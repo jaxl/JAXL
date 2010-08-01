@@ -1,47 +1,26 @@
 About:
 ------
-JAXL (Jabber XMPP Library) is a XMPP client library
-Written in PHP by Abhinav Singh <me@abhinavsingh.com>
+Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time applications
+for browsers, desktops and hand held devices. Jaxl 2.x is a robust, flexible and easy to use
+version of Jaxl 1.x series which was hosted at google code.
 
-History:
---------
-Development on Jaxl started building Gtalkbots
-In Jan 2009, Jaxl was made open source under GNU GPLv3 license and hosted at google code
-In last 1 year, Jaxl was downloaded 3,000 times, more than any other XMPP client library in PHP
-However, Jaxl 1.x release lacked developer API support
-In order to have a better support from the developer community, library has been restructured in 2.x release
-Also the hosting moves from google code to github
+What's New?
+-----------
+- More robust, flexible, scalable and easy to use
+- Event mechanism for registering callbacks for various xmpp events
+- Integrated BOSH support along with 13 other XMPP extensions (XEP's)
+- Setup dynamic number of parallel XMPP sessions on the fly
 
-Features:
----------
-- Connect to any Jabber server including ejabberd, gtalk, facebook, openfire, ....
-- TLS Encryption
-- DIGEST-MD5, PLAIN and ANONYMOUS login support
-
-Implemented XEP's:
-------------------
-- Last Activity (0012)
-- MUC Implementation (0045)
-- vCard Temp (0054)
-- PubSub (0060)
-- Chat State Notification (0085)
-- Software Version (0092)
-- Stream Initiation (0095)
-- Stream Initiated File Profile Transfer (0096)*
-- Jabber Component Protocol (0114)
-- Bosh Implementation (0124)*
-- XMPP over Bosh (0206)*
-(*) demo ready state
-
-Coding with Jaxl 2.x:
----------------------
-- Jaxl 2.x provide an extendable/pluggable architecture
-- Core library provide hooks for all significant XMPP events
-- Some important hooks include `jaxl_get_auth_mech`, `jaxl_get_message`, ...
-- Hence, coding with Jaxl 2.x simply boils down to registering callbacks using available hooks
-
-Important Links:
-----------------
-- Mailing List (http://groups.google.com/group/jaxl)
-- Google Code Repo (http://code.google.com/p/jaxl)
-- Github Repo (http://github.com/abhinavsingh/jaxl)
+Implemented XEP's
+-----------------
+0004 Data Forms
+0030 Service Discovery
+0045 Multi-User Chat
+0050 Ad-Hoc Commands
+0085 Chat State Notification
+0092 Software Version
+0114 Jabber Component Protocol
+0124 Bosh Implementation
+0133 Service Administration
+0206 XMPP over Bosh 
+0249 Direct MUC Invitation
