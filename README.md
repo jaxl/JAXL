@@ -4,14 +4,14 @@ Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time ap
 for browsers, desktops and hand held devices. Jaxl 2.x is a robust, flexible and easy to use
 version of Jaxl 1.x series which was hosted at google code.
 
-# What's New?
+## What's New?
 
 * More robust, flexible, scalable and easy to use
 * Event mechanism for registering callbacks for various xmpp events
 * Integrated BOSH support and 11 supported XMPP extensions (XEP's)
 * Setup dynamic number of parallel XMPP sessions on the fly
 
-# Documentation for Jaxl users:
+## Documentation for Jaxl users
 
 * [Installation, Usage guide and Sample applications](http://abhinavsingh.com/blog/2010/08/jaxl-2-0-installation-usage-guide-and-example-apps)
 * Jaxl core directory structure and classes
@@ -20,7 +20,7 @@ version of Jaxl 1.x series which was hosted at google code.
 * Writing your first XMPP web application using Jaxl
 * Migration guide for Jaxl 1.x users
 
-# Implemented XEP's
+## Implemented XEP's
 
 * 0004 Data Forms
 * 0030 Service Discovery
@@ -33,14 +33,14 @@ version of Jaxl 1.x series which was hosted at google code.
 * 0203 Delayed Delivery
 * 0249 Direct MUC Invitation
 
-# Documentation for project contributors:
+## Documentation for project contributors:
 
 * Jaxl core library workflow and architecture
 * How to implement new XMPP extensions using Jaxl
 
-# Useful Links:
+## Useful Links:
 
 * [Developer Mailing List](http://groups.google.com/group/jaxl)
 * [Issue Tracker](http://github.com/abhinavsingh/jaxl/issues)
-* [Twitter](http://twitter.com/imjaxlim)
 * [Facebook](http://www.facebook.com/apps/application.php?id=133882693294505)
+* [Twitter](http://twitter.com/imjaxlim)
