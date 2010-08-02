@@ -1,0 +1,7 @@
+version 2.0.0
+--------------
+First checkin of:
+- Restructed core library with event mechanism
+- Packaged XEP 0004, 0030, 0045, 0050, 0085, 0092, 0114, 0133, 0249
+- Sample echobot application
+- 
