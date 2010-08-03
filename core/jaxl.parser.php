@@ -78,7 +78,7 @@
 				'type'		=>	'//message/@type',
 				'xml:lang'	=>	'//message/@xml:lang',
 				'body'		=>	'//message/body',
-				'errrorType'	=>	'//message/error/@type',
+				'errorType'	=>	'//message/error/@type',
 				'errorCode'	=>	'//message/error/@code'
 			),
 			
@@ -102,8 +102,8 @@
 				'id'		=>	'//iq/@id',
 				'type'		=>	'//iq/@type',
 				'xml:lang'	=>	'//iq/@xml:lang',
-				'bindResource'	=>	'//iq/bind[@ns="urn:ietf:params:xml:ns:xmpp-bind"]/resource',
-				'bindJid'	=>	'//iq/bind[@ns="urn:ietf:params:xml:ns:xmpp-bind"]/jid',
+				'bindResource'	=>	'//iq/bind/resource',
+				'bindJid'	=>	'//iq/bind/jid',
 				'queryXmlns'	=>	'//iq/query/@xmlns',
 				'queryVer'	=>	'//iq/query/@ver',
 				'queryItemSub'	=>	'//iq/query/item/@subscription',
@@ -152,10 +152,56 @@
 			unset(self::$tagMap[$node][$tag]);
 		}
 		
-		public static function create($tagVal) {
-			// We shall one day create XML packets using this method, self::$tagMap and passed $tagVal
+		public static function create($tagVals) {
+			foreach($tagVals as $node=>$tagVal) {
+				// initialize new XML document
+				$dom = new DOMDocument();
+				$superRoot = $dom->createElement($node);
+				$dom->appendChild($superRoot);
+				
+				$childs = array();
+				// iterate over all tag values
+				foreach($tagVal as $tag=>$value) {
+					// find xpath where this $tag and $value should go
+					$xpath = self::$tagMap[$node][$tag];
+					
+					// xpath parts for depth detection
+					$xpath = str_replace('//'.$node.'/', '', $xpath);
+					$xpart = explode('/', $xpath);
+					$depth = sizeof($xpart);
+					
+					$root = $superRoot;
+					for($currDepth=0; $currDepth<$depth; $currDepth++) {
+						$element = $xpart[$currDepth];
+						$isAttr = (substr($element, 0, 1) == '@') ? TRUE : FALSE;
+						
+						if($isAttr) {
+							$element = str_replace('@', '', $element);
+							$attr = $dom->createAttribute($element);
+							$root->appendChild($attr);
+							$text = $dom->createTextNode($value);
+							$attr->appendChild($text);
+						}
+						else {
+							if(!isset($childs[$currDepth][$element])) {
+								$child = $dom->createElement($element);
+								$root->appendChild($child);
+								$childs[$currDepth][$element] = TRUE;
+							}
+							else if($currDepth == $depth-1) {
+								//echo ' value '.$value.PHP_EOL.PHP_EOL;
+								$text = $dom->createTextNode($value);
+								$child->appendChild($text);
+							}
+							$root = $child;
+						}
+					}
+				}
+					
+				return $dom->saveXML();
+			}
 		}
 		
-	}	
-	//print_r(JAXLXml::parse($argv[1]));	
+	}
+	
 ?>
