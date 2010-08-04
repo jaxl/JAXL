@@ -105,28 +105,6 @@
 			return self::xml($xml);
 		}
 		
-		/*
-		 * Following attributes are common for all XMPP Stanza
-		 * 1. to		If missing, XMPP Stanza is handled by the server
-		 * 2. from
-		 * 3. id
-		 * 4. type
-		 * 5. xml:lang
-		*/
-		
-		/*
-		 * 'type' attribute of a message stanza is RECOMMENDED. Possible values are:
-		 * 1. chat
-		 * 2. error
-		 * 3. groupchat
-		 * 4. headline	means message is kind of auto-generated and do not expect a reply back
-		 * 5. normal	Default
-		 * 
-		 * Message stanza's can have child nodes:
-		 * 1. <subject/>
-		 * 2. <body/>
-		 * 3. <thread/>
-		*/
 		public static function message($to, $from=FALSE, $child=FALSE, $type='normal', $ns='jabber:client') {
 			$xml = '';
 			
@@ -162,31 +140,6 @@
 			return $xml;
 		}
 		
-		/*
-		 * 'type' attribute of a presence stanza is OPTIONAL.
-		 * 
-		 * If 'type' attribute is absent
-		 * 		Presence stanza is used to signal to the server that the sender is online and available for communication
-		 * If 'type' attribute is present
-		 * 		Presence stanza specifies lack of availability
-		 * 		A request to manage a subscription to another entity's presence
-		 * 		A request for another entity's current presence
-		 * 		An error related to a previously-sent presence stanza
-		 * 
-		 * Possible values for 'type' attribute are:
-		 * 1. unavailable
-		 * 2. subscribe
-		 * 3. subscribed
-		 * 4. unsubscribe
-		 * 5. unsubscribed
-		 * 6. probe
-		 * 7. error
-		 *
-		 * Presence stanza's can have child nodes:
-		 * 1. <show/>		away, chat, dnd, xa (If no show element is provided, sender is assumed online and available)
-		 * 2. <status/>		
-		 * 3. <priority/>	Value between -128 to +127
-		*/
 		public static function presence($to=FALSE, $from=FALSE, $child=FALSE, $type=FALSE, $ns='jabber:client') {
 			$xml = '';
 			if(is_array($to)) {
@@ -220,17 +173,6 @@
 			return $xml;
 		}
 		
-		/*
-		 * 1. 'id' attribute is required
-		 * 2. 'type' is required (get, set, result, error)
-		 * 3. IQ of type 'get' and 'set' should have only 1 child element
-		 * 4. IQ of type 'result' must have none or 1 child element
-		 * 5. Of type 'error' must contain corresponding received child element and <error/> child element
-		 * 
-		 * Note:
-		 * $callback is the methods which gets control back after a response from the jabber server for sent <iq/>
-		 *
-		*/
 		public static function iq($type, $payload=FALSE, $to=FALSE, $from=FALSE, $callback=FALSE, $id=FALSE, $ns='jabber:client') {
 			if($type == 'get' || $type == 'set') {
 				global $jaxl;
