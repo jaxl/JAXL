@@ -219,7 +219,7 @@
 			$xml.= '</presence>';
 			return $xml;
 		}
-			
+		
 		/*
 		 * 1. 'id' attribute is required
 		 * 2. 'type' is required (get, set, result, error)

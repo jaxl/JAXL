@@ -14,7 +14,7 @@ version of Jaxl 1.x series which was hosted at google code.
 ## Documentation for Jaxl users
 
 * [Installation, Usage guide and Sample applications](http://abhinavsingh.com/blog/2010/08/jaxl-2-0-installation-usage-guide-and-example-apps/)
-* Jaxl core directory structure and classes
+* [Jaxl 2.0 Core classes, available methods and directory structure](http://abhinavsingh.com/blog/2010/08/jaxl-2-0-core-classes-available-methods-and-directory-structure/)
 * [Writing your first command line XMPP bot (echobot)](http://abhinavsingh.com/blog/2010/08/writing-a-command-line-xmpp-bot-echobot-using-jaxl-2-0/)
 * Available hooks for various xmpp events
 * Writing your first XMPP web application using Jaxl

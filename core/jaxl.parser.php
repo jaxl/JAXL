@@ -197,8 +197,10 @@
 						}
 					}
 				}
-					
-				return $dom->saveXML();
+				
+				$xml = $dom->saveXML();
+				unset($dom); unset($attr); unset($child); unset($text);
+				return $xml;
 			}
 		}
 		
