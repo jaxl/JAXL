@@ -89,7 +89,15 @@
 			$payload = JAXLPlugin::execute('jaxl_pre_handler', $payload);	
 			
 			$xmls = JAXLUtil::splitXML($payload);
-			foreach($xmls as $xml) {
+			$pktCnt = count($xmls);
+			
+			foreach($xmls as $pktNo => $xml) {	
+				if($pktNo == $pktCnt-1) {
+					if(substr($xml, -1, 1) != '>') {
+						$jaxl->buffer = $xml;
+						break;
+					}
+				}
 				
 				if(substr($xml, 0, 7) == '<stream') 
 					$arr = $jaxl->xml->xmlize($xml);
