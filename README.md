@@ -20,7 +20,7 @@ version of Jaxl 1.x series which was hosted at google code.
 * Writing your first XMPP web application using Jaxl
 * Migration guide for Jaxl 1.x users
 
-## Implemented XEP's
+## Implemented XEP's Documentation
 
 * 0004 Data Forms
 * 0030 Service Discovery
@@ -29,7 +29,7 @@ version of Jaxl 1.x series which was hosted at google code.
 * 0085 Chat State Notification
 * 0092 Software Version
 * 0114 Jabber Component Protocol
-* 0133 Service Administration
+* [0133 Service Administration](http://abhinavsingh.com/blog/2010/08/xep-0133-service-administration-available-methods-in-jaxl-2-0/)
 * 0203 Delayed Delivery
 * 0249 Direct MUC Invitation
 

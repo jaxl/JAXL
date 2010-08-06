@@ -34,6 +34,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 	
+	// include required XEP's
+	jaxl_require(array(
+		'JAXL0004',	// Data Forms
+		'JAXL0050'	// Ad-Hoc Commands
+	));
+	
 	/*
 	 * XEP-0133: Service Administration
 	*/
@@ -106,9 +112,6 @@
 			return XMPPSend::iq('set', $payload, $to, $from, array('JAXL0133', 'handleForm'));
 		}
 		
-		/*
-		 * $user = array('jid'=>,'pass'=>,'email'=>,'fname'=>,'lname'=>);
-		*/
 		public static function addUser($user, $domain, $callback) {
 			$id = self::requestForm($domain, FALSE, 'add-user');
 			self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
