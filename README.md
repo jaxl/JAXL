@@ -11,6 +11,14 @@ version of Jaxl 1.x series which was hosted at google code.
 * Integrated BOSH support and 11 supported XMPP extensions (XEP's)
 * Setup dynamic number of parallel XMPP sessions on the fly
 
+## Download
+
+* For better experience download [latest stable tarball](http://code.google.com/p/jaxl/downloads/list) from google code
+* The development version of Jaxl is hosted here at Github, have fun cloning the source code with Git
+* Checkout Jaxl v 1.x series source code from [svn repository (deprecated)](http://code.google.com/p/jaxl/source/browse/)
+
+Warning: The development source code at Github is only intended for people that want to develop Jaxl or absolutely need the latest features still not available on the stable releases.
+
 ## Documentation for Jaxl users
 
 * [Installation, Usage guide and Sample applications](http://abhinavsingh.com/blog/2010/08/jaxl-2-0-installation-usage-guide-and-example-apps/)
