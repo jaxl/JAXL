@@ -37,6 +37,7 @@ Warning: The development source code at Github is only intended for people that 
 * 0085 Chat State Notification
 * 0092 Software Version
 * 0114 Jabber Component Protocol
+* 0115 Entity Capabilities
 * [0133 Service Administration](http://abhinavsingh.com/blog/2010/08/xep-0133-service-administration-available-methods-in-jaxl-2-0/)
 * 0203 Delayed Delivery
 * 0249 Direct MUC Invitation

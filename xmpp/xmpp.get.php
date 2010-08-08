@@ -227,29 +227,72 @@
 					$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>';
 				}
 				else {
+					$response = array();
 					$decoded = base64_decode($arr['challenge']);
-			        	$decoded = JAXLUtil::explodeData($decoded);
-
-			        	if(!isset($decoded['digest-uri'])) $decoded['digest-uri'] = 'xmpp/'.$jaxl->domain;
-					$decoded['cnonce'] = base64_encode(JAXLUtil::generateNonce());
 					
-					if(isset($decoded['qop']) && $decoded['qop'] != 'auth' && strpos($decoded['qop'],'auth') !== false)
-			           		$decoded['qop'] = 'auth';
+					// Some cleanup required in below methods in future
+					if($jaxl->authType == 'X-FACEBOOK-PLATFORM') {
+						$decoded = explode('&', $decoded);
+						foreach($decoded as $k=>$v) {
+							list($kk, $vv) = explode('=', $v);
+							$decoded[$kk] = $vv;
+							unset($decoded[$k]);
+						}
+						
+						list($secret, $decoded['api_key'], $decoded['session_key']) = JAXLPlugin::execute('jaxl_get_facebook_key');
+						
+						$decoded['call_id'] = time();
+						$decoded['v'] = '1.0';
+						
+						$base_string = '';
+						foreach(array('api_key', 'call_id', 'method', 'nonce', 'session_key', 'v') as $key) {
+							if(isset($decoded[$key])) {
+								$response[$key] = $decoded[$key];
+								$base_string .= $key.'='.$decoded[$key];
+							}
+						}
+						
+						$base_string .= $secret;
+						$response['sig'] = md5($base_string);
+						
+						$responseURI = '';
+						foreach($response as $k=>$v) {
+							if($responseURI == '')
+								$responseURI .= $k.'='.urlencode($v);
+							else 
+								$responseURI .= '&'.$k.'='.urlencode($v);
+						}
+						
+						$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
+						$xml .= base64_encode($responseURI);
+						$xml .= '</response>';
+					}
+					else if($jaxl->authType == 'DIGEST-MD5') {
+			        		$decoded = JAXLUtil::explodeData($decoded);		
+						if(!isset($decoded['digest-uri'])) $decoded['digest-uri'] = 'xmpp/'.$jaxl->domain;	
+						$decoded['cnonce'] = base64_encode(JAXLUtil::generateNonce());
+						
+						if(isset($decoded['qop'])
+						&& $decoded['qop'] != 'auth' 
+						&& strpos($decoded['qop'],'auth') !== false
+						) {
+			           			$decoded['qop'] = 'auth';
+						}
+						
+						$response = array('username'=>$jaxl->user,
+						'response' => JAXLUtil::encryptPassword(array_merge($decoded,array('nc'=>'00000001'))),
+						'charset' => 'utf-8',
+						'nc' => '00000001',
+						'qop' => 'auth');
+						
+						foreach(array('nonce', 'digest-uri', 'realm', 'cnonce') as $key)
+							if(isset($decoded[$key]))
+								$response[$key] = $decoded[$key];
 					
-					$response = array('username'=>$jaxl->user,
-			                          'response'=>JAXLUtil::encryptPassword(array_merge($decoded,array('nc'=>'00000001'))),
-			                          'charset'	=> 'utf-8',
-			                          'nc'=>'00000001',
-			                          'qop'=>'auth',
-			                          );
-					
-					foreach(array('nonce', 'digest-uri', 'realm', 'cnonce') as $key)
-						if(isset($decoded[$key]))
-							$response[$key] = $decoded[$key];
-					
-					$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
-					$xml .= base64_encode(JAXLUtil::implodeData($response));
-					$xml .= '</response>';
+						$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
+						$xml .= base64_encode(JAXLUtil::implodeData($response));
+						$xml .= '</response>';
+					}
 					
 					$jaxl->secondChallenge = TRUE;
 				}

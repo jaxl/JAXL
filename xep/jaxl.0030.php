@@ -41,36 +41,20 @@
 	*/
 	class JAXL0030 {
 	
-		public static $ns = array(
-					'info'=>'http://jabber.org/protocol/disco#info',
-					'item'=>'http://jabber.org/protocol/disco#item'
-					);
+		public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'item'=>'http://jabber.org/protocol/disco#item');
+		public static $category = FALSE;
+		public static $type = FALSE;
+		public static $name = FALSE;
+		public static $lang = FALSE;
 		
-		/*
-		 * @link http://xmpp.org/registrar/disco-categories.html
-		 * client
-		 * 	bot, console, handheld, pc, phone, web
-		 * component
-		 *	archive, c2s, generic, load, log, presence, router, s2s, sm, stats
-		 * gateway
-		 * 	facebook, xmpp
-		*/
-		public static $category = 'client';
-		public static $type = 'bot';
-		public static $name = 'Jaxl';
-		public static $lang = 'en';
-		
-		public static function init($config=FALSE) {
-			global $jaxl;
+		public static function init($config=array()) {
+			$config['instance']->features[] = self::$ns['info'];
+			$config['instance']->features[] = self::$ns['item'];
 			
-			// accept user configurations	
-			if(!isset($config['features']) || (isset($config['features']) && $config['features'] == TRUE)) {
-				$jaxl->features[] = self::$ns['info'];
-				$jaxl->features[] = self::$ns['item'];
-			}
-			
-			self::$category = isset($config['category']) ? $config['category'] : self::$category;
-			self::$type = isset($config['type']) ? $config['type'] : self::$type;
+			self::$category = isset($config['category']) ? $config['category'] : 'client';
+			self::$type = isset($config['type']) ? $config['type'] : 'bot';
+			self::$name = isset($config['name']) ? $config['name'] : 'Jaxl';
+			self::$lang = isset($config['lang']) ? $config['lang'] : 'en';
 			
 			// register callbacks
 			JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
@@ -97,10 +81,19 @@
 			
 			$xmlns = $payload['queryXmlns'];
 			if($xmlns == self::$ns['info']) {
-				$xml = '<query xmlns="'.$xmlns.'">';
-				$xml .= '<identity xml:lang="'.self::$lang.'" name="'.self::$name.'" category="'.self::$category.'" type="'.self::$type.'"/>';
-				foreach($jaxl->features as $feature) $xml .= '<feature var="'.$feature.'"/>';
+				$xml = '<query xmlns="'.$xmlns.'"';
+				if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
+				$xml .= '>';
+				
+				$xml .= '<identity xml:lang="'.self::$lang.'"';
+				$xml .= ' name="'.self::$name.'"';
+				$xml .= ' category="'.self::$category.'"';
+				$xml .= ' type="'.self::$type.'"/>';
+				
+				foreach($jaxl->features as $feature)
+					$xml .= '<feature var="'.$feature.'"/>';
 				$xml .= '</query>';
+				
 				XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], FALSE, $payload['id']);
 			}
 			else if($xmlns == self::$ns['item']) {

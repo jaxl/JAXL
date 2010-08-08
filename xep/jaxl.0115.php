@@ -35,35 +35,45 @@
  */
 
 	/*
-	 * XEP-0114: Jabber Component Protocol
+	 * XEP-0115 : Entity Capabilities
 	*/
-	class JAXL0114 {
+	class JAXL0115 {
+		
+		public static $ns = 'http://jabber.org/protocol/caps';
 		
 		public static function init() {
-			JAXLPlugin::add('jaxl_post_connect', array('JAXL0114', 'startStream'));
-			JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
-			JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
+			global $jaxl;
+			$jaxl->features[] = self::$ns;
+			
+			JAXLXml::addTag('presence', 'cXmlns', '//presence/c/@xmlns');
+			JAXLXml::addTag('presence', 'cHash', '//presence/c/@hash');
+			JAXLXml::addTag('presence', 'cNode', '//presence/c/@node');
+			JAXLXml::addTag('presence', 'cVer', '//presence/c/@ver');
+			
+			JAXLXml::addTag('iq', 'queryNode', '//iq/query/@node');
 		}
 		
-		public static function startStream() {
-			$xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.JAXL_COMPONENT_HOST.'">';
-			XMPPSend::xml($xml);
+		public static function getCaps() {
+			$payload = '';
+			$payload .= '<c';
+			$payload .= ' xmlns="'.self::$ns.'"';
+			$payload .= ' hash="sha1"';
+			$payload .= ' node="http://code.google.com/p/jaxl"';
+			$payload .= ' ver="'.self::getVerificationString().'"';
+			$payload .= '/>';
+			return $payload;
 		}
 		
-		public static function handshake($id) {
-			$hash = JAXLPlugin::execute('jaxl_pre_handshake', $id);
-			$xml = '<handshake>'.$hash.'</handshake>';
-			XMPPSend::xml($xml);
-		}
-
-		public static function preHandler($xml) {
-			if($xml == '<handshake/>') {
-				$xml = '';
-				JAXLPlugin::execute('jaxl_post_handshake');
-			}
-			return $xml;
+		public static function getVerificationString() {
+			global $jaxl;
+			asort($jaxl->features);
+			
+			$S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
+			foreach($jaxl->features as $feature) $S .= $feature.'<';
+			$ver = base64_encode(sha1($S, TRUE));
+			return $ver;
 		}
 		
 	}
-
+	
 ?>

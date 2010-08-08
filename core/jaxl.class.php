@@ -35,7 +35,7 @@
  */
 
 	/*
-	 * include core, xmpp base and XEP-0030
+	 * include core, xmpp base
 	 * (basic requirements for every Jaxl instance)
 	*/
 	jaxl_require(array(
@@ -44,17 +44,16 @@
 		'JAXLPlugin',
 		'XML',
 		'XMPP',
-		'JAXL0030'
-	));	
+	));
 	
 	/*
 	 * Jaxl Core Class extending Base XMPP Class
-	 * All user space available methods are written here
 	*/
 	class JAXL extends XMPP {
 		
 		var $pid = FALSE;	
 		var $mode = FALSE;
+		var $authType = FALSE;
 		var $features = array();
 		
 		function __construct($config=array()) {
@@ -86,13 +85,24 @@
 			if($this->mode == "cgi") {
 				if(!function_exists('curl_init'))
 					die("Jaxl requires curl_init method ...");
-			}	
+			}
+
+			// include service discovery XEP, recommended for every IM client
+			jaxl_require('JAXL0030', array(
+				'category'=>'client',
+				'type'=>'bot',
+				'name'=>JAXL_NAME,
+				'lang'=>'en',
+				'instance'=>$this
+			));
 		}
-			
+		
 		function shutdown($signal) {
 			global $jaxl;
 			JAXLog::log("Jaxl Shutting down ...", 0);
 			JAXLPlugin::execute('jaxl_pre_shutdown', $signal);
+			
+			XMPPSend::endStream();
 			$jaxl->stream = FALSE;
 		}
 		
@@ -100,11 +110,13 @@
 			return XMPPSend::startAuth($type);
 		}
 		
-		function setStatus($status=FALSE, $show=FALSE, $priority=FALSE) {
+		function setStatus($status=FALSE, $show=FALSE, $priority=FALSE, $caps=FALSE) {
 			$child = array();
 			$child['status'] = ($status === FALSE ? 'Online using Jaxl (Jabber XMPP Library in PHP)' : $status);
 			$child['show'] = ($show === FALSE ? 'chat' : $show);
-			$child['priority'] = ($priority === FALSE ? 1 : $priority);	
+			$child['priority'] = ($priority === FALSE ? 1 : $priority);
+			if($caps) $child['payload'] = JAXL0115::getCaps();
+			
 			return XMPPSend::presence(FALSE, FALSE, $child);
 		}
 		

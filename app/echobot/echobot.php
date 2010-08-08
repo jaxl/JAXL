@@ -5,6 +5,7 @@
 	
 	// Include required XEP's
 	jaxl_require(array(
+		'JAXL0115', // Entity Capabilities
 		'JAXL0085', // Chat State Notification
 		'JAXL0092', // Software Version
 		'JAXL0203'  // Delayed Delivery
@@ -30,6 +31,9 @@
 				case in_array("PLAIN",$mechanism):
 					$jaxl->auth("PLAIN");
 					break;
+				case in_array("X-FACEBOOK-PLATFORM",$mechanism):
+					$jaxl->auth("X-FACEBOOK-PLATFORM");
+					break;
 				default:
 					die("No prefered auth method exists...");
 					break;
@@ -38,12 +42,12 @@
 		
 		function postAuth() {
 			global $jaxl;
-			$jaxl->setStatus();
+			$jaxl->setStatus(FALSE, FALSE, FALSE, TRUE);
 			$jaxl->getRosterList(array($this, 'handleRosterList'));
 		}
 		
 		function handleRosterList($payload) {
-			if(isset($payload['queryXmlns'])) {
+			if(is_array($payload['queryItemJid'])) {
 				foreach($payload['queryItemJid'] as $key=>$jid) {
 					$group = $payload['queryItemGrp'][$key];
 					$subscription = $payload['queryItemSub'][$key];
@@ -96,5 +100,5 @@
 	JAXLPlugin::add('jaxl_post_auth', array($echobot, 'postAuth'));
 	JAXLPlugin::add('jaxl_get_message', array($echobot, 'getMessage'));
 	JAXLPlugin::add('jaxl_get_presence', array($echobot, 'getPresence'));
-	
+
 ?>

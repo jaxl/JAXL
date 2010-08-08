@@ -1,3 +1,11 @@
+version 2.0.1
+-------------
+- Typo fix in JAXLXml::$tagMap for errorCode
+- Fix for handling overflooded roster list
+- Packaged XEP 0115 Entity capability
+- Updated sample echobot to use XEP 0115
+- Support for X-FACEBOOK-PLATFORM authentication
+
 version 2.0.0
 --------------
 First checkin of:

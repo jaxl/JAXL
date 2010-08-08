@@ -40,7 +40,7 @@
 			global $jaxl;
 				
 			$fh = NULL;
-			$log = '== '.$jaxl->pid.' == '.'[['.date('Y-m-d H:i:s')."]] ".$log;
+			$log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
 			
 			if($log != '' && $level == 0) {
 				if($jaxl->mode == "cli") {

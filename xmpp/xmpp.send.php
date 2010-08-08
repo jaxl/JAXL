@@ -79,12 +79,20 @@
       			return self::xml($xml);
 		}
 		
+		public static function endStream() {
+			$xml = '</stream:stream>';
+			return self::xml($xml);
+		}
+		
 		public static function startTLS() {
 			$xml = '<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
 			return self::xml($xml);
 		}
 		
 		public static function startAuth($type) {
+			global $jaxl;
+			$jaxl->authType = $type;
+			
 			switch($type) {
 				case 'DIGEST-MD5':
 					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
@@ -97,6 +105,9 @@
 					break;
 				case 'ANONYMOUS':
 					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="ANONYMOUS"/>';
+					break;
+				case 'X-FACEBOOK-PLATFORM':
+					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="X-FACEBOOK-PLATFORM"/>';
 					break;
 				default:
 					break;
