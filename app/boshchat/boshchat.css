@@ -1,0 +1,26 @@
+body {
+	color:#444;
+	background-color:#F7F7F7;
+}
+label, input {
+	margin-bottom:5px;
+}
+#read {
+	width:700px;
+	height:250px;
+	overflow-x:hidden;
+	overflow-y:auto;
+	background-color:#FFF;
+	border:1px solid #E7E7E7;
+	display:none;
+}
+#write {
+	width:698px;
+	border:1px solid #E7E7E7;
+	background-color:#FFF;
+	height:20px;
+	padding:1px;
+	font-size:13px;
+	color:#AAA;
+	display:none;
+}
