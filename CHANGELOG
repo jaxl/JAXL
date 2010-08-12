@@ -1,9 +1,20 @@
+version 2.0.2
+-------------
+- Packaged XEP 0202 (Entity Time)
+- First checkin of Bosh related XEP 0124 and 0206
+- Sample Bosh Chat example application
+- Updated jaxl.class.php to save Bosh request action parameter
+- jaxl.ini updated with Bosh related cookie options, default loglevel now set to 4
+- jaxl.js checkin which should be used with bosh applications
+- Updated base xmpp classes to provide integrated bosh support
+- Outgoing presence and message stanza's too can include @id attribute now
+
 version 2.0.1
 -------------
 - Typo fix in JAXLXml::$tagMap for errorCode
 - Fix for handling overflooded roster list
-- Packaged XEP 0115 Entity capability
-- Updated sample echobot to use XEP 0115
+- Packaged XEP 0115 (Entity capability) and XEP 0199 (XMPP Ping)
+- Updated sample echobot to use XEP 0115 and XEP 0199
 - Support for X-FACEBOOK-PLATFORM authentication
 
 version 2.0.0

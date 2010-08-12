@@ -35,6 +35,7 @@ case "$1" in
 			rm -R xep
 			rm -R env
 			rm -R app/echobot
+			rm -R app/boshchat
 			rm $PACKAGE_BIN_PATH/jaxl
 		else
 			echo "creating package directories..."
@@ -54,7 +55,8 @@ case "$1" in
 			xmpp/xmpp* \
 			xep/jaxl* \
 			env/jaxl* \
-			app/*
+			app/echobot/* \
+			app/boshchat/*
         ;;
 esac
 

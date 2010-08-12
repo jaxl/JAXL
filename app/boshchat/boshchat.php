@@ -1,4 +1,7 @@
 <?php
+	
+	// Admin jid who will receive all messages sent using this application ui
+	define('BOSHCHAT_ADMIN_JID', 'abhinavsingh@jaxl.im');
 		
 	// Serve application UI if $_REQUEST['jaxl'] is not set
 	if(!isset($_REQUEST['jaxl'])) {
@@ -8,7 +11,7 @@
         <head profile="http://gmpg.org/xfn/11">
                 <link rel="SHORTCUT ICON" href="http://im.jaxl.im/favicon.ico" type="image/x-icon">
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                <title>Sample Chat Application using Jaxl Library</title>
+                <title>Web Chat Application using Jaxl Library</title>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
                 <script type="text/javascript" src="jaxl.js"></script>
 		<style type="text/css">
@@ -23,9 +26,13 @@ label, input { margin-bottom:5px; }
 #write { width:698px; border:1px solid #E7E7E7; background-color:#FFF; height:20px; padding:1px; font-size:13px; color:#AAA; display:none; }
 		</style>
 		<script type="text/javascript">
-var boshapp = {
+var boshchat = {
         payloadHandler: function(payload) {
-                if(payload.jaxl == 'connected') {
+		if(payload.jaxl == 'authFailed') {
+			jaxl.connected = false;
+			$('#button input').val('Connect');
+		}
+                else if(payload.jaxl == 'connected') {
                         jaxl.connected = true;
                         jaxl.jid = payload.jid;
 
@@ -57,25 +64,35 @@ var boshapp = {
                         console.log('disconnected');
                 }
                 else if(payload.jaxl == 'message') {
-                        $('#read').append(jaxl.urldecode(payload.message));
-                        $('#read').animate({ scrollTop: $('#read').attr('scrollHeight') }, 300);
+			boshchat.appendMessage(jaxl.urldecode(payload.message));
                         jaxl.ping();
                 }
                 else if(payload.jaxl == 'presence') {
-                        $('#read').append(jaxl.urldecode(payload.presence));
-                        $('#read').animate({ scrollTop: $('#read').attr('scrollHeight') }, 300);
+			boshchat.appendMessage(jaxl.urldecode(payload.presence));
                         jaxl.ping();
                 }
                 else if(payload.jaxl == 'pinged') {
                         jaxl.ping();
                 }
-        }
+        },
+	appendMessage: function(message) {
+		$('#read').append(message);
+		$('#read').animate({ scrollTop: $('#read').attr('scrollHeight') }, 300);
+	},
+	prepareMessage: function(jid, message) {
+		html = '';
+		html += '<div class="mssgIn">';
+		html += '<p class="from">'+jid+'</p>';
+		html += '<p class="body">'+message+'</div>';
+		html += '</div>';
+		return html;
+	}
 };
 
 jQuery(function($) {
         $(document).ready(function() {
                 jaxl.pollUrl = 'http://localhost.localdomain/jaxl.php';
-                jaxl.payloadHandler = new Array('boshapp', 'payloadHandler');
+                jaxl.payloadHandler = new Array('boshchat', 'payloadHandler');
 
                 $('#button input').click(function() {
                         if($(this).val() == 'Connect') {
@@ -109,7 +126,9 @@ jQuery(function($) {
                                 message = $.trim($(this).val());
                                 if(message.length == 0) return false;
                                 $(this).val('');
-
+				
+				boshchat.appendMessage(boshchat.prepareMessage(jaxl.jid, message));
+				
                                 obj = new Object;
                                 obj['jaxl'] = 'message';
                                 obj['message'] = message;
@@ -122,7 +141,7 @@ jQuery(function($) {
 	</head>
         <body>
                 <center>
-                        <h1>Sample Chat Application using Jaxl Library</h1>
+                        <h1>Web Chat Application using Jaxl Library</h1>
                         <div id="uname">
                                 <label>Username:</label>
                                 <input type="text" value=""/>
@@ -171,7 +190,7 @@ HTML;
 		public static function postAuth() {
 			global $jaxl;
 			$response = array('jaxl'=>'connected', 'jid'=>$jaxl->jid);
-			JAXL0124::out($response);
+			JAXL0206::out($response);
 		}
 		
 		public static function handleRosterList($payload) {
@@ -187,19 +206,19 @@ HTML;
 			}
 			
 			$response = array('jaxl'=>'rosterList', 'roster'=>$roster);
-			JAXL0124::out($response);
+			JAXL0206::out($response);
 		}
 		
 		public static function postDisconnect() {
 			$response = array('jaxl'=>'disconnected');
-			JAXL0124::out($response);
+			JAXL0206::out($response);
 		}
 		
 		public static function getMessage($payloads) {
 			$html = '';
 			foreach($payloads as $payload) {
 				// reject offline message
-				if($payload['offline'] != JAXL0203::$ns) {
+				if($payload['offline'] != JAXL0203::$ns && $payload['type'] == 'chat') {
 					if(strlen($payload['body']) > 0) {
 						$html .= '<div class="mssgIn">';
 						$html .= '<p class="from">'.$payload['from'].'</p>';
@@ -216,38 +235,46 @@ HTML;
 			
 			if($html != '') {
 				$response = array('jaxl'=>'message', 'message'=>urlencode($html));
-				JAXL0124::out($response);
+				JAXL0206::out($response);
 			}
+			
+			return $payloads;
 		}
 		
 		public static function getPresence($payloads) {
 			$html = '';
 			foreach($payloads as $payload) {
-				if($payload['offline'] != JAXL0203::$ns) {
-					if($payload['type'] == '' || in_array($payload['type'], array('available', 'unavailable'))) {
-						$html .= '<div class="presIn">';
-						$html .= '<p class="from">'.$payload['from'];
-						if($payload['type'] == 'unavailable') $html .= ' is now offline</p>';
-						else $html .= ' is now online</p>';
-						$html .= '</div>';
-					}
+				if($payload['type'] == '' || in_array($payload['type'], array('available', 'unavailable'))) {
+					$html .= '<div class="presIn">';
+					$html .= '<p class="from">'.$payload['from'];
+					if($payload['type'] == 'unavailable') $html .= ' is now offline</p>';
+					else $html .= ' is now online</p>';
+					$html .= '</div>';
 				}
 			}
 			
 			if($html != '') {
 				$response = array('jaxl'=>'presence', 'presence'=>urlencode($html));
-				JAXL0124::out($response);
+				JAXL0206::out($response);
 			}
+			
+			return $payloads;
 		}
 		
 		public static function postEmptyBody($body) {
 			$response = array('jaxl'=>'pinged');
-			JAXL0124::out($response);
+			JAXL0206::out($response);
+		}
+
+		public static function postAuthFailure() {
+			$response = array('jaxl'=>'authFailed');
+			JAXL0206::out($response);
 		}
 		
 	}
 	
 	// Add callbacks on various event handlers
+	JAXLPlugin::add('jaxl_post_auth_failure', array('boshchat', 'postAuthFailure'));
 	JAXLPlugin::add('jaxl_post_auth', array('boshchat', 'postAuth'));
 	JAXLPlugin::add('jaxl_post_disconnect', array('boshchat', 'postDisconnect'));
 	JAXLPlugin::add('jaxl_get_auth_mech', array('boshchat', 'doAuth'));
@@ -272,10 +299,7 @@ HTML;
 			$jaxl->setStatus(FALSE, FALSE, FALSE, TRUE);
 			break;
 		case 'message':
-			$jaxl->sendMessage('jaxl.im-b-global@muc.'.JAXL_HOST_NAME, $_POST['message'], $jaxl->jid, 'groupchat');
-			break;
-		case 'joinRoom':
-			JAXL0045::joinRoom($jaxl->jid, 'jaxl.im-b-global@muc.'.JAXL_HOST_NAME.'/abhinavsingh', 20, 'maxstanzas');
+			$jaxl->sendMessage(BOSHCHAT_ADMIN_JID, $_POST['message']);
 			break;
 		case 'ping':
 			JAXL0206::ping();
@@ -284,7 +308,7 @@ HTML;
 			break;
 		default:
 			$response = array('jaxl'=>'400', 'desc'=>$jaxl->action." not implemented");
-			JAXL0124::out($response);
+			JAXL0206::out($response);
 			break;
 	}
 	

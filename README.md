@@ -8,7 +8,7 @@ version of Jaxl 1.x series which was hosted at google code.
 
 * More robust, flexible, scalable and easy to use
 * Event mechanism for registering callbacks for various xmpp events
-* Integrated BOSH support and 11 supported XMPP extensions (XEP's)
+* Integrated support for BOSH and various XMPP extensions (XEP's)
 * Setup dynamic number of parallel XMPP sessions on the fly
 
 ## Download
@@ -39,8 +39,12 @@ Warning: The development source code at Github is only intended for people that 
 * 0092 Software Version
 * 0114 Jabber Component Protocol
 * 0115 Entity Capabilities
+* 0124 Bosh Implementation
 * [0133 Service Administration](http://abhinavsingh.com/blog/2010/08/xep-0133-service-administration-available-methods-in-jaxl-2-0/)
+* 0119 XMPP Ping
+* 0202 Entity Time
 * 0203 Delayed Delivery
+* 0206 XMPP over BOSH
 * 0249 Direct MUC Invitation
 
 ## Documentation for project contributors:
@@ -52,5 +56,5 @@ Warning: The development source code at Github is only intended for people that 
 
 * [Developer Mailing List](http://groups.google.com/group/jaxl)
 * [Issue Tracker](http://github.com/abhinavsingh/jaxl/issues)
-* [Facebook](http://www.facebook.com/apps/application.php?id=133882693294505)
+* [Facebook](http://www.facebook.com/imjaxlim)
 * [Twitter](http://twitter.com/imjaxlim)

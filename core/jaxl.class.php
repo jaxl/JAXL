@@ -53,6 +53,7 @@
 		
 		var $pid = FALSE;	
 		var $mode = FALSE;
+		var $action = FALSE;
 		var $authType = FALSE;
 		var $features = array();
 		

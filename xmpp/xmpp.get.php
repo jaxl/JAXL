@@ -83,7 +83,7 @@
 		
 		public static function handler($payload) {
 			global $jaxl;
-			JAXLog::log("[[XMPPGet]] \n".$payload, 5);
+			JAXLog::log("[[XMPPGet]] \n".$payload, 4);
 			
 			$buffer = array();
 			$payload = JAXLPlugin::execute('jaxl_pre_handler', $payload);	
@@ -144,6 +144,8 @@
 			if(isset($buffer['presence'])) self::presence($buffer['presence']);
 			if(isset($buffer['message'])) self::message($buffer['message']);
 			unset($buffer);
+			
+			JAXLPlugin::execute('jaxl_post_handler', $payload);
 		}
 		
 		public static function streamStream($arr) {
@@ -194,10 +196,12 @@
 			switch($xmlns) {
 				case 'urn:ietf:params:xml:ns:xmpp-tls':
 					JAXLog::log("Unable to start TLS negotiation, see logs for detail...", 0);
+					JAXLPlugin::execute('jaxl_post_auth_failure');
 					$jaxl->shutdown('tlsFailure');
 					break;
 				case 'urn:ietf:params:xml:ns:xmpp-sasl':
 					JAXLog::log("Unable to complete SASL Auth, see logs for detail...", 0);
+					JAXLPlugin::execute('jaxl_post_auth_failure');
 					$jaxl->shutdown('saslFailure');
 					break;
 				default:
@@ -310,29 +314,26 @@
 		
 		public static function presence($arrs) {
 			$payload = array();
-			foreach($arrs as $arr) {
-				$payload[] = $arr;
-			}
-			
+			foreach($arrs as $arr) $payload[] = $arr;
 			JAXLPlugin::execute('jaxl_get_presence', $payload);
+			unset($payload);
+			return $arrs;
 		}
 		
 		public static function message($arrs) {
 			$payload = array();
-			
-			foreach($arrs as $arr) {
-				$payload[] = $arr;
-			}
-			
+			foreach($arrs as $arr) $payload[] = $arr;
 			JAXLPlugin::execute('jaxl_get_message', $payload);
 			unset($payload);
+			return $arrs;
 		}
 		
 		public static function postBind($arr) {
 			if($arr["type"] == "result") {
 				global $jaxl;
 				$jaxl->jid = $arr["bindJid"];
-				$jaxl->bosh['jid'] = $jaxl->jid;
+				
+				JAXLPlugin::execute('jaxl_post_bind');
 				
 				if($jaxl->sessionRequired) {
 					$jaxl->startSession();
@@ -372,6 +373,7 @@
 					JAXLog::log('Unhandled iq type ...'.json_encode($arr), 0);
 					break;
 			}
+			return $arr;
 		}
 		
 	}

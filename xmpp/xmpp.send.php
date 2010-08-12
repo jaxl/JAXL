@@ -54,15 +54,13 @@
 				JAXLPlugin::execute('jaxl_send_body', $xml);
 			}
 			else {
-				if($jaxl->lastSendTime && (JAXLUtil::getTime() - $jaxl->lastSendTime < JAXL_XMPP_SEND_RATE)) {
+				if($jaxl->lastSendTime && (JAXLUtil::getTime() - $jaxl->lastSendTime < JAXL_XMPP_SEND_RATE))
 					sleep(JAXL_XMPP_SEND_SLEEP);
-				}
 				$jaxl->lastSendTime = JAXLUtil::getTime();
 				
 				if($jaxl->stream) {
-					if(($ret = fwrite($jaxl->stream, $xml)) !== FALSE) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 5);
-					else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1);
-					
+					if(($ret = fwrite($jaxl->stream, $xml)) !== FALSE) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4);
+					else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1);	
 					return $ret;
 				}
 				else {
@@ -116,27 +114,30 @@
 			return self::xml($xml);
 		}
 		
-		public static function message($to, $from=FALSE, $child=FALSE, $type='normal', $ns='jabber:client') {
+		public static function message($to, $from=FALSE, $child=FALSE, $type='normal', $ns='jabber:client', $id=FALSE) {
 			$xml = '';
 			
 			if(is_array($to)) {
 				foreach($to as $key => $value) {
-					$xml .= self::prepareMessage($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key]);	
+					$xml .= self::prepareMessage($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key]);	
 				}
 			}
 			else {
-				$xml .= self::prepareMessage($to, $from, $child, $type, $ns);
+				$xml .= self::prepareMessage($to, $from, $child, $type, $ns, $id);
 			}
 		
 			JAXLPlugin::execute('jaxl_send_message', $xml);	
 			return self::xml($xml);
 		}
 		
-		private static function prepareMessage($to, $from, $child, $type, $ns) {
+		private static function prepareMessage($to, $from, $child, $type, $ns, $id) {
+			global $jaxl;
+			
 			$xml = '<message';
 			if($from) $xml .= ' from="'.$from.'"';
 			$xml .= ' to="'.$to.'"';
-			$xml .= ' type="'.$type.'"';
+			if($type) $xml .= ' type="'.$type.'"';
+			if($id) $xml .= ' id="'.$jaxl->getId().'"';
 			$xml .= '>';
 			
 			if($child) {
@@ -151,26 +152,29 @@
 			return $xml;
 		}
 		
-		public static function presence($to=FALSE, $from=FALSE, $child=FALSE, $type=FALSE, $ns='jabber:client') {
+		public static function presence($to=FALSE, $from=FALSE, $child=FALSE, $type=FALSE, $ns='jabber:client', $id=FALSE) {
 			$xml = '';
 			if(is_array($to)) {
 				foreach($to as $key => $value) {
-					$xml .= self::preparePresence($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key]);	
+					$xml .= self::preparePresence($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key]);
 				}
 			}
 			else {
-				$xml .= self::preparePresence($to, $from, $child, $type, $ns);
+				$xml .= self::preparePresence($to, $from, $child, $type, $ns, $id);
 			}
 				
 			JAXLPlugin::execute('jaxl_send_presence', $xml);
 			return self::xml($xml);
 		}
 	
-		private static function preparePresence($to, $from, $child, $type, $ns) {
+		private static function preparePresence($to, $from, $child, $type, $ns, $id) {
+			global $jaxl;
+			
 			$xml = '<presence';
 			if($type) $xml .= ' type="'.$type.'"';
 			if($from) $xml .= ' from="'.$from.'"';
 			if($to) $xml .= ' to="'.$to.'"';
+			if($id) $xml .= ' id="'.$jaxl->getId().'"';
 			$xml .= '>';
 			
 			if($child) {

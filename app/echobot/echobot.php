@@ -8,7 +8,8 @@
 		'JAXL0115', // Entity Capabilities
 		'JAXL0085', // Chat State Notification
 		'JAXL0092', // Software Version
-		'JAXL0203'  // Delayed Delivery
+		'JAXL0203', // Delayed Delivery
+		'JAXL0199'  // XMPP Ping
 	));
 	
 	// Sample Echobot class
