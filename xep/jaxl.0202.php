@@ -35,16 +35,36 @@
  */
 	
 	/*
-	 * XEP-0184 Message Receipts
-	*/
-	class JAXL0184 {
+	 * XEP-0202 : Entity Time
+	*/	
+	class JAXL0202 {
 		
-		public static $ns = 'urn:xmpp:receipts';
+		public static $ns = 'urn:xmpp:time';
 		
 		public static function init() {
-			JAXLXml::addTag('message', 'request', '//message/request/@xmlns');
-			JAXLXml::addTag('message', 'received', '//message/received/@xmlns');
-			JAXLXml::addTag('message', 'receivedId', '//message/received/@id');
+			global $jaxl;
+			$jaxl->features[] = self::$ns;
+			
+			JAXLXml::addTag('iq', 'time', '//iq/time/@xmlns');
+			JAXLXml::addTag('iq', 'timeTZO', '//iq/time/tzo');
+			JAXLXml::addTag('iq', 'timeUTC', '//iq/time/utc');
+
+			JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0202', 'handleIq'));
+		}
+		
+		public static function getEntityTime($to, $from, $callback) {
+			$payload = '<time xmlns="'.self::$ns.'"/>';
+			return XMPPSend::iq('get', $payload, $to, $from, $callback);
+		}
+		
+		public static function handleIq($payload) {
+			if($payload['time'] == self::$ns) {
+				$entityTime = '<time xmlns="'.self::$ns.'">';
+				$entityTime .= '<tzo>'.date('P').'</tzo>';
+				$entityTime .= '<utc>'.date('Y-m-d').'T'.date('H:i:s').'Z</utc>';
+				$entityTime .= '</time>';
+				return XMPPSend::iq('result', $entityTime, $payload['from'], $payload['to']);
+			}
 		}
 		
 	}
