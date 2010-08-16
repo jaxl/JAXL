@@ -179,6 +179,7 @@ HTML;
 		'JAXL0085', // Chat State Notification
 		'JAXL0092', // Software Version
 		'JAXL0203', // Delayed Delivery
+		'JAXL0202', // Entity Time
 		'JAXL0206'  // XMPP over Bosh
 	));
 	
