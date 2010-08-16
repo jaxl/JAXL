@@ -85,9 +85,14 @@ var jaxl = {
 		});
 	},
 	handlePayload: function(payload) {
-		if(payload == null) { jaxl.ping(); }
-		else if(payload.jaxl == 'jaxl') { jaxl.xhrPayload(payload); }
-		else { call_user_func(jaxl.payloadHandler, payload); }
+		if(payload.length == 0) { jaxl.ping(); }
+		else { 
+			for(key in payload) {
+				if(key == null) { jaxl.ping(); }
+				else if(payload[key].jaxl == 'jaxl') { jaxl.xhrPayload(payload[key]); }
+				else { call_user_func(jaxl.payloadHandler, payload[key]); }
+			}
+		}
 	},
 	urldecode: function(msg) {
 		return decodeURIComponent(msg.replace(/\+/g, '%20'));
