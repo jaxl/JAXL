@@ -75,16 +75,7 @@
 		}
 		
 		public static function getAppFilePath() {
-			if(substr(php_sapi_name(), 0, 3) == 'cgi') {
-				if(isset($_REQUEST['jaxl'])) {
-					$botPath = JAXL_BOSH_APP_ABS_PATH;
-				}
-				else {
-					header("HTTP/1.1 400 Bad Request");
-					die("missing action ...");
-				}
-			}
-			else {
+			if(php_sapi_name() == 'cli') {
 				global $argv;
 				if(sizeof($argv) == 2) {
 					$value = array_pop($argv);
@@ -92,6 +83,15 @@
 				}
 				else {
 					die("invalid number of parameters passed ...");
+				}
+			}
+			else {
+				if(isset($_REQUEST['jaxl'])) {
+					$botPath = JAXL_BOSH_APP_ABS_PATH;
+				}
+				else {
+					header("HTTP/1.1 400 Bad Request");
+					die("missing action ...");
 				}
 			}
 			
