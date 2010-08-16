@@ -1,8 +1,11 @@
 <?php
 	
+	// Ajax poll url
+	define('BOSHCHAT_POLL_URL', 'http://localhost.localdomain/jaxl.php');
+		
 	// Admin jid who will receive all messages sent using this application ui
 	define('BOSHCHAT_ADMIN_JID', 'abhinavsingh@jaxl.im');
-		
+	
 	// Serve application UI if $_REQUEST['jaxl'] is not set
 	if(!isset($_REQUEST['jaxl'])) {
 		$boshchatUI =<<<HTML
@@ -91,7 +94,6 @@ var boshchat = {
 
 jQuery(function($) {
         $(document).ready(function() {
-                jaxl.pollUrl = 'http://localhost.localdomain/jaxl.php';
                 jaxl.payloadHandler = new Array('boshchat', 'payloadHandler');
 
                 $('#button input').click(function() {
@@ -160,6 +162,7 @@ jQuery(function($) {
         </body>
 </html>
 HTML;
+		$boshchatUI .= '<script type="text/javascript">jaxl.pollUrl = "'.BOSHCHAT_POLL_URL.'";</script>';
 		echo $boshchatUI;
 		exit;
 	}
