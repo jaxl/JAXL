@@ -47,9 +47,7 @@
 			global $jaxl;
 			$jaxl->action = $_REQUEST['jaxl'];
 			JAXLog::log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5);
-			if($jaxl->action == 'jaxl') {
-				XMPPSend::xml(urldecode($_REQUEST['xml']));
-			}
+			if($jaxl->action == 'jaxl') XMPPSend::xml(urldecode($_REQUEST['xml']));
 		}
 		
 		public static function startStream($host, $port) {
