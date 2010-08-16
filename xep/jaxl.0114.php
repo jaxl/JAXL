@@ -51,7 +51,8 @@
 		}
 		
 		public static function handshake($id) {
-			$hash = JAXLPlugin::execute('jaxl_pre_handshake', $id);
+			$pass = JAXLPlugin::execute('jaxl_pre_handshake');
+			$hash = strtolower(sha1($id.$pass));
 			$xml = '<handshake>'.$hash.'</handshake>';
 			XMPPSend::xml($xml);
 		}
