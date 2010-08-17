@@ -1,5 +1,10 @@
 <?php
 	
+	/*
+	 * Example echobot application using Jaxl library
+	 * Read more: http://bit.ly/bz9KXb
+	*/
+	
 	// Initialize Jaxl Library
 	$jaxl = new JAXL();
 	
@@ -33,6 +38,10 @@
 					$jaxl->auth("PLAIN");
 					break;
 				case in_array("X-FACEBOOK-PLATFORM",$mechanism):
+					/*
+					 * Facebook chat connect using Jaxl library
+					 * Read more: http://bit.ly/dkdFjL
+					*/
 					$jaxl->auth("X-FACEBOOK-PLATFORM");
 					break;
 				default:
