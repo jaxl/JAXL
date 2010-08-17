@@ -25,8 +25,9 @@ Warning: The development source code at Github is only intended for people that 
 * [Jaxl 2.0 Core classes, available methods and directory structure](http://abhinavsingh.com/blog/2010/08/jaxl-2-0-core-classes-available-methods-and-directory-structure/)
 * [Writing your first command line XMPP bot (echobot)](http://abhinavsingh.com/blog/2010/08/writing-a-command-line-xmpp-bot-echobot-using-jaxl-2-0/)
 * [Facebook chat connect with X-FACEBOOK-PLATFORM using Jaxl](http://abhinavsingh.com/blog/2010/08/facebook-chat-connect-with-x-facebook-platform-using-jaxl-2-0/)
+* [Code, Setup and Demo of Bosh chat application](http://abhinavsingh.com/blog/2010/08/php-code-setup-and-demo-of-jaxl-boshchat-application/)
+* Writing XMPP web applications using Jaxl in 5 minutes
 * Available hooks for various xmpp events
-* Writing your first XMPP web application using Jaxl
 * Migration guide for Jaxl 1.x users
 
 ## Implemented XEP's Documentation

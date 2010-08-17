@@ -1,5 +1,10 @@
 <?php
 	
+	/*
+	 * Example bosh chat application using Jaxl library
+	 * Read more: http://bit.ly/aMozMy
+	*/
+	
 	// Ajax poll url
 	define('BOSHCHAT_POLL_URL', 'http://localhost/jaxl.php');
 		
