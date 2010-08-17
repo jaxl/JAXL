@@ -1,10 +1,10 @@
 <?php
 	
 	// Ajax poll url
-	define('BOSHCHAT_POLL_URL', 'http://localhost.localdomain/jaxl.php');
+	define('BOSHCHAT_POLL_URL', 'http://localhost/jaxl.php');
 		
 	// Admin jid who will receive all messages sent using this application ui
-	define('BOSHCHAT_ADMIN_JID', 'abhinavsingh@jaxl.im');
+	define('BOSHCHAT_ADMIN_JID', 'admin@localhost');
 	
 	// Serve application UI if $_REQUEST['jaxl'] is not set
 	if(!isset($_REQUEST['jaxl'])) {
