@@ -1,3 +1,16 @@
+version 2.0.3
+-------------
+- Updated Jaxl XML parsing class to handle multiple level nested child cases
+- Updated README and bosh chat application with documentation link
+- Fixed bosh application to run on localhost
+- Added doc links inside echobot sample app
+- Bosh sample application also use entity time XEP-0202 now
+- Fix for sapi detection inside jaxl util
+- jaxl.js updated to handle multiple ajax poll response payloads
+- Bosh session manager now dumps ajax poll response on post handler callback
+- Removed hardcoded ajax poll url inside boshchat application
+- Updated component protocol XEP pre handshake event handling
+
 version 2.0.2
 -------------
 - Packaged XEP 0202 (Entity Time)
