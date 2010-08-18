@@ -91,25 +91,27 @@
 			global $jaxl;
 			$jaxl->authType = $type;
 			
+			$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="'.$type.'">';
 			switch($type) {
 				case 'DIGEST-MD5':
-					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
 					break;
 				case 'PLAIN':
-					global $jaxl;
-					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">';
 					$xml .= base64_encode("\x00".$jaxl->user."\x00".$jaxl->pass);
-					$xml .= '</auth>';
 					break;
 				case 'ANONYMOUS':
-					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="ANONYMOUS"/>';
 					break;
 				case 'X-FACEBOOK-PLATFORM':
-					$xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="X-FACEBOOK-PLATFORM"/>';
+					break;
+				case 'CRAM-MD5':
+					break;
+				case 'SCRAM-SHA-1':
+					$xml .= base64_encode("n,,n=".$jaxl->user.",r=".base64_encode(JAXLUtil::generateNonce()));
 					break;
 				default:
 					break;
 			}
+			$xml .= '</auth>';
+			
 			JAXLog::log("Performing Auth type: ".$type, 0);
 			return self::xml($xml);
 		}

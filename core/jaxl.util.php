@@ -178,6 +178,31 @@
 		    
 			return md5(sprintf('%s:%s:%s:%s:%s:%s', md5($a1), $data['nonce'], $data['nc'], $data['cnonce'], $data['qop'], md5($a2)));
 		}
+
+		public static function hmacMD5($key, $data) {
+			if(strlen($key) > 64) $key = pack('H32', md5($key));
+			if(strlen($key) < 64) $key = str_pad($key, 64, chr(0));
+			$k_ipad = substr($key, 0, 64) ^ str_repeat(chr(0x36), 64);
+			$k_opad = substr($key, 0, 64) ^ str_repeat(chr(0x5C), 64);
+			$inner  = pack('H32', md5($k_ipad . $data));
+			$digest = md5($k_opad . $inner);
+			return $digest;
+		}
+		
+		public static function pbkdf2($data, $secret, $iteration, $dkLen=32, $algo='sha1') {
+			$hLen = strlen(hash($algo, null, true));
+			
+			$l = ceil($dkLen/$hLen);
+			$t = null;
+			for($i=1; $i<=$l; $i++) {
+				$f = $u = hash_hmac($algo, $s.pack('N', $i), $p, true);
+				for($j=1; $j<$c; $j++) {
+					$f ^= ($u = hash_hmac($algo, $u, $p, true));
+				}
+				$t .= $f;
+			}
+			return substr($t, 0, $dk_len);
+		}
 		
 		public static function getBareJid($jid) {
 			list($user,$domain,$resource) = self::splitJid($jid);

@@ -235,6 +235,7 @@
 					$decoded = base64_decode($arr['challenge']);
 					
 					// Some cleanup required in below methods in future
+					$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
 					if($jaxl->authType == 'X-FACEBOOK-PLATFORM') {
 						$decoded = explode('&', $decoded);
 						foreach($decoded as $k=>$v) {
@@ -267,9 +268,7 @@
 								$responseURI .= '&'.$k.'='.urlencode($v);
 						}
 						
-						$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
 						$xml .= base64_encode($responseURI);
-						$xml .= '</response>';
 					}
 					else if($jaxl->authType == 'DIGEST-MD5') {
 			        		$decoded = JAXLUtil::explodeData($decoded);		
@@ -293,10 +292,42 @@
 							if(isset($decoded[$key]))
 								$response[$key] = $decoded[$key];
 					
-						$xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
 						$xml .= base64_encode(JAXLUtil::implodeData($response));
-						$xml .= '</response>';
 					}
+					else if($jaxl->authType == 'SCRAM-SHA-1') {
+						$decoded = JAXLUtil::explodeData($decoded);
+						
+						// SaltedPassword  := Hi(Normalize(password), salt, i)
+						$saltedPasswd = JAXLUtil::pbkdf2($jaxl->pass, $decoded['s'], $decoded['i']);
+						
+						// ClientKey       := HMAC(SaltedPassword, "Client Key")
+						$clientKey = JAXLUtil::hashMD5($saltedPassword, "Client Key");
+						
+						// StoredKey       := H(ClientKey)
+						$storedKey = sha1("Client Key");
+						
+						// assemble client-final-message-without-proof
+						$clientFinalMessage = "c=bwis,r=".$decoded['r'];
+						
+						// AuthMessage     := client-first-message-bare + "," + server-first-message + "," + client-final-message-without-proof
+						// ClientSignature := HMAC(StoredKey, AuthMessage)
+						
+						// ClientProof     := ClientKey XOR ClientSignature
+
+						// ServerKey       := HMAC(SaltedPassword, "Server Key")
+
+						// ServerSignature := HMAC(ServerKey, AuthMessage)
+						
+						foreach(array('c', 'r', 'p') as $key)
+							if(isset($decoded[$key]))
+								$response[$key] = $decoded[$key];
+						
+						$xml .= base64_encode(JAXLUtil::implodeData($response));
+					}
+					else if($jaxl->authType == 'CRAM-MD5') {
+						$xml .= base64_encode($jaxl->user.' '.hash_hmac('md5', $jaxl->pass, $arr['challenge']));
+					}
+					$xml .= '</response>';
 					
 					$jaxl->secondChallenge = TRUE;
 				}
