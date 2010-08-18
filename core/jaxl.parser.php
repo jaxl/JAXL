@@ -57,7 +57,7 @@
 		
 			'challenge'		=>	array(
 				'xmlns'		=>	'//challenge/@xmlns',
-				'challenge'	=>	'//challenge'
+				'challenge'	=>	'//challenge/text()'
 			),
 		
 			'success'		=>	array(
@@ -66,7 +66,7 @@
 			
 			'failure'		=>	array(
 				'xmlns'		=>	'//failure/@xmlns',
-				'condition'	=>	'//failure',
+				'condition'	=>	'//failure/text()',
 				'desc'		=>	'//failure/text',
 				'descLang'	=>	'//failure/text/@xml:lang'
 			),
@@ -125,23 +125,41 @@
 			$xml = str_replace('xmlns=', 'ns=', $xml);
 			$xml = new SimpleXMLElement($xml);
 			$node = $xml->getName();
+			$parents = array();
 			
 			foreach(self::$tagMap[$node] as $tag=>$xpath) {
 				$xpath = str_replace('/@xmlns', '/@ns', $xpath);
-				$values = $xml->xpath($xpath);
+				$parentXPath = implode('/', explode('/', $xpath, -1));
+				$tagXPath = str_replace($parentXPath.'/', '', $xpath);
 				
-				if(sizeof($values) > 1) {
-					foreach($values as $value) {
-						$payload[$node][$tag][] = (string)$value[0];
+				if(!isset($parents[$parentXPath])) $parents[$parentXPath] = $xml->xpath($parentXPath);
+				
+				foreach($parents[$parentXPath] as $key=>$obj) {
+					if($tagXPath == 'text()') {
+						$values = $obj[0];
 					}
-				}
-				else {
-					$payload[$node][$tag] = (string)$values[0];
+					else if(substr($tagXPath, 0, 1) == '@') {
+						$txpath = str_replace('@', '', $tagXPath);
+						$values = $obj->attributes()->{$txpath};
+						unset($txpath);
+					}
+					else { $values = $obj->{$tagXPath}; }
+					
+					if(sizeof($values) > 1) {
+						$temp = array();
+						foreach($values as $value) $temp[] = (string)$value[0];
+						$payload[$node][$tag][] = $temp;
+						unset($temp);
+					}
+					else {
+						if(sizeof($parents[$parentXPath]) == 1) $payload[$node][$tag] = (string)$values[0];
+						else $payload[$node][$tag][] = (string)$values[0];
+					}
 				}
 			}
 			
 			unset($xml);
-			return $payload;	
+			return $payload;
 		}
 		
 		public static function addTag($node, $tag, $map) {
