@@ -1,3 +1,7 @@
+version 2.0.4
+-------------
+- Added experimental support for SCRAM-SHA-1, CRAM-MD5 and LOGIN auth mechanisms
+
 version 2.0.3
 -------------
 - Updated Jaxl XML parsing class to handle multiple level nested child cases
