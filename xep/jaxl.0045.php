@@ -34,143 +34,143 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0045: Mutli-User Chat Implementation
-	*/
-	class JAXL0045 {
-		
-		public static $ns = 'http://jabber.org/protocol/muc';	
-	
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-			
-			JAXLXml::addTag('presence', 'itemJid', '//presence/x/item/@jid');
-			JAXLXml::addTag('presence', 'itemAffiliation', '//presence/x/item/@affiliation');
-			JAXLXml::addTag('presence', 'itemRole', '//presence/x/item/@role');
-		}
-		
-		/*
-		 * Occupant Use Cases
-		*/
-		public static function joinRoom($jid, $roomJid, $history=0, $type='seconds') {
-			$child = array();
-			$child['payload'] = '';
-			$child['payload'] .= '<x xmlns="'.self::$ns.'">';
-			$child['payload'] .= '<history '.$type.'="'.$history.'"/>';
-			$child['payload'] .= '</x>';
-			return XMPPSend::presence($roomJid, $jid, $child);
-		}
-		
-		public static function exitRoom($jid, $roomJid) {
-			return XMPPSend::presence($roomJid, $jid, FALSE, "unavailable");
-		}
+    /*
+     * XEP-0045: Mutli-User Chat Implementation
+    */
+    class JAXL0045 {
+        
+        public static $ns = 'http://jabber.org/protocol/muc';   
+    
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+            
+            JAXLXml::addTag('presence', 'itemJid', '//presence/x/item/@jid');
+            JAXLXml::addTag('presence', 'itemAffiliation', '//presence/x/item/@affiliation');
+            JAXLXml::addTag('presence', 'itemRole', '//presence/x/item/@role');
+        }
+        
+        /*
+         * Occupant Use Cases
+        */
+        public static function joinRoom($jid, $roomJid, $history=0, $type='seconds') {
+            $child = array();
+            $child['payload'] = '';
+            $child['payload'] .= '<x xmlns="'.self::$ns.'">';
+            $child['payload'] .= '<history '.$type.'="'.$history.'"/>';
+            $child['payload'] .= '</x>';
+            return XMPPSend::presence($roomJid, $jid, $child);
+        }
+        
+        public static function exitRoom($jid, $roomJid) {
+            return XMPPSend::presence($roomJid, $jid, FALSE, "unavailable");
+        }
 
-		/*
-		 * Moderator Use Cases
-		*/
-		public static function kickOccupant($fromJid, $nick, $roomJid, $reason=FALSE, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#admin">';
-			$payload .= '<item role="none" nick="'.$nick.'">';
-			if($reason) $payload .= '<reason>'.$reason.'</reason>';
-			$payload .= '</item>';
-			$payload .= '</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);	
-		}
+        /*
+         * Moderator Use Cases
+        */
+        public static function kickOccupant($fromJid, $nick, $roomJid, $reason=FALSE, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#admin">';
+            $payload .= '<item role="none" nick="'.$nick.'">';
+            if($reason) $payload .= '<reason>'.$reason.'</reason>';
+            $payload .= '</item>';
+            $payload .= '</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);    
+        }
 
-		/*
-		 * Admin Use Cases
-		*/
-		public static function banUser() {
+        /*
+         * Admin Use Cases
+        */
+        public static function banUser() {
 
-		}
+        }
 
-		public static function grantModeratorPrivileges() {
-			
-		}
+        public static function grantModeratorPrivileges() {
+            
+        }
 
-		public static function revokeModeratorPrivileges() {
+        public static function revokeModeratorPrivileges() {
 
-		}
+        }
 
-		public static function modifyModeratorList() {
-			
-		}
-		
-		/*
-		 * Owner Use Cases
-		*/
-		public static function createRoom() {
+        public static function modifyModeratorList() {
+            
+        }
+        
+        /*
+         * Owner Use Cases
+        */
+        public static function createRoom() {
 
-		}
+        }
 
-		public static function getUniqueRoomName() {
+        public static function getUniqueRoomName() {
 
-		}
-		
-		public static function configureRoom() {
+        }
+        
+        public static function configureRoom() {
 
-		}
+        }
 
-		public static function getRoomConfig($jid, $roomJid, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#owner"/>';
-			return XMPPSend::iq("get", $payload, $roomJid, $jid, $callback);
-		}
-		
-		public static function setRoomConfig($jid, $roomJid, $fields, $callback=FALSE) {
-			$payload = JAXL0004::setFormField($fields, FALSE, FALSE, 'submit');
-			$payload = '<query xmlns="'.self::$ns.'#owner">'.$payload.'</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $jid, $callback);
-		}
+        public static function getRoomConfig($jid, $roomJid, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#owner"/>';
+            return XMPPSend::iq("get", $payload, $roomJid, $jid, $callback);
+        }
+        
+        public static function setRoomConfig($jid, $roomJid, $fields, $callback=FALSE) {
+            $payload = JAXL0004::setFormField($fields, FALSE, FALSE, 'submit');
+            $payload = '<query xmlns="'.self::$ns.'#owner">'.$payload.'</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $jid, $callback);
+        }
 
-		public static function grantOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#admin">';
-			$payload .= '<item affiliation="owner" jid="'.$toJid.'">';
-			if($reason) $payload .= '<reason>'.$reason.'</reason>';
-			$payload .= '</item>';
-			$payload .= '</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);
-		}
-		
-		public static function revokeOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#admin">';
-			$payload .= '<item affiliation="member" jid="'.$toJid.'">';
-			if($reason) $payload .= '<reason>'.$reason.'</reason>';
-			$payload .= '</item>';
-			$payload .= '</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);	
-		}
-		
-		public static function modifyOwnerList() {
-			
-		}
-		
-		public static function grantAdminPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#admin">';
-			$payload .= '<item affiliation="admin" jid="'.$toJid.'">';
-			if($reason) $payload .= '<reason>'.$reason.'</reason>';
-			$payload .= '</item>';
-			$payload .= '</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);	
-		}
+        public static function grantOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#admin">';
+            $payload .= '<item affiliation="owner" jid="'.$toJid.'">';
+            if($reason) $payload .= '<reason>'.$reason.'</reason>';
+            $payload .= '</item>';
+            $payload .= '</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);
+        }
+        
+        public static function revokeOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#admin">';
+            $payload .= '<item affiliation="member" jid="'.$toJid.'">';
+            if($reason) $payload .= '<reason>'.$reason.'</reason>';
+            $payload .= '</item>';
+            $payload .= '</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);    
+        }
+        
+        public static function modifyOwnerList() {
+            
+        }
+        
+        public static function grantAdminPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#admin">';
+            $payload .= '<item affiliation="admin" jid="'.$toJid.'">';
+            if($reason) $payload .= '<reason>'.$reason.'</reason>';
+            $payload .= '</item>';
+            $payload .= '</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);    
+        }
 
-		public static function removeAdminPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
-			$payload = '<query xmlns="'.self::$ns.'#admin">';
-			$payload .= '<item affiliation="member" jid="'.$toJid.'">';
-			if($reason) $payload .= '<reason>'.$reason.'</reason>';
-			$payload .= '</item>';
-			$payload .= '</query>';
-			return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);	
-		}
+        public static function removeAdminPrivileges($fromJid, $toJid, $roomJid, $reason=FALSE, $callback=FALSE) {
+            $payload = '<query xmlns="'.self::$ns.'#admin">';
+            $payload .= '<item affiliation="member" jid="'.$toJid.'">';
+            if($reason) $payload .= '<reason>'.$reason.'</reason>';
+            $payload .= '</item>';
+            $payload .= '</query>';
+            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback);    
+        }
 
-		public static function modifyAdminList() {
+        public static function modifyAdminList() {
 
-		}
+        }
 
-		public static function destroyRoom() {
+        public static function destroyRoom() {
 
-		}
-		
-	}
-	
+        }
+        
+    }
+    
 ?>

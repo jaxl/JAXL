@@ -35,29 +35,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*******************************/
-	/**** DONOT edit this file *****/
-	/*******************************/
-	define('JAXL_CWD', getcwd());
-	define('JAXL_INI_PATH', JAXL_CWD.'/jaxl.ini');
-	
-	/* Run Jaxl, Wroom Wroom */
-	if(file_exists(JAXL_INI_PATH)) require_once JAXL_INI_PATH;	
-	else die("Missing ini file...");
-	
-	if($jaxl->mode == "cli") {
-		try {
-			if($jaxl->connect()) {
-				while($jaxl->stream) {
-					$jaxl->getXML();
-				}
-			}
-		}
-		catch(Exception $e) {
-			die($e->getMessage);
-		}
-	}
-	
-	/* Exit Jaxl after we are done */	
-	exit;
+    /*******************************/
+    /**** DONOT edit this file *****/
+    /*******************************/
+    define('JAXL_CWD', getcwd());
+    define('JAXL_INI_PATH', JAXL_CWD.'/jaxl.ini');
+    
+    /* Run Jaxl, Wroom Wroom */
+    if(file_exists(JAXL_INI_PATH)) require_once JAXL_INI_PATH;  
+    else die("Missing ini file...");
+    
+    if($jaxl->mode == "cli") {
+        try {
+            if($jaxl->connect()) {
+                while($jaxl->stream) {
+                    $jaxl->getXML();
+                }
+            }
+        }
+        catch(Exception $e) {
+            die($e->getMessage);
+        }
+    }
+    
+    /* Exit Jaxl after we are done */   
+    exit;
 ?>

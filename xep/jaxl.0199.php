@@ -34,32 +34,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0199: XMPP Ping
-	*/
-	class JAXL0199 {
-		
-		public static $ns = 'urn:xmpp:ping';
-		
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-			
-			JAXLXml::addTag('iq', 'ping', '//iq/ping/@xmlns');
-			JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0199', 'handleIq'));
-		}
-		
-		public static function handleIq($payload) {
-			if(isset($payload['ping'])) 
-				return XMPPSend::iq('result', FALSE, $payload['from'], $payload['to'], FALSE, $payload['id']);
-			else
-				return $payload;
-		}
-		
-		public static function ping($to, $from, $callback) {
-			$payload = "<ping xmlns='urn:xmpp:ping'/>";
-			return XMPPSend::iq('get', $payload, $to, $from, $callback);
-		}
-	}
+    /*
+     * XEP-0199: XMPP Ping
+    */
+    class JAXL0199 {
+        
+        public static $ns = 'urn:xmpp:ping';
+        
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+            
+            JAXLXml::addTag('iq', 'ping', '//iq/ping/@xmlns');
+            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0199', 'handleIq'));
+        }
+        
+        public static function handleIq($payload) {
+            if(isset($payload['ping'])) 
+                return XMPPSend::iq('result', FALSE, $payload['from'], $payload['to'], FALSE, $payload['id']);
+            else
+                return $payload;
+        }
+        
+        public static function ping($to, $from, $callback) {
+            $payload = "<ping xmlns='urn:xmpp:ping'/>";
+            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+        }
+    }
 
 ?>

@@ -34,33 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0050: Ad-Hoc Commands
-	*/
-	class JAXL0050 {
+    /*
+     * XEP-0050: Ad-Hoc Commands
+    */
+    class JAXL0050 {
 
-		public static $ns = 'http://jabber.org/protocol/commands';
+        public static $ns = 'http://jabber.org/protocol/commands';
 
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-		}
-		
-		public static function getCommandList($to, $from, $callback) {
-			$payload = '<query xmlns="http://jabber.org/protocol/disco#items" node="'.self::$ns.'"/>';
-			return XMPPSend::iq('get', $payload, $to, $from, $callback);
-		}
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+        }
+        
+        public static function getCommandList($to, $from, $callback) {
+            $payload = '<query xmlns="http://jabber.org/protocol/disco#items" node="'.self::$ns.'"/>';
+            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+        }
 
-		public static function getCommandInfo($to, $from, $node, $callback) {
-			$payload = '<query xmlns="http://jabber.org/protocol/disco#info" node="'.$node.'"/>';
-			return XMPPSend::iq('get', $payload, $to, $from, $callback);
-		}
-		
-		public static function executeCommand($to, $from, $node, $callback) {
-			$payload = '<command xmlns="'.self::$ns.'" node="'.$node.'" action="execute"/>';
-			return XMPPSend::iq('set', $payload, $to, $from, $callback);
-		}
+        public static function getCommandInfo($to, $from, $node, $callback) {
+            $payload = '<query xmlns="http://jabber.org/protocol/disco#info" node="'.$node.'"/>';
+            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+        }
+        
+        public static function executeCommand($to, $from, $node, $callback) {
+            $payload = '<command xmlns="'.self::$ns.'" node="'.$node.'" action="execute"/>';
+            return XMPPSend::iq('set', $payload, $to, $from, $callback);
+        }
 
-	}
+    }
 
 ?>

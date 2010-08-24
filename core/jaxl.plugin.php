@@ -34,56 +34,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * Jaxl Plugin Framework
-	 *
-	 * Available methods:
-	 * add($hook, $callback)
-	 * remove($hook, $callback)
-	*/
-	
-	class JAXLPlugin {
-		
-		public static $registry = array();
-		
-		public static function add($hook, $callback, $priority=10) {
-			if(!isset(self::$registry[$hook]))
-				self::$registry[$hook] = array();
-			
-			if(!isset(self::$registry[$hook][$priority])) 
-				self::$registry[$hook][$priority] = array();
-			
-			array_push(self::$registry[$hook][$priority], $callback);
-		}
-		
-		public static function remove($hook, $callback) {
-			if(isset(self::$registry[$hook][$callback])) {
-				unset(self::$registry[$hook][$callback]);
-			}
-			
-			if(count(self::$registry[$hook]) == 0) {
-				unset(self::$registry[$hook]);
-			}
-		}
-		
-		/*
-		 * execute methods will only execute those callbacks
-		 * Which are passed as $filter paramater
-		*/
-		public static function execute($hook, $payload=NULL, $filter=FALSE) {
-			if(isset(self::$registry[$hook]) && count(self::$registry[$hook]) > 0) {
-				foreach(self::$registry[$hook] as $priority) {
-					foreach($priority as $callback) {
-						if($filter === FALSE || (is_array($filter) && in_array($callback[0], $filter))) {
-							//echo json_encode($callback).' '.json_encode($payload).PHP_EOL;
-							$payload = call_user_func($callback, $payload);
-						}
-					}
-				}
-			}
-			return $payload;
-		}
-		
-	}
+    /*
+     * Jaxl Plugin Framework
+     *
+     * Available methods:
+     * add($hook, $callback)
+     * remove($hook, $callback)
+    */
+    
+    class JAXLPlugin {
+        
+        public static $registry = array();
+        
+        public static function add($hook, $callback, $priority=10) {
+            if(!isset(self::$registry[$hook]))
+                self::$registry[$hook] = array();
+            
+            if(!isset(self::$registry[$hook][$priority])) 
+                self::$registry[$hook][$priority] = array();
+            
+            array_push(self::$registry[$hook][$priority], $callback);
+        }
+        
+        public static function remove($hook, $callback) {
+            if(isset(self::$registry[$hook][$callback])) {
+                unset(self::$registry[$hook][$callback]);
+            }
+            
+            if(count(self::$registry[$hook]) == 0) {
+                unset(self::$registry[$hook]);
+            }
+        }
+        
+        /*
+         * execute methods will only execute those callbacks
+         * Which are passed as $filter paramater
+        */
+        public static function execute($hook, $payload=NULL, $filter=FALSE) {
+            if(isset(self::$registry[$hook]) && count(self::$registry[$hook]) > 0) {
+                foreach(self::$registry[$hook] as $priority) {
+                    foreach($priority as $callback) {
+                        if($filter === FALSE || (is_array($filter) && in_array($callback[0], $filter))) {
+                            //echo json_encode($callback).' '.json_encode($payload).PHP_EOL;
+                            $payload = call_user_func($callback, $payload);
+                        }
+                    }
+                }
+            }
+            return $payload;
+        }
+        
+    }
 
 ?>

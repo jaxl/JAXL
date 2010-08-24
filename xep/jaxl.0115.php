@@ -34,47 +34,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0115 : Entity Capabilities
-	*/
-	class JAXL0115 {
-		
-		public static $ns = 'http://jabber.org/protocol/caps';
-		
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-			
-			JAXLXml::addTag('presence', 'cXmlns', '//presence/c/@xmlns');
-			JAXLXml::addTag('presence', 'cHash', '//presence/c/@hash');
-			JAXLXml::addTag('presence', 'cNode', '//presence/c/@node');
-			JAXLXml::addTag('presence', 'cVer', '//presence/c/@ver');
-			
-			JAXLXml::addTag('iq', 'queryNode', '//iq/query/@node');
-		}
-		
-		public static function getCaps($features=FALSE) {
-			$payload = '';
-			$payload .= '<c';
-			$payload .= ' xmlns="'.self::$ns.'"';
-			$payload .= ' hash="sha1"';
-			$payload .= ' node="http://code.google.com/p/jaxl"';
-			$payload .= ' ver="'.self::getVerificationString($features).'"';
-			$payload .= '/>';
-			return $payload;
-		}
-		
-		public static function getVerificationString($features) {
-			global $jaxl;
-			if(!$features) $features = $jaxl->features;
-			asort($features);
-			
-			$S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
-			foreach($features as $feature) $S .= $feature.'<';
-			$ver = base64_encode(sha1($S, TRUE));
-			return $ver;
-		}
-		
-	}
-	
+    /*
+     * XEP-0115 : Entity Capabilities
+    */
+    class JAXL0115 {
+        
+        public static $ns = 'http://jabber.org/protocol/caps';
+        
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+            
+            JAXLXml::addTag('presence', 'cXmlns', '//presence/c/@xmlns');
+            JAXLXml::addTag('presence', 'cHash', '//presence/c/@hash');
+            JAXLXml::addTag('presence', 'cNode', '//presence/c/@node');
+            JAXLXml::addTag('presence', 'cVer', '//presence/c/@ver');
+            
+            JAXLXml::addTag('iq', 'queryNode', '//iq/query/@node');
+        }
+        
+        public static function getCaps($features=FALSE) {
+            $payload = '';
+            $payload .= '<c';
+            $payload .= ' xmlns="'.self::$ns.'"';
+            $payload .= ' hash="sha1"';
+            $payload .= ' node="http://code.google.com/p/jaxl"';
+            $payload .= ' ver="'.self::getVerificationString($features).'"';
+            $payload .= '/>';
+            return $payload;
+        }
+        
+        public static function getVerificationString($features) {
+            global $jaxl;
+            if(!$features) $features = $jaxl->features;
+            asort($features);
+            
+            $S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
+            foreach($features as $feature) $S .= $feature.'<';
+            $ver = base64_encode(sha1($S, TRUE));
+            return $ver;
+        }
+        
+    }
+    
 ?>

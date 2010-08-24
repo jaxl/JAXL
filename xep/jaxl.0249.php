@@ -34,31 +34,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0249: Direct MUC Invitations
-	*/
-	class JAXL0249 {
-		
-		public static $ns = "jabber:x:conference";
+    /*
+     * XEP-0249: Direct MUC Invitations
+    */
+    class JAXL0249 {
+        
+        public static $ns = "jabber:x:conference";
 
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-		}
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+        }
 
-		public static function invite($toJid, $fromJid, $roomJid, $roomPass=FALSE, $reason=FALSE) {
-			$child = array();
-			$child['payload'] = '';
-			
+        public static function invite($toJid, $fromJid, $roomJid, $roomPass=FALSE, $reason=FALSE) {
+            $child = array();
+            $child['payload'] = '';
+            
                         $child['payload'] .= '<x xmlns="'.self::$ns.'"';
-			$child['payload'] .= ' jid="'.$roomJid.'"';
-			if($roomPass) $child['payload'] .= ' password="'.$roomPass.'"';
-			if($reason) $child['payload'] .= ' reason="'.$reason.'"';
-			$child['payload'] .= '/>';
+            $child['payload'] .= ' jid="'.$roomJid.'"';
+            if($roomPass) $child['payload'] .= ' password="'.$roomPass.'"';
+            if($reason) $child['payload'] .= ' reason="'.$reason.'"';
+            $child['payload'] .= '/>';
                         
-			XMPPSend::message($toJid, $fromJid, $child, 'chat');
-		}
-		
-	}
+            XMPPSend::message($toJid, $fromJid, $child, 'chat');
+        }
+        
+    }
 
 ?>

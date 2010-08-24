@@ -33,71 +33,71 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-	
-	/*
-	 * XEP-0004 : Data Forms
-	*/
-	class JAXL0004 {
+    
+    /*
+     * XEP-0004 : Data Forms
+    */
+    class JAXL0004 {
 
-		public static $ns = 'jabber:x:data';
+        public static $ns = 'jabber:x:data';
 
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-		}
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+        }
 
-		/*
-		 * create XEP-0004 complaint data form using $fields
-		*/
-		public static function setFormField($fields, $title=FALSE, $inst=FALSE, $type='form') {
-			$payload = '';
-			
-			$payload .= '<x xmlns="'.self::$ns.'" type="'.$type.'">';
-			if($title) $payload .= '<title>'.$title.'</title>';
-			if($inst) $payload .= '<instruction>'.$inst.'</instruction>';
+        /*
+         * create XEP-0004 complaint data form using $fields
+        */
+        public static function setFormField($fields, $title=FALSE, $inst=FALSE, $type='form') {
+            $payload = '';
+            
+            $payload .= '<x xmlns="'.self::$ns.'" type="'.$type.'">';
+            if($title) $payload .= '<title>'.$title.'</title>';
+            if($inst) $payload .= '<instruction>'.$inst.'</instruction>';
                         foreach($fields as $field) {
                                 $payload .= '<field var="'.$field['var'].'">';
                                 $payload .= '<value>'.$field['value'].'</value>';
                                 $payload .= '</field>';
                         }
                         $payload .= '</x>';
-			
-			unset($fields); unset($title); unset($inst); unset($type);
-			return $payload;
-			unset($payload);
-		}
-		
-		/*
-		 * Parses incoming form $fields
-		*/
-		public static function getFormField($fields) {
-			$result = array();
+            
+            unset($fields); unset($title); unset($inst); unset($type);
+            return $payload;
+            unset($payload);
+        }
+        
+        /*
+         * Parses incoming form $fields
+        */
+        public static function getFormField($fields) {
+            $result = array();
                         foreach($fields as $field) {
                                 $f = array();
-				
+                
                                 $f['type'] = $field['@']['type'];
                                 $f['label'] = $field['@']['label'];
                                 $f['var'] = $field['@']['var'];
-				
+                
                                 $f['desc'] = $field['#']['desc'][0]['#'];
                                 $f['required'] = $field['#']['required'][0]['#'];
                                 $f['value'] = $field['#']['value'][0]['#'];
                                 
-				if(is_array($field['#']['option'])) { 
-					$f['option'] = array();
-                                	foreach($field['#']['option'] as $option) {
-                                        	$f['option'][] = array('label'=>$option['@']['label'], 'value'=>$option['#']['value'][0]['#']);
-                                	}
-				}
-				
+                if(is_array($field['#']['option'])) { 
+                    $f['option'] = array();
+                                    foreach($field['#']['option'] as $option) {
+                                            $f['option'][] = array('label'=>$option['@']['label'], 'value'=>$option['#']['value'][0]['#']);
+                                    }
+                }
+                
                                 $result[] = $f;
                         }
-			
-			unset($f); unset($field); unset($fields);
-			return $result;
-			unset($result);
-		}
+            
+            unset($f); unset($field); unset($fields);
+            return $result;
+            unset($result);
+        }
 
-	}
+    }
 
 ?>

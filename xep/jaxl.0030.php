@@ -34,75 +34,75 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP: 0030 Service Discovery
-	 * Version: 2.4
-	 * Url: http://xmpp.org/extensions/xep-0030.html
-	*/
-	class JAXL0030 {
-	
-		public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'item'=>'http://jabber.org/protocol/disco#item');
-		public static $category = FALSE;
-		public static $type = FALSE;
-		public static $name = FALSE;
-		public static $lang = FALSE;
-		
-		public static function init($config=array()) {
-			$config['instance']->features[] = self::$ns['info'];
-			$config['instance']->features[] = self::$ns['item'];
-			
-			self::$category = isset($config['category']) ? $config['category'] : 'client';
-			self::$type = isset($config['type']) ? $config['type'] : 'bot';
-			self::$name = isset($config['name']) ? $config['name'] : 'Jaxl';
-			self::$lang = isset($config['lang']) ? $config['lang'] : 'en';
-			
-			// register callbacks
-			JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
-		}
-		
-		public static function discoInfo($to, $from, $callback, $node=FALSE) {
-			$payload = '<query xmlns="'.self::$ns['info'].'"';
-			if($node) $payload .= ' node="'.$node.'"/>';
-			else $payload .= '/>';
-			
-			return XMPPSend::iq('get', $payload, $to, $from, $callback);
-		}
-		
-		public static function discoItem($to, $from, $callback, $node) {
-			$payload = '<query xmlns="'.self::$ns['item'].'"';
-			if($node) $payload .= ' node="'.$node.'"/>';
-			else $payload .= '/>';
-			
-			return XMPPSend::iq('get', $payload, $to, $from, $callback);
-		}
+    /*
+     * XEP: 0030 Service Discovery
+     * Version: 2.4
+     * Url: http://xmpp.org/extensions/xep-0030.html
+    */
+    class JAXL0030 {
+    
+        public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'item'=>'http://jabber.org/protocol/disco#item');
+        public static $category = FALSE;
+        public static $type = FALSE;
+        public static $name = FALSE;
+        public static $lang = FALSE;
+        
+        public static function init($config=array()) {
+            $config['instance']->features[] = self::$ns['info'];
+            $config['instance']->features[] = self::$ns['item'];
+            
+            self::$category = isset($config['category']) ? $config['category'] : 'client';
+            self::$type = isset($config['type']) ? $config['type'] : 'bot';
+            self::$name = isset($config['name']) ? $config['name'] : 'Jaxl';
+            self::$lang = isset($config['lang']) ? $config['lang'] : 'en';
+            
+            // register callbacks
+            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
+        }
+        
+        public static function discoInfo($to, $from, $callback, $node=FALSE) {
+            $payload = '<query xmlns="'.self::$ns['info'].'"';
+            if($node) $payload .= ' node="'.$node.'"/>';
+            else $payload .= '/>';
+            
+            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+        }
+        
+        public static function discoItem($to, $from, $callback, $node) {
+            $payload = '<query xmlns="'.self::$ns['item'].'"';
+            if($node) $payload .= ' node="'.$node.'"/>';
+            else $payload .= '/>';
+            
+            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+        }
 
-		public static function handleIq($payload) {
-			global $jaxl;
-			
-			$xmlns = $payload['queryXmlns'];
-			if($xmlns == self::$ns['info']) {
-				$xml = '<query xmlns="'.$xmlns.'"';
-				if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
-				$xml .= '>';
-				
-				$xml .= '<identity xml:lang="'.self::$lang.'"';
-				$xml .= ' name="'.self::$name.'"';
-				$xml .= ' category="'.self::$category.'"';
-				$xml .= ' type="'.self::$type.'"/>';
-				
-				foreach($jaxl->features as $feature)
-					$xml .= '<feature var="'.$feature.'"/>';
-				$xml .= '</query>';
-				
-				XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], FALSE, $payload['id']);
-			}
-			else if($xmlns == self::$ns['item']) {
-				
-			}
-			
-			return $payload;
-		}
-	
-	}
-	
+        public static function handleIq($payload) {
+            global $jaxl;
+            
+            $xmlns = $payload['queryXmlns'];
+            if($xmlns == self::$ns['info']) {
+                $xml = '<query xmlns="'.$xmlns.'"';
+                if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
+                $xml .= '>';
+                
+                $xml .= '<identity xml:lang="'.self::$lang.'"';
+                $xml .= ' name="'.self::$name.'"';
+                $xml .= ' category="'.self::$category.'"';
+                $xml .= ' type="'.self::$type.'"/>';
+                
+                foreach($jaxl->features as $feature)
+                    $xml .= '<feature var="'.$feature.'"/>';
+                $xml .= '</query>';
+                
+                XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], FALSE, $payload['id']);
+            }
+            else if($xmlns == self::$ns['item']) {
+                
+            }
+            
+            return $payload;
+        }
+    
+    }
+    
 ?>

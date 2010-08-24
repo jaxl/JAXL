@@ -33,45 +33,45 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-	
-	/*
-	 * XEP-0092: Software Version
-	*/
-	class JAXL0092 {
-		
-		public static $ns = 'jabber:iq:version';
+    
+    /*
+     * XEP-0092: Software Version
+    */
+    class JAXL0092 {
+        
+        public static $ns = 'jabber:iq:version';
 
-		public static function init() {
-			global $jaxl;
-			$jaxl->features[] = self::$ns;
-			
-			JAXLXml::addTag('iq', 'softwareName', '//iq/query[@xmlns="'.self::$ns.'"]/name');
-			JAXLXml::addTag('iq', 'softwareVersion', '//iq/query[@xmlns="'.self::$ns.'"]/version');
-			JAXLXml::addTag('iq', 'softwareOS', '//iq/query[@xmlns="'.self::$ns.'"]/os');
-			
-			JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0092', 'getIq'));
-		}
-		
-		public static function getIq($arr) {
-			if(isset($arr['queryXmlns']) && $arr['queryXmlns'] == self::$ns) {
-				$payload = '<query xmlns="'.self::$ns.'">';
-				$payload .= '<name>'.JAXL_NAME.'</name>';
-				$payload .= '<version>'.JAXL_VERSION.'</version>';
-				$payload .= '<os>'.PHP_OS.'</os>';
-				$payload .= '</query>';
-				
-				return XMPPSend::iq('result', $payload, $arr['from'], $arr['to'], FALSE, $arr['id']);
-			}
-			else {
-				return $arr;
-			}
-		}
-		
-		public static function getVersion($fromJid, $toJid, $callback) {
-			$payload = '<query xmlns="'.self::$ns.'">';
-			return XMPPSend::iq('get', $payload, $fromJid, $toJid, $callback);
-		}
-		
-	}
+        public static function init() {
+            global $jaxl;
+            $jaxl->features[] = self::$ns;
+            
+            JAXLXml::addTag('iq', 'softwareName', '//iq/query[@xmlns="'.self::$ns.'"]/name');
+            JAXLXml::addTag('iq', 'softwareVersion', '//iq/query[@xmlns="'.self::$ns.'"]/version');
+            JAXLXml::addTag('iq', 'softwareOS', '//iq/query[@xmlns="'.self::$ns.'"]/os');
+            
+            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0092', 'getIq'));
+        }
+        
+        public static function getIq($arr) {
+            if(isset($arr['queryXmlns']) && $arr['queryXmlns'] == self::$ns) {
+                $payload = '<query xmlns="'.self::$ns.'">';
+                $payload .= '<name>'.JAXL_NAME.'</name>';
+                $payload .= '<version>'.JAXL_VERSION.'</version>';
+                $payload .= '<os>'.PHP_OS.'</os>';
+                $payload .= '</query>';
+                
+                return XMPPSend::iq('result', $payload, $arr['from'], $arr['to'], FALSE, $arr['id']);
+            }
+            else {
+                return $arr;
+            }
+        }
+        
+        public static function getVersion($fromJid, $toJid, $callback) {
+            $payload = '<query xmlns="'.self::$ns.'">';
+            return XMPPSend::iq('get', $payload, $fromJid, $toJid, $callback);
+        }
+        
+    }
 
 ?>

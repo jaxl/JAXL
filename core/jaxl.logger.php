@@ -33,30 +33,30 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-	
-	class JAXLog {
-		
-		public static function log($log, $level=1) {
-			global $jaxl;
-				
-			$fh = NULL;
-			$log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
-			
-			if($log != '' && $level == 0) {
-				if($jaxl->mode == "cli") {
-					print $log."\n";
-				}	
-			}
-			else if($log != '' && ($level <= JAXL_LOG_LEVEL)) {
-				$fh = fopen(JAXL_LOG_PATH, "a");
-				fwrite($fh, $log."\n\n");
-				fclose($fh);
-			}
-			
-			unset($log); unset($level); unset($fh);
-			return TRUE;
-		}
-		
-	}
-	
+    
+    class JAXLog {
+        
+        public static function log($log, $level=1) {
+            global $jaxl;
+                
+            $fh = NULL;
+            $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
+            
+            if($log != '' && $level == 0) {
+                if($jaxl->mode == "cli") {
+                    print $log."\n";
+                }   
+            }
+            else if($log != '' && ($level <= JAXL_LOG_LEVEL)) {
+                $fh = fopen(JAXL_LOG_PATH, "a");
+                fwrite($fh, $log."\n\n");
+                fclose($fh);
+            }
+            
+            unset($log); unset($level); unset($fh);
+            return TRUE;
+        }
+        
+    }
+    
 ?>

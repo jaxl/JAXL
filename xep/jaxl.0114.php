@@ -34,37 +34,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-	/*
-	 * XEP-0114: Jabber Component Protocol
-	*/
-	class JAXL0114 {
-		
-		public static function init() {
-			JAXLPlugin::add('jaxl_post_connect', array('JAXL0114', 'startStream'));
-			JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
-			JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
-		}
-		
-		public static function startStream() {
-			$xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.JAXL_COMPONENT_HOST.'">';
-			XMPPSend::xml($xml);
-		}
-		
-		public static function handshake($id) {
-			$pass = JAXLPlugin::execute('jaxl_pre_handshake');
-			$hash = strtolower(sha1($id.$pass));
-			$xml = '<handshake>'.$hash.'</handshake>';
-			XMPPSend::xml($xml);
-		}
+    /*
+     * XEP-0114: Jabber Component Protocol
+    */
+    class JAXL0114 {
+        
+        public static function init() {
+            JAXLPlugin::add('jaxl_post_connect', array('JAXL0114', 'startStream'));
+            JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
+            JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
+        }
+        
+        public static function startStream() {
+            $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.JAXL_COMPONENT_HOST.'">';
+            XMPPSend::xml($xml);
+        }
+        
+        public static function handshake($id) {
+            $pass = JAXLPlugin::execute('jaxl_pre_handshake');
+            $hash = strtolower(sha1($id.$pass));
+            $xml = '<handshake>'.$hash.'</handshake>';
+            XMPPSend::xml($xml);
+        }
 
-		public static function preHandler($xml) {
-			if($xml == '<handshake/>') {
-				$xml = '';
-				JAXLPlugin::execute('jaxl_post_handshake');
-			}
-			return $xml;
-		}
-		
-	}
+        public static function preHandler($xml) {
+            if($xml == '<handshake/>') {
+                $xml = '';
+                JAXLPlugin::execute('jaxl_post_handshake');
+            }
+            return $xml;
+        }
+        
+    }
 
 ?>
