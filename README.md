@@ -26,6 +26,7 @@ Warning: The development source code at Github is only intended for people that 
 * [Writing your first command line XMPP bot (echobot)](http://abhinavsingh.com/blog/2010/08/writing-a-command-line-xmpp-bot-echobot-using-jaxl-2-0/)
 * [Facebook chat connect with X-FACEBOOK-PLATFORM using Jaxl](http://abhinavsingh.com/blog/2010/08/facebook-chat-connect-with-x-facebook-platform-using-jaxl-2-0/)
 * [Code, Setup and Demo of Bosh chat application](http://abhinavsingh.com/blog/2010/08/php-code-setup-and-demo-of-jaxl-boshchat-application/)
+* [Writing External Jabber Components in PHP using Jaxl library](http://abhinavsingh.com/blog/2010/08/how-to-write-external-jabber-components-in-php-using-jaxl-library/)
 * Writing XMPP web applications using Jaxl in 5 minutes
 * Available hooks for various xmpp events
 * Migration guide for Jaxl 1.x users
@@ -38,14 +39,14 @@ Warning: The development source code at Github is only intended for people that 
 * 0050 Ad-Hoc Commands
 * 0085 Chat State Notification
 * 0092 Software Version
-* 0114 Jabber Component Protocol
+* [0114 Jabber Component Protocol](http://abhinavsingh.com/blog/2010/08/how-to-write-external-jabber-components-in-php-using-jaxl-library/)
 * 0115 Entity Capabilities
 * 0124 Bosh Implementation
 * [0133 Service Administration](http://abhinavsingh.com/blog/2010/08/xep-0133-service-administration-available-methods-in-jaxl-2-0/)
 * 0119 XMPP Ping
 * 0202 Entity Time
 * 0203 Delayed Delivery
-* 0206 XMPP over BOSH
+* [0206 XMPP over BOSH](http://abhinavsingh.com/blog/2010/08/php-code-setup-and-demo-of-jaxl-boshchat-application/)
 * 0249 Direct MUC Invitation
 
 ## Documentation for project contributors:
@@ -56,6 +57,6 @@ Warning: The development source code at Github is only intended for people that 
 ## Useful Links:
 
 * [Developer Mailing List](http://groups.google.com/group/jaxl)
-* [Issue Tracker](http://github.com/abhinavsingh/jaxl/issues)
+* [Issue Tracker](http://code.google.com/p/jaxl/issues/list?can=1&q=)
 * [Facebook](http://www.facebook.com/imjaxlim)
 * [Twitter](http://twitter.com/imjaxlim)
