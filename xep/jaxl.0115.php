@@ -53,23 +53,24 @@
 			JAXLXml::addTag('iq', 'queryNode', '//iq/query/@node');
 		}
 		
-		public static function getCaps() {
+		public static function getCaps($features=FALSE) {
 			$payload = '';
 			$payload .= '<c';
 			$payload .= ' xmlns="'.self::$ns.'"';
 			$payload .= ' hash="sha1"';
 			$payload .= ' node="http://code.google.com/p/jaxl"';
-			$payload .= ' ver="'.self::getVerificationString().'"';
+			$payload .= ' ver="'.self::getVerificationString($features).'"';
 			$payload .= '/>';
 			return $payload;
 		}
 		
-		public static function getVerificationString() {
+		public static function getVerificationString($features) {
 			global $jaxl;
-			asort($jaxl->features);
+			if(!$features) $features = $jaxl->features;
+			asort($features);
 			
 			$S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
-			foreach($jaxl->features as $feature) $S .= $feature.'<';
+			foreach($features as $feature) $S .= $feature.'<';
 			$ver = base64_encode(sha1($S, TRUE));
 			return $ver;
 		}
