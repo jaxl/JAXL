@@ -1,3 +1,8 @@
+# News
+[Jaxl 2.0.3 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.0.3 include working Bosh Chat example and X-FACEBOOK-PLATFORM auth support. You can find a raw list of what is new reading the [Jaxl 2.0.3 Changelog page](http://github.com/abhinavsingh/JAXL/blob/58b69f981132b4f3075aa3bb9155be7f9a125557/CHANGELOG)
+
+For live help and discussion join jaxl@conference.psi-im.org chat room
+
 # About
 
 Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time applications
