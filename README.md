@@ -3,7 +3,7 @@
 
 For live help and discussion join jaxl@conference.psi-im.org chat room
 
-# About
+## About
 
 Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time applications
 for browsers, desktops and hand held devices. Jaxl 2.x is a robust, flexible and easy to use
