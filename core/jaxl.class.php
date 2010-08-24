@@ -104,45 +104,45 @@
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal);
             
             XMPPSend::endStream();
-            $jaxl->stream = FALSE;
+            $jaxl->stream = false;
         }
         
         function auth($type) {
             return XMPPSend::startAuth($type);
         }
         
-        function setStatus($status=FALSE, $show=FALSE, $priority=FALSE, $caps=FALSE) {
+        function setStatus($status=false, $show=false, $priority=false, $caps=false) {
             $child = array();
-            $child['status'] = ($status === FALSE ? 'Online using Jaxl (Jabber XMPP Library in PHP)' : $status);
-            $child['show'] = ($show === FALSE ? 'chat' : $show);
-            $child['priority'] = ($priority === FALSE ? 1 : $priority);
+            $child['status'] = ($status === false ? 'Online using Jaxl (Jabber XMPP Library in PHP)' : $status);
+            $child['show'] = ($show === false ? 'chat' : $show);
+            $child['priority'] = ($priority === false ? 1 : $priority);
             if($caps) $child['payload'] = JAXL0115::getCaps();
             
-            return XMPPSend::presence(FALSE, FALSE, $child);
+            return XMPPSend::presence(false, false, $child);
         }
         
         function subscribe($toJid) {
-            return XMPPSend::presence($toJid, FALSE, FALSE, 'subscribe');
+            return XMPPSend::presence($toJid, false, false, 'subscribe');
         }
         
         function subscribed($toJid) {
-            return XMPPSend::presence($toJid, FALSE, FALSE, 'subscribed');
+            return XMPPSend::presence($toJid, false, false, 'subscribed');
         }
         
         function unsubscribe($toJid) {
-            return XMPPSend::presence($toJid, FALSE, FALSE, 'unsubscribe');
+            return XMPPSend::presence($toJid, false, false, 'unsubscribe');
         }
         
         function unsubscribed($toJid) {
-            return XMPPSend::presence($toJid, FALSE, FALSE, 'unsubscribed');
+            return XMPPSend::presence($toJid, false, false, 'unsubscribed');
         }
         
-        function getRosterList($callback=FALSE) {
+        function getRosterList($callback=false) {
             $payload = '<query xmlns="jabber:iq:roster"/>';
-            return XMPPSend::iq("get", $payload, FALSE, $this->jid, $callback);
+            return XMPPSend::iq("get", $payload, false, $this->jid, $callback);
         }
         
-        function addRoster($jid, $group, $name=FALSE) {
+        function addRoster($jid, $group, $name=false) {
             $payload = '<query xmlns="jabber:iq:roster">';
             $payload .= '<item jid="'.$jid.'"';
             if($name) $payload .= ' name="'.$name.'"';
@@ -150,10 +150,10 @@
             $payload .= '<group>'.$group.'</group>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, FALSE, $this->jid);
+            return XMPPSend::iq("set", $payload, false, $this->jid);
         }
         
-        function updateRoster($jid, $group, $name=FALSE, $subscription=FALSE) {
+        function updateRoster($jid, $group, $name=false, $subscription=false) {
             $payload = '<query xmlns="jabber:iq:roster">';
             $payload .= '<item jid="'.$jid.'"';
             if($name) $payload .= ' name="'.$name.'"';
@@ -162,7 +162,7 @@
             $payload .= '<group>'.$group.'</group>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, FALSE, $this->jid);
+            return XMPPSend::iq("set", $payload, false, $this->jid);
         }
         
         function deleteRoster($jid) {
@@ -170,10 +170,10 @@
             $payload .= '<item jid="'.$jid.'" subscription="remove">';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, FALSE, $this->jid);
+            return XMPPSend::iq("set", $payload, false, $this->jid);
         }
         
-        function sendMessage($to, $message, $from=FALSE, $type='chat') {
+        function sendMessage($to, $message, $from=false, $type='chat') {
             $child = array();
             $child['body'] = $message;
             return XMPPSend::message($to, $from, $child, $type);

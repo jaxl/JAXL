@@ -191,7 +191,7 @@
                     $root = $superRoot;
                     for($currDepth=0; $currDepth<$depth; $currDepth++) {
                         $element = $xpart[$currDepth];
-                        $isAttr = (substr($element, 0, 1) == '@') ? TRUE : FALSE;
+                        $isAttr = (substr($element, 0, 1) == '@') ? true : false;
                         
                         if($isAttr) {
                             $element = str_replace('@', '', $element);
@@ -204,7 +204,7 @@
                             if(!isset($childs[$currDepth][$element])) {
                                 $child = $dom->createElement($element);
                                 $root->appendChild($child);
-                                $childs[$currDepth][$element] = TRUE;
+                                $childs[$currDepth][$element] = true;
                             }
                             else if($currDepth == $depth-1) {
                                 //echo ' value '.$value.PHP_EOL.PHP_EOL;

@@ -48,34 +48,34 @@
     class XMPP {
         
         /* User account related parameters */
-        var $user = FALSE;
-        var $pass = FALSE;
-        var $host = FALSE;
-        var $port = FALSE;
-        var $jid = FALSE;
-        var $domain = FALSE;
-        var $resource = FALSE;  
+        var $user = false;
+        var $pass = false;
+        var $host = false;
+        var $port = false;
+        var $jid = false;
+        var $domain = false;
+        var $resource = false;  
         
         /* User session related parameters */
-        var $auth = FALSE;
-        var $isConnected = FALSE;
-        var $sessionRequired = FALSE;
-        var $secondChallenge = FALSE;
+        var $auth = false;
+        var $isConnected = false;
+        var $sessionRequired = false;
+        var $secondChallenge = false;
         var $lastid = 0;
         
         /* Socket stream related parameters */
-        var $stream = FALSE;
-        var $streamId = FALSE;
-        var $streamHost = FALSE;
-        var $streamVersion = FALSE;
-        var $streamENum = FALSE;
-        var $streamEStr = FALSE;
-        var $streamTimeout = FALSE;
+        var $stream = false;
+        var $streamId = false;
+        var $streamHost = false;
+        var $streamVersion = false;
+        var $streamENum = false;
+        var $streamEStr = false;
+        var $streamTimeout = false;
         var $streamBlocking = 0;
         
         /* XMPP working parameter */
         var $buffer = '';
-        var $lastSendTime = FALSE;
+        var $lastSendTime = false;
         
         function __construct($config) {
             /* Parse configuration parameter */
@@ -104,8 +104,8 @@
             }
             
             JAXLPlugin::execute('jaxl_post_connect');
-            if($this->stream) return TRUE;
-            else return FALSE;
+            if($this->stream) return true;
+            else return false;
         }
         
         function startStream() {
@@ -115,7 +115,7 @@
         function startSession() {
             $payload = '';
             $payload .= '<session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>';   
-            return XMPPSend::iq("set", $payload, $this->domain, FALSE, array('XMPPGet', 'postSession'));
+            return XMPPSend::iq("set", $payload, $this->domain, false, array('XMPPGet', 'postSession'));
         }
         
         function startBind() {
@@ -123,7 +123,7 @@
             $payload .= '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">';
             $payload .= '<resource>'.$this->resource.'</resource>';
             $payload .= '</bind>';
-            return XMPPSend::iq("set", $payload, FALSE, FALSE, array('XMPPGet', 'postBind'));
+            return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'));
         }
         
         function getXML() {

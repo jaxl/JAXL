@@ -60,7 +60,7 @@
                 $payload .= '<os>'.PHP_OS.'</os>';
                 $payload .= '</query>';
                 
-                return XMPPSend::iq('result', $payload, $arr['from'], $arr['to'], FALSE, $arr['id']);
+                return XMPPSend::iq('result', $payload, $arr['from'], $arr['to'], false, $arr['id']);
             }
             else {
                 return $arr;

@@ -39,14 +39,14 @@
     */
     class JAXLUtil {
         
-        public static function curl($url, $type='GET', $headers=FALSE, $data=FALSE, $user=FALSE, $pass=FALSE) {
+        public static function curl($url, $type='GET', $headers=false, $data=false, $user=false, $pass=false) {
             $ch = curl_init($url);
             
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_HEADER, FALSE);
+            curl_setopt($ch, CURLOPT_HEADER, false);
             if($headers) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-            curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_VERBOSE, false);
             
             if($type == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, 1);
@@ -97,11 +97,11 @@
             
             self::includePath(dirname($botPath));
             if($botPath && file_exists($botPath)) return $botPath;
-            else return FALSE;
+            else return false;
         }
         
         public static function isWin() {
-            return strtoupper(substr(PHP_OS,0,3)) == "WIN" ? TRUE : FALSE;
+            return strtoupper(substr(PHP_OS,0,3)) == "WIN" ? true : false;
         }
         
         public static function pcntlEnabled() {

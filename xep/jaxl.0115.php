@@ -53,7 +53,7 @@
             JAXLXml::addTag('iq', 'queryNode', '//iq/query/@node');
         }
         
-        public static function getCaps($features=FALSE) {
+        public static function getCaps($features=false) {
             $payload = '';
             $payload .= '<c';
             $payload .= ' xmlns="'.self::$ns.'"';
@@ -71,7 +71,7 @@
             
             $S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
             foreach($features as $feature) $S .= $feature.'<';
-            $ver = base64_encode(sha1($S, TRUE));
+            $ver = base64_encode(sha1($S, true));
             return $ver;
         }
         

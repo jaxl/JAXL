@@ -49,7 +49,7 @@
         /*
          * create XEP-0004 complaint data form using $fields
         */
-        public static function setFormField($fields, $title=FALSE, $inst=FALSE, $type='form') {
+        public static function setFormField($fields, $title=false, $inst=false, $type='form') {
             $payload = '';
             
             $payload .= '<x xmlns="'.self::$ns.'" type="'.$type.'">';

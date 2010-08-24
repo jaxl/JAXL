@@ -50,7 +50,7 @@
     class JAXL0124 {
         
         private static $buffer = array();
-        private static $sess = FALSE;
+        private static $sess = false;
         public static $ns = '';
         
         public static function init() {
@@ -77,7 +77,7 @@
         public static function postBind() {
             global $jaxl;
             $jaxl->bosh['jid'] = $jaxl->jid;
-            $_SESSION['auth'] = TRUE;
+            $_SESSION['auth'] = true;
             return;
         }
         
@@ -105,7 +105,7 @@
         public static function loadSession() {
             global $jaxl;
             $jaxl->bosh['rid'] = isset($_SESSION['rid']) ? (string) $_SESSION['rid'] : rand(1000, 10000);
-            $jaxl->bosh['sid'] = isset($_SESSION['sid']) ? (string) $_SESSION['sid'] : FALSE;
+            $jaxl->bosh['sid'] = isset($_SESSION['sid']) ? (string) $_SESSION['sid'] : false;
             $jaxl->lastid = isset($_SESSION['id']) ? $_SESSION['id'] : $jaxl->lastid;
             $jaxl->jid = isset($_SESSION['jid']) ? $_SESSION['jid'] : $jaxl->jid;
             JAXLog::log("Loading session data\n".json_encode($_SESSION), 5);
@@ -115,8 +115,8 @@
             global $jaxl;
             
             if($_SESSION['auth']) {
-                $_SESSION['rid'] = isset($jaxl->bosh['rid']) ? $jaxl->bosh['rid'] : FALSE;
-                $_SESSION['sid'] = isset($jaxl->bosh['sid']) ? $jaxl->bosh['sid'] : FALSE;
+                $_SESSION['rid'] = isset($jaxl->bosh['rid']) ? $jaxl->bosh['rid'] : false;
+                $_SESSION['sid'] = isset($jaxl->bosh['sid']) ? $jaxl->bosh['sid'] : false;
                 $_SESSION['jid'] = $jaxl->jid;
                 $_SESSION['id'] = $jaxl->lastid;
                 
@@ -128,7 +128,7 @@
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
                 }
                 else {
-                    self::$sess = TRUE;
+                    self::$sess = true;
                     JAXLog::log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
                 }
             }
@@ -162,7 +162,7 @@
             global $jaxl;
             
             $xml = JAXLPlugin::execute('jaxl_pre_curl', $xml);
-            if($xml != FALSE) {
+            if($xml != false) {
                 JAXLog::log("[[XMPPSend]] body\n".$xml, 4);
                 
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);

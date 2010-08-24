@@ -39,7 +39,7 @@
         public static function log($log, $level=1) {
             global $jaxl;
                 
-            $fh = NULL;
+            $fh = null;
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
             
             if($log != '' && $level == 0) {
@@ -54,7 +54,7 @@
             }
             
             unset($log); unset($level); unset($fh);
-            return TRUE;
+            return true;
         }
         
     }

@@ -59,13 +59,13 @@
                 $jaxl->lastSendTime = JAXLUtil::getTime();
                 
                 if($jaxl->stream) {
-                    if(($ret = fwrite($jaxl->stream, $xml)) !== FALSE) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4);
+                    if(($ret = fwrite($jaxl->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4);
                     else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1);  
                     return $ret;
                 }
                 else {
                     JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1);
-                    return FALSE;
+                    return false;
                 }
             }
             
@@ -116,7 +116,7 @@
             return self::xml($xml);
         }
         
-        public static function message($to, $from=FALSE, $child=FALSE, $type='normal', $ns='jabber:client', $id=FALSE) {
+        public static function message($to, $from=false, $child=false, $type='normal', $ns='jabber:client', $id=false) {
             $xml = '';
             
             if(is_array($to)) {
@@ -154,7 +154,7 @@
             return $xml;
         }
         
-        public static function presence($to=FALSE, $from=FALSE, $child=FALSE, $type=FALSE, $ns='jabber:client', $id=FALSE) {
+        public static function presence($to=false, $from=false, $child=false, $type=false, $ns='jabber:client', $id=false) {
             $xml = '';
             if(is_array($to)) {
                 foreach($to as $key => $value) {
@@ -190,7 +190,7 @@
             return $xml;
         }
         
-        public static function iq($type, $payload=FALSE, $to=FALSE, $from=FALSE, $callback=FALSE, $id=FALSE, $ns='jabber:client') {
+        public static function iq($type, $payload=false, $to=false, $from=false, $callback=false, $id=false, $ns='jabber:client') {
             if($type == 'get' || $type == 'set') {
                 global $jaxl;
                 $id = $jaxl->getId();
@@ -211,7 +211,7 @@
             
             self::xml($xml);
             if($type == 'get' || $type == 'set') return $id;
-            else return TRUE;
+            else return true;
         }
         
     }

@@ -104,7 +104,7 @@
                 else 
                     $arr = JAXLXml::parse($xml);
                 
-                switch(TRUE) {
+                switch(true) {
                     case isset($arr['stream:stream']):
                         self::streamStream($arr['stream:stream']);
                         break;
@@ -186,7 +186,7 @@
             $desc = key($arr['#']);
             $xmlns = $arr['#']['0']['@']['xmlns'];
             JAXLog::log("Stream error with description ".$desc." and xmlns ".$xmlns, 0);
-            return TRUE;
+            return true;
         }
 
         public static function failure($arr) {
@@ -215,8 +215,8 @@
                 global $jaxl;
                 
                 stream_set_blocking($jaxl->stream, 1);
-                if(!stream_socket_enable_crypto($jaxl->stream, TRUE, STREAM_CRYPTO_METHOD_TLS_CLIENT))
-                    stream_socket_enable_crypto($jaxl->stream, TRUE, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
+                if(!stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
+                    stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
                 stream_set_blocking($jaxl->stream, 0);
                 
                 XMPPSend::startStream();
@@ -329,7 +329,7 @@
                     }
                     $xml .= '</response>';
                     
-                    $jaxl->secondChallenge = TRUE;
+                    $jaxl->secondChallenge = true;
                 }
                 XMPPSend::xml($xml);
             }
@@ -370,7 +370,7 @@
                     $jaxl->startSession();
                 }
                 else {
-                    $jaxl->auth = TRUE;
+                    $jaxl->auth = true;
                     JAXLog::log("Auth completed...", 0);
                     JAXLPlugin::execute('jaxl_post_auth');
                 }
@@ -379,7 +379,7 @@
         
         public static function postSession($arr) {
             if($arr["type"] == "result") {
-                $jaxl->auth = TRUE;
+                $jaxl->auth = true;
                 JAXLog::log("Auth completed...", 0);
                 JAXLPlugin::execute('jaxl_post_auth');
             }

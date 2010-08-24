@@ -69,7 +69,7 @@
             $xml .= " route='xmpp:".$host.":".$port."'";
             $xml .= " xmpp:version='".$jaxl->bosh['xmppversion']."'/>";
             
-            $_SESSION['auth'] = FALSE;
+            $_SESSION['auth'] = false;
             XMPPSend::xml($xml);
         }
         
@@ -85,7 +85,7 @@
             $xml .= "<presence type='unavailable' xmlns='jabber:client'/>";
             $xml .= "</body>";
             
-            $_SESSION['auth'] = FALSE;
+            $_SESSION['auth'] = false;
             XMPPSend::xml($xml);
         }
         
@@ -102,7 +102,7 @@
             $xml .= " xmpp:restart='true'";
             $xml .= " xmlns:xmpp='".$jaxl->bosh['xmlnsxmpp']."'/>";
             
-            $_SESSION['auth'] = FALSE;
+            $_SESSION['auth'] = false;
             XMPPSend::xml($xml);
         }
         
@@ -114,7 +114,7 @@
             $xml .= ' sid="'.$jaxl->bosh['sid'].'"';
             $xml .= ' xmlns="http://jabber.org/protocol/httpbind"/>';
             
-            $_SESSION['auth'] = TRUE;
+            $_SESSION['auth'] = true;
             XMPPSend::xml($xml);
         }
 

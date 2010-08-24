@@ -51,7 +51,7 @@
         
         public static function handleIq($payload) {
             if(isset($payload['ping'])) 
-                return XMPPSend::iq('result', FALSE, $payload['from'], $payload['to'], FALSE, $payload['id']);
+                return XMPPSend::iq('result', false, $payload['from'], $payload['to'], false, $payload['id']);
             else
                 return $payload;
         }

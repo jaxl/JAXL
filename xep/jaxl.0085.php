@@ -57,7 +57,7 @@
         
         function getMessage($payloads) {
             foreach($payloads as $key => $payload) {
-                $payload['chatState'] = FALSE;
+                $payload['chatState'] = false;
                 
                 foreach(self::$chatStates as $state) {
                     if(isset($payload[$state]) && $payload[$state] == self::$ns) {

@@ -16,7 +16,7 @@
          * DO NOT TOUCH
         */
         function XML() {
-            $this->valid = FALSE;
+            $this->valid = false;
         }
     
         /*
