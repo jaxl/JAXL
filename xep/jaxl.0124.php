@@ -173,7 +173,7 @@
             return $xml;
         }
         
-        private static function unwrapBody($payload) {
+        public static function unwrapBody($payload) {
             if(substr($payload, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/i', $payload, $m);
             else preg_match_all('/<body (.*?)>(.*)<\/body>/i', $payload, $m);
             
