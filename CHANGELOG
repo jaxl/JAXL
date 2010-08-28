@@ -1,5 +1,9 @@
 version 2.0.4
 -------------
+- Updated XMPP base class and XMPP Get class to utilize new XMPPAuth class
+- Updated jaxl_require method with new XMPPAuth class path
+- Extracted XMPP SASL auth mechanism out of XMPP Get class, code cleanup
+- unwrapBody method of XEP 0124 is now public
 - Added #News block on top of README
 - No more capital true, false, null inside Jaxl core to pass PHP_CodeSniffer tests
 - :retab Jaxl library core to pass PHP_CodeSniffer tests
