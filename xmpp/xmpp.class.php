@@ -36,10 +36,10 @@
     
     // include required classes
     jaxl_require(array(
-        'XMPPGet',
-        'XMPPSend',
         'JAXLPlugin',
-        'JAXLog'
+        'JAXLog',
+        'XMPPGet',
+        'XMPPSend'
     ));
     
     /*
