@@ -49,39 +49,6 @@
     */
     class XMPPGet {
         
-        public static function xml() {
-            global $jaxl;
-            
-            // sleep between two reads
-            sleep(JAXL_XMPP_GET_SLEEP);
-            
-            // initialize empty lines read
-            $emptyLine = 0;
-            
-            // read previous buffer
-            $payload = $jaxl->buffer;
-            $jaxl->buffer = '';
-            
-            // read socket data
-            for($i=0; $i<JAXL_XMPP_GET_PCKTS; $i++) {
-                if($jaxl->stream) {
-                    $line = fread($jaxl->stream, JAXL_XMPP_GET_PCKT_SIZE);
-                    if(strlen($line) == 0) {
-                        $emptyLine++;
-                        if($emptyLine > JAXL_XMPP_GET_EMPTY_LINES)
-                            break;
-                    }
-                    else {
-                        $payload .= $line;
-                    }
-                }
-            }
-            
-            // trim read data
-            $payload = trim($payload);
-            if($payload != '') self::handler($payload);
-        }
-        
         public static function handler($payload) {
             global $jaxl;
             JAXLog::log("[[XMPPGet]] \n".$payload, 4);

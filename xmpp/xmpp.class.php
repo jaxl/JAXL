@@ -127,7 +127,34 @@
         }
         
         function getXML() {
-            return XMPPGet::xml();
+            // sleep between two reads
+            sleep(JAXL_XMPP_GET_SLEEP);
+            
+            // initialize empty lines read
+            $emptyLine = 0;
+            
+            // read previous buffer
+            $payload = $this->buffer;
+            $this->buffer = '';
+            
+            // read socket data
+            for($i=0; $i<JAXL_XMPP_GET_PCKTS; $i++) {
+                if($this->stream) {
+                    $line = fread($this->stream, JAXL_XMPP_GET_PCKT_SIZE);
+                    if(strlen($line) == 0) {
+                        $emptyLine++;
+                        if($emptyLine > JAXL_XMPP_GET_EMPTY_LINES)
+                            break;
+                    }
+                    else {
+                        $payload .= $line;
+                    }
+                }
+            }
+            
+            // trim read data
+            $payload = trim($payload);
+            if($payload != '') XMPPGet::handler($payload); 
         }
         
         function getId() {
