@@ -103,7 +103,7 @@
             JAXLog::log("Jaxl Shutting down ...", 0);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal);
             
-            XMPPSend::endStream();
+            if($jaxl->stream) XMPPSend::endStream();
             $jaxl->stream = false;
         }
         
