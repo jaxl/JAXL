@@ -109,7 +109,7 @@
                 
                 $xml .= base64_encode(JAXLUtil::implodeData($response));
             }
-            else if($jaxl->authType == 'SCRAM-SHA-1') {
+            else if($authType == 'SCRAM-SHA-1') {
                 $decoded = JAXLUtil::explodeData($decoded);
                         
                 // SaltedPassword  := Hi(Normalize(password), salt, i)
@@ -137,7 +137,7 @@
                         
                 $xml .= base64_encode(JAXLUtil::implodeData($response));
             }
-            else if($jaxl->authType == 'CRAM-MD5') {
+            else if($authType == 'CRAM-MD5') {
                 $xml .= base64_encode($jaxl->user.' '.hash_hmac('md5', $jaxl->pass, $arr['challenge']));
             }
 
