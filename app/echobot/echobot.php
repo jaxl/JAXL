@@ -15,7 +15,7 @@
 		'JAXL0092', // Software Version
 		'JAXL0203', // Delayed Delivery
 		'JAXL0199'  // XMPP Ping
-	));
+	), $jaxl);
 	
 	// Sample Echobot class
 	class echobot {
