@@ -46,12 +46,11 @@
     */
     class XMPPSend {
         
-        public static function xml($xml) {
-            global $jaxl;
-            $xml = JAXLPlugin::execute('jaxl_send_xml', $xml);
+        public static function xml($xml, $jaxl) {
+            $xml = JAXLPlugin::execute('jaxl_send_xml', $xml, $jaxl);
             
             if($jaxl->mode == "cgi") {
-                JAXLPlugin::execute('jaxl_send_body', $xml);
+                JAXLPlugin::execute('jaxl_send_body', $xml, $jaxl);
             }
             else {
                 if($jaxl->lastSendTime && (JAXLUtil::getTime() - $jaxl->lastSendTime < JAXL_XMPP_SEND_RATE))
@@ -59,36 +58,34 @@
                 $jaxl->lastSendTime = JAXLUtil::getTime();
                 
                 if($jaxl->stream) {
-                    if(($ret = fwrite($jaxl->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4);
-                    else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1);  
+                    if(($ret = fwrite($jaxl->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4, $jaxl);
+                    else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1, $jaxl);  
                     return $ret;
                 }
                 else {
-                    JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1);
+                    JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1, $jaxl);
                     return false;
                 }
             }
             
         }
         
-        public static function startStream() {
-            global $jaxl;
+        public static function startStream($jaxl) {
             $xml = '<stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" xmlns="jabber:client" to="'.$jaxl->domain.'" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">';
-            return self::xml($xml);
+            return self::xml($xml, $jaxl);
         }
         
-        public static function endStream() {
+        public static function endStream($jaxl) {
             $xml = '</stream:stream>';
-            return self::xml($xml);
+            return self::xml($xml, $jaxl);
         }
         
-        public static function startTLS() {
+        public static function startTLS($jaxl) {
             $xml = '<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
-            return self::xml($xml);
+            return self::xml($xml, $jaxl);
         }
         
-        public static function startAuth($type) {
-            global $jaxl;
+        public static function startAuth($type, $jaxl) {
             $jaxl->authType = $type;
             
             $xml = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="'.$type.'">';
@@ -112,29 +109,27 @@
             }
             $xml .= '</auth>';
             
-            JAXLog::log("Performing Auth type: ".$type, 0);
-            return self::xml($xml);
+            JAXLog::log("Performing Auth type: ".$type, 0, $jaxl);
+            return self::xml($xml, $jaxl);
         }
         
-        public static function message($to, $from=false, $child=false, $type='normal', $ns='jabber:client', $id=false) {
+        public static function message($to, $from=false, $child=false, $type='normal', $jaxl, $id=false, $ns='jabber:client') {
             $xml = '';
             
             if(is_array($to)) {
                 foreach($to as $key => $value) {
-                    $xml .= self::prepareMessage($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key]);  
+                    $xml .= self::prepareMessage($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key], $jaxl);  
                 }
             }
             else {
-                $xml .= self::prepareMessage($to, $from, $child, $type, $ns, $id);
+                $xml .= self::prepareMessage($to, $from, $child, $type, $ns, $id, $jaxl);
             }
         
-            JAXLPlugin::execute('jaxl_send_message', $xml); 
-            return self::xml($xml);
+            JAXLPlugin::execute('jaxl_send_message', $xml, $jaxl); 
+            return self::xml($xml, $jaxl);
         }
         
-        private static function prepareMessage($to, $from, $child, $type, $ns, $id) {
-            global $jaxl;
-            
+        private static function prepareMessage($to, $from, $child, $type, $ns, $id, $jaxl) {
             $xml = '<message';
             if($from) $xml .= ' from="'.$from.'"';
             $xml .= ' to="'.$to.'"';
@@ -150,28 +145,25 @@
             }
             
             $xml .= '</message>';
-            
             return $xml;
         }
         
-        public static function presence($to=false, $from=false, $child=false, $type=false, $ns='jabber:client', $id=false) {
+        public static function presence($to=false, $from=false, $child=false, $type=false, $jaxl, $id=false, $ns='jabber:client') {
             $xml = '';
             if(is_array($to)) {
                 foreach($to as $key => $value) {
-                    $xml .= self::preparePresence($to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key]);
+                    $xml .= self::preparePresence($to[$key], $from[$key], $child[$key], $type[$key], $jaxl, $id[$key], $ns[$key]);
                 }
             }
             else {
-                $xml .= self::preparePresence($to, $from, $child, $type, $ns, $id);
+                $xml .= self::preparePresence($to, $from, $child, $type, $jaxl, $id, $ns);
             }
                 
-            JAXLPlugin::execute('jaxl_send_presence', $xml);
-            return self::xml($xml);
+            JAXLPlugin::execute('jaxl_send_presence', $xml, $jaxl);
+            return self::xml($xml, $jaxl);
         }
     
-        private static function preparePresence($to, $from, $child, $type, $ns, $id) {
-            global $jaxl;
-            
+        private static function preparePresence($to, $from, $child, $type, $jaxl, $id, $ns) {
             $xml = '<presence';
             if($type) $xml .= ' type="'.$type.'"';
             if($from) $xml .= ' from="'.$from.'"';
@@ -190,9 +182,8 @@
             return $xml;
         }
         
-        public static function iq($type, $payload=false, $to=false, $from=false, $callback=false, $id=false, $ns='jabber:client') {
+        public static function iq($type, $payload=false, $to=false, $from=false, $callback=false, $jaxl, $id=false, $ns='jabber:client') {
             if($type == 'get' || $type == 'set') {
-                global $jaxl;
                 $id = $jaxl->getId();
                 if($callback) JAXLPlugin::add('jaxl_get_iq_'.$id, $callback);
             }
@@ -209,7 +200,7 @@
             if($payload) $xml .= $payload;
             $xml .= '</iq>';
             
-            self::xml($xml);
+            self::xml($xml, $jaxl);
             if($type == 'get' || $type == 'set') return $id;
             else return true;
         }
