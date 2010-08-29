@@ -46,9 +46,7 @@
     */
     class XMPPAuth {
         
-        public static function getResponse($authType, $challenge) {
-            global $jaxl;
-            
+        public static function getResponse($authType, $challenge, $jaxl) {
             $response = array();
             $decoded = base64_decode($challenge);
             $xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
@@ -61,7 +59,7 @@
                     unset($decoded[$k]);
                 }
                         
-                list($secret, $decoded['api_key'], $decoded['session_key']) = JAXLPlugin::execute('jaxl_get_facebook_key');
+                list($secret, $decoded['api_key'], $decoded['session_key']) = JAXLPlugin::execute('jaxl_get_facebook_key', false, $jaxl);
                         
                 $decoded['call_id'] = time();
                 $decoded['v'] = '1.0';
