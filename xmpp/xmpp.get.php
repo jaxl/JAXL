@@ -49,12 +49,11 @@
     */
     class XMPPGet {
         
-        public static function handler($payload) {
-            global $jaxl;
-            JAXLog::log("[[XMPPGet]] \n".$payload, 4);
+        public static function handler($payload, $jaxl) {
+            JAXLog::log("[[XMPPGet]] \n".$payload, 4, $jaxl);
             
             $buffer = array();
-            $payload = JAXLPlugin::execute('jaxl_pre_handler', $payload);   
+            $payload = JAXLPlugin::execute('jaxl_pre_handler', $payload, $jaxl);
             
             $xmls = JAXLUtil::splitXML($payload);
             $pktCnt = count($xmls);
@@ -74,25 +73,25 @@
                 
                 switch(true) {
                     case isset($arr['stream:stream']):
-                        self::streamStream($arr['stream:stream']);
+                        self::streamStream($arr['stream:stream'], $jaxl);
                         break;
                     case isset($arr['stream:features']):
-                        self::streamFeatures($arr['stream:features']);
+                        self::streamFeatures($arr['stream:features'], $jaxl);
                         break;
                     case isset($arr['stream:error']):
-                        self::streamError($arr['stream:error']);
+                        self::streamError($arr['stream:error'], $jaxl);
                         break;
                     case isset($arr['failure']);
-                        self::failure($arr['failure']);
+                        self::failure($arr['failure'], $jaxl);
                         break;
                     case isset($arr['proceed']):
-                        self::proceed($arr['proceed']);
+                        self::proceed($arr['proceed'], $jaxl);
                         break;
                     case isset($arr['challenge']):
-                        self::challenge($arr['challenge']);
+                        self::challenge($arr['challenge'], $jaxl);
                         break;
                     case isset($arr['success']):
-                        self::success($arr['success']);
+                        self::success($arr['success'], $jaxl);
                         break;
                     case isset($arr['presence']):
                         $buffer['presence'][] = $arr['presence'];
@@ -101,7 +100,7 @@
                         $buffer['message'][] = $arr['message'];
                         break;
                     case isset($arr['iq']):
-                        self::iq($arr['iq']);
+                        self::iq($arr['iq'], $jaxl);
                         break;
                     default:
                         print "Unrecognized payload received from jabber server...";
@@ -109,31 +108,30 @@
                 }
             }
             
-            if(isset($buffer['presence'])) self::presence($buffer['presence']);
-            if(isset($buffer['message'])) self::message($buffer['message']);
+            if(isset($buffer['presence'])) self::presence($buffer['presence'], $jaxl);
+            if(isset($buffer['message'])) self::message($buffer['message'], $jaxl);
             unset($buffer);
             
-            JAXLPlugin::execute('jaxl_post_handler', $payload);
+            JAXLPlugin::execute('jaxl_post_handler', $payload, $jaxl);
         }
         
-        public static function streamStream($arr) {
+        public static function streamStream($arr, $jaxl) {
             if($arr['@']["xmlns:stream"] != "http://etherx.jabber.org/streams") {
                 print "Unrecognized XMPP Stream...\n";
             }
             else if($arr['@']['xmlns'] == "jabber:component:accept") {
-                JAXLPlugin::execute('jaxl_post_start', $arr['@']['id']);
+                JAXLPlugin::execute('jaxl_post_start', $arr['@']['id'], $jaxl);
             }
             else if($arr['@']['xmlns'] == "jabber:client") {
-                global $jaxl;
                 $jaxl->streamId = $arr['@']['id'];
                 $jaxl->streamHost = $arr['@']['from'];
                 $jaxl->streamVersion = $arr['@']['version'];
             }
         }
         
-        public static function streamFeatures($arr) {
+        public static function streamFeatures($arr, $jaxl) {
             if(isset($arr["#"]["starttls"]) && ($arr["#"]["starttls"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-tls")) {
-                XMPPSend::startTLS();
+                XMPPSend::startTLS($jaxl);
             }
             else if(isset($arr["#"]["mechanisms"]) && ($arr["#"]["mechanisms"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-sasl")) {
                 $mechanism = array();
@@ -141,136 +139,123 @@
                 foreach ($arr["#"]["mechanisms"][0]["#"]["mechanism"] as $row)
                     $mechanism[] = $row["#"];
                 
-                JAXLPlugin::execute('jaxl_get_auth_mech', $mechanism);
+                JAXLPlugin::execute('jaxl_get_auth_mech', $mechanism, $jaxl);
             }
             else if(isset($arr["#"]["bind"]) && ($arr["#"]["bind"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-bind")) {
-                global $jaxl;
                 $jaxl->sessionRequired = isset($arr["#"]["session"]);
                 $jaxl->startBind();
             }
         }
         
-        public static function streamError($arr) {
+        public static function streamError($arr, $jaxl) {
             $desc = key($arr['#']);
             $xmlns = $arr['#']['0']['@']['xmlns'];
-            JAXLog::log("Stream error with description ".$desc." and xmlns ".$xmlns, 0);
+            JAXLog::log("Stream error with description ".$desc." and xmlns ".$xmlns, 0, $jaxl);
             return true;
         }
 
-        public static function failure($arr) {
-            global $jaxl;
-            
+        public static function failure($arr, $jaxl) {
             $xmlns = $arr['xmlns'];
             switch($xmlns) {
                 case 'urn:ietf:params:xml:ns:xmpp-tls':
-                    JAXLog::log("Unable to start TLS negotiation, see logs for detail...", 0);
-                    JAXLPlugin::execute('jaxl_post_auth_failure');
+                    JAXLog::log("Unable to start TLS negotiation, see logs for detail...", 0, $jaxl);
+                    JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('tlsFailure');
                     break;
                 case 'urn:ietf:params:xml:ns:xmpp-sasl':
-                    JAXLog::log("Unable to complete SASL Auth, see logs for detail...", 0);
-                    JAXLPlugin::execute('jaxl_post_auth_failure');
+                    JAXLog::log("Unable to complete SASL Auth, see logs for detail...", 0, $jaxl);
+                    JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('saslFailure');
                     break;
                 default:
-                    JAXLog::log("Uncatched failure xmlns received...", 0);
+                    JAXLog::log("Uncatched failure xmlns received...", 0, $jaxl);
                     break;
             }
         }
         
-        public static function proceed($arr) {
+        public static function proceed($arr, $jaxl) {
             if($arr['xmlns'] == "urn:ietf:params:xml:ns:xmpp-tls") {
-                global $jaxl;
-                
                 stream_set_blocking($jaxl->stream, 1);
                 if(!stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
                     stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
                 stream_set_blocking($jaxl->stream, 0);
-                
-                XMPPSend::startStream();
+                XMPPSend::startStream($jaxl);
             }
         }
         
-        public static function challenge($arr) {
+        public static function challenge($arr, $jaxl) {
             if($arr['xmlns'] == "urn:ietf:params:xml:ns:xmpp-sasl") {
-                global $jaxl;
-                if($jaxl->secondChallenge) {
-                    $xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>';
-                }
-                else {
-                    $xml = XMPPAuth::getResponse($jaxl->authType, $arr['challenge']);
-                }
-                XMPPSend::xml($xml);
+                if($jaxl->secondChallenge) $xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>';
+                else $xml = XMPPAuth::getResponse($jaxl->authType, $arr['challenge'], $jaxl);
+                XMPPSend::xml($xml, $jaxl);
             }
         }
         
-        public static function success($arr) {
-            global $jaxl;
+        public static function success($arr, $jaxl) {
             if($arr['xmlns'] == "urn:ietf:params:xml:ns:xmpp-sasl") {
-                if($jaxl->mode == "cgi") JAXL0206::restartStream();
-                else XMPPSend::startStream();
+                if($jaxl->mode == "cgi") JAXL0206::restartStream($jaxl);
+                else XMPPSend::startStream($jaxl);
             }
         }
         
-        public static function presence($arrs) {
+        public static function presence($arrs, $jaxl) {
             $payload = array();
             foreach($arrs as $arr) $payload[] = $arr;
-            JAXLPlugin::execute('jaxl_get_presence', $payload);
+            JAXLPlugin::execute('jaxl_get_presence', $payload, $jaxl);
             unset($payload);
             return $arrs;
         }
         
-        public static function message($arrs) {
+        public static function message($arrs, $jaxl) {
             $payload = array();
             foreach($arrs as $arr) $payload[] = $arr;
-            JAXLPlugin::execute('jaxl_get_message', $payload);
+            JAXLPlugin::execute('jaxl_get_message', $payload, $jaxl);
             unset($payload);
             return $arrs;
         }
         
-        public static function postBind($arr) {
+        public static function postBind($arr, $jaxl) {
             if($arr["type"] == "result") {
-                global $jaxl;
                 $jaxl->jid = $arr["bindJid"];
                 
-                JAXLPlugin::execute('jaxl_post_bind');
+                JAXLPlugin::execute('jaxl_post_bind', false, $jaxl);
                 
                 if($jaxl->sessionRequired) {
                     $jaxl->startSession();
                 }
                 else {
                     $jaxl->auth = true;
-                    JAXLog::log("Auth completed...", 0);
-                    JAXLPlugin::execute('jaxl_post_auth');
+                    JAXLog::log("Auth completed...", 0, $jaxl);
+                    JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
                 }
             }
         }
         
-        public static function postSession($arr) {
+        public static function postSession($arr, $jaxl) {
             if($arr["type"] == "result") {
                 $jaxl->auth = true;
-                JAXLog::log("Auth completed...", 0);
-                JAXLPlugin::execute('jaxl_post_auth');
+                JAXLog::log("Auth completed...", 0, $jaxl);
+                JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
             }
         }
         
-        public static function iq($arr) {
+        public static function iq($arr, $jaxl) {
             switch($arr['type']) {
                 case 'result':
                     $id = $arr['id'];
-                    JAXLPlugin::execute('jaxl_get_iq_'.$id, $arr);
+                    JAXLPlugin::execute('jaxl_get_iq_'.$id, $arr, $jaxl);
                     break;
                 case 'get':
-                    JAXLPlugin::execute('jaxl_get_iq_get', $arr);
+                    JAXLPlugin::execute('jaxl_get_iq_get', $arr, $jaxl);
                     break;
                 case 'set':
-                    JAXLPlugin::execute('jaxl_get_iq_set', $arr);
+                    JAXLPlugin::execute('jaxl_get_iq_set', $arr, $jaxl);
                     break;
                 case 'error':
-                    JAXLPlugin::execute('jaxl_get_iq_error', $arr);
+                    JAXLPlugin::execute('jaxl_get_iq_error', $arr, $jaxl);
                     break;
                 default:
-                    JAXLog::log('Unhandled iq type ...'.json_encode($arr), 0);
+                    JAXLog::log('Unhandled iq type ...'.json_encode($arr), 0, $jaxl);
                     break;
             }
             return $arr;
