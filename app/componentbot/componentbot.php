@@ -7,22 +7,27 @@
 	
 	// Initialize Jaxl Library
 	$jaxl = new JAXL(array(
+        'host' => JAXL_HOST_NAME,
+        'domain' => JAXL_HOST_DOMAIN,
+        'component' => JAXL_COMPONENT_HOST,
 		'port' => JAXL_COMPONENT_PORT
 	));
 
 	// Include required XEP's
-	jaxl_require('JAXL0114'); // Jabber Component Protocol
+	jaxl_require('JAXL0114', $jaxl); // Jabber Component Protocol
 
 	// Sample Component class
 	class componentbot {
 		
 		function doAuth() {
-			JAXLog::log("Going for component handshake ...", 1);
+            global $jaxl;
+			$jaxl->log("Going for component handshake ...", 1);
 			return JAXL_COMPONENT_PASS;
 		}
 
 		function postAuth() {
-			JAXLog::log("Component handshake completed ...", 1);
+            global $jaxl;
+			$jaxl->log("Component handshake completed ...", 1);
 		}
 		
 		function getMessage($payloads) {
