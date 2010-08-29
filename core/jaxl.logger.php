@@ -36,9 +36,7 @@
     
     class JAXLog {
         
-        public static function log($log, $level=1) {
-            global $jaxl;
-                
+        public static function log($log, $level=1, $jaxl=false) {
             $fh = null;
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
             
