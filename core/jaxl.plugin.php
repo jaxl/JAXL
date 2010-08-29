@@ -70,13 +70,12 @@
          * execute methods will only execute those callbacks
          * Which are passed as $filter paramater
         */
-        public static function execute($hook, $payload=null, $filter=false) {
+        public static function execute($hook, $payload=null, $jaxl=false, $filter=false) {
             if(isset(self::$registry[$hook]) && count(self::$registry[$hook]) > 0) {
                 foreach(self::$registry[$hook] as $priority) {
                     foreach($priority as $callback) {
                         if($filter === false || (is_array($filter) && in_array($callback[0], $filter))) {
-                            //echo json_encode($callback).' '.json_encode($payload).PHP_EOL;
-                            $payload = call_user_func($callback, $payload);
+                            $payload = call_user_func($callback, $payload, $jaxl);
                         }
                     }
                 }
