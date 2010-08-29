@@ -54,7 +54,8 @@
         var $port = false;
         var $jid = false;
         var $domain = false;
-        var $resource = false;  
+        var $resource = false;
+        var $component = false;
         
         /* User session related parameters */
         var $auth = false;
@@ -85,37 +86,38 @@
             $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
             $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
             $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : JAXL_STREAM_TIMEOUT;
-            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();    
+            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
+            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
         }
         
         function connect() {
             if(!$this->stream) {
                 if($this->stream = @fsockopen($this->host, $this->port, $this->streamENum, $this->streamEStr, $this->streamTimeout)) {
-                    JAXLog::log("Socket opened to the jabber host ".$this->host.":".$this->port." ...", 0);
+                    JAXLog::log("Socket opened to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
                     stream_set_blocking($this->stream, $this->streamBlocking);
                     stream_set_timeout($this->stream, $this->streamTimeout);
                 }
                 else {
-                    JAXLog::log("Unable to open socket to the jabber host ".$this->host.":".$this->port." ...", 0);
+                    JAXLog::log("Unable to open socket to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
                 }
             }
             else {
-                JAXLog::log("Socket already opened to the jabber host ".$this->host.":".$this->port." ...", 0);
+                JAXLog::log("Socket already opened to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
             }
             
-            JAXLPlugin::execute('jaxl_post_connect');
+            JAXLPlugin::execute('jaxl_post_connect', false, $this);
             if($this->stream) return true;
             else return false;
         }
         
         function startStream() {
-            return XMPPSend::startStream();
+            return XMPPSend::startStream($this);
         }
         
         function startSession() {
             $payload = '';
             $payload .= '<session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>';   
-            return XMPPSend::iq("set", $payload, $this->domain, false, array('XMPPGet', 'postSession'));
+            return XMPPSend::iq("set", $payload, $this->domain, false, array('XMPPGet', 'postSession'), $this);
         }
         
         function startBind() {
@@ -123,7 +125,7 @@
             $payload .= '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">';
             $payload .= '<resource>'.$this->resource.'</resource>';
             $payload .= '</bind>';
-            return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'));
+            return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'), $this);
         }
         
         function getXML() {
@@ -154,7 +156,7 @@
             
             // trim read data
             $payload = trim($payload);
-            if($payload != '') XMPPGet::handler($payload); 
+            if($payload != '') XMPPGet::handler($payload, $this); 
         }
         
         function getId() {
