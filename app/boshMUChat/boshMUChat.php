@@ -155,7 +155,7 @@
         <head profile="http://gmpg.org/xfn/11">
                 <link rel="SHORTCUT ICON" href="http://im.jaxl.im/favicon.ico" type="image/x-icon">
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                <title>Web Chat Application using Jaxl Library</title>
+                <title>Web MUC Chat Application using Jaxl Library</title>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
                 <script type="text/javascript" src="jaxl.js"></script>
                 <script type="text/javascript">jaxl.pollUrl = "<?php echo BOSHCHAT_POLL_URL; ?>";</script>
@@ -276,7 +276,7 @@ jQuery(function($) {
 	</head>
         <body>
                 <center>
-                        <h1>Web Chat Application using Jaxl Library</h1>
+                        <h1>Web MUC Chat Application using Jaxl Library</h1>
                         <div id="uname">
                                 <label>Username:</label>
                                 <input type="text" value=""/>

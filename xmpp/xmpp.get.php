@@ -49,7 +49,7 @@
     */
     class XMPPGet {
         
-        public static function handler($payload, $jaxl) {
+        public static function handler($payload, &$jaxl) {
             JAXLog::log("[[XMPPGet]] \n".$payload, 4, $jaxl);
             
             $buffer = array();
