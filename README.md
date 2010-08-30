@@ -1,7 +1,7 @@
 # News
-[Jaxl 2.0.3 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.0.3 include working Bosh Chat example and X-FACEBOOK-PLATFORM auth support. You can find a raw list of what is new reading the [Jaxl 2.0.3 Changelog page](http://github.com/abhinavsingh/JAXL/blob/58b69f981132b4f3075aa3bb9155be7f9a125557/CHANGELOG)
+[Jaxl 2.1.0 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.1.0 include working Bosh Multi-User Chat example and tons of other changes. You can find a raw list of what is new reading the [Jaxl 2.1.0 Changelog page](http://github.com/abhinavsingh/JAXL/blob/4ea026b2e758e4d6d1e04730da3a167cff743528/CHANGELOG)
 
-For live help and discussion join jaxl@conference.psi-im.org chat room
+For live help and discussion join *jaxl@conference.psi-im.org* chat room (leave your messages if timezones keep us apart)
 
 ## About
 
@@ -20,7 +20,7 @@ version of Jaxl 1.x series which was hosted at google code.
 
 * For better experience download [latest stable tarball](http://code.google.com/p/jaxl/downloads/list) from google code
 * The development version of Jaxl is hosted here at Github, have fun cloning the source code with Git
-* Checkout Jaxl v 1.x series source code from [svn repository (deprecated)](http://code.google.com/p/jaxl/source/browse/)
+* Checkout Jaxl [1.x](http://code.google.com/p/jaxl/downloads/list?can=4&q=&colspec=Filename+Summary+Uploaded+Size+DownloadCount) series source code from [svn repository (deprecated)](http://code.google.com/p/jaxl/source/browse/)
 
 Warning: The development source code at Github is only intended for people that want to develop Jaxl or absolutely need the latest features still not available on the stable releases.
 
