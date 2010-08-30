@@ -1,3 +1,34 @@
+version 2.1.0
+-------------
+- First checkin of bosh MUC sample application 
+- Updated build file now packages bosh MUC chat sample application along with core classes 
+- Updated JAXLog class to accept  instance inside log() method, application code should use ->log() to call JAXLog::log() method now 
+- Updated JAXLPlugin class to pass  instance along with every XMPP event hook 
+- Updated jaxl_require method to call including XEP's init() method every time they are included using jaxl_require method 
+- Update jaxl.ini with some documentation/comments about JAXL_BOSH_COOKIE_DOMAIN parameter
+- Updated echobot sample application code to pass  instance while calling jaxl_require method 
+- Update XMPP SASL Auth class to accept  instance while calculating SASL response.
+  Also passinginstance when jaxl_get_facebook_key hook is called 
+- Updated XMPP base class to accept component host name inside constructor.
+  Sending currentinstance with every XMPPSend, XMPPGet and JAXLog method calls 
+- Every XMPPGet method now accepts instance.
+  Updated JAXLPlugin execute method call to accept instance and also passing current working instance to JAXLog method calls 
+- Every XMPPSend method now accepts instance.
+  Updated JAXLPlugin execute method call to accept instance and also passing current working  instance to JAXLog method calls 
+- Updated component bot sample application to show how to pass component host inside JAXL constructor.
+  Also updated jaxl_require call to accept current working  instance 
+- Updated boshchat sample application to follow new rules of jaxl_require, also cleaned up the sample app code a bit 
+- Updated jaxl.ini of packaged sample applications to match /env/jaxl.ini 
+- Updated implemented XEP's init method to accept instance during initialization step
+  Send working instance with every XMPPSend method call
+  Almost every XEP's available method now accepts an additional instance so that XEP's can work independently for every  instance inside a multiple jaxl instance application code 
+- Added magic method __call inside JAXL class
+  All application codes should now call a methods inside implemented XEP's like ->JAXLxxxx('method', , , ...)
+  Also added ->log method to be used by application codes
+  JAXLog::log() should not be called directly from application code
+  Updated XMPPSend methods to accept instance
+  Added ->requires() method that does a similar job as jaxl_require() which now also expects  instance as one of the passed parameter. 
+
 version 2.0.4
 -------------
 - Updated XMPP base class and XMPP Get class to utilize new XMPPAuth class
