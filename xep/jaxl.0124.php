@@ -53,7 +53,7 @@
         private static $sess = false;
         public static $ns = '';
         
-        public static function init() {
+        public static function init($jaxl) {
             JAXLPlugin::add('jaxl_post_bind', array('JAXL0124', 'postBind'));
             JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
@@ -62,20 +62,19 @@
             JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
             JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));   
             
-            self::setEnv();
-            self::loadSession();
+            self::setEnv($jaxl);
+            self::loadSession($jaxl);
         }
         
-        public static function postHandler($payload) {
+        public static function postHandler($payload, $jaxl) {
             $payload = json_encode(self::$buffer);
-            JAXLog::log("[[BoshOut]]\n".$payload, 5);
+            JAXLog::log("[[BoshOut]]\n".$payload, 5, $jaxl);
             header('Content-type: application/json');
             echo $payload;
             exit;
         }
         
-        public static function postBind() {
-            global $jaxl;
+        public static function postBind($jaxl) {
             $jaxl->bosh['jid'] = $jaxl->jid;
             $_SESSION['auth'] = true;
             return;
@@ -85,9 +84,7 @@
             self::$buffer[] = $payload;
         }
         
-        public static function setEnv() {
-            global $jaxl;
-            
+        public static function setEnv($jaxl) {
             $jaxl->bosh = array();
             $jaxl->bosh['hold'] = "1";
             $jaxl->bosh['wait'] = "30";
@@ -98,22 +95,19 @@
             $jaxl->bosh['xmlns'] = "http://jabber.org/protocol/httpbind";
             $jaxl->bosh['xmlnsxmpp'] = "urn:xmpp:xbosh";
             $jaxl->bosh['content'] = "text/xml; charset=utf-8";
-            $jaxl->bosh['url'] = "http://".JAXL_HOST_NAME.":".JAXL_BOSH_PORT."/".JAXL_BOSH_SUFFIX."/";
+            $jaxl->bosh['url'] = "http://".$jaxl->host.":".JAXL_BOSH_PORT."/".JAXL_BOSH_SUFFIX."/";
             $jaxl->bosh['headers'] = array("Accept-Encoding: gzip, deflate","Content-Type: text/xml; charset=utf-8");
         }
         
-        public static function loadSession() {
-            global $jaxl;
+        public static function loadSession($jaxl) {
             $jaxl->bosh['rid'] = isset($_SESSION['rid']) ? (string) $_SESSION['rid'] : rand(1000, 10000);
             $jaxl->bosh['sid'] = isset($_SESSION['sid']) ? (string) $_SESSION['sid'] : false;
             $jaxl->lastid = isset($_SESSION['id']) ? $_SESSION['id'] : $jaxl->lastid;
             $jaxl->jid = isset($_SESSION['jid']) ? $_SESSION['jid'] : $jaxl->jid;
-            JAXLog::log("Loading session data\n".json_encode($_SESSION), 5);
+            JAXLog::log("Loading session data\n".json_encode($_SESSION), 5, $jaxl);
         }
         
-        public static function saveSession($xml) {
-            global $jaxl;
-            
+        public static function saveSession($xml, $jaxl) {
             if($_SESSION['auth']) {
                 $_SESSION['rid'] = isset($jaxl->bosh['rid']) ? $jaxl->bosh['rid'] : false;
                 $_SESSION['sid'] = isset($jaxl->bosh['sid']) ? $jaxl->bosh['sid'] : false;
@@ -124,27 +118,25 @@
                 
                 if(self::$sess) { // session already closed?
                     list($body, $xml) = self::unwrapBody($xml);
-                    JAXLog::log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
+                    JAXLog::log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5, $jaxl);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
                 }
                 else {
                     self::$sess = true;
-                    JAXLog::log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
+                    JAXLog::log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5, $jaxl);
                 }
             }
             else {
-                JAXLog::log("[[".$jaxl->action."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
+                JAXLog::log("[[".$jaxl->action."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5, $jaxl);
             }
             
             return $xml;
         }
         
-        public static function wrapBody($xml) {
+        public static function wrapBody($xml, $jaxl) {
             $body = trim($xml);
             
             if(substr($body, 1, 4) != 'body') {
-                global $jaxl;
-                
                 $body = '';
                 $body .= '<body rid="'.++$jaxl->bosh['rid'].'"';
                 $body .= ' sid="'.$jaxl->bosh['sid'].'"';
@@ -158,17 +150,15 @@
             return $body;
         }
         
-        public static function sendBody($xml) {
-            global $jaxl;
-            
-            $xml = JAXLPlugin::execute('jaxl_pre_curl', $xml);
+        public static function sendBody($xml, $jaxl) {
+            $xml = JAXLPlugin::execute('jaxl_pre_curl', $xml, $jaxl);
             if($xml != false) {
-                JAXLog::log("[[XMPPSend]] body\n".$xml, 4);
+                JAXLog::log("[[XMPPSend]] body\n".$xml, 4, $jaxl);
                 
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
                 $payload = $payload['content'];
                 
-                XMPPGet::handler($payload);
+                XMPPGet::handler($payload, $jaxl);
             }
             return $xml;
         }
@@ -186,17 +176,16 @@
             return array($body, $payload);
         }
         
-        public static function preHandler($payload) {   
+        public static function preHandler($payload, $jaxl) {
             if(substr($payload, 1, 4) == "body") {
                 list($body, $payload) = self::unwrapBody($payload);
-                JAXLPlugin::execute('jaxl_get_body', $body);
-                if($payload == '') JAXLPlugin::execute('jaxl_get_empty_body', $body);
+                JAXLPlugin::execute('jaxl_get_body', $body, $jaxl);
+                if($payload == '') JAXLPlugin::execute('jaxl_get_empty_body', $body, $jaxl);
             }
             return $payload;
         }
         
-        public static function processBody($xml) {
-            global $jaxl;   
+        public static function processBody($xml, $jaxl) {
             $arr = $jaxl->xml->xmlize($xml);
             
             switch($jaxl->action) {

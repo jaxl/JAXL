@@ -41,24 +41,23 @@
 
         public static $ns = 'http://jabber.org/protocol/commands';
 
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
         }
         
-        public static function getCommandList($to, $from, $callback) {
+        public static function getCommandList($to, $from, $callback, $jaxl) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#items" node="'.self::$ns.'"/>';
-            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
         }
 
-        public static function getCommandInfo($to, $from, $node, $callback) {
+        public static function getCommandInfo($to, $from, $node, $callback, $jaxl) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#info" node="'.$node.'"/>';
-            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
         }
         
-        public static function executeCommand($to, $from, $node, $callback) {
+        public static function executeCommand($to, $from, $node, $callback, $jaxl) {
             $payload = '<command xmlns="'.self::$ns.'" node="'.$node.'" action="execute"/>';
-            return XMPPSend::iq('set', $payload, $to, $from, $callback);
+            return XMPPSend::iq('set', $payload, $to, $from, $callback, $jaxl);
         }
 
     }

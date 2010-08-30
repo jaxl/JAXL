@@ -43,8 +43,7 @@
         public static $ns = 'http://jabber.org/protocol/chatstates';        
         public static $chatStates = array('composing', 'active', 'inactive', 'paused', 'gone');
         
-        function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
             
             JAXLXml::addTag('message', 'composing', '//message/composing/@xmlns');
@@ -55,7 +54,7 @@
             JAXLPlugin::add('jaxl_get_message', array('JAXL0085', 'getMessage'));
         }
         
-        function getMessage($payloads) {
+        public static function getMessage($payloads, $jaxl) {
             foreach($payloads as $key => $payload) {
                 $payload['chatState'] = false;
                 

@@ -41,8 +41,7 @@
         
         public static $ns = 'http://jabber.org/protocol/caps';
         
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
             
             JAXLXml::addTag('presence', 'cXmlns', '//presence/c/@xmlns');
@@ -65,10 +64,7 @@
         }
         
         public static function getVerificationString($features) {
-            global $jaxl;
-            if(!$features) $features = $jaxl->features;
             asort($features);
-            
             $S = JAXL0030::$category.'/'.JAXL0030::$type.'/'.JAXL0030::$lang.'/'.JAXL0030::$name.'<';
             foreach($features as $feature) $S .= $feature.'<';
             $ver = base64_encode(sha1($S, true));

@@ -41,22 +41,21 @@
         
         public static $ns = "jabber:x:conference";
 
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
         }
 
-        public static function invite($toJid, $fromJid, $roomJid, $roomPass=false, $reason=false) {
+        public static function invite($toJid, $fromJid, $roomJid, $roomPass=false, $reason=false, $jaxl) {
             $child = array();
             $child['payload'] = '';
             
-                        $child['payload'] .= '<x xmlns="'.self::$ns.'"';
+            $child['payload'] .= '<x xmlns="'.self::$ns.'"';
             $child['payload'] .= ' jid="'.$roomJid.'"';
             if($roomPass) $child['payload'] .= ' password="'.$roomPass.'"';
             if($reason) $child['payload'] .= ' reason="'.$reason.'"';
             $child['payload'] .= '/>';
                         
-            XMPPSend::message($toJid, $fromJid, $child, 'chat');
+            XMPPSend::message($toJid, $fromJid, $child, 'chat', false, $jaxl);
         }
         
     }

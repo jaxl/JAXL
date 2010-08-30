@@ -47,9 +47,9 @@
         public static $name = false;
         public static $lang = false;
         
-        public static function init($config=array()) {
-            $config['instance']->features[] = self::$ns['info'];
-            $config['instance']->features[] = self::$ns['item'];
+        public static function init($jaxl, $config=array()) {
+            $jaxl->features[] = self::$ns['info'];
+            $jaxl->features[] = self::$ns['item'];
             
             self::$category = isset($config['category']) ? $config['category'] : 'client';
             self::$type = isset($config['type']) ? $config['type'] : 'bot';
@@ -60,25 +60,23 @@
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
         }
         
-        public static function discoInfo($to, $from, $callback, $node=false) {
+        public static function discoInfo($to, $from, $callback, $node=false, $jaxl) {
             $payload = '<query xmlns="'.self::$ns['info'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
             
-            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
         }
         
-        public static function discoItem($to, $from, $callback, $node) {
+        public static function discoItem($to, $from, $callback, $node=false, $jaxl) {
             $payload = '<query xmlns="'.self::$ns['item'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
             
-            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
         }
 
-        public static function handleIq($payload) {
-            global $jaxl;
-            
+        public static function handleIq($payload, $jaxl) {
             $xmlns = $payload['queryXmlns'];
             if($xmlns == self::$ns['info']) {
                 $xml = '<query xmlns="'.$xmlns.'"';
@@ -94,7 +92,7 @@
                     $xml .= '<feature var="'.$feature.'"/>';
                 $xml .= '</query>';
                 
-                XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], false, $payload['id']);
+                XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], false, $jaxl, $payload['id']);
             }
             else if($xmlns == self::$ns['item']) {
                 

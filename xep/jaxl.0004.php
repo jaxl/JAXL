@@ -41,8 +41,7 @@
 
         public static $ns = 'jabber:x:data';
 
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
         }
 

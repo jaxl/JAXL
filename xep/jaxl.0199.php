@@ -41,24 +41,23 @@
         
         public static $ns = 'urn:xmpp:ping';
         
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
             
             JAXLXml::addTag('iq', 'ping', '//iq/ping/@xmlns');
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0199', 'handleIq'));
         }
         
-        public static function handleIq($payload) {
+        public static function handleIq($payload, $jaxl) {
             if(isset($payload['ping'])) 
-                return XMPPSend::iq('result', false, $payload['from'], $payload['to'], false, $payload['id']);
+                return XMPPSend::iq('result', false, $payload['from'], $payload['to'], false, $jaxl, $payload['id']);
             else
                 return $payload;
         }
         
-        public static function ping($to, $from, $callback) {
+        public static function ping($to, $from, $callback, $jaxl) {
             $payload = "<ping xmlns='urn:xmpp:ping'/>";
-            return XMPPSend::iq('get', $payload, $to, $from, $callback);
+            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
         }
     }
 

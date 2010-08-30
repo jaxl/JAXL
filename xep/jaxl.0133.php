@@ -34,12 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
     
-    // include required XEP's
-    jaxl_require(array(
-        'JAXL0004', // Data Forms
-        'JAXL0050'  // Ad-Hoc Commands
-    ));
-    
     /*
      * XEP-0133: Service Administration
     */
@@ -49,14 +43,19 @@
         public static $node = 'http://jabber.org/protocol/admin';   
         protected static $buffer = array();
         
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
+            // include required XEP's
+            jaxl_require(array(
+                'JAXL0004', // Data Forms
+                'JAXL0050'  // Ad-Hoc Commands
+            ), $jaxl);
+            
             $jaxl->features[] = self::$ns;
         }
         
-        protected static function requestForm($to, $from, $type) {
+        protected static function requestForm($to, $from, $type, $jaxl) {
             $callback = array('JAXL0133', 'handleForm');
-            return JAXL0050::executeCommand($to, $from, self::$node."#".$type, $callback);
+            return JAXL0050::executeCommand($to, $from, self::$node."#".$type, $callback, $jaxl);
         }
         
         public static function handleForm($payload) {
@@ -107,109 +106,97 @@
             }
         }
         
-        protected static function submitForm($to, $from, $payload, $node, $sid) {
+        protected static function submitForm($to, $from, $payload, $node, $sid, $jaxl) {
             $payload = '<command xmlns="http://jabber.org/protocol/commands" node="'.$node.'" sessionid="'.$sid.'">'.$payload.'</command>';
-            return XMPPSend::iq('set', $payload, $to, $from, array('JAXL0133', 'handleForm'));
+            return XMPPSend::iq('set', $payload, $to, $from, array('JAXL0133', 'handleForm'), $jaxl);
         }
         
-        public static function addUser($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'add-user');
+        public static function addUser($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'add-user', $jaxl);
             self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-            
             unset($user); unset($domain); unset($callback);
             return true;
         }
         
-        public static function deleteUser($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'delete-user');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function deleteUser($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'delete-user', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function disableUser($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'disable-user');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function disableUser($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'disable-user', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function reEnableUser($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'reenable-user');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function reEnableUser($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'reenable-user', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function endUserSession($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'end-user-session');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function endUserSession($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'end-user-session', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
         
-        public static function getUserPassword($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'get-user-password');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function getUserPassword($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'get-user-password', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
         
-        public static function changeUserPassword($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'change-user-password');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-            
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function changeUserPassword($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'change-user-password', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function getUserRoster($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'get-user-roster');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function getUserRoster($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'get-user-roster', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function getUserLastLoginTime($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'get-user-lastlogin');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function getUserLastLoginTime($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'get-user-lastlogin', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function getUserStatistics($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'user-stats');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function getUserStatistics($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'user-stats', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function editBlacklist($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'edit-blacklist');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function editBlacklist($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'edit-blacklist', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function editWhitelist($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'edit-whitelist');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function editWhitelist($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'edit-whitelist', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
         // 1 step
-        public static function getUserCount($user, $domain, $callback, $type) {
+        public static function getUserCount($user, $domain, $callback, $type, $jaxl) {
             switch($type) {
                 case 'registered':
                     $type = 'get-registered-users-num';
@@ -230,113 +217,102 @@
                     return false;
             }
             
-            $id = self::requestForm($domain, false, $type);
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+            $id = self::requestForm($domain, false, $type, $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function getUserList($user, $domain, $callback, $type) {
+        public static function getUserList($user, $domain, $callback, $type, $jaxl) {
             switch($type) {
                 case 'registered':
                     $type = 'get-registered-users-list';
                     break;
                 case 'disabled':
                     $type = 'get-disabled-users-list';
-                                        break;
+                    break;
                 case 'online':
-                                        $type = 'get-online-users-list';
-                                        break;
-                                case 'active':
-                                        $type = 'get-active-users';
-                                        break;
-                                case 'idle':
-                                        $type = 'get-idle-users';
-                                        break;
-                                default:
-                                        return false;
+                    $type = 'get-online-users-list';
+                    break;
+                case 'active':
+                    $type = 'get-active-users';
+                    break;
+                case 'idle':
+                    $type = 'get-idle-users';
+                    break;
+                default:
+                    return false;
             }
             
-            $id = self::requestForm($domain, false, $type);
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+            $id = self::requestForm($domain, false, $type, $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
         
-        public static function sendAnnouncementToActiveUsers($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'announce');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function sendAnnouncementToActiveUsers($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'announce', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function setMOTD($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'set-motd');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function setMOTD($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'set-motd', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function editMOTD($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'edit-motd');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function editMOTD($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'edit-motd', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
         // 1 step
-        public static function deleteMOTD($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'delete-motd');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function deleteMOTD($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'delete-motd', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function setWelcomeMessage($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'set-welcome');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function setWelcomeMessage($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'set-welcome', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
         // 1 step
-        public static function deleteWelcomeMessage($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'delete-welcome');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function deleteWelcomeMessage($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'delete-welcome', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function editAdminList($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'edit-admin');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function editAdminList($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'edit-admin', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function restartService($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'restart');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function restartService($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'restart', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
-        public static function shutdownService($user, $domain, $callback) {
-            $id = self::requestForm($domain, false, 'shutdown');
-                        self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
-
-                        unset($user); unset($domain); unset($callback);
-                        return true;
+        public static function shutdownService($user, $domain, $callback, $jaxl) {
+            $id = self::requestForm($domain, false, 'shutdown', $jaxl);
+            self::$buffer[$id] = array('user'=>$user, 'callback'=>$callback);
+            unset($user); unset($domain); unset($callback);
+            return true;
         }
 
     }

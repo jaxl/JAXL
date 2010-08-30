@@ -45,22 +45,22 @@
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
         }
         
-        public static function startStream() {
-            $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.JAXL_COMPONENT_HOST.'">';
-            XMPPSend::xml($xml);
+        public static function startStream($payload, $jaxl) {
+            $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.$jaxl->component.'">';
+            XMPPSend::xml($xml, $jaxl);
         }
         
-        public static function handshake($id) {
+        public static function handshake($id, $jaxl) {
             $pass = JAXLPlugin::execute('jaxl_pre_handshake');
             $hash = strtolower(sha1($id.$pass));
             $xml = '<handshake>'.$hash.'</handshake>';
-            XMPPSend::xml($xml);
+            XMPPSend::xml($xml, $jaxl);
         }
 
-        public static function preHandler($xml) {
+        public static function preHandler($xml, $jaxl) {
             if($xml == '<handshake/>') {
                 $xml = '';
-                JAXLPlugin::execute('jaxl_post_handshake');
+                JAXLPlugin::execute('jaxl_post_handshake', false, $jaxl);
             }
             return $xml;
         }

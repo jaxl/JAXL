@@ -41,7 +41,7 @@
         
         public static $ns = 'urn:xmpp:delay';
                 
-        public static function init() {
+        public static function init($jaxl) {
             // add message specific tag maps
             JAXLXml::addTag('message', 'offline', '//message/delay/@xmlns');
             JAXLXml::addTag('message', 'delayFrom', '//message/delay/@from');

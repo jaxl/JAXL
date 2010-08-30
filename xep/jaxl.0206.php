@@ -33,9 +33,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-    // Requires Bosh Session Manager
-    jaxl_require('JAXL0124');
     
     /*
      * XEP-0206: XMPP over BOSH
@@ -43,16 +40,18 @@
     */
     class JAXL0206 {
         
-        public static function init() {
-            global $jaxl;
+        public static function init($jaxl) {
+            // Requires Bosh Session Manager
+            jaxl_require('JAXL0124', $jaxl);    
             $jaxl->action = $_REQUEST['jaxl'];
-            JAXLog::log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5);
-            if($jaxl->action == 'jaxl') XMPPSend::xml(urldecode($_REQUEST['xml']));
+            JAXLog::log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5, $jaxl);
         }
         
-        public static function startStream($host, $port) {
-            global $jaxl;
-            
+        public static function jaxl($xml, $jaxl) { 
+            XMPPSend::xml(urldecode($xml), $jaxl);
+        }
+
+        public static function startStream($host, $port, $jaxl) {
             $xml = "";
             $xml .= "<body";
             $xml .= " content='".$jaxl->bosh['content']."'";
@@ -70,12 +69,10 @@
             $xml .= " xmpp:version='".$jaxl->bosh['xmppversion']."'/>";
             
             $_SESSION['auth'] = false;
-            XMPPSend::xml($xml);
+            XMPPSend::xml($xml, $jaxl);
         }
         
-        public static function endStream() {
-            global $jaxl;
-            
+        public static function endStream($jaxl) {
             $xml = "";
             $xml .= "<body";
             $xml .= " rid='".++$jaxl->bosh['rid']."'";
@@ -86,36 +83,32 @@
             $xml .= "</body>";
             
             $_SESSION['auth'] = false;
-            XMPPSend::xml($xml);
+            XMPPSend::xml($xml, $jaxl);
         }
         
-        public static function restartStream() {
-            global $jaxl;
-            
+        public static function restartStream($jaxl) {
             $xml = "";
             $xml .= "<body";
             $xml .= " rid='".++$jaxl->bosh['rid']."'";
             $xml .= " sid='".$jaxl->bosh['sid']."'";
             $xml .= " xmlns='".$jaxl->bosh['xmlns']."'";
             
-            $xml .= " to='".JAXL_HOST_NAME."'";
+            $xml .= " to='".$jaxl->host."'";
             $xml .= " xmpp:restart='true'";
             $xml .= " xmlns:xmpp='".$jaxl->bosh['xmlnsxmpp']."'/>";
             
             $_SESSION['auth'] = false;
-            XMPPSend::xml($xml);
+            XMPPSend::xml($xml, $jaxl);
         }
         
-        public static function ping() {
-            global $jaxl;
-            
+        public static function ping($jaxl) {
             $xml = '';
             $xml .= '<body rid="'.++$jaxl->bosh['rid'].'"';
             $xml .= ' sid="'.$jaxl->bosh['sid'].'"';
             $xml .= ' xmlns="http://jabber.org/protocol/httpbind"/>';
             
             $_SESSION['auth'] = true;
-            XMPPSend::xml($xml);
+            XMPPSend::xml($xml, $jaxl);
         }
 
         public static function out($payload) {
