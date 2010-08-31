@@ -176,6 +176,14 @@
             $child['body'] = $message;
             return XMPPSend::message($to, $from, $child, $type, $this);
         }
+        
+        function sendMessages($to, $from, $child, $type) {
+            return XMPPSend::message($to, $from, $child, $type, $this);
+        }
+
+        function sendPresence($to, $from, $child, $type) {
+           XMPPSend::presence($to, $from, $child, $type, $this); 
+        }
 
         function log($log, $level) {
             JAXLog::log($log, $level, $this);
