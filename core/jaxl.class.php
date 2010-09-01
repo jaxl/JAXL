@@ -58,7 +58,7 @@
         var $features = array();
         
         function __construct($config=array()) {
-            $this->configure();
+            $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
         }
@@ -67,7 +67,7 @@
             $this->pid = getmypid();
             $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";         
             
-            if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled()) {
+            if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $config['sigh'] != FALSE) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
                 JAXLog::log("Registering shutdown for SIGH Terms ...", 0, $this);
