@@ -156,7 +156,8 @@
             
             // trim read data
             $payload = trim($payload);
-            if($payload != '') XMPPGet::handler($payload, $this); 
+            $payload = JAXLPlugin::execute('jaxl_get_xml', $payload, $this);
+            if($payload != '') XMPPGet::handler($payload, $this);
         }
         
         function getId() {
