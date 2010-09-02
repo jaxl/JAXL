@@ -128,9 +128,9 @@
             return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'), $this);
         }
         
-        function getXML() {
+        function getXML($nap=TRUE) {
             // sleep between two reads
-            sleep(JAXL_XMPP_GET_SLEEP);
+            if($nap) sleep(JAXL_XMPP_GET_SLEEP);
             
             // initialize empty lines read
             $emptyLine = 0;
