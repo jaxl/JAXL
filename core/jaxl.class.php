@@ -200,7 +200,7 @@
                 $xep = substr($xep, 4, 4);
                 if(is_numeric($xep)
                 && class_exists('JAXL'.$xep)
-                ) { call_user_func_array(array('JAXL'.$xep, $method), $param); }
+                ) { return call_user_func_array(array('JAXL'.$xep, $method), $param); }
             }
         }
         
