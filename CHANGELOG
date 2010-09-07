@@ -1,3 +1,14 @@
+version 2.1.1
+-------------
+- XMPPSend::xml method moves inside XMPP::sendXML (call using ->sendXML from within application code), as a part of library core cleanup
+- Updated jaxl class to return back payload from called xep methods
+- XMPP base method getXML can be instructed not to take a nap between stream reads
+- Added jaxl_get_xml hook for taking control over incoming xml payload from xmpp stream
+- Added support for disabling sig term registration, required by applications who already handle this in their core code
+- Added capability of sending multiple message/presence stanza in one go inside jaxl base class
+- Fixed typo in MUC Direct Invitation xep invite method
+- getHandler should have accepted core instance by reference, fixed now. BOSH MUC Chat sample application header is now more appropriate
+
 version 2.1.0
 -------------
 - First checkin of bosh MUC sample application 
