@@ -128,6 +128,10 @@
             return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'), $this);
         }
         
+        function getId() {
+            return ++$this->lastid;
+        }
+        
         function getXML($nap=TRUE) {
             // sleep between two reads
             if($nap) sleep(JAXL_XMPP_GET_SLEEP);
@@ -160,10 +164,29 @@
             if($payload != '') XMPPGet::handler($payload, $this);
         }
         
-        function getId() {
-            return ++$this->lastid;
+        function sendXML($xml) {
+            $xml = JAXLPlugin::execute('jaxl_send_xml', $xml, $this);
+            
+            if($this->mode == "cgi") {
+                JAXLPlugin::execute('jaxl_send_body', $xml, $this);
+            }
+            else {
+                if($this->lastSendTime && (JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE))
+                    sleep(JAXL_XMPP_SEND_SLEEP);
+                $this->lastSendTime = JAXLUtil::getTime();
+                
+                if($this->stream) {
+                    if(($ret = fwrite($this->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4, $this);
+                    else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1, $this);  
+                    return $ret;
+                }
+                else {
+                    JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1, $this);
+                    return false;
+                }
+            }    
         }
-        
+
     }
 
 ?>

@@ -47,14 +47,14 @@
         
         public static function startStream($payload, $jaxl) {
             $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.$jaxl->component.'">';
-            XMPPSend::xml($xml, $jaxl);
+            $jaxl->sendXML($xml);
         }
         
         public static function handshake($id, $jaxl) {
             $pass = JAXLPlugin::execute('jaxl_pre_handshake');
             $hash = strtolower(sha1($id.$pass));
             $xml = '<handshake>'.$hash.'</handshake>';
-            XMPPSend::xml($xml, $jaxl);
+            $jaxl->sendXML($xml);
         }
 
         public static function preHandler($xml, $jaxl) {

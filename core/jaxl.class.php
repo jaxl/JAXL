@@ -56,13 +56,27 @@
         var $action = false;
         var $authType = false;
         var $features = array();
-        
+       
+        /*
+         * $config = array(
+         *  'user'=>'', // connecting user name
+         *  'pass'=>'', // connecting user pass
+         *  'host'=>'', // destination hostname
+         *  'domain'=>'', // destination domain
+         *  'resource'=>'', // connecting user resource identifier
+         *  'streamTimeout'=>'', // connecting stream timeout
+         *  'component'=>'' // binding vhost for connecting component
+         * );
+        */
         function __construct($config=array()) {
             $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
         }
-        
+       
+        /*
+         * Configure Jaxl instance to run across various systems
+        */
         function configure() {
             $this->pid = getmypid();
             $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";         
@@ -96,7 +110,11 @@
                 'lang'=>'en'
             ));
         }
-        
+       
+        /************************************/
+        /*** User space available methods ***/
+        /************************************/
+
         function shutdown($signal) {
             JAXLog::log("Jaxl Shutting down ...", 0, $this);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);

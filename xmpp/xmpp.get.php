@@ -187,7 +187,7 @@
             if($arr['xmlns'] == "urn:ietf:params:xml:ns:xmpp-sasl") {
                 if($jaxl->secondChallenge) $xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>';
                 else $xml = XMPPAuth::getResponse($jaxl->authType, $arr['challenge'], $jaxl);
-                XMPPSend::xml($xml, $jaxl);
+                $jaxl->sendXML($xml);
             }
         }
         
