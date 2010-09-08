@@ -79,6 +79,7 @@
         var $obuffer = '';
         var $clock = false;
         var $clocked = false;
+        var $rateLimit = true;
         var $lastSendTime = false;
         
         function __construct($config) {
@@ -94,6 +95,7 @@
             $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : JAXL_STREAM_TIMEOUT;
             $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
             $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
+            $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
         }
         
         function connect() {
@@ -168,7 +170,7 @@
             $now = time();
             $this->clock += $now-$this->clocked;
             $this->clocked = $now;
-            
+
             // trim read data
             $payload = trim($payload);
             $payload = JAXLPlugin::execute('jaxl_get_xml', $payload, $this);
@@ -182,7 +184,8 @@
                 JAXLPlugin::execute('jaxl_send_body', $xml, $this);
             }
             else {
-                if($this->lastSendTime
+                if($this->rateLimit
+                && $this->lastSendTime
                 && JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE
                 ) { $this->obuffer .= $xml; }
                 else {
