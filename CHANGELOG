@@ -1,5 +1,24 @@
 version 2.1.1
 -------------
+- Added more options for JAXL constructor e.g.
+  boshHost, boshPort, boshSuffix, pidPath, logPath, logLevel, dumpStat, dumpTime
+  These param overwrites value specified inside jaxl.ini file
+  Also JAXL core will now periodically dump instance statistics 
+- Added an option in JAXL constructor to disable inbuild core rate limiter 
+- Added support when applications need to connect with external bosh endpoints
+  Bosh application code requires update for ->JAXL0206('startStream') method 
+- XMPPGet::handler replaces ->handler inside XEP-0124
+- JAXLCron job now also passes connected  instance to callback cron methods 
+- Updated base XMPP class now maintains a clock, updated sendXML method to respect library level rate limiting
+- Base JAXL class now includes JAXLCron class for periodically dumping connected bot memory/usage stats
+- First version of JAXLCron class for adding periodic jobs in the background
+- XMPP payload handler moves from XMPPGet to base XMPP class, packets are then routed to XMPPGet class for further processing
+- Updated xep-0124 to use instance bosh parameters instead of values defined inside jaxl.ini 
+- Provision to specify custom JAXL_BOSH_HOST inside jaxl.ini 
+- Instead of global logLevel and logPath, logger class now respects indivisual instance log settings
+  Helpful in multiple instance applications 
+- Updated base JAXL class to accept various other configuration parameters inside constructor
+  These param overwrites values defined inside jaxl.ini 
 - XMPPSend::xml method moves inside XMPP::sendXML (call using ->sendXML from within application code), as a part of library core cleanup
 - Updated jaxl class to return back payload from called xep methods
 - XMPP base method getXML can be instructed not to take a nap between stream reads
