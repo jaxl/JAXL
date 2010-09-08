@@ -161,7 +161,7 @@
             // trim read data
             $payload = trim($payload);
             $payload = JAXLPlugin::execute('jaxl_get_xml', $payload, $this);
-            if($payload != '') XMPPGet::handler($payload, $this);
+            if($payload != '') $this->handler($payload);
         }
         
         function sendXML($xml) {
@@ -185,6 +185,72 @@
                     return false;
                 }
             }    
+        }
+        
+        function handler($payload) {
+            JAXLog::log("[[XMPPGet]] \n".$payload, 4, $this);
+            
+            $buffer = array();
+            $payload = JAXLPlugin::execute('jaxl_pre_handler', $payload, $this);
+            
+            $xmls = JAXLUtil::splitXML($payload);
+            $pktCnt = count($xmls);
+            
+            foreach($xmls as $pktNo => $xml) {  
+                if($pktNo == $pktCnt-1) {
+                    if(substr($xml, -1, 1) != '>') {
+                        $this->buffer = $xml;
+                        break;
+                    }
+                }
+                
+                if(substr($xml, 0, 7) == '<stream') 
+                    $arr = $this->xml->xmlize($xml);
+                else 
+                    $arr = JAXLXml::parse($xml);
+                
+                switch(true) {
+                    case isset($arr['stream:stream']):
+                        XMPPGet::streamStream($arr['stream:stream'], $this);
+                        break;
+                    case isset($arr['stream:features']):
+                        XMPPGet::streamFeatures($arr['stream:features'], $this);
+                        break;
+                    case isset($arr['stream:error']):
+                        XMPPGet::streamError($arr['stream:error'], $this);
+                        break;
+                    case isset($arr['failure']);
+                        XMPPGet::failure($arr['failure'], $this);
+                        break;
+                    case isset($arr['proceed']):
+                        XMPPGet::proceed($arr['proceed'], $this);
+                        break;
+                    case isset($arr['challenge']):
+                        XMPPGet::challenge($arr['challenge'], $this);
+                        break;
+                    case isset($arr['success']):
+                        XMPPGet::success($arr['success'], $this);
+                        break;
+                    case isset($arr['presence']):
+                        $buffer['presence'][] = $arr['presence'];
+                        break;
+                    case isset($arr['message']):
+                        $buffer['message'][] = $arr['message'];
+                        break;
+                    case isset($arr['iq']):
+                        XMPPGet::iq($arr['iq'], $this);
+                        break;
+                    default:
+                        print "Unrecognized payload received from jabber server...";
+                        break;
+                }
+            }
+            
+            if(isset($buffer['presence'])) XMPPGet::presence($buffer['presence'], $this);
+            if(isset($buffer['message'])) XMPPGet::message($buffer['message'], $this);
+            unset($buffer);
+            
+            JAXLPlugin::execute('jaxl_post_handler', $payload, $this);
         }
 
     }
