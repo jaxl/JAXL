@@ -51,21 +51,36 @@
     */
     class JAXL extends XMPP {
         
-        var $pid = false;   
+        var $pid = false;
         var $mode = false;
         var $action = false;
         var $authType = false;
+        var $sigh = true;
+        var $logLevel = 1;
+        var $logPath = '/var/log/jaxl.log';
+        var $pidPath = '/var/run/jaxl.pid';
         var $features = array();
        
         /*
+         * Constructor accepts following configuration parameters
+         * Passed param will overwrite corresponding jaxl.ini values
+         *
          * $config = array(
-         *  'user'=>'', // connecting user name
-         *  'pass'=>'', // connecting user pass
-         *  'host'=>'', // destination hostname
-         *  'domain'=>'', // destination domain
+         *  'user'=>'', // JAXL_USER_NAME
+         *  'pass'=>'', // JAXL_USER_PASS
+         *  'host'=>'', // JAXL_HOST_NAME
+         *  'port'=>'', // JAXL_HOST_PORT
+         *  'domain'=>'', // JAXL_HOST_DOMAIN
+         *  'component'=>'', // JAXL_COMPONENT_HOST
+         *  'logPath'=>'', // JAXL_LOG_PATH
+         *  'logLevel'=>'', // JAXL_LOG_LEVEL
+         *  'pidPath'=>'', // JAXL_PID_PATH
+         *  'boshHost'=>'', // JAXL_BOSH_HOST
+         *  'boshPort'=>'', // JAXL_BOSH_PORT
+         *  'boshSuffix'=>'', // JAXL_BOSH_SUFFIX
          *  'resource'=>'', // connecting user resource identifier
          *  'streamTimeout'=>'', // connecting stream timeout
-         *  'component'=>'' // binding vhost for connecting component
+         *  'sigh'=>'' // boolean to forcible enable/disable sigh term
          * );
         */
         function __construct($config=array()) {
@@ -75,13 +90,22 @@
         }
        
         /*
-         * Configure Jaxl instance to run across various systems
+         * Configures Jaxl instance to run across various systems
         */
-        function configure() {
+        protected function configure($config) {
             $this->pid = getmypid();
-            $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";         
+            $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";
             
-            if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $config['sigh'] != FALSE) {
+            /* Parse configuration parameter */
+            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
+            $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
+            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : JAXL_PID_PATH;
+            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
+            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
+            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
+            $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
+            
+            if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
                 JAXLog::log("Registering shutdown for SIGH Terms ...", 0, $this);
@@ -90,16 +114,14 @@
             if(JAXLUtil::sslEnabled()) {
                 JAXLog::log("Openssl enabled ...", 0, $this);
             }
-            
+              
             if($this->mode == "cli") {
-                if(!function_exists('fsockopen')) 
-                    die("Jaxl requires fsockopen method ...");  
-                file_put_contents(JAXL_PID_PATH, $this->pid);
+                if(!function_exists('fsockopen')) die("Jaxl requires fsockopen method ...");  
+                file_put_contents($this->pidPath, $this->pid);
             }
             
             if($this->mode == "cgi") {
-                if(!function_exists('curl_init'))
-                    die("Jaxl requires curl_init method ...");
+                if(!function_exists('curl_init')) die("Jaxl requires curl_init method ...");
             }
 
             // include service discovery XEP, recommended for every IM client
@@ -129,11 +151,10 @@
         
         function setStatus($status=false, $show=false, $priority=false, $caps=false) {
             $child = array();
-            $child['status'] = ($status === false ? 'Online using Jaxl (Jabber XMPP Library in PHP)' : $status);
+            $child['status'] = ($status === false ? 'Online using Jaxl library http://code.google.com/p/jaxl' : $status);
             $child['show'] = ($show === false ? 'chat' : $show);
             $child['priority'] = ($priority === false ? 1 : $priority);
             if($caps) $child['payload'] = JAXL0115::getCaps($this->features);
-            
             return XMPPSend::presence(false, false, $child, false, $this);
         }
         
