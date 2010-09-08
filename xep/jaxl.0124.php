@@ -158,7 +158,7 @@
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
                 $payload = $payload['content'];
                 
-                XMPPGet::handler($payload, $jaxl);
+                $jaxl->handler($payload);
             }
             return $xml;
         }
