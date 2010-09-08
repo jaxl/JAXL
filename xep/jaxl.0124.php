@@ -95,7 +95,7 @@
             $jaxl->bosh['xmlns'] = "http://jabber.org/protocol/httpbind";
             $jaxl->bosh['xmlnsxmpp'] = "urn:xmpp:xbosh";
             $jaxl->bosh['content'] = "text/xml; charset=utf-8";
-            $jaxl->bosh['url'] = "http://".$jaxl->host.":".JAXL_BOSH_PORT."/".JAXL_BOSH_SUFFIX."/";
+            $jaxl->bosh['url'] = "http://".$jaxl->boshHost.":".$jaxl->boshPort."/".$jaxl->boshSuffix."/";
             $jaxl->bosh['headers'] = array("Accept-Encoding: gzip, deflate","Content-Type: text/xml; charset=utf-8");
         }
         
