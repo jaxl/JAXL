@@ -40,13 +40,15 @@
             $fh = null;
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
             
-            if($log != '' && $level == 0) {
+            // prints to console
+            if($level == 0) {
                 if($jaxl->mode == "cli") {
                     print $log."\n";
-                }   
+                }
             }
-            else if($log != '' && ($level <= JAXL_LOG_LEVEL)) {
-                $fh = fopen(JAXL_LOG_PATH, "a");
+            // print to log file
+            else if($level <= $jaxl->logLevel) {
+                $fh = fopen($jaxl->logPath, "a");
                 fwrite($fh, $log."\n\n");
                 fclose($fh);
             }
