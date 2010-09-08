@@ -42,6 +42,7 @@
         'JAXLog',
         'JAXLUtil',
         'JAXLPlugin',
+        'JAXLCron',
         'XML',
         'XMPP',
     ));
@@ -60,7 +61,7 @@
         var $logPath = '/var/log/jaxl.log';
         var $pidPath = '/var/run/jaxl.pid';
         var $features = array();
-       
+        
         /*
          * Constructor accepts following configuration parameters
          * Passed param will overwrite corresponding jaxl.ini values
@@ -87,8 +88,11 @@
             $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
+
+            JAXLCron::init();
+            JAXLCron::add(array($this, 'dump'), 300);
         }
-       
+
         /*
          * Configures Jaxl instance to run across various systems
         */
@@ -131,6 +135,11 @@
                 'name'=>JAXL_NAME,
                 'lang'=>'en'
             ));
+        }
+       
+        // periodically dumps jaxl instance usage stats
+        function dump() {
+            $this->log("Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb, peak: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb", 0);
         }
        
         /************************************/
