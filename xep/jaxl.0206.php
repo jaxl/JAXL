@@ -51,7 +51,7 @@
             $jaxl->sendXML(urlencode($xml));
         }
 
-        public static function startStream($host, $port, $jaxl) {
+        public static function startStream($host, $port, $domain, $jaxl) {
             $xml = "";
             $xml .= "<body";
             $xml .= " content='".$jaxl->bosh['content']."'";
@@ -64,7 +64,7 @@
             $xml .= " secure='".$jaxl->bosh['secure']."'";
             $xml .= " xmlns:xmpp='".$jaxl->bosh['xmlnsxmpp']."'";
             
-            $xml .= " to='".$host."'";
+            $xml .= " to='".$domain."'";
             $xml .= " route='xmpp:".$host.":".$port."'";
             $xml .= " xmpp:version='".$jaxl->bosh['xmppversion']."'/>";
             
