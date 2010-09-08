@@ -52,14 +52,20 @@
     */
     class JAXL extends XMPP {
         
+        var $logLevel = 1;
+        var $logPath = '/var/log/jaxl.log';
+        var $pidPath = '/var/run/jaxl.pid';
+        var $boshHost = false;
+        var $boshPort = false;
+        var $boshSuffix = false;
+        var $sigh = true;
+        var $dumpStat = true;
+        var $dumpTime = 300;
+
         var $pid = false;
         var $mode = false;
         var $action = false;
         var $authType = false;
-        var $sigh = true;
-        var $logLevel = 1;
-        var $logPath = '/var/log/jaxl.log';
-        var $pidPath = '/var/run/jaxl.pid';
         var $features = array();
         
         /*
@@ -81,25 +87,12 @@
          *  'boshSuffix'=>'', // JAXL_BOSH_SUFFIX
          *  'resource'=>'', // connecting user resource identifier
          *  'streamTimeout'=>'', // connecting stream timeout
-         *  'sigh'=>'' // boolean to forcible enable/disable sigh term
+         *  'sigh'=>'', // boolean to forcible enable/disable sigh term
+         *  'dumpStat'=>'', // boolean to enable periodic stats dump
+         *  'dumpTime'=>'', // periodic interval in sec for stats dump
          * );
         */
         function __construct($config=array()) {
-            $this->configure($config);
-            parent::__construct($config);
-            $this->xml = new XML();
-
-            JAXLCron::init();
-            JAXLCron::add(array($this, 'dump'), 300);
-        }
-
-        /*
-         * Configures Jaxl instance to run across various systems
-        */
-        protected function configure($config) {
-            $this->pid = getmypid();
-            $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";
-            
             /* Parse configuration parameter */
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
             $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
@@ -108,6 +101,23 @@
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
+            $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : true;
+            $this->dumpTime = isset($config['dumpTime']) ? $config['dumpTime'] : 300;
+            
+            $this->configure($config);
+            parent::__construct($config);
+            $this->xml = new XML();
+            
+            JAXLCron::init();
+            if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpTime);
+        }
+
+        /*
+         * Configures Jaxl instance to run across various systems
+        */
+        protected function configure($config) {
+            $this->pid = getmypid();
+            $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";
             
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
@@ -138,7 +148,7 @@
         }
        
         // periodically dumps jaxl instance usage stats
-        function dump() {
+        function dumpStat() {
             $this->log("Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb, peak: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb", 0);
         }
        
