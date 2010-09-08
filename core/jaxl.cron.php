@@ -53,7 +53,7 @@
                     || $jaxl->clocked - $job['lastCall'] > $interval // if cron interval has already passed
                     ) {
                         self::$cron[$interval][$key]['lastCall'] = $jaxl->clocked;
-                        call_user_func($job['callback']);
+                        call_user_func($job['callback'], $jaxl);
                     }
                 }
             }
