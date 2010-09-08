@@ -76,9 +76,15 @@
         
         /* XMPP working parameter */
         var $buffer = '';
+        var $obuffer = '';
+        var $clock = false;
+        var $clocked = false;
         var $lastSendTime = false;
         
         function __construct($config) {
+            $this->clock = 0;
+            $this->clocked = time();
+            
             /* Parse configuration parameter */
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
@@ -158,6 +164,11 @@
                 }
             }
             
+            // update clock
+            $now = time();
+            $this->clock += $now-$this->clocked;
+            $this->clocked = $now;
+            
             // trim read data
             $payload = trim($payload);
             $payload = JAXLPlugin::execute('jaxl_get_xml', $payload, $this);
@@ -171,18 +182,23 @@
                 JAXLPlugin::execute('jaxl_send_body', $xml, $this);
             }
             else {
-                if($this->lastSendTime && (JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE))
-                    sleep(JAXL_XMPP_SEND_SLEEP);
-                $this->lastSendTime = JAXLUtil::getTime();
-                
-                if($this->stream) {
-                    if(($ret = fwrite($this->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4, $this);
-                    else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1, $this);  
-                    return $ret;
-                }
+                if($this->lastSendTime
+                && JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE
+                ) { $this->obuffer .= $xml; }
                 else {
-                    JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1, $this);
-                    return false;
+                    $this->lastSendTime = JAXLUtil::getTime();
+                    $xml = $this->obuffer.$xml;
+                    $this->obuffer = '';
+
+                    if($this->stream) {
+                        if(($ret = fwrite($this->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4, $this);
+                        else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1, $this);  
+                        return $ret;
+                    }
+                    else {
+                        JAXLog::log("Jaxl stream not connected to jabber host, unable to send xmpp payload...", 1, $this);
+                        return false;
+                    }
                 }
             }    
         }
