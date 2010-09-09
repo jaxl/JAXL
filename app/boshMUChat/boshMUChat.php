@@ -125,7 +125,7 @@
             case 'connect':
                 $jaxl->user = $_POST['user'];
                 $jaxl->pass = $_POST['pass'];
-                $jaxl->JAXL0206('startStream', $jaxl->host, $jaxl->port);
+                $jaxl->JAXL0206('startStream', $jaxl->host, $jaxl->port, $jaxl->domain);
                 break;
             case 'disconnect':
                 $jaxl->JAXL0206('endStream');
