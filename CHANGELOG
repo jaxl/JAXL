@@ -1,5 +1,7 @@
 version 2.1.1
 -------------
+- JAXL instance logs can be rotated every x seconds (logRotate config parameter) now
+- Removed config param dumpTime, instead use dumpStat to specify stats dump period
 - Base XMPP class now auto-flush output buffers filled because of library level rate limiter
 - Added more options for JAXL constructor e.g.
   boshHost, boshPort, boshSuffix, pidPath, logPath, logLevel, dumpStat, dumpTime
