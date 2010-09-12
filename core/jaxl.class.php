@@ -53,14 +53,14 @@
     class JAXL extends XMPP {
         
         var $logLevel = 1;
+        var $logRotate = false;
         var $logPath = '/var/log/jaxl.log';
         var $pidPath = '/var/run/jaxl.pid';
         var $boshHost = false;
         var $boshPort = false;
         var $boshSuffix = false;
         var $sigh = true;
-        var $dumpStat = true;
-        var $dumpTime = 300;
+        var $dumpStat = 300;
 
         var $pid = false;
         var $mode = false;
@@ -80,6 +80,7 @@
          *  'domain'=>'', // JAXL_HOST_DOMAIN
          *  'component'=>'', // JAXL_COMPONENT_HOST
          *  'logPath'=>'', // JAXL_LOG_PATH
+         *  'logRotate'=>'', // false or second in which to rotate log
          *  'logLevel'=>'', // JAXL_LOG_LEVEL
          *  'pidPath'=>'', // JAXL_PID_PATH
          *  'boshHost'=>'', // JAXL_BOSH_HOST
@@ -88,28 +89,28 @@
          *  'resource'=>'', // connecting user resource identifier
          *  'streamTimeout'=>'', // connecting stream timeout
          *  'sigh'=>'', // boolean to forcible enable/disable sigh term
-         *  'dumpStat'=>'', // boolean to enable periodic stats dump
-         *  'dumpTime'=>'', // periodic interval in sec for stats dump
+         *  'dumpStat'=>'', // false or numeric specifying second after which to dump stat
          * );
         */
         function __construct($config=array()) {
             /* Parse configuration parameter */
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
             $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
+            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : false;
             $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : JAXL_PID_PATH;
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
-            $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : true;
-            $this->dumpTime = isset($config['dumpTime']) ? $config['dumpTime'] : 300;
+            $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
             
             $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
             
             JAXLCron::init();
-            if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpTime);
+            if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
+            if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
         }
 
         /*

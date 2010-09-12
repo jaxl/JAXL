@@ -36,27 +36,38 @@
     
     class JAXLog {
         
+        private static function writeLog($logPath, $log) {
+            $fh = fopen($logPath, "a");
+            fwrite($fh, $log."\n\n");
+            fclose($fh);
+        }
+
         public static function log($log, $level=1, $jaxl=false) {
-            $fh = null;
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
             
-            // prints to console
             if($level == 0) {
-                if($jaxl->mode == "cli") {
+                if($jaxl->mode == "cli")
                     print $log."\n";
-                }
             }
-            // print to log file
-            else if($level <= $jaxl->logLevel) {
-                $fh = fopen($jaxl->logPath, "a");
-                fwrite($fh, $log."\n\n");
-                fclose($fh);
+            else {
+                if($level <= $jaxl->logLevel)
+                    self::writeLog($jaxl->logPath, $log);
             }
-            
-            unset($log); unset($level); unset($fh);
+
             return true;
         }
-        
+
+        public static function logRotate($jaxl) {
+            if(copy($jaxl->logPath, $jaxl->logPath.'.'.date('Y-m-d-H-i-s')))
+                if($jaxl->mode == 'cli')
+                    print '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - Successfully rotated log file...\n";
+            
+            $fh = fopen($jaxl->logPath, "r+");
+            ftruncate($fh, 1);
+            rewind($fh);
+            fclose($fh);
+        }
+
     }
     
 ?>
