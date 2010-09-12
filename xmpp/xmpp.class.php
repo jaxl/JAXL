@@ -178,7 +178,6 @@
             
             // flush obuffer
             if($this->obuffer != '') {
-                $this->lastSendTime = JAXLUtil::getTime();
                 $payload = $this->obuffer;
                 $this->obuffer = '';
                 $this->_sendXML($payload);
@@ -197,7 +196,6 @@
                 && JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE
                 ) { $this->obuffer .= $xml; }
                 else {
-                    $this->lastSendTime = JAXLUtil::getTime();
                     $xml = $this->obuffer.$xml;
                     $this->obuffer = '';
                     return $this->_sendXML($xml);
@@ -207,6 +205,7 @@
 
         function _sendXML($xml) {
             if($this->stream) {
+                $this->lastSendTime = JAXLUtil::getTime();
                 if(($ret = fwrite($this->stream, $xml)) !== false) JAXLog::log("[[XMPPSend]] $ret\n".$xml, 4, $this);
                 else JAXLog::log("[[XMPPSend]] Failed\n".$xml, 1, $this);  
                 return $ret;
