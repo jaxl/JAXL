@@ -1,5 +1,6 @@
 version 2.1.1
 -------------
+- Base XMPP class now auto-flush output buffers filled because of library level rate limiter
 - Added more options for JAXL constructor e.g.
   boshHost, boshPort, boshSuffix, pidPath, logPath, logLevel, dumpStat, dumpTime
   These param overwrites value specified inside jaxl.ini file
