@@ -65,7 +65,7 @@
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
             
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
         
         public static function discoItem($to, $from, $callback, $node=false, $jaxl) {
@@ -73,7 +73,7 @@
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
             
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
 
         public static function handleIq($payload, $jaxl) {
@@ -92,7 +92,7 @@
                     $xml .= '<feature var="'.$feature.'"/>';
                 $xml .= '</query>';
                 
-                XMPPSend::iq('result', $xml, $payload['from'], $payload['to'], false, $jaxl, $payload['id']);
+                XMPPSend::iq($jaxl, 'result', $xml, $payload['from'], $payload['to'], false, $payload['id']);
             }
             else if($xmlns == self::$ns['item']) {
                 

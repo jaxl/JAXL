@@ -125,7 +125,7 @@
         function startSession() {
             $payload = '';
             $payload .= '<session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>';   
-            return XMPPSend::iq("set", $payload, $this->domain, false, array('XMPPGet', 'postSession'), $this);
+            return XMPPSend::iq($this, "set", $payload, $this->domain, false, array('XMPPGet', 'postSession'));
         }
         
         function startBind() {
@@ -133,7 +133,7 @@
             $payload .= '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">';
             $payload .= '<resource>'.$this->resource.'</resource>';
             $payload .= '</bind>';
-            return XMPPSend::iq("set", $payload, false, false, array('XMPPGet', 'postBind'), $this);
+            return XMPPSend::iq($this, "set", $payload, false, false, array('XMPPGet', 'postBind'));
         }
         
         function getId() {

@@ -47,17 +47,17 @@
         
         public static function getCommandList($to, $from, $callback, $jaxl) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#items" node="'.self::$ns.'"/>';
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
 
         public static function getCommandInfo($to, $from, $node, $callback, $jaxl) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#info" node="'.$node.'"/>';
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
         
         public static function executeCommand($to, $from, $node, $callback, $jaxl) {
             $payload = '<command xmlns="'.self::$ns.'" node="'.$node.'" action="execute"/>';
-            return XMPPSend::iq('set', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, $callback);
         }
 
     }

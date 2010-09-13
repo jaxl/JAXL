@@ -55,7 +55,7 @@
             if($reason) $child['payload'] .= ' reason="'.$reason.'"';
             $child['payload'] .= '/>';
                         
-            XMPPSend::message($toJid, $fromJid, $child, 'chat', $jaxl, false);
+            XMPPSend::message($jaxl, $toJid, $fromJid, $child, 'chat', false);
         }
         
     }

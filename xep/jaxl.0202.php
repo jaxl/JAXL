@@ -53,7 +53,7 @@
         
         public static function getEntityTime($to, $from, $callback, $jaxl) {
             $payload = '<time xmlns="'.self::$ns.'"/>';
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
         
         public static function handleIq($payload, $jaxl) {
@@ -62,7 +62,7 @@
                 $entityTime .= '<tzo>'.date('P').'</tzo>';
                 $entityTime .= '<utc>'.date('Y-m-d').'T'.date('H:i:s').'Z</utc>';
                 $entityTime .= '</time>';
-                return XMPPSend::iq('result', $entityTime, $payload['from'], $payload['to'], false, $jaxl);
+                return XMPPSend::iq($jaxl, 'result', $entityTime, $payload['from'], $payload['to'], false);
             }
         }
         

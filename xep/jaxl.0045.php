@@ -58,11 +58,11 @@
             $child['payload'] .= '<x xmlns="'.self::$ns.'">';
             $child['payload'] .= '<history '.$type.'="'.$history.'"/>';
             $child['payload'] .= '</x>';
-            return XMPPSend::presence($roomJid, $jid, $child, false, $jaxl);
+            return XMPPSend::presence($jaxl, $roomJid, $jid, $child, false);
         }
         
         public static function exitRoom($jid, $roomJid, $jaxl) {
-            return XMPPSend::presence($roomJid, $jid, false, "unavailable", $jaxl);
+            return XMPPSend::presence($jaxl, $roomJid, $jid, false, "unavailable");
         }
 
         /*
@@ -74,7 +74,7 @@
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
 
         /*
@@ -113,13 +113,13 @@
 
         public static function getRoomConfig($jid, $roomJid, $callback=false, $jaxl) {
             $payload = '<query xmlns="'.self::$ns.'#owner"/>';
-            return XMPPSend::iq("get", $payload, $roomJid, $jid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "get", $payload, $roomJid, $jid, $callback);
         }
         
         public static function setRoomConfig($jid, $roomJid, $fields, $callback=false, $jaxl) {
             $payload = JAXL0004::setFormField($fields, false, false, 'submit');
             $payload = '<query xmlns="'.self::$ns.'#owner">'.$payload.'</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $jid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $jid, $callback);
         }
 
         public static function grantOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
@@ -128,7 +128,7 @@
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
         
         public static function revokeOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
@@ -137,7 +137,7 @@
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
         
         public static function modifyOwnerList() {
@@ -150,7 +150,7 @@
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
 
         public static function removeAdminPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
@@ -159,7 +159,7 @@
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
             $payload .= '</item>';
             $payload .= '</query>';
-            return XMPPSend::iq("set", $payload, $roomJid, $fromJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
 
         public static function modifyAdminList() {

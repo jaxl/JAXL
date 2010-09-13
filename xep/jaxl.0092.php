@@ -59,7 +59,7 @@
                 $payload .= '<os>'.PHP_OS.'</os>';
                 $payload .= '</query>';
                 
-                return XMPPSend::iq('result', $payload, $arr['from'], $arr['to'], false, $jaxl, $arr['id']);
+                return XMPPSend::iq($jaxl, 'result', $payload, $arr['from'], $arr['to'], false, $arr['id']);
             }
             else {
                 return $arr;
@@ -68,7 +68,7 @@
         
         public static function getVersion($fromJid, $toJid, $callback, $jaxl) {
             $payload = '<query xmlns="'.self::$ns.'">';
-            return XMPPSend::iq('get', $payload, $fromJid, $toJid, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $fromJid, $toJid, $callback);
         }
         
     }

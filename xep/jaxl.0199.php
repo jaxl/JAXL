@@ -50,14 +50,14 @@
         
         public static function handleIq($payload, $jaxl) {
             if(isset($payload['ping'])) 
-                return XMPPSend::iq('result', false, $payload['from'], $payload['to'], false, $jaxl, $payload['id']);
+                return XMPPSend::iq($jaxl, 'result', false, $payload['from'], $payload['to'], false, $payload['id']);
             else
                 return $payload;
         }
         
         public static function ping($to, $from, $callback, $jaxl) {
             $payload = "<ping xmlns='urn:xmpp:ping'/>";
-            return XMPPSend::iq('get', $payload, $to, $from, $callback, $jaxl);
+            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
     }
 

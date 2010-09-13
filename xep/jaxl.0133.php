@@ -108,7 +108,7 @@
         
         protected static function submitForm($to, $from, $payload, $node, $sid, $jaxl) {
             $payload = '<command xmlns="http://jabber.org/protocol/commands" node="'.$node.'" sessionid="'.$sid.'">'.$payload.'</command>';
-            return XMPPSend::iq('set', $payload, $to, $from, array('JAXL0133', 'handleForm'), $jaxl);
+            return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, array('JAXL0133', 'handleForm'));
         }
         
         public static function addUser($user, $domain, $callback, $jaxl) {
