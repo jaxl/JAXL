@@ -1,7 +1,7 @@
 # News
 [Jaxl 2.1.0 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.1.0 include working Bosh Multi-User Chat example and tons of other changes. You can find a raw list of what is new reading the [Jaxl 2.1.0 Changelog page](http://github.com/abhinavsingh/JAXL/blob/4ea026b2e758e4d6d1e04730da3a167cff743528/CHANGELOG)
 
-For live help and discussion join *jaxl@conference.psi-im.org* chat room (leave your messages if timezones keep us apart)
+For questions, feature requests, insights, bugs, patches, etc use [google group mailing list](http://groups.google.com/group/jaxl). Fork for commit patches and contribute to Jaxl using Github tools. For live help and discussion join jaxl@conference.psi-im.org chat room (leave your messages if timezones keep us apart)
 
 ## About
 

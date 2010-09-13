@@ -1,5 +1,9 @@
 version 2.1.1
 -------------
+- Updated XMPPSend 'presence', 'message' and 'iq' methods to accept $jaxl instance as first parameter
+  if you are not calling these methods directly from your application code as mentioned in documentation
+  this change should not hurt you 
+- Added more comments to env/jaxl.ini and also added JAXL_LOG_ROTATE ini file option
 - JAXL instance logs can be rotated every x seconds (logRotate config parameter) now
 - Removed config param dumpTime, instead use dumpStat to specify stats dump period
 - Base XMPP class now auto-flush output buffers filled because of library level rate limiter
