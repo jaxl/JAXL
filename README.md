@@ -1,7 +1,7 @@
 # News
-[Jaxl 2.1.0 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.1.0 include working Bosh Multi-User Chat example and tons of other changes. You can find a raw list of what is new reading the [Jaxl 2.1.0 Changelog page](http://github.com/abhinavsingh/JAXL/blob/4ea026b2e758e4d6d1e04730da3a167cff743528/CHANGELOG)
+[Jaxl 2.1.1 is out!](http://code.google.com/p/jaxl/downloads/list), Jaxl 2.1.1 adds a lot of performance enhancements to the library core. Also adds new options for monitoring, usage stats collection, rate limiting, running background cron job, log rotation and other utilities. You can find a raw list of what is new reading the [Jaxl 2.1.1 Changelog page](http://bit.ly/jaxl211)
 
-For questions, feature requests, insights, bugs, patches, etc use [google group mailing list](http://groups.google.com/group/jaxl). Fork for commit patches and contribute to Jaxl using Github tools. For live help and discussion join jaxl@conference.psi-im.org chat room (leave your messages if timezones keep us apart)
+Follow [@imjaxlim](http://twitter.com/imjaxlim) on twitter for development and release updates. For questions, feature requests, insights, bugs, patches, etc use [google group mailing list](http://groups.google.com/group/jaxl). Fork for commit patches and contribute to Jaxl using Github tools.
 
 ## About
 
@@ -13,8 +13,10 @@ version of Jaxl 1.x series which was hosted at google code.
 
 * More robust, flexible, scalable and easy to use
 * Event mechanism for registering callbacks for various xmpp events
-* Integrated support for BOSH and various XMPP extensions (XEP's)
+* Integrated support for Real Time Web (XMPP over Bosh) application development
+* 15+ implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/)
 * Setup dynamic number of parallel XMPP sessions on the fly
+* Options for monitoring, usage stat collection, rate limiting, etc.
 
 ## Download
 
@@ -62,6 +64,7 @@ Warning: The development source code at Github is only intended for people that 
 ## Useful Links:
 
 * [Developer Mailing List](http://groups.google.com/group/jaxl)
-* [Issue Tracker](http://code.google.com/p/jaxl/issues/list?can=1&q=)
+* [Bug Tracker](http://code.google.com/p/jaxl/issues/list?can=1&q=)
+* [Author Home](http://abhinavsingh.com/)
 * [Facebook](http://www.facebook.com/imjaxlim)
 * [Twitter](http://twitter.com/imjaxlim)
