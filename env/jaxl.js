@@ -96,5 +96,23 @@ var jaxl = {
     },
     urldecode: function(msg) {
         return decodeURIComponent(msg.replace(/\+/g, '%20'));
+    },
+    urlencode: function(msg) {
+        return encodeURIComponent(msg);
+    },
+    htmlEntities: function(msg) {
+        return msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    },
+    stripHTML: function(msg) {
+        return msg.replace(/<\/?[^>]+>/gi,'');
+    },
+    splitJid: function(jid) {
+        part1=jid.split("@");
+        part2=part1[1].split("/");
+        ret=new Object;
+        ret['jid']=part1[0];
+        ret['domain']=part2[0];
+        ret['res']=part2[1];
+        return ret;
     }
 };
