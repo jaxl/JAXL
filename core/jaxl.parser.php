@@ -79,6 +79,7 @@
                 'xml:lang'  =>  '//message/@xml:lang',
                 'body'      =>  '//message/body',
                 'errorType' =>  '//message/error/@type',
+                'xXmlns'    =>  '//presence/x/@xmlns',
                 'errorCode' =>  '//message/error/@code'
             ),
             
