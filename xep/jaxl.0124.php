@@ -164,8 +164,8 @@
         }
         
         public static function unwrapBody($payload) {
-            if(substr($payload, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/i', $payload, $m);
-            else preg_match_all('/<body (.*?)>(.*)<\/body>/i', $payload, $m);
+            if(substr($payload, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $payload, $m);
+            else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $payload, $m);
             
             if(isset($m[1][0])) $body = "<body ".$m[1][0].">";
             else $body = "<body>";
