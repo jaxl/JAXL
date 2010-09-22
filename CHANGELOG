@@ -1,3 +1,11 @@
+version 2.1.2
+-------------
+- Added xmlentities JAXLUtil method
+- Jaxl Parser now default parses xXmlns node for message stanzas
+- Added PCRE_DOTALL and PCRE_MULTILINE pattern modifier for bosh unwrapBody method
+- Added utility methods like urldecode, urlencode, htmlEntities, stripHTML and splitJid inside jaxl.js
+- Updated sample application jaxl.ini to reflect changes in env/jaxl.ini
+
 version 2.1.1
 -------------
 - Updated XMPPSend 'presence', 'message' and 'iq' methods to accept $jaxl instance as first parameter
