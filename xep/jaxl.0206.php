@@ -47,7 +47,7 @@
             JAXLog::log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5, $jaxl);
         }
         
-        public static function jaxl($xml, $jaxl) { 
+        public static function jaxl($jaxl, $xml) { 
             $jaxl->sendXML(urlencode($xml));
         }
 
@@ -111,7 +111,7 @@
             $jaxl->sendXML($xml);
         }
 
-        public static function out($payload) {
+        public static function out($jaxl, $payload) {
             JAXL0124::out($payload);
         }
         
