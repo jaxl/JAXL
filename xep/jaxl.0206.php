@@ -48,7 +48,7 @@
         }
         
         public static function jaxl($jaxl, $xml) { 
-            $jaxl->sendXML(urlencode($xml));
+            $jaxl->sendXML(urldecode($xml));
         }
 
         public static function startStream($jaxl, $host, $port, $domain) {
