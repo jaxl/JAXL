@@ -14,6 +14,8 @@
 		'JAXL0085', // Chat State Notification
 		'JAXL0092', // Software Version
 		'JAXL0203', // Delayed Delivery
+        'JAXL0054', // VCard Temp
+        'JAXL0202', // Entity Time
 		'JAXL0199'  // XMPP Ping
 	), $jaxl);
 	
@@ -52,9 +54,17 @@
 		
 		function postAuth() {
 			global $jaxl;
+
+            $jaxl->JAXL0030('discoInfo', $jaxl->host, false, false);
+            $jaxl->JAXL0054('getVCard', false, $jaxl->jid, array($this, 'handleVCard'));
+
 			$jaxl->setStatus(FALSE, FALSE, FALSE, TRUE);
 			$jaxl->getRosterList(array($this, 'handleRosterList'));
 		}
+
+        function handleVCard($payload) {
+            // print_r($payload);
+        }
 		
 		function handleRosterList($payload) {
 			if(is_array($payload['queryItemJid'])) {
