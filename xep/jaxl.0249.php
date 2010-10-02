@@ -45,7 +45,7 @@
             $jaxl->features[] = self::$ns;
         }
 
-        public static function invite($toJid, $fromJid, $roomJid, $roomPass=false, $reason=false, $jaxl) {
+        public static function invite($jaxl, $toJid, $fromJid, $roomJid, $roomPass=false, $reason=false) {
             $child = array();
             $child['payload'] = '';
             

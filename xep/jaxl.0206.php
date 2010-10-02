@@ -51,7 +51,7 @@
             $jaxl->sendXML(urlencode($xml));
         }
 
-        public static function startStream($host, $port, $domain, $jaxl) {
+        public static function startStream($jaxl, $host, $port, $domain) {
             $xml = "";
             $xml .= "<body";
             $xml .= " content='".$jaxl->bosh['content']."'";

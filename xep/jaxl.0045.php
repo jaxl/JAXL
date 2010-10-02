@@ -52,7 +52,7 @@
         /*
          * Occupant Use Cases
         */
-        public static function joinRoom($jid, $roomJid, $history=0, $type='seconds', $jaxl) {
+        public static function joinRoom($jaxl, $jid, $roomJid, $history=0, $type='seconds') {
             $child = array();
             $child['payload'] = '';
             $child['payload'] .= '<x xmlns="'.self::$ns.'">';
@@ -61,14 +61,14 @@
             return XMPPSend::presence($jaxl, $roomJid, $jid, $child, false);
         }
         
-        public static function exitRoom($jid, $roomJid, $jaxl) {
+        public static function exitRoom($jaxl, $jid, $roomJid) {
             return XMPPSend::presence($jaxl, $roomJid, $jid, false, "unavailable");
         }
 
         /*
          * Moderator Use Cases
         */
-        public static function kickOccupant($fromJid, $nick, $roomJid, $reason=false, $callback=false, $jaxl) {
+        public static function kickOccupant($jaxl, $fromJid, $nick, $roomJid, $reason=false, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#admin">';
             $payload .= '<item role="none" nick="'.$nick.'">';
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
@@ -111,18 +111,18 @@
 
         }
 
-        public static function getRoomConfig($jid, $roomJid, $callback=false, $jaxl) {
+        public static function getRoomConfig($jaxl, $jid, $roomJid, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#owner"/>';
             return XMPPSend::iq($jaxl, "get", $payload, $roomJid, $jid, $callback);
         }
         
-        public static function setRoomConfig($jid, $roomJid, $fields, $callback=false, $jaxl) {
+        public static function setRoomConfig($jaxl, $jid, $roomJid, $fields, $callback=false) {
             $payload = JAXL0004::setFormField($fields, false, false, 'submit');
             $payload = '<query xmlns="'.self::$ns.'#owner">'.$payload.'</query>';
             return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $jid, $callback);
         }
 
-        public static function grantOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
+        public static function grantOwnerPrivileges($jaxl, $fromJid, $toJid, $roomJid, $reason=false, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#admin">';
             $payload .= '<item affiliation="owner" jid="'.$toJid.'">';
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
@@ -131,7 +131,7 @@
             return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
         
-        public static function revokeOwnerPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
+        public static function revokeOwnerPrivileges($jaxl, $fromJid, $toJid, $roomJid, $reason=false, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#admin">';
             $payload .= '<item affiliation="member" jid="'.$toJid.'">';
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
@@ -144,7 +144,7 @@
             
         }
         
-        public static function grantAdminPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
+        public static function grantAdminPrivileges($jaxl, $fromJid, $toJid, $roomJid, $reason=false, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#admin">';
             $payload .= '<item affiliation="admin" jid="'.$toJid.'">';
             if($reason) $payload .= '<reason>'.$reason.'</reason>';
@@ -153,7 +153,7 @@
             return XMPPSend::iq($jaxl, "set", $payload, $roomJid, $fromJid, $callback);
         }
 
-        public static function removeAdminPrivileges($fromJid, $toJid, $roomJid, $reason=false, $callback=false, $jaxl) {
+        public static function removeAdminPrivileges($jaxl, $fromJid, $toJid, $roomJid, $reason=false, $callback=false) {
             $payload = '<query xmlns="'.self::$ns.'#admin">';
             $payload .= '<item affiliation="member" jid="'.$toJid.'">';
             if($reason) $payload .= '<reason>'.$reason.'</reason>';

@@ -45,17 +45,17 @@
             $jaxl->features[] = self::$ns;
         }
         
-        public static function getCommandList($to, $from, $callback, $jaxl) {
+        public static function getCommandList($jaxl, $to, $from, $callback) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#items" node="'.self::$ns.'"/>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
 
-        public static function getCommandInfo($to, $from, $node, $callback, $jaxl) {
+        public static function getCommandInfo($jaxl, $to, $from, $node, $callback) {
             $payload = '<query xmlns="http://jabber.org/protocol/disco#info" node="'.$node.'"/>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
         
-        public static function executeCommand($to, $from, $node, $callback, $jaxl) {
+        public static function executeCommand($jaxl, $to, $from, $node, $callback) {
             $payload = '<command xmlns="'.self::$ns.'" node="'.$node.'" action="execute"/>';
             return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, $callback);
         }

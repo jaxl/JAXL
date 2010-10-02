@@ -60,7 +60,7 @@
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
         }
         
-        public static function discoInfo($to, $from, $callback, $node=false, $jaxl) {
+        public static function discoInfo($jaxl, $to, $from, $callback, $node=false) {
             $payload = '<query xmlns="'.self::$ns['info'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
@@ -68,7 +68,7 @@
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
         
-        public static function discoItem($to, $from, $callback, $node=false, $jaxl) {
+        public static function discoItem($jaxl, $to, $from, $callback, $node=false) {
             $payload = '<query xmlns="'.self::$ns['item'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';

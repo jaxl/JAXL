@@ -55,7 +55,7 @@
                 return $payload;
         }
         
-        public static function ping($to, $from, $callback, $jaxl) {
+        public static function ping($jaxl, $to, $from, $callback) {
             $payload = "<ping xmlns='urn:xmpp:ping'/>";
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }

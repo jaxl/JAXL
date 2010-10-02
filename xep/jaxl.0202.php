@@ -51,7 +51,7 @@
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0202', 'handleIq'));
         }
         
-        public static function getEntityTime($to, $from, $callback, $jaxl) {
+        public static function getEntityTime($jaxl, $to, $from, $callback) {
             $payload = '<time xmlns="'.self::$ns.'"/>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }

@@ -66,7 +66,7 @@
             }
         }
         
-        public static function getVersion($fromJid, $toJid, $callback, $jaxl) {
+        public static function getVersion($jaxl, $fromJid, $toJid, $callback) {
             $payload = '<query xmlns="'.self::$ns.'">';
             return XMPPSend::iq($jaxl, 'get', $payload, $fromJid, $toJid, $callback);
         }

@@ -254,8 +254,8 @@
         }
 
         function __call($xep, $param) {
-            $param[] = $this;
             $method = array_shift($param);
+            array_unshift($param, $this);
             if(substr($xep, 0, 4) == 'JAXL') {
                 $xep = substr($xep, 4, 4);
                 if(is_numeric($xep)

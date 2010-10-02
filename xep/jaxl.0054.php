@@ -41,7 +41,9 @@
 		
 		public static $ns = 'vcard-temp';
 		
-		public static function init() {
+		public static function init($jaxl) {
+            $jaxl->features[] = self::$ns;
+
 			JAXLXml::addTag('iq', 'vCard', '//iq/vCard/@xmlns');
 			JAXLXml::addTag('iq', 'vCardFN', '//iq/vCard/FN');
 			JAXLXml::addTag('iq', 'vCardNFamily', '//iq/vCard/N/FAMILY');
@@ -70,12 +72,12 @@
 			JAXLXml::addTag('iq', 'vCardDesc', '//iq/vCard/DESC');
 		}
 
-		public static function getVCard($to, $from, $callback, $jaxl) {
+		public static function getVCard($jaxl, $to, $from, $callback) {
             $payload = '<vCard xmlns="'.self::$ns.'"/>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
 		}
 		
-		public static function updateVCard($to, $from, $jaxl) {
+		public static function updateVCard($jaxl, $to, $from) {
 			
 		}
 		
