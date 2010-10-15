@@ -1,5 +1,12 @@
 version 2.1.2
 -------------
+- Added JAXLHTTPd inside Jaxl core (a simple socket select server)
+- Fixed sync of background iq and other stanza requests with browser ajax calls
+- Updated left out methods in XMPP over BOSH xep to accept jaxl instance as first method
+- All XEP methods available in application landspace, now accepts jaxl instance as first parameter. Updated core jaxl class magic method to handle the same.
+  If you are calling XEP methods as specified in the documentation, this change will not hurt your running applications
+- Updated echobot sample application to utilize XEP 0054 (VCard Temp) and 0202 (Entity Time)
+- First checkin of missing vcard-temp xep
 - Added xmlentities JAXLUtil method
 - Jaxl Parser now default parses xXmlns node for message stanzas
 - Added PCRE_DOTALL and PCRE_MULTILINE pattern modifier for bosh unwrapBody method

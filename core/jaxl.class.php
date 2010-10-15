@@ -148,15 +148,30 @@
             ));
         }
        
-        // periodically dumps jaxl instance usage stats
+        /*
+         * Periodically dumps jaxl instance usage stats
+        */
         function dumpStat() {
             $this->log("Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb, peak: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb", 0);
         }
+        
+        /*
+         * Magic method for calling XEP methods using JAXL instance
+        */
+        function __call($xep, $param) {
+            $method = array_shift($param);
+            array_unshift($param, $this);
+            if(substr($xep, 0, 4) == 'JAXL') {
+                $xep = substr($xep, 4, 4);
+                if(is_numeric($xep)
+                && class_exists('JAXL'.$xep)
+                ) { return call_user_func_array(array('JAXL'.$xep, $method), $param); }
+            }
+        } 
        
         /************************************/
         /*** User space available methods ***/
         /************************************/
-
         function shutdown($signal) {
             JAXLog::log("Jaxl Shutting down ...", 0, $this);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);
@@ -253,17 +268,6 @@
             jaxl_require($class, $this);
         }
 
-        function __call($xep, $param) {
-            $method = array_shift($param);
-            array_unshift($param, $this);
-            if(substr($xep, 0, 4) == 'JAXL') {
-                $xep = substr($xep, 4, 4);
-                if(is_numeric($xep)
-                && class_exists('JAXL'.$xep)
-                ) { return call_user_func_array(array('JAXL'.$xep, $method), $param); }
-            }
-        }
-        
     }
 
 ?>
