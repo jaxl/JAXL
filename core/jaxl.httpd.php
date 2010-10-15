@@ -34,12 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-    // HTTPd server meta    
-    define('JAXL_SERVER_NAME', 'JAXLHTTPd');
-    define('JAXL_SERVER_VERSION', '0.0.1');
-    define('JAXL_HTTP_VERSION', 'HTTP/1.1');
-    define('JAXL_HTTP_SELECT_TIMEOUT', 1);
-
     // Jaxl core dependency
     jaxl_require(array(
         'JAXLPlugin'

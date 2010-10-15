@@ -25,7 +25,7 @@ case "$1" in
 		echo "Open/Edit the above configuration options inside build script"
 		echo ""
 	;;
-        install)
+    install)
 		if [ -d $PACKAGE_INSTALL_PATH ];
 		then
 			echo "uninstalling old package..."
@@ -43,15 +43,15 @@ case "$1" in
 			echo "creating package directories..."
 			mkdir $PACKAGE_INSTALL_PATH
 			cd $PACKAGE_INSTALL_PATH
-                fi
+        fi
 		
 		echo "installing..."
-                tar -xvzf $PACKAGE_BASE/$PACKAGE_TAR_NAME
+        tar -xvzf $PACKAGE_BASE/$PACKAGE_TAR_NAME
 		ln -s $PACKAGE_INSTALL_PATH/env/jaxl.php $PACKAGE_BIN_PATH/jaxl
 		chmod +x $PACKAGE_INSTALL_PATH/env/jaxl.php
-        ;;
-        *)
-                echo "building..."
+    ;;
+    *)
+        echo "building..."
 		tar -cvzf $PACKAGE_TAR_NAME \
 			core/jaxl* \
 			xmpp/xmpp* \
@@ -61,7 +61,7 @@ case "$1" in
             app/componentbot/* \
 			app/boshchat/* \
             app/boshMUChat/*
-        ;;
+    ;;
 esac
 
 exit 0
