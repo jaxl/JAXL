@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- First checkin of PubSub XEP (untested)
+- Indented build.sh and moved define's from top of JAXLHTTPd class to jaxl.ini
 - Added JAXLHTTPd inside Jaxl core (a simple socket select server)
 - Fixed sync of background iq and other stanza requests with browser ajax calls
 - Updated left out methods in XMPP over BOSH xep to accept jaxl instance as first method
