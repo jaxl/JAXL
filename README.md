@@ -45,6 +45,7 @@ Warning: The development source code at Github is only intended for people that 
 * [0045 Multi-User Chat](http://abhinavsingh.com/blog/2010/08/xep-0045-%e2%80%93-multi-user-chat-muc-available-methods-in-jaxl-2-0/)
 * 0050 Ad-Hoc Commands
 * 0054 VCard Temp
+* 0060 Publisher-Subscriber
 * 0085 Chat State Notification
 * 0092 Software Version
 * [0114 Jabber Component Protocol](http://abhinavsingh.com/blog/2010/08/how-to-write-external-jabber-components-in-php-using-jaxl-library/)
