@@ -41,38 +41,38 @@
     */
     class JAXL0030 {
     
-        public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'item'=>'http://jabber.org/protocol/disco#item');
+        public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'items'=>'http://jabber.org/protocol/disco#items');
         public static $category = false;
         public static $type = false;
         public static $name = false;
         public static $lang = false;
-        
+
         public static function init($jaxl, $config=array()) {
             $jaxl->features[] = self::$ns['info'];
-            $jaxl->features[] = self::$ns['item'];
-            
+            $jaxl->features[] = self::$ns['items'];
+
             self::$category = isset($config['category']) ? $config['category'] : 'client';
             self::$type = isset($config['type']) ? $config['type'] : 'bot';
             self::$name = isset($config['name']) ? $config['name'] : 'Jaxl';
             self::$lang = isset($config['lang']) ? $config['lang'] : 'en';
-            
+
             // register callbacks
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
         }
-        
+
         public static function discoInfo($jaxl, $to, $from, $callback, $node=false) {
             $payload = '<query xmlns="'.self::$ns['info'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
-            
+
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
-        
-        public static function discoItem($jaxl, $to, $from, $callback, $node=false) {
-            $payload = '<query xmlns="'.self::$ns['item'].'"';
+
+        public static function discoItems($jaxl, $to, $from, $callback, $node=false) {
+            $payload = '<query xmlns="'.self::$ns['items'].'"';
             if($node) $payload .= ' node="'.$node.'"/>';
             else $payload .= '/>';
-            
+
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
 
@@ -94,7 +94,7 @@
                 
                 XMPPSend::iq($jaxl, 'result', $xml, $payload['from'], $payload['to'], false, $payload['id']);
             }
-            else if($xmlns == self::$ns['item']) {
+            else if($xmlns == self::$ns['items']) {
                 
             }
             

@@ -64,21 +64,21 @@
         }
 
         public static function discoNodes() {
-            
+
         }
 
         public static function discoNodeInfo() {
 
         }
-        
+
         public static function discoNodeMeta($jaxl, $to, $from, $node, $callback) {
             $payload = '<query xmlns="'.JAXL0030::$ns['info'].'" node="'.$node.'"/>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
 
-        public static function discoNodeItem($jaxl, $to, $from, $node, $callback) {
-            $payload = '<query xmlns="'.JAXL0030::$ns['item'].'" node="'.$node.'"/>';
-            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
+        //note: node can be a null string
+        public static function discoNodeItems($jaxl, $to, $from, $callback, $node=false) {
+            return JAXL0030::discoItems($jaxl, $to, $from, $callback, $node);
         }
 
         public static function getNodeSubscriptions($jaxl, $to, $from, $callback) {
@@ -88,7 +88,7 @@
             $payload .= '</pubsub>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
         }
-        
+
         public static function getNodeAffiliations($jaxl, $to, $from, $callback) {
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'">';
@@ -96,7 +96,7 @@
             $payload .= '</pubsub>';
             return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback); 
         }
-        
+
         /*
          * Subscriber Use Cases
         */
