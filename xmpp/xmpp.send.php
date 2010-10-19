@@ -37,6 +37,7 @@
     // include required classes
     jaxl_require(array(
         'JAXLPlugin',
+        'JAXLUtil',
         'JAXLog'
     ));
     
@@ -108,14 +109,14 @@
         private static function prepareMessage($jaxl, $to, $from, $child, $type, $ns, $id) {
             $xml = '<message';
             if($from) $xml .= ' from="'.$from.'"';
-            $xml .= ' to="'.$to.'"';
+            $xml .= ' to="'.htmlspecialchars($to).'"';
             if($type) $xml .= ' type="'.$type.'"';
             if($id) $xml .= ' id="'.$jaxl->getId().'"';
             $xml .= '>';
             
             if($child) {
-                if(isset($child['subject'])) $xml .= '<subject>'.$child['subject'].'</subject>';
-                if(isset($child['body'])) $xml .= '<body>'.$child['body'].'</body>';
+                if(isset($child['subject'])) $xml .= '<subject>'.JAXLUtil::xmlentities($child['subject']).'</subject>';
+                if(isset($child['body'])) $xml .= '<body>'.JAXLUtil::xmlentities($child['body']).'</body>';
                 if(isset($child['thread'])) $xml .= '<thread>'.$child['thread'].'</thread>';
                 if(isset($child['payload'])) $xml .= $child['payload'];
             }
@@ -143,13 +144,13 @@
             $xml = '<presence';
             if($type) $xml .= ' type="'.$type.'"';
             if($from) $xml .= ' from="'.$from.'"';
-            if($to) $xml .= ' to="'.$to.'"';
+            if($to) $xml .= ' to="'.htmlspecialchars($to).'"';
             if($id) $xml .= ' id="'.$jaxl->getId().'"';
             $xml .= '>';
             
             if($child) {
                 if(isset($child['show'])) $xml .= '<show>'.$child['show'].'</show>';
-                if(isset($child['status'])) $xml .= '<status>'.$child['status'].'</status>';
+                if(isset($child['status'])) $xml .= '<status>'.JAXLUtil::xmlentities($child['status']).'</status>';
                 if(isset($child['priority'])) $xml .= '<priority>'.$child['priority'].'</priority>';
                 if(isset($child['payload'])) $xml .= $child['payload'];
             }

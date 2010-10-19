@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Jaxl core now converts transmitted stanza's into xmlentities (http://code.google.com/p/jaxl/issues/detail?id=22)
 - Created a top level 'patch' folder which contains various patches sent by developers using 'git diff > patch' utility
 - Fixed typo in namespace inside 0030 (thanks to Thomas Baquet for the patch)
 - First checkin of PubSub XEP (untested)
