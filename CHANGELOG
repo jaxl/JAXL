@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Created a top level 'patch' folder which contains various patches sent by developers using 'git diff > patch' utility
 - Fixed typo in namespace inside 0030 (thanks to Thomas Baquet for the patch)
 - First checkin of PubSub XEP (untested)
 - Indented build.sh and moved define's from top of JAXLHTTPd class to jaxl.ini
