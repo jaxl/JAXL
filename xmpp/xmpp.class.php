@@ -74,28 +74,32 @@
         var $streamTimeout = false;
         var $streamBlocking = 0;
         
-        /* XMPP working parameter */
+        /* XMPP Performance parameters */
+        var $getSleep = 1;
+        var $getPkts = false;
+        var $getPktSize = false;
+        var $getEmptyLines = false;
+        var $sendRate = false;
+
+        /* XMPP working parameters */
         var $buffer = '';
         var $obuffer = '';
         var $clock = false;
         var $clocked = false;
         var $rateLimit = true;
         var $lastSendTime = false;
-        
+         
         function __construct($config) {
             $this->clock = 0;
             $this->clocked = time();
             
             /* Parse configuration parameter */
-            $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
-            $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
-            $this->host = isset($config['host']) ? $config['host'] : JAXL_HOST_NAME;
-            $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
-            $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
-            $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : JAXL_STREAM_TIMEOUT;
-            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
-            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
+            $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : 20;
             $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
+            $this->getPkts = isset($config['getPkts']) ? $config['getPkts'] : 1600;
+            $this->getPktSize = isset($config['getPktSize']) ? $config['getPktSize'] : 2048;
+            $this->getEmptyLines = isset($config['getEmptyLines']) ? $config['getEmptyLines'] : 15;
+            $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : 0.1;
         }
         
         function connect() {
@@ -142,7 +146,7 @@
         
         function getXML($nap=TRUE) {
             // sleep between two reads
-            if($nap) sleep(JAXL_XMPP_GET_SLEEP);
+            if($nap) sleep($this->getSleep);
             
             // initialize empty lines read
             $emptyLine = 0;
@@ -152,12 +156,12 @@
             $this->buffer = '';
             
             // read socket data
-            for($i=0; $i<JAXL_XMPP_GET_PCKTS; $i++) {
+            for($i=0; $i<$this->getPkts; $i++) {
                 if($this->stream) {
-                    $line = fread($this->stream, JAXL_XMPP_GET_PCKT_SIZE);
+                    $line = fread($this->stream, $this->getPktSize);
                     if(strlen($line) == 0) {
                         $emptyLine++;
-                        if($emptyLine > JAXL_XMPP_GET_EMPTY_LINES)
+                        if($emptyLine > $this->getEmptyLines)
                             break;
                     }
                     else {
@@ -193,7 +197,7 @@
             else {
                 if($this->rateLimit
                 && $this->lastSendTime
-                && JAXLUtil::getTime() - $this->lastSendTime < JAXL_XMPP_SEND_RATE
+                && JAXLUtil::getTime() - $this->lastSendTime < $this->sendRate
                 ) { $this->obuffer .= $xml; }
                 else {
                     $xml = $this->obuffer.$xml;
