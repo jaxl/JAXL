@@ -35,6 +35,55 @@
  */
 
     /*
+     * Library Metainfo
+    */
+    declare(ticks=1);
+    define('JAXL_NAME', 'Jaxl :: Jabber XMPP Client Library');
+    define('JAXL_VERSION', '2.1.2');
+
+    /*
+     * autoLoad method for Jaxl library and apps
+    */
+    function jaxl_require($classNames, $jaxl=false) {
+        static $included = array();
+        $tagMap = array(
+            // core classes
+            'JAXL' => '/core/jaxl.class.php',
+            'JAXLCron' => '/core/jaxl.cron.php',
+            'JAXLog' => '/core/jaxl.logger.php',
+            'JAXLDb' => '/core/jaxl.mdbm.php',
+            'JAXLXml' => '/core/jaxl.parser.php',
+            'JAXLPlugin' => '/core/jaxl.plugin.php',
+            'JAXLUtil' => '/core/jaxl.util.php',
+            'XML' => '/core/jaxl.xml.php',  
+            // xmpp classes
+            'XMPP' => '/xmpp/xmpp.class.php',
+            'XMPPGet' => '/xmpp/xmpp.get.php',
+            'XMPPSend' => '/xmpp/xmpp.send.php',
+            'XMPPAuth' => '/xmpp/xmpp.auth.php'
+        );
+        
+        if(!is_array($classNames)) $classNames = array('0'=>$classNames);
+        foreach($classNames as $key => $className) {
+            $xep = substr($className, 4, 4);
+            if(substr($className, 0, 4) == 'JAXL'
+            && is_numeric($xep)
+            ) { // is XEP
+                if(!isset($included[$className])) {
+                    require_once JAXL_BASE_PATH.'/xep/jaxl.'.$xep.'.php';
+                    $included[$className] = true;
+                }
+                call_user_func(array('JAXL'.$xep, 'init'), $jaxl);
+            } // is Core file
+            else if(isset($tagMap[$className])) {
+                require_once JAXL_BASE_PATH.$tagMap[$className];
+                $included[$className] = true;
+            }
+        }
+        return;
+    }
+
+    /*
      * include core, xmpp base
      * (basic requirements for every Jaxl instance)
     */
@@ -46,12 +95,14 @@
         'XML',
         'XMPP',
     ));
-    
+
     /*
      * Jaxl Core Class extending Base XMPP Class
     */
     class JAXL extends XMPP {
-        
+
+        var $config = array();
+
         var $logLevel = 1;
         var $logRotate = false;
         var $logPath = '/var/log/jaxl.log';
@@ -69,31 +120,17 @@
         var $features = array();
         
         /*
-         * Constructor accepts following configuration parameters
-         * Passed param will overwrite corresponding jaxl.ini values
-         *
-         * $config = array(
-         *  'user'=>'', // JAXL_USER_NAME
-         *  'pass'=>'', // JAXL_USER_PASS
-         *  'host'=>'', // JAXL_HOST_NAME
-         *  'port'=>'', // JAXL_HOST_PORT
-         *  'domain'=>'', // JAXL_HOST_DOMAIN
-         *  'component'=>'', // JAXL_COMPONENT_HOST
-         *  'logPath'=>'', // JAXL_LOG_PATH
-         *  'logRotate'=>'', // false or second in which to rotate log
-         *  'logLevel'=>'', // JAXL_LOG_LEVEL
-         *  'pidPath'=>'', // JAXL_PID_PATH
-         *  'boshHost'=>'', // JAXL_BOSH_HOST
-         *  'boshPort'=>'', // JAXL_BOSH_PORT
-         *  'boshSuffix'=>'', // JAXL_BOSH_SUFFIX
-         *  'resource'=>'', // connecting user resource identifier
-         *  'streamTimeout'=>'', // connecting stream timeout
-         *  'sigh'=>'', // boolean to forcible enable/disable sigh term
-         *  'dumpStat'=>'', // false or numeric specifying second after which to dump stat
-         * );
+         * Core constructor
         */
         function __construct($config=array()) {
-            /* Parse configuration parameter */
+            $this->config = $config;
+            /* Parse configuration parameter */ 
+            $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
+            $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
+            $this->host = isset($config['host']) ? $config['host'] : JAXL_HOST_NAME;
+            $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
+            $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
+            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
             $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
             $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : false;
@@ -101,9 +138,14 @@
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
+            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
-            
+            $this->category = 'client';
+            $this->type = 'bot';
+            $this->lang = 'en';
+            $this->name = JAXL_NAME;
+
             $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
@@ -112,13 +154,13 @@
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
         }
-
+        
         /*
          * Configures Jaxl instance to run across various systems
         */
         protected function configure($config) {
             $this->pid = getmypid();
-            $this->mode = isset($_REQUEST['jaxl']) ? "cgi" : "cli";
+            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
@@ -139,13 +181,8 @@
                 if(!function_exists('curl_init')) die("Jaxl requires curl_init method ...");
             }
 
-            // include service discovery XEP, recommended for every IM client
-            jaxl_require('JAXL0030', $this, array(
-                'category'=>'client',
-                'type'=>'bot',
-                'name'=>JAXL_NAME,
-                'lang'=>'en'
-            ));
+            // include service discovery XEP, recommended for every XMPP entity
+            jaxl_require('JAXL0030', $this);
         }
        
         /*
