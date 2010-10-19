@@ -42,19 +42,10 @@
     class JAXL0030 {
     
         public static $ns = array('info'=>'http://jabber.org/protocol/disco#info', 'items'=>'http://jabber.org/protocol/disco#items');
-        public static $category = false;
-        public static $type = false;
-        public static $name = false;
-        public static $lang = false;
-
-        public static function init($jaxl, $config=array()) {
+        
+        public static function init($jaxl) {
             $jaxl->features[] = self::$ns['info'];
             $jaxl->features[] = self::$ns['items'];
-
-            self::$category = isset($config['category']) ? $config['category'] : 'client';
-            self::$type = isset($config['type']) ? $config['type'] : 'bot';
-            self::$name = isset($config['name']) ? $config['name'] : 'Jaxl';
-            self::$lang = isset($config['lang']) ? $config['lang'] : 'en';
 
             // register callbacks
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
@@ -83,10 +74,10 @@
                 if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
                 $xml .= '>';
                 
-                $xml .= '<identity xml:lang="'.self::$lang.'"';
-                $xml .= ' name="'.self::$name.'"';
-                $xml .= ' category="'.self::$category.'"';
-                $xml .= ' type="'.self::$type.'"/>';
+                $xml .= '<identity xml:lang="'.$jaxl->lang.'"';
+                $xml .= ' name="'.$jaxl->name.'"';
+                $xml .= ' category="'.$jaxl->category.'"';
+                $xml .= ' type="'.$jaxl->type.'"/>';
                 
                 foreach($jaxl->features as $feature)
                     $xml .= '<feature var="'.$feature.'"/>';
