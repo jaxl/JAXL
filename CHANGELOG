@@ -1,5 +1,13 @@
 version 2.1.2
 -------------
+- Hardcoded client category, type, lang and name. TODO: Make them configurable in future
+- Cleaned up XEP 0030 (Service Discovery) and XEP 0115 (Entity Capabilities)
+- Updated XMPP base class to use performance configuration parameters (now customizable with JAXL constructor)
+- jaxl.conf will be removed from jaxl core in future, 1st step towards this goal
+- Moved bulk of core configs from jaxl.conf
+- Added more configuration options relating to client performance e.g. getPkts, getPktSize etc
+- Fixed client mode by detecting sapi type instead of $_REQUEST['jaxl'] variable
+- Now every implemented XEP should have an 'init' method which will accept only one parameter (jaxl instance itself)
 - Jaxl core now converts transmitted stanza's into xmlentities (http://code.google.com/p/jaxl/issues/detail?id=22)
 - Created a top level 'patch' folder which contains various patches sent by developers using 'git diff > patch' utility
 - Fixed typo in namespace inside 0030 (thanks to Thomas Baquet for the patch)

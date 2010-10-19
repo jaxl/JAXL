@@ -107,9 +107,6 @@
         var $logRotate = false;
         var $logPath = '/var/log/jaxl.log';
         var $pidPath = '/var/run/jaxl.pid';
-        var $boshHost = false;
-        var $boshPort = false;
-        var $boshSuffix = false;
         var $sigh = true;
         var $dumpStat = 300;
 
@@ -117,8 +114,13 @@
         var $mode = false;
         var $action = false;
         var $authType = false;
+
         var $features = array();
-        
+        var $category = 'client';
+        var $type = 'bot';
+        var $lang = 'en';
+        var $name = 'Jaxl :: Jabber XMPP Client Library';
+
         /*
          * Core constructor
         */
@@ -130,7 +132,6 @@
             $this->host = isset($config['host']) ? $config['host'] : JAXL_HOST_NAME;
             $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
             $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
-            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
             $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
             $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : false;
@@ -138,13 +139,10 @@
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
+            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
             $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
-            $this->category = 'client';
-            $this->type = 'bot';
-            $this->lang = 'en';
-            $this->name = JAXL_NAME;
 
             $this->configure($config);
             parent::__construct($config);
