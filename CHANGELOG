@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- First checkin of PEP (Personal Eventing), User Location, User Mood, User Activity and User Tune XEP's
+- Completed methods discoFeatures, discoNodes, discoNodeInfo, discoNodeMeta and discoNodeItems in PubSub XEP
 - Hardcoded client category, type, lang and name. TODO: Make them configurable in future
 - Cleaned up XEP 0030 (Service Discovery) and XEP 0115 (Entity Capabilities)
 - Updated XMPP base class to use performance configuration parameters (now customizable with JAXL constructor)
