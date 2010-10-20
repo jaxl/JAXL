@@ -59,24 +59,22 @@
         /*
          * Entity Use Cases
         */
-        public static function discoFeatures() {
-
+        public static function discoFeatures($jaxl, $to, $from, $callback) {
+            return JAXL0030::discoInfo($jaxl, $to, $from, $callback);
         }
 
-        public static function discoNodes() {
-
+        public static function discoNodes($jaxl, $to, $from, $callback, $node=false) {
+            return JAXL0030::discoItems($jaxl, $to, $from, $callback, $node);
         }
 
-        public static function discoNodeInfo() {
-
+        public static function discoNodeInfo($jaxl, $to, $from, $callback, $node=false) {
+            return JAXL0030::discoInfo($jaxl, $to, $from, $callback, $node);
         }
 
-        public static function discoNodeMeta($jaxl, $to, $from, $node, $callback) {
-            $payload = '<query xmlns="'.JAXL0030::$ns['info'].'" node="'.$node.'"/>';
-            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
+        public static function discoNodeMeta($jaxl, $to, $from, $callback, $node=false) {
+            return JAXL0030::discoInfo($jaxl, $to, $from, $callback, $node);
         }
 
-        //note: node can be a null string
         public static function discoNodeItems($jaxl, $to, $from, $callback, $node=false) {
             return JAXL0030::discoItems($jaxl, $to, $from, $callback, $node);
         }
