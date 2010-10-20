@@ -48,7 +48,11 @@
             // update feature list
             $jaxl->features[] = self::$ns;
 
-            JAXLXml::addTag('message', 'mood', '');
+            JAXLXml::addTag('message', 'mood', '//message/event/items/item/mood/@xmlns');
+        }
+
+        public static function publishMood($jaxl, $from, $item) {
+            return JAXL0163::publishItem($jaxl, $from, self::$ns, $item);
         }
 
     }
