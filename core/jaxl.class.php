@@ -225,7 +225,7 @@
             $child['status'] = ($status === false ? 'Online using Jaxl library http://code.google.com/p/jaxl' : $status);
             $child['show'] = ($show === false ? 'chat' : $show);
             $child['priority'] = ($priority === false ? 1 : $priority);
-            if($caps) $child['payload'] = JAXL0115::getCaps($this->features);
+            if($caps) $child['payload'] = $this->JAXL0115('getCaps', $this->features);
             return XMPPSend::presence($this, false, false, $child, false);
         }
         
