@@ -84,7 +84,7 @@
         public static function streamError($arr, $jaxl) {
             $desc = key($arr['#']);
             $xmlns = $arr['#']['0']['@']['xmlns'];
-            JAXLog::log("Stream error with description ".$desc." and xmlns ".$xmlns, 0, $jaxl);
+            JAXLog::log("Stream error with description ".$desc." and xmlns ".$xmlns, 1, $jaxl);
             return true;
         }
 
@@ -92,17 +92,17 @@
             $xmlns = $arr['xmlns'];
             switch($xmlns) {
                 case 'urn:ietf:params:xml:ns:xmpp-tls':
-                    JAXLog::log("Unable to start TLS negotiation, see logs for detail...", 0, $jaxl);
+                    JAXLog::log("Unable to start TLS negotiation, see logs for detail...", 1, $jaxl);
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('tlsFailure');
                     break;
                 case 'urn:ietf:params:xml:ns:xmpp-sasl':
-                    JAXLog::log("Unable to complete SASL Auth, see logs for detail...", 0, $jaxl);
+                    JAXLog::log("Unable to complete SASL Auth, see logs for detail...", 1, $jaxl);
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('saslFailure');
                     break;
                 default:
-                    JAXLog::log("Uncatched failure xmlns received...", 0, $jaxl);
+                    JAXLog::log("Uncatched failure xmlns received...", 1, $jaxl);
                     break;
             }
         }
@@ -159,7 +159,7 @@
                 }
                 else {
                     $jaxl->auth = true;
-                    JAXLog::log("Auth completed...", 0, $jaxl);
+                    JAXLog::log("Auth completed...", 1, $jaxl);
                     JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
                 }
             }
@@ -168,7 +168,7 @@
         public static function postSession($arr, $jaxl) {
             if($arr["type"] == "result") {
                 $jaxl->auth = true;
-                JAXLog::log("Auth completed...", 0, $jaxl);
+                JAXLog::log("Auth completed...", 1, $jaxl);
                 JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
             }
         }
@@ -189,7 +189,7 @@
                     JAXLPlugin::execute('jaxl_get_iq_error', $arr, $jaxl);
                     break;
                 default:
-                    JAXLog::log('Unhandled iq type ...'.json_encode($arr), 0, $jaxl);
+                    JAXLog::log('Unhandled iq type ...'.json_encode($arr), 1, $jaxl);
                     break;
             }
             return $arr;

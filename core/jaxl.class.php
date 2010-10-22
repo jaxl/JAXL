@@ -101,20 +101,32 @@
     */
     class JAXL extends XMPP {
 
+        /* Custom config passed to constructor */
         var $config = array();
 
+        /* User account related parameters */
+        var $user = false;
+        var $pass = false;
+        var $host = false;
+        var $port = false;
+        var $jid = false;
+        var $domain = false;
+        var $resource = false;
+        var $component = false;
+
+        /* Core working parameters */
         var $logLevel = 1;
         var $logRotate = false;
         var $logPath = '/var/log/jaxl.log';
         var $pidPath = '/var/run/jaxl.pid';
         var $sigh = true;
-        var $dumpStat = 300;
-
         var $pid = false;
         var $mode = false;
         var $action = false;
         var $authType = false;
+        var $dumpStat = 300;
 
+        /* Support feature and meta about Jaxl instance */
         var $features = array();
         var $category = 'client';
         var $type = 'bot';
@@ -126,23 +138,28 @@
         */
         function __construct($config=array()) {
             $this->config = $config;
+
             /* Parse configuration parameter */ 
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
             $this->host = isset($config['host']) ? $config['host'] : JAXL_HOST_NAME;
             $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
             $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
+            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
+            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
+            
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
-            $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
             $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : false;
+            $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
             $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : JAXL_PID_PATH;
+            $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
+            $this->pid = getmypid();
+            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
+            $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
+            
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
-            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
-            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
-            $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
-            $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
 
             $this->configure($config);
             parent::__construct($config);
@@ -157,19 +174,16 @@
          * Configures Jaxl instance to run across various systems
         */
         protected function configure($config) {
-            $this->pid = getmypid();
-            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
-            
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                JAXLog::log("Registering shutdown for SIGH Terms ...", 0, $this);
+                JAXLog::log("Registering shutdown for SIGH Terms ...", 1, $this);
             }
             
             if(JAXLUtil::sslEnabled()) {
-                JAXLog::log("Openssl enabled ...", 0, $this);
+                JAXLog::log("Openssl enabled ...", 1, $this);
             }
-              
+            
             if($this->mode == "cli") {
                 if(!function_exists('fsockopen')) die("Jaxl requires fsockopen method ...");  
                 file_put_contents($this->pidPath, $this->pid);

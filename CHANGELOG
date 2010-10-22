@@ -1,5 +1,7 @@
 version 2.1.
 -------------
+- Reshuffled core instance paramaters between JAXL and XMPP class
+  Also Jaxl core now logs at level 1 instead of 0 (i.e. all logs goes inside jaxl.log and not on console)
 - JAXL class now make use of endStream method inside XMPP base class while disconnecting.
   Also XMPPSend::endStream now forces xmpp stanza delivery (escaping JAXL internal buffer)
   http://code.google.com/p/jaxl/issues/detail?id=23

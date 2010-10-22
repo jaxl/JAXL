@@ -86,7 +86,7 @@
             }
             $xml .= '</auth>';
             
-            JAXLog::log("Performing Auth type: ".$type, 0, $jaxl);
+            JAXLog::log("Performing Auth type: ".$type, 1, $jaxl);
             return $jaxl->sendXML($xml);
         }
         

@@ -47,16 +47,6 @@
     */
     class XMPP {
         
-        /* User account related parameters */
-        var $user = false;
-        var $pass = false;
-        var $host = false;
-        var $port = false;
-        var $jid = false;
-        var $domain = false;
-        var $resource = false;
-        var $component = false;
-        
         /* User session related parameters */
         var $auth = false;
         var $isConnected = false;
@@ -105,16 +95,16 @@
         function connect() {
             if(!$this->stream) {
                 if($this->stream = @fsockopen($this->host, $this->port, $this->streamENum, $this->streamEStr, $this->streamTimeout)) {
-                    JAXLog::log("Socket opened to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
+                    JAXLog::log("Socket opened to the jabber host ".$this->host.":".$this->port." ...", 1, $this);
                     stream_set_blocking($this->stream, $this->streamBlocking);
                     stream_set_timeout($this->stream, $this->streamTimeout);
                 }
                 else {
-                    JAXLog::log("Unable to open socket to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
+                    JAXLog::log("Unable to open socket to the jabber host ".$this->host.":".$this->port." ...", 1, $this);
                 }
             }
             else {
-                JAXLog::log("Socket already opened to the jabber host ".$this->host.":".$this->port." ...", 0, $this);
+                JAXLog::log("Socket already opened to the jabber host ".$this->host.":".$this->port." ...", 1, $this);
             }
             
             JAXLPlugin::execute('jaxl_post_connect', false, $this);
