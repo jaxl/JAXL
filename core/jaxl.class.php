@@ -108,7 +108,7 @@
         var $user = false;
         var $pass = false;
         var $host = false;
-        var $port = false;
+        var $port = 5222;
         var $jid = false;
         var $domain = false;
         var $resource = false;
@@ -137,37 +137,46 @@
          * Core constructor
         */
         function __construct($config=array()) {
+            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
+            $this->pid = getmypid();
             $this->config = $config;
 
-            /* Parse configuration parameter */ 
+            /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */ 
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
-            $this->host = isset($config['host']) ? $config['host'] : JAXL_HOST_NAME;
-            $this->port = isset($config['port']) ? $config['port'] : JAXL_HOST_PORT;
             $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
-            $this->resource = isset($config['resource']) ? $config['resource'] : "jaxl.".time();
-            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
             
-            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : JAXL_LOG_LEVEL;
-            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : false;
-            $this->logPath = isset($config['logPath']) ? $config['logPath'] : JAXL_LOG_PATH;
-            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : JAXL_PID_PATH;
+            /* Optional params if not configured using jaxl.ini or $config take default values */
+            $this->port = isset($config['port']) ? $config['port'] : (constant(JAXL_HOST_PORT) == null ? $this->port : JAXL_HOST_PORT);
+            $this->host = isset($config['host']) ? $config['host'] : (constant(JAXL_HOST_NAME) == null ? $this->domain : JAXL_HOST_NAME);
+            $this->resource = isset($config['resource']) ? $config['resource'] : (constant(JAXL_USER_RESC) == null ? "jaxl.".time() : JAXL_USER_RESC);
+            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : (constant(JAXL_LOG_LEVEL) == null ? $this->logLevel : JAXL_LOG_LEVEL);
+            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (constant(JAXL_LOG_ROTATE) == null ? $this->logRotate : JAXL_LOG_ROTATE);
+            $this->logPath = isset($config['logPath']) ? $config['logPath'] : (constant(JAXL_LOG_PATH) == null ? $this->logPath : JAXL_LOG_PATH);
+            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : (constant(JAXL_PID_PATH) == null ? $this->pidPath : JAXL_PID_PATH);
+
+            /* Optional params which can be configured only via constructor $config */
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
-            $this->pid = getmypid();
-            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
-            
+           
+            /* Mandatory param while working with XEP-0115 or XEP-0206 */
+            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : JAXL_BOSH_HOST;
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : JAXL_BOSH_PORT;
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : JAXL_BOSH_SUFFIX;
 
+            /* Configure instance for platforms and call parent construct */
             $this->configure($config);
             parent::__construct($config);
             $this->xml = new XML();
             
+            /* Initialize JAXLCron and register instance cron jobs */
             JAXLCron::init();
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
+            
+            // include service discovery XEP-0030, recommended for every XMPP entity
+            jaxl_require('JAXL0030', $this);
         }
         
         /*
@@ -177,24 +186,21 @@
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                JAXLog::log("Registering shutdown for SIGH Terms ...", 1, $this);
+                $this->log("Registering shutdown for SIGH Terms ...", 1);
             }
             
             if(JAXLUtil::sslEnabled()) {
-                JAXLog::log("Openssl enabled ...", 1, $this);
+                $this->log("Openssl enabled ...", 1);
             }
             
             if($this->mode == "cli") {
                 if(!function_exists('fsockopen')) die("Jaxl requires fsockopen method ...");  
-                file_put_contents($this->pidPath, $this->pid);
+                if(@is_writable($this->pidPath)) file_put_contents($this->pidPath, $this->pid);
             }
             
             if($this->mode == "cgi") {
                 if(!function_exists('curl_init')) die("Jaxl requires curl_init method ...");
             }
-
-            // include service discovery XEP, recommended for every XMPP entity
-            jaxl_require('JAXL0030', $this);
         }
        
         /*
@@ -222,7 +228,7 @@
         /*** User space available methods ***/
         /************************************/
         function shutdown($signal) {
-            JAXLog::log("Jaxl Shutting down ...", 0, $this);
+            $this->log("Jaxl Shutting down ...", 0);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);
             
             if($this->stream) $this->endStream();

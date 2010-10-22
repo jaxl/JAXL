@@ -1,5 +1,8 @@
-version 2.1.
+version 2.1.2
 -------------
+- All core classes inside core/, xmpp/ and xep/ folder now make use of jaxl->log method
+  JAXL Core constructor are now well prepared so that inclusion of jaxl.ini is now optional
+  Application code too should use jaxl->log instead of JAXLog::log method for logging purpose
 - Reshuffled core instance paramaters between JAXL and XMPP class
   Also Jaxl core now logs at level 1 instead of 0 (i.e. all logs goes inside jaxl.log and not on console)
 - JAXL class now make use of endStream method inside XMPP base class while disconnecting.

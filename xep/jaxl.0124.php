@@ -68,7 +68,7 @@
         
         public static function postHandler($payload, $jaxl) {
             $payload = json_encode(self::$buffer);
-            JAXLog::log("[[BoshOut]]\n".$payload, 5, $jaxl);
+            $jaxl->log("[[BoshOut]]\n".$payload, 5);
             header('Content-type: application/json');
             echo $payload;
             exit;
@@ -104,7 +104,7 @@
             $jaxl->bosh['sid'] = isset($_SESSION['sid']) ? (string) $_SESSION['sid'] : false;
             $jaxl->lastid = isset($_SESSION['id']) ? $_SESSION['id'] : $jaxl->lastid;
             $jaxl->jid = isset($_SESSION['jid']) ? $_SESSION['jid'] : $jaxl->jid;
-            JAXLog::log("Loading session data\n".json_encode($_SESSION), 5, $jaxl);
+            $jaxl->log("Loading session data\n".json_encode($_SESSION), 5);
         }
         
         public static function saveSession($xml, $jaxl) {
@@ -118,16 +118,16 @@
                 
                 if(self::$sess) { // session already closed?
                     list($body, $xml) = self::unwrapBody($xml);
-                    JAXLog::log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5, $jaxl);
+                    $jaxl->log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
                 }
                 else {
                     self::$sess = true;
-                    JAXLog::log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5, $jaxl);
+                    $jaxl->log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
                 }
             }
             else {
-                JAXLog::log("[[".$jaxl->action."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5, $jaxl);
+                $jaxl->log("[[".$jaxl->action."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
             }
             
             return $xml;
@@ -153,7 +153,7 @@
         public static function sendBody($xml, $jaxl) {
             $xml = JAXLPlugin::execute('jaxl_pre_curl', $xml, $jaxl);
             if($xml != false) {
-                JAXLog::log("[[XMPPSend]] body\n".$xml, 4, $jaxl);
+                $jaxl->log("[[XMPPSend]] body\n".$xml, 4);
                 
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
                 $payload = $payload['content'];

@@ -44,7 +44,7 @@
             // Requires Bosh Session Manager
             jaxl_require('JAXL0124', $jaxl);    
             $jaxl->action = $_REQUEST['jaxl'];
-            JAXLog::log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5, $jaxl);
+            $jaxl->log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5);
         }
         
         public static function jaxl($jaxl, $xml) { 
