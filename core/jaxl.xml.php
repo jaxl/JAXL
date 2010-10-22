@@ -1,12 +1,17 @@
 <?php
   
-/*
-* This class is by Hans Anderson, me@hansanderson.com
-*
-* This is a stable release, 1.0.  I don't foresee any changes, but you
-* might check http://www.hansanderson.com/php/xml/ to see
-* usage: $xml = xmlize($array);
-*
+/**
+ * This class is by Hans Anderson, me@hansanderson.com
+ *
+ * This is a stable release, 1.0.  I don't foresee any changes, but you
+ * might check http://www.hansanderson.com/php/xml/ to see
+ * usage: $xml = xmlize($array);
+ *
+ * @package jaxl
+ * @subpackage core
+ * @author Hans Anderson <me@hansanderson.com>
+ * @copyright Hans Anderson
+ * @link http://www.hansanderson.com/php/xml/
 */
   
     class XML {

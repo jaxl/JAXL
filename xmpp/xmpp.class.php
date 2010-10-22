@@ -1,5 +1,6 @@
 <?php
-/* Jaxl (Jabber XMPP Library)
+/**
+ * Jaxl (Jabber XMPP Library)
  *
  * Copyright (c) 2009-2010, Abhinav Singh <me@abhinavsingh.com>.
  * All rights reserved.
@@ -32,6 +33,12 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * @package jaxl
+ * @subpackage xmpp
+ * @author Abhinav Singh <me@abhinavsingh.com>
+ * @copyright Abhinav Singh
+ * @link http://code.google.com/p/jaxl 
  */
     
     // include required classes
@@ -42,7 +49,7 @@
         'XMPPSend'
     ));
     
-    /*
+    /**
      * Base XMPP class
     */
     class XMPP {
@@ -78,7 +85,10 @@
         var $clocked = false;
         var $rateLimit = true;
         var $lastSendTime = false;
-         
+        
+        /**
+         * XMPP constructor
+        */
         function __construct($config) {
             $this->clock = 0;
             $this->clocked = time();
@@ -92,6 +102,9 @@
             $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : 0.1;
         }
         
+        /**
+         * Open socket stream to jabber server host:port for connecting Jaxl instance
+        */
         function connect() {
             if(!$this->stream) {
                 if($this->stream = @fsockopen($this->host, $this->port, $this->streamENum, $this->streamEStr, $this->streamTimeout)) {
@@ -112,26 +125,46 @@
             else return false;
         }
         
+        /**
+         * Send XMPP start stream
+        */
         function startStream() {
             return XMPPSend::startStream($this);
         }
 
+        /**
+         * Send XMPP end stream
+        */
         function endStream() {
             return XMPPSend::endStream($this);
         }
         
+        /**
+         * Send session start XMPP stanza 
+        */
         function startSession() {
             return XMPPSend::startSession($this, array('XMPPGet', 'postSession'));
         }
         
+        /**
+         * Bind connected Jaxl instance to a resource
+        */
         function startBind() {
             return XMPPSend::startBind($this, array('XMPPGet', 'postBind'));
         }
-        
+       
+        /**
+         * Return back id for use with XMPP stanza's
+         *
+         * @return integer $id
+        */
         function getId() {
             return ++$this->lastid;
         }
         
+        /**
+         * Read connected XMPP stream for new data
+        */
         function getXML($nap=TRUE) {
             // sleep between two reads
             if($nap) sleep($this->getSleep);
@@ -176,6 +209,9 @@
             }
         }
         
+        /**
+         * Send XMPP XML packet over connected stream
+        */
         function sendXML($xml, $force=false) {
             $xml = JAXLPlugin::execute('jaxl_send_xml', $xml, $this);
             
@@ -196,7 +232,10 @@
             }
         }
 
-        function _sendXML($xml) {
+        /**
+         * Send XMPP XML packet over connected stream
+        */
+        protected function _sendXML($xml) {
             if($this->stream) {
                 $this->lastSendTime = JAXLUtil::getTime();
                 if(($ret = fwrite($this->stream, $xml)) !== false) $this->log("[[XMPPSend]] $ret\n".$xml, 4);
@@ -209,6 +248,9 @@
             }
         }
         
+        /**
+         * Routes incoming XMPP data to appropriate handlers
+        */
         function handler($payload) {
             $this->log("[[XMPPGet]] \n".$payload, 4);
             

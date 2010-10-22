@@ -1,5 +1,6 @@
 <?php
-/* Jaxl (Jabber XMPP Library)
+/** 
+ * Jaxl (Jabber XMPP Library)
  *
  * Copyright (c) 2009-2010, Abhinav Singh <me@abhinavsingh.com>.
  * All rights reserved.
@@ -32,17 +33,23 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * @package jaxl
+ * @subpackage core
+ * @author Abhinav Singh <me@abhinavsingh.com>
+ * @copyright Abhinav Singh
+ * @link http://code.google.com/p/jaxl
  */
 
-    /*
-     * Library Metainfo
-    */
     declare(ticks=1);
     define('JAXL_NAME', 'Jaxl :: Jabber XMPP Client Library');
     define('JAXL_VERSION', '2.1.2');
 
-    /*
-     * autoLoad method for Jaxl library and apps
+    /**
+     * Autoload method for Jaxl library and it's applications
+     *
+     * @param string|array $classNames core class name required in PHP environment
+     * @param object $jaxl Jaxl object which require these classes. Optional but always required while including implemented XEP's in PHP environment
     */
     function jaxl_require($classNames, $jaxl=false) {
         static $included = array();
@@ -83,10 +90,7 @@
         return;
     }
 
-    /*
-     * include core, xmpp base
-     * (basic requirements for every Jaxl instance)
-    */
+    // Include core classes and xmpp base
     jaxl_require(array(
         'JAXLog',
         'JAXLUtil',
@@ -96,45 +100,189 @@
         'XMPP',
     ));
 
-    /*
-     * Jaxl Core Class extending Base XMPP Class
+    /**
+     * Jaxl class extending base XMPP class
+     *
+     * Jaxl library core is like any of your desktop Instant Messaging (IM) clients.
+     * Include Jaxl core in you application and start connecting and managing multiple XMPP accounts
+     * Packaged library is custom configured for running <b>single instance</b> Jaxl applications
+     * 
+     * For connecting <b>multiple instance</b> XMPP accounts inside your application rewrite Jaxl controller
+     * using combination of env/jaxl.php, env/jaxl.ini and env/jaxl.conf
     */
     class JAXL extends XMPP {
 
-        /* Custom config passed to constructor */
+        /**
+         * Custom config passed to Jaxl constructor
+         * 
+         * @var array
+        */
         var $config = array();
 
-        /* User account related parameters */
+        /**
+         * Username of connecting Jaxl instance
+         *
+         * @var string
+        */
         var $user = false;
+
+        /**
+         * Password of connecting Jaxl instance
+         *
+         * @var string
+        */
         var $pass = false;
+
+        /**
+         * Hostname for the connecting Jaxl instance
+         * 
+         * @var string
+        */
         var $host = false;
+
+        /**
+         * Port for the connecting Jaxl instance
+         * 
+         * @var integer
+        */
         var $port = 5222;
+
+        /**
+         * Full JID of the connected Jaxl instance
+         *
+         * @var string
+        */
         var $jid = false;
+
+        /**
+         * Domain for the connecting Jaxl instance
+         * 
+         * @var string
+        */
         var $domain = false;
+
+        /**
+         * Resource for the connecting Jaxl instance
+         *
+         * @var string
+        */
         var $resource = false;
+
+        /**
+         * Hostname for the connecting Jaxl component (XEP-0115)
+         *
+         * @var string
+         * @todo This variable will deprecate and move inside jaxl.0115.php
+         *       Will be replaced by $compHost, $compPass, $compPort
+        */
         var $component = false;
 
-        /* Core working parameters */
+        /**
+         * Log Level of the connected Jaxl instance
+         * 
+         * @var integer
+        */
         var $logLevel = 1;
+
+        /**
+         * Enable/Disable automatic log rotation for this Jaxl instance
+         *
+         * @var bool|integer
+        */
         var $logRotate = false;
+
+        /**
+         * Absolute path of log file for this Jaxl instance
+        */
         var $logPath = '/var/log/jaxl.log';
+
+        /**
+         * Absolute path of pid file for this Jaxl instance
+        */
         var $pidPath = '/var/run/jaxl.pid';
+
+        /**
+         * Enable/Disable shutdown callback on SIGH terms
+         *
+         * @var bool
+        */
         var $sigh = true;
+
+        /**
+         * Process Id of the connected Jaxl instance
+         *
+         * @var bool|integer
+        */
         var $pid = false;
+
+        /**
+         * Mode of the connected Jaxl instance (cgi or cli)
+         *
+         * @var bool|string
+        */
         var $mode = false;
+
+        /**
+         * Bosh action being served by this Jaxl instance
+         *
+         * @var bool|string
+        */
         var $action = false;
+
+        /**
+         * Jabber auth mechanism performed by this Jaxl instance
+         *
+         * @var false|string
+        */
         var $authType = false;
+
+        /**
+         * Jaxl instance dumps usage statistics periodically. Disabled if set to "false"
+         * 
+         * @var bool|integer
+        */
         var $dumpStat = 300;
 
-        /* Support feature and meta about Jaxl instance */
+        /**
+         * List of XMPP feature supported by this Jaxl instance
+         * 
+         * @var array
+        */
         var $features = array();
+
+        /**
+         * XMPP entity category for the connected Jaxl instance
+         *
+         * @var string
+        */
         var $category = 'client';
+
+        /**
+         * XMPP entity type for the connected Jaxl instance
+         * 
+         * @var string
+        */
         var $type = 'bot';
+
+        /**
+         * Default language of the connected Jaxl instance
+        */
         var $lang = 'en';
+
+        /**
+         * Client name of the connected Jaxl instance
+        */
         var $name = 'Jaxl :: Jabber XMPP Client Library';
 
-        /*
-         * Core constructor
+        /**
+         * Jaxl core constructor
+         *
+         * Jaxl instance configures itself using the constants inside your application jaxl.ini.
+         * However, passed array of configuration options overrides the value inside jaxl.ini.
+         * If no configuration are found or passed for a particular value,
+         * Jaxl falls back to default config options.
+         * 
+         * @param $config Array of configuration options
         */
         function __construct($config=array()) {
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
@@ -179,10 +327,13 @@
             jaxl_require('JAXL0030', $this);
         }
         
-        /*
-         * Configures Jaxl instance to run across various systems
+        /**
+         * Configures Jaxl instance to run across various platforms (*nix/windows)
+         *
+         * Configure method tunes connecting Jaxl instance for
+         * OS compatibility, SSL support and dependencies over PHP methods
         */
-        protected function configure($config) {
+        protected function configure() {
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
@@ -203,15 +354,25 @@
             }
         }
        
-        /*
-         * Periodically dumps jaxl instance usage stats
+        /**
+         * Dumps Jaxl instance usage statistics
+         *
+         * Jaxl instance periodically calls this methods every JAXL::$dumpStat seconds.
         */
         function dumpStat() {
             $this->log("Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb, peak: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb", 0);
         }
         
-        /*
-         * Magic method for calling XEP methods using JAXL instance
+        /**
+         * Magic method for calling XEP's included by the JAXL instance
+         *
+         * Application <b>should never</b> call an XEP method directly using <code>JAXL0045::joinRoom()</code>
+         * instead use <code>$jaxl->JAXL0045('joinRoom', $param1, ..)</code> to call methods provided by included XEP's
+         *
+         * @param string $xep XMPP extension (XEP) class name e.g. JAXL0045 for XEP-0045 a.k.a. Multi-User chat extension
+         * @param array $param Array of parameters where $param[0]='methodName' is the method called inside JAXL0045 class
+         *
+         * @return mixed $return Return value of called XEP method
         */
         function __call($xep, $param) {
             $method = array_shift($param);
@@ -224,9 +385,14 @@
             }
         } 
        
-        /************************************/
-        /*** User space available methods ***/
-        /************************************/
+        /**
+         * Shutdown Jaxl instance cleanly
+         *
+         * shutdown method is auto invoked when Jaxl instance receives a SIGH term.
+         * Before cleanly shutting down this method callbacks registered using <b>jaxl_pre_shutdown</b> hook.
+         *
+         * @param mixed $signal This is passed as paramater to callbacks registered using <b>jaxl_pre_shutdown</b> hook
+        */
         function shutdown($signal) {
             $this->log("Jaxl Shutting down ...", 1);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);
@@ -235,11 +401,28 @@
             $this->stream = false;
         }
         
+        /**
+         * Perform authentication for connecting Jaxl instance
+         *
+         * @param string $type Authentication mechanism to proceed with. Supported auth types are:
+         *               - DIGEST-MD5
+         *               - PLAIN
+         *               - X-FACEBOOK-PLATFORM
+         *               - ANONYMOUS
+        */
         function auth($type) {
             $this->authType = $type;
             return XMPPSend::startAuth($this);
         }
-        
+       
+        /**
+         * Set status of the connected Jaxl instance
+         *
+         * @param bool|string $status
+         * @param bool|string $show
+         * @param bool|integer $priority
+         * @param bool $caps
+        */
         function setStatus($status=false, $show=false, $priority=false, $caps=false) {
             $child = array();
             $child['status'] = ($status === false ? 'Online using Jaxl library http://code.google.com/p/jaxl' : $status);
@@ -248,28 +431,60 @@
             if($caps) $child['payload'] = $this->JAXL0115('getCaps', $this->features);
             return XMPPSend::presence($this, false, false, $child, false);
         }
-        
+       
+        /**
+         * Send authorization request to $toJid
+         *
+         * @param string $toJid JID whom Jaxl instance wants to send authorization request
+        */
         function subscribe($toJid) {
             return XMPPSend::presence($this, $toJid, false, false, 'subscribe');
         }
         
+        /**
+         * Accept authorization request from $toJid
+         *
+         * @param string $toJid JID who's authorization request Jaxl instance wants to accept
+        */
         function subscribed($toJid) {
             return XMPPSend::presence($this, $toJid, false, false, 'subscribed');
         }
         
+        /**
+         * Send cancel authorization request to $toJid
+         *
+         * @param string $toJid JID whom Jaxl instance wants to send cancel authorization request
+        */
         function unsubscribe($toJid) {
             return XMPPSend::presence($this, $toJid, false, false, 'unsubscribe');
         }
         
+        /**
+         * Accept cancel authorization request from $toJid
+         * 
+         * @param string $toJid JID who's cancel authorization request Jaxl instance wants to accept
+        */
         function unsubscribed($toJid) {
             return XMPPSend::presence($this, $toJid, false, false, 'unsubscribed');
         }
-        
+       
+        /**
+         * Retrieve connected Jaxl instance roster list from the server
+         *
+         * @param mixed $callback Method to be callback'd when roster list is received from the server
+        */
         function getRosterList($callback=false) {
             $payload = '<query xmlns="jabber:iq:roster"/>';
             return XMPPSend::iq($this, "get", $payload, false, $this->jid, $callback);
         }
         
+        /**
+         * Add a new jabber account in connected Jaxl instance roster list
+         *
+         * @param string $jid JID to be added in the roster list
+         * @param string $group Group name
+         * @param bool|string $name Name of JID to be added
+        */
         function addRoster($jid, $group, $name=false) {
             $payload = '<query xmlns="jabber:iq:roster">';
             $payload .= '<item jid="'.$jid.'"';
@@ -281,6 +496,13 @@
             return XMPPSend::iq($this, "set", $payload, false, $this->jid, false);
         }
         
+        /**
+         * Update subscription of a jabber account in roster list
+         *
+         * @param string $jid JID to be updated inside roster list
+         * @param string $group Updated group name
+         * @param bool|string $subscription Updated subscription type
+        */
         function updateRoster($jid, $group, $name=false, $subscription=false) {
             $payload = '<query xmlns="jabber:iq:roster">';
             $payload .= '<item jid="'.$jid.'"';
@@ -293,6 +515,11 @@
             return XMPPSend::iq($this, "set", $payload, false, $this->jid, false);
         }
         
+        /**
+         * Delete a jabber account from roster list
+         *
+         * @param string $jid JID to be removed from the roster list
+        */
         function deleteRoster($jid) {
             $payload = '<query xmlns="jabber:iq:roster">';
             $payload .= '<item jid="'.$jid.'" subscription="remove">';
@@ -301,24 +528,59 @@
             return XMPPSend::iq($this, "set", $payload, false, $this->jid, false);
         }
         
+        /**
+         * Send an XMPP message
+         *
+         * @param string $to JID to whom message is sent
+         * @param string $message Message to be sent
+         * @param string $from (Optional) JID from whom this message should be sent
+         * @param string $type (Optional) Type of message stanza to be delivered
+        */
         function sendMessage($to, $message, $from=false, $type='chat') {
             $child = array();
             $child['body'] = $message;
             return XMPPSend::message($this, $to, $from, $child, $type);
         }
         
+        /** 
+         * Send multiple XMPP messages in one go
+         *
+         * @param array $to array of JID's to whom this presence stanza should be send
+         * @param array $from array of JID from whom this presence stanza should originate
+         * @param array $child array of arrays specifying child objects of the stanza
+         * @param array $type array of type of presence stanza to send
+        */
         function sendMessages($to, $from, $child, $type) {
             return XMPPSend::message($this, $to, $from, $child, $type);
         }
 
+        /**
+         * Send an XMPP presence stanza
+         *
+         * @param string $to JID to whom this presence stanza should be send
+         * @param string $from JID from whom this presence stanza should originate
+         * @param array $child Array specifying child objects of the stanza
+         * @param string $type Type of presence stanza to send
+        */
         function sendPresence($to, $from, $child, $type) {
            XMPPSend::presence($this, $to, $from, $child, $type);
         }
-
+        
+        /**
+         * Logs library core and application debug data into the log file
+         *
+         * @param string $log Datum to be logged
+         * @param integer $level Log level for passed datum
+        */
         function log($log, $level) {
             JAXLog::log($log, $level, $this);
         }
 
+        /**
+         * Instead of using jaxl_require method applications can use $jaxl->requires to include XEP's in PHP environment
+         *
+         * @param string $class Class name of the XEP to be included e.g. JAXL0045 for including XEP-0045 a.k.a. Multi-user chat
+        */
         function requires($class) {
             jaxl_require($class, $this);
         }
