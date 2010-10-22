@@ -1,5 +1,12 @@
-version 2.1.2
+version 2.1.
 -------------
+- JAXL class now make use of endStream method inside XMPP base class while disconnecting.
+  Also XMPPSend::endStream now forces xmpp stanza delivery (escaping JAXL internal buffer)
+  http://code.google.com/p/jaxl/issues/detail?id=23
+- Added endStream method inside XMPP base class and startSession,startBind methods inside XMPPSend class
+  XMPP::sendXML now accepts a $force parameter for escaping XMPP stanza's from JAXL internal buffer
+- Updated the way Jaxl core calls XEP 0115 method (entity caps) to match documentation
+  XEP method's should accept jaxl instance as first paramater
 - First checkin of PEP (Personal Eventing), User Location, User Mood, User Activity and User Tune XEP's
 - Completed methods discoFeatures, discoNodes, discoNodeInfo, discoNodeMeta and discoNodeItems in PubSub XEP
 - Hardcoded client category, type, lang and name. TODO: Make them configurable in future
