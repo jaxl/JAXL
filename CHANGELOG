@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Jaxl library is now phpdocs ready. Added extended documentation for JAXL core class, rest to be added
 - All core classes inside core/, xmpp/ and xep/ folder now make use of jaxl->log method
   JAXL Core constructor are now well prepared so that inclusion of jaxl.ini is now optional
   Application code too should use jaxl->log instead of JAXLog::log method for logging purpose
