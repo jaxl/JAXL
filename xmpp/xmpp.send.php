@@ -54,7 +54,7 @@
         
         public static function endStream($jaxl) {
             $xml = '</stream:stream>';
-            return $jaxl->sendXML($xml);
+            return $jaxl->sendXML($xml, true);
         }
         
         public static function startTLS($jaxl) {
@@ -90,6 +90,18 @@
             return $jaxl->sendXML($xml);
         }
         
+        public static function startSession($jaxl, $callback) {
+            $payload = '<session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>';
+            return self::iq($jaxl, "set", $payload, $jaxl->domain, false, $callback);
+        }
+
+        public static function startBind($jaxl, $callback) {
+            $payload = '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">';
+            $payload .= '<resource>'.$jaxl->resource.'</resource>';
+            $payload .= '</bind>';
+            return self::iq($jaxl, "set", $payload, false, false, $callback);
+        }
+
         public static function message($jaxl, $to, $from=false, $child=false, $type='normal', $id=false, $ns='jabber:client') {
             $xml = '';
             

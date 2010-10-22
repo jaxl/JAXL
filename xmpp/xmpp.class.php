@@ -125,19 +125,17 @@
         function startStream() {
             return XMPPSend::startStream($this);
         }
+
+        function endStream() {
+            return XMPPSend::endStream($this);
+        }
         
         function startSession() {
-            $payload = '';
-            $payload .= '<session xmlns="urn:ietf:params:xml:ns:xmpp-session"/>';   
-            return XMPPSend::iq($this, "set", $payload, $this->domain, false, array('XMPPGet', 'postSession'));
+            return XMPPSend::startSession($this, array('XMPPGet', 'postSession'));
         }
         
         function startBind() {
-            $payload = '';
-            $payload .= '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">';
-            $payload .= '<resource>'.$this->resource.'</resource>';
-            $payload .= '</bind>';
-            return XMPPSend::iq($this, "set", $payload, false, false, array('XMPPGet', 'postBind'));
+            return XMPPSend::startBind($this, array('XMPPGet', 'postBind'));
         }
         
         function getId() {
@@ -188,7 +186,7 @@
             }
         }
         
-        function sendXML($xml) {
+        function sendXML($xml, $force=false) {
             $xml = JAXLPlugin::execute('jaxl_send_xml', $xml, $this);
             
             if($this->mode == "cgi") {
@@ -196,6 +194,7 @@
             }
             else {
                 if($this->rateLimit
+                && !$force
                 && $this->lastSendTime
                 && JAXLUtil::getTime() - $this->lastSendTime < $this->sendRate
                 ) { $this->obuffer .= $xml; }
@@ -204,7 +203,7 @@
                     $this->obuffer = '';
                     return $this->_sendXML($xml);
                 }
-            }    
+            }
         }
 
         function _sendXML($xml) {
