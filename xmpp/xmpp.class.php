@@ -54,36 +54,154 @@
     */
     class XMPP {
         
-        /* User session related parameters */
+        /**
+         * Auth status of Jaxl instance
+         *
+         * @var bool 
+        */
         var $auth = false;
+
+        /**
+         * Connected socket stream status
+         *
+         * @var bool
+        */
         var $isConnected = false;
+
+        /**
+         * Connected XMPP stream session requirement status
+         *
+         * @var bool
+        */
         var $sessionRequired = false;
+
+        /**
+         * SASL second auth challenge status
+         *
+         * @var bool
+        */
         var $secondChallenge = false;
+
+        /**
+         * Id of connected Jaxl instance
+         *
+         * @var integer
+        */
         var $lastid = 0;
         
-        /* Socket stream related parameters */
+        /**
+         * Connected socket stream handler
+         *
+         * @var bool|object
+        */
         var $stream = false;
+
+        /**
+         * Connected socket stream id
+         *
+         * @var bool|integer
+        */
         var $streamId = false;
+
+        /**
+         * Socket stream connected host
+         *
+         * @var bool|string
+        */
         var $streamHost = false;
+
+        /**
+         * Socket stream version
+         *
+         * @var bool|integer
+        */
         var $streamVersion = false;
+
+        /**
+         * Last error number for connected socket stream
+         *
+         * @var bool|integer
+        */
         var $streamENum = false;
+
+        /**
+         * Last error string for connected socket stream
+         *
+         * @var bool|string
+        */
         var $streamEStr = false;
+
+        /**
+         * Timeout value for connecting socket stream
+         *
+         * @var bool|integer
+        */
         var $streamTimeout = false;
+
+        /**
+         * Blocking or Non-blocking socket stream
+         *
+         * @var bool
+        */
         var $streamBlocking = 0;
         
-        /* XMPP Performance parameters */
+        /**
+         * Nap in seconds between two socket reads
+         *
+         * @var integer
+        */
         var $getSleep = 1;
+
+        /**
+         * Number of packets to read in one socket read
+         *
+         * @var integer
+        */
         var $getPkts = false;
+
+        /**
+         * Size of each packet to be read from the socket
+        */
         var $getPktSize = false;
+
+        /**
+         * Number of empty packet read before aborting further reads
+        */
         var $getEmptyLines = false;
+
+        /**
+         * Maximum rate at which XMPP stanza's can flow out
+        */
         var $sendRate = false;
 
-        /* XMPP working parameters */
+        /**
+         * Input XMPP stream buffer
+        */
         var $buffer = '';
+
+        /**
+         * Output XMPP stream buffer
+        */
         var $obuffer = '';
+
+        /**
+         * Current value of instance clock
+        */
         var $clock = false;
+
+        /**
+         * When was instance clock last sync'd?
+        */
         var $clocked = false;
+
+        /**
+         * Enable/Disable rate limiting
+        */
         var $rateLimit = true;
+
+        /**
+         * Timestamp of last outbound XMPP packet
+        */
         var $lastSendTime = false;
         
         /**
