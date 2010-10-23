@@ -129,7 +129,7 @@
             
             while(true) {
                 $read = self::$clients;
-                $ns = @socket_select($read, $write=null, $except=null, JAXL_HTTP_SELECT_TIMEOUT);
+                $ns = @socket_select($read, $write=null, $except=null, JAXL_HTTPd_SELECT_TIMEOUT);
                 
                 if($ns) foreach($read as $read_socket) {
                     $accept_id = self::getResourceID($read_socket);
@@ -215,7 +215,7 @@
         private static function prepareResponse($meta, $headers) {
             $raw = '';
             $raw .= $meta['protocol']."/".$meta['version']." ".self::$headers[$meta['code']]."\r\n";
-            $raw .= "Server: ".JAXL_SERVER_NAME."/".JAXL_SERVER_VERSION."\r\n";
+            $raw .= "Server: ".JAXL_HTTPd_SERVER_NAME."/".JAXL_HTTPd_SERVER_VERSION."\r\n";
             $raw .= "Date: ".gmdate("D, d M Y H:i:s T")."\r\n";
             foreach($headers as $key => $val) $raw .= $key.": ".$val."\r\n";
             $raw .= "\r\n";
