@@ -114,18 +114,18 @@
             
             if(is_array($to)) {
                 foreach($to as $key => $value) {
-                    $xml .= self::prepareMessage($jaxl, $to[$key], $from[$key], $child[$key], $type[$key], $ns[$key], $id[$key]);
+                    $xml .= self::prepareMessage($jaxl, $to[$key], $from[$key], $child[$key], $type[$key], $id[$key], $ns[$key]);
                 }
             }
             else {
-                $xml .= self::prepareMessage($jaxl, $to, $from, $child, $type, $ns, $id);
+                $xml .= self::prepareMessage($jaxl, $to, $from, $child, $type, $id, $ns);
             }
         
             JAXLPlugin::execute('jaxl_send_message', $xml, $jaxl); 
             return $jaxl->sendXML($xml);
         }
         
-        private static function prepareMessage($jaxl, $to, $from, $child, $type, $ns, $id) {
+        private static function prepareMessage($jaxl, $to, $from, $child, $type, $id, $ns) {
             $xml = '<message';
             if($from) $xml .= ' from="'.$from.'"';
             $xml .= ' to="'.htmlspecialchars($to).'"';

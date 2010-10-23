@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- Provided a sendIQ method per JAXL instance.
+  Recommended that applications and XEP's should directly use this method for sending <iq/> type stanza
+  DONOT use XMPPSend methods inside your application code from here on
 - Added configuration options for JAXL HTTPd server and JAXL Bosh Component Manager inside jaxl.ini
 - Fixed type in XEP-0202 (Entity Time). XEP was not sending <iq/> id in response to get request
 - Jaxl library is now phpdocs ready. Added extended documentation for JAXL core class, rest to be added

@@ -535,37 +535,54 @@
          * @param string $message Message to be sent
          * @param string $from (Optional) JID from whom this message should be sent
          * @param string $type (Optional) Type of message stanza to be delivered
+         * @param integer $id (Optional) Add an id attribute to transmitted stanza (omitted if not provided)
         */
-        function sendMessage($to, $message, $from=false, $type='chat') {
+        function sendMessage($to, $message, $from=false, $type='chat', $id=false) {
             $child = array();
             $child['body'] = $message;
-            return XMPPSend::message($this, $to, $from, $child, $type);
+            return XMPPSend::message($this, $to, $from, $child, $type, $id);
         }
         
         /** 
          * Send multiple XMPP messages in one go
          *
          * @param array $to array of JID's to whom this presence stanza should be send
-         * @param array $from array of JID from whom this presence stanza should originate
-         * @param array $child array of arrays specifying child objects of the stanza
-         * @param array $type array of type of presence stanza to send
+         * @param array $from (Optional) array of JID from whom this presence stanza should originate
+         * @param array $child (Optional) array of arrays specifying child objects of the stanza
+         * @param array $type (Optional) array of type of presence stanza to send
+         * @param integer $id (Optional) Add an id attribute to transmitted stanza (omitted if not provided)
         */
-        function sendMessages($to, $from, $child, $type) {
+        function sendMessages($to, $from=false, $child=false, $type='chat', $id=false) {
             return XMPPSend::message($this, $to, $from, $child, $type);
         }
 
         /**
          * Send an XMPP presence stanza
          *
-         * @param string $to JID to whom this presence stanza should be send
-         * @param string $from JID from whom this presence stanza should originate
-         * @param array $child Array specifying child objects of the stanza
-         * @param string $type Type of presence stanza to send
+         * @param string $to (Optional) JID to whom this presence stanza should be send
+         * @param string $from (Optional) JID from whom this presence stanza should originate
+         * @param array $child (Optional) array specifying child objects of the stanza
+         * @param string $type (Optional) Type of presence stanza to send
+         * @param integer $id (Optional) Add an id attribute to transmitted stanza (omitted if not provided)
         */
-        function sendPresence($to, $from, $child, $type) {
-           XMPPSend::presence($this, $to, $from, $child, $type);
+        function sendPresence($to=false, $from=false, $child=false, $type=false, $id=false) {
+           return XMPPSend::presence($this, $to, $from, $child, $type, $id);
         }
-        
+
+        /**
+         * Send an XMPP iq stanza
+         *
+         * @param string $type Type of iq stanza to send
+         * @param string $payload (Optional) XML string to be transmitted
+         * @param string $to (Optional) JID to whom this iq stanza should be send
+         * @param string $from (Optional) JID from whom this presence stanza should originate
+         * @param string|array $callback (Optional) Callback method which will handle "result" type stanza rcved
+         * @param integer $id (Optional) Add an id attribute to transmitted stanza (auto-generated if not provided)
+        */
+        function sendIQ($type, $payload=false, $to=false, $from=false, $callback=false, $id=false) {
+            return XMPPSend::iq($this, $type, $payload, $to, $from, $callback, $id); 
+        }
+
         /**
          * Logs library core and application debug data into the log file
          *
