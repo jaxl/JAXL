@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Added configuration options for JAXL HTTPd server and JAXL Bosh Component Manager inside jaxl.ini
 - Fixed type in XEP-0202 (Entity Time). XEP was not sending <iq/> id in response to get request
 - Jaxl library is now phpdocs ready. Added extended documentation for JAXL core class, rest to be added
 - All core classes inside core/, xmpp/ and xep/ folder now make use of jaxl->log method
