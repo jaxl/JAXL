@@ -138,7 +138,7 @@
          * 
          * @var string
         */
-        var $host = false;
+        var $host = 'localhost';
 
         /**
          * Port for the connecting Jaxl instance
@@ -159,7 +159,7 @@
          * 
          * @var string
         */
-        var $domain = false;
+        var $domain = 'localhost';
 
         /**
          * Resource for the connecting Jaxl instance
@@ -176,6 +176,27 @@
          *       Will be replaced by $compHost, $compPass, $compPort
         */
         var $component = false;
+
+        /**
+         * BOSH component hostname
+         *
+         * @var string
+        */
+        var $boshHost = 'localhost';
+
+        /**
+         * BOSH component port
+         * 
+         * @var integer
+        */
+        var $boshPort = 5280;
+
+        /**
+         * BOSH component suffix
+         *
+         * @var string
+        */
+        var $boshSuffix = '/http-bind';
 
         /**
          * Log Level of the connected Jaxl instance
@@ -283,16 +304,17 @@
          * Jaxl falls back to default config options.
          * 
          * @param $config Array of configuration options
+         * @todo Use DNS SRV lookup to set $jaxl->host from provided domain info
         */
         function __construct($config=array()) {
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->pid = getmypid();
             $this->config = $config;
 
-            /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */ 
+            /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
-            $this->domain = isset($config['domain']) ? $config['domain'] : JAXL_HOST_DOMAIN;
+            $this->domain = isset($config['domain']) ? $config['domain'] : (@constant(JAXL_HOST_DOMAIN) == null ? $this->domain : JAXL_HOST_DOMAIN);
             
             /* Optional params if not configured using jaxl.ini or $config take default values */
             $this->port = isset($config['port']) ? $config['port'] : (@constant(JAXL_HOST_PORT) == null ? $this->port : JAXL_HOST_PORT);
@@ -309,9 +331,9 @@
            
             /* Mandatory param while working with XEP-0115 or XEP-0206 */
             $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
-            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant(JAXL_BOSH_HOST) == null ? $this->host : JAXL_BOSH_HOST);
-            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant(JAXL_BOSH_PORT) == null ? 5280 : JAXL_BOSH_PORT);
-            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant(JAXL_BOSH_SUFFIX) == null ? '/http-bind' : JAXL_BOSH_SUFFIX);
+            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant(JAXL_BOSH_HOST) == null ? $this->boshHost : JAXL_BOSH_HOST);
+            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant(JAXL_BOSH_PORT) == null ? $this->boshPort : JAXL_BOSH_PORT);
+            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant(JAXL_BOSH_SUFFIX) == null ? $this->boshSuffix : JAXL_BOSH_SUFFIX);
 
             /* Configure instance for platforms and call parent construct */
             $this->configure($config);
