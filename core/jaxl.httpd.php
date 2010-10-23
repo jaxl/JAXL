@@ -41,6 +41,10 @@
  * @link http://code.google.com/p/jaxl
  */
 
+    // JAXLHTTPd server meta    
+    define('JAXL_HTTPd_SERVER_NAME', 'JAXLHTTPd');
+    define('JAXL_HTTPd_SERVER_VERSION', '0.0.1');
+
     // Jaxl core dependency
     jaxl_require(array(
         'JAXLPlugin'
