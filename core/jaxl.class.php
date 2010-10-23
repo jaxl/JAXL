@@ -55,10 +55,9 @@
         static $included = array();
         $tagMap = array(
             // core classes
-            'JAXL' => '/core/jaxl.class.php',
             'JAXLCron' => '/core/jaxl.cron.php',
+            'JAXLHTTPd' => '/core/jaxl.httpd.php',
             'JAXLog' => '/core/jaxl.logger.php',
-            'JAXLDb' => '/core/jaxl.mdbm.php',
             'JAXLXml' => '/core/jaxl.parser.php',
             'JAXLPlugin' => '/core/jaxl.plugin.php',
             'JAXLUtil' => '/core/jaxl.util.php',
@@ -624,6 +623,22 @@
             jaxl_require($class, $this);
         }
 
+        /**
+         * Starts a socket server at 127.0.0.1:port
+         *
+         * startHTTPd converts Jaxl instance into a Jaxl socket server (may or may not be a HTTP server)
+         * Same Jaxl socket server instance <b>SHOULD NOT</b> be used for XMPP communications.
+         * Instead separate "new Jaxl();" instances should be created for such XMPP communications.
+         *
+         * @param integer $port Port at which to start the socket server
+        */
+        function startHTTPd($port, $maxq=false) {
+            if($maxq) $maxq = JAXL_HTTPd_MAXQ;
+            JAXLHTTPd::start(array(
+                'port'  =>  $port,
+                'maxq'  =>  $maxq
+            ));
+        }
     }
 
 ?>

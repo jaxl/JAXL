@@ -1,5 +1,10 @@
 version 2.1.2
--------------
+------------
+- Added JAXL::startHTTPd method with appropriate docblock on how to convert Jaxl instance into a Jaxl socket (web) server.
+  Comments also explains how to still maintaining XMPP communication in the background
+- Updated JAXLHTTPd class to use new constants inside jaxl.ini
+- Added jaxl_get_stream_error event handler.
+  Registered callback methods also receive array form of received XMPP XML stanza
 - Connecting Jaxl instance now fallback to default value 'localhost' for host,domain,boshHost,boshPort,boshSuffix
   If these values are not configured either using jaxl.ini constants or constructor
 - Provided a sendIQ method per JAXL instance.
