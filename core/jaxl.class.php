@@ -196,7 +196,7 @@
          *
          * @var string
         */
-        var $boshSuffix = '/http-bind';
+        var $boshSuffix = 'http-bind';
 
         /**
          * Log Level of the connected Jaxl instance
@@ -314,16 +314,16 @@
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
-            $this->domain = isset($config['domain']) ? $config['domain'] : (@constant(JAXL_HOST_DOMAIN) == null ? $this->domain : JAXL_HOST_DOMAIN);
+            $this->domain = isset($config['domain']) ? $config['domain'] : (@constant("JAXL_HOST_DOMAIN") == null ? $this->domain : JAXL_HOST_DOMAIN);
             
             /* Optional params if not configured using jaxl.ini or $config take default values */
-            $this->port = isset($config['port']) ? $config['port'] : (@constant(JAXL_HOST_PORT) == null ? $this->port : JAXL_HOST_PORT);
-            $this->host = isset($config['host']) ? $config['host'] : (@constant(JAXL_HOST_NAME) == null ? $this->domain : JAXL_HOST_NAME);
-            $this->resource = isset($config['resource']) ? $config['resource'] : (@constant(JAXL_USER_RESC) == null ? "jaxl.".time() : JAXL_USER_RESC);
-            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : (@constant(JAXL_LOG_LEVEL) == null ? $this->logLevel : JAXL_LOG_LEVEL);
-            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (@constant(JAXL_LOG_ROTATE) == null ? $this->logRotate : JAXL_LOG_ROTATE);
-            $this->logPath = isset($config['logPath']) ? $config['logPath'] : (@constant(JAXL_LOG_PATH) == null ? $this->logPath : JAXL_LOG_PATH);
-            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : (@constant(JAXL_PID_PATH) == null ? $this->pidPath : JAXL_PID_PATH);
+            $this->port = isset($config['port']) ? $config['port'] : (@constant("JAXL_HOST_PORT") == null ? $this->port : JAXL_HOST_PORT);
+            $this->host = isset($config['host']) ? $config['host'] : (@constant("JAXL_HOST_NAME") == null ? $this->domain : JAXL_HOST_NAME);
+            $this->resource = isset($config['resource']) ? $config['resource'] : (@constant("JAXL_USER_RESC") == null ? "jaxl.".time() : JAXL_USER_RESC);
+            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : (@constant("JAXL_LOG_LEVEL") == null ? $this->logLevel : JAXL_LOG_LEVEL);
+            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (@constant("JAXL_LOG_ROTATE") == null ? $this->logRotate : JAXL_LOG_ROTATE);
+            $this->logPath = isset($config['logPath']) ? $config['logPath'] : (@constant("JAXL_LOG_PATH") == null ? $this->logPath : JAXL_LOG_PATH);
+            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : (@constant("JAXL_PID_PATH") == null ? $this->pidPath : JAXL_PID_PATH);
 
             /* Optional params which can be configured only via constructor $config */
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
@@ -331,9 +331,9 @@
            
             /* Mandatory param while working with XEP-0115 or XEP-0206 */
             $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
-            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant(JAXL_BOSH_HOST) == null ? $this->boshHost : JAXL_BOSH_HOST);
-            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant(JAXL_BOSH_PORT) == null ? $this->boshPort : JAXL_BOSH_PORT);
-            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant(JAXL_BOSH_SUFFIX) == null ? $this->boshSuffix : JAXL_BOSH_SUFFIX);
+            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $this->boshHost : JAXL_BOSH_HOST);
+            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $this->boshPort : JAXL_BOSH_PORT);
+            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $this->boshSuffix : JAXL_BOSH_SUFFIX);
 
             /* Configure instance for platforms and call parent construct */
             $this->configure($config);
