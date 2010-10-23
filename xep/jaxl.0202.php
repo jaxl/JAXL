@@ -69,7 +69,7 @@
                 $entityTime .= '<tzo>'.date('P').'</tzo>';
                 $entityTime .= '<utc>'.date('Y-m-d').'T'.date('H:i:s').'Z</utc>';
                 $entityTime .= '</time>';
-                return XMPPSend::iq($jaxl, 'result', $entityTime, $payload['from'], $payload['to'], false);
+                return XMPPSend::iq($jaxl, 'result', $entityTime, $payload['from'], $payload['to'], false, $payload['id']);
             }
         }
         
