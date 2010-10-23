@@ -55,6 +55,7 @@
         static $included = array();
         $tagMap = array(
             // core classes
+            'JAXLBosh' => '/core/jaxl.bosh.php',
             'JAXLCron' => '/core/jaxl.cron.php',
             'JAXLHTTPd' => '/core/jaxl.httpd.php',
             'JAXLog' => '/core/jaxl.logger.php',
@@ -631,14 +632,15 @@
          * Instead separate "new Jaxl();" instances should be created for such XMPP communications.
          *
          * @param integer $port Port at which to start the socket server
+         * @param integer $maxq JAXLHTTPd socket server max queue
         */
-        function startHTTPd($port, $maxq=false) {
-            if($maxq) $maxq = JAXL_HTTPd_MAXQ;
+        function startHTTPd($port, $maxq) {
             JAXLHTTPd::start(array(
                 'port'  =>  $port,
                 'maxq'  =>  $maxq
             ));
         }
+
     }
 
 ?>
