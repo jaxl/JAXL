@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Connecting Jaxl instance now fallback to default value 'localhost' for host,domain,boshHost,boshPort,boshSuffix
+  If these values are not configured either using jaxl.ini constants or constructor
 - Provided a sendIQ method per JAXL instance.
   Recommended that applications and XEP's should directly use this method for sending <iq/> type stanza
   DONOT use XMPPSend methods inside your application code from here on
