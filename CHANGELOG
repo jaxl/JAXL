@@ -1,5 +1,7 @@
 version 2.1.2
 ------------
+- Added a sample application file which can be used to pre-fetch XMPP/Jabber data for a webpage without using BOSH XEP or Ajax requests
+  As per the discussion on google groups (http://bit.ly/aKavZB) with MOVIM team
 - JAXL library is now $jaxl independent, you can use anything like $var = new JAXL(); instance your applications now
   JAXLUtil::encryptPassword now accepts username/password during SASL auth.
   Previously it used to auto detect the same from JAXL instance, now core has to manually pass these param

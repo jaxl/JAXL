@@ -415,7 +415,7 @@
          *
          * @param mixed $signal This is passed as paramater to callbacks registered using <b>jaxl_pre_shutdown</b> hook
         */
-        function shutdown($signal) {
+        function shutdown($signal=false) {
             $this->log("Jaxl Shutting down ...", 1);
             JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);
             
