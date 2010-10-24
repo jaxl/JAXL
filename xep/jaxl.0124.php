@@ -50,7 +50,7 @@
     );
     session_start();
 
-    /*
+    /**
      * XEP-0124: Bosh Implementation
      * Maintain various attributes like rid, sid across requests
     */

@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * Jaxl Utility Class
     */
     class JAXLUtil {

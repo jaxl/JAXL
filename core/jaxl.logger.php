@@ -40,7 +40,10 @@
  * @copyright Abhinav Singh
  * @link http://code.google.com/p/jaxl
  */
-    
+
+    /**
+     * Jaxl Logging Class
+    */
     class JAXLog {
         
         private static function writeLog($logPath, $log) {

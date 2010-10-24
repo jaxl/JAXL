@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0115 : Entity Capabilities
     */
     class JAXL0115 {

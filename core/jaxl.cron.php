@@ -41,9 +41,10 @@
  * @link http://code.google.com/p/jaxl 
  */
 
-	/*
+	/**
 	 * Jaxl Cron Job
-	 * Add periodic cron in your xmpp applications
+	 * 
+     * Add periodic cron in your xmpp applications
 	*/
 	class JAXLCron {
 	

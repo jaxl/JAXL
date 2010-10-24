@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0114: Jabber Component Protocol
     */
     class JAXL0114 {

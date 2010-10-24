@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0202 : Entity Time
     */  
     class JAXL0202 {

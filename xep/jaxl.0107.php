@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0107 : User Mood
     */
     class JAXL0107 {

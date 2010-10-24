@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0108 : User Activity
     */
     class JAXL0108 {

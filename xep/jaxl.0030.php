@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP: 0030 Service Discovery
      * Version: 2.4
      * Url: http://xmpp.org/extensions/xep-0030.html

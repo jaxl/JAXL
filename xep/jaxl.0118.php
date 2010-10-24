@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0118 : User Tune
     */
     class JAXL0118 {

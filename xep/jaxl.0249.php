@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0249: Direct MUC Invitations
     */
     class JAXL0249 {

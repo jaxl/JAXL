@@ -41,8 +41,9 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0206: XMPP over BOSH
+     * 
      * Uses XEP-0124 to wrap XMPP stanza's inside <body/> wrapper
     */
     class JAXL0206 {

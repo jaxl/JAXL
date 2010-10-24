@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0045: Mutli-User Chat Implementation
     */
     class JAXL0045 {

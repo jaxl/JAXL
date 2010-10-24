@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0163 : Personal Eventing Protocol
     */
     class JAXL0163 {

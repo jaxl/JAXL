@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0054 : vcard-temp
     */
 	class JAXL0054 {

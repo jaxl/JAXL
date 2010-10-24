@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0092: Software Version
     */
     class JAXL0092 {

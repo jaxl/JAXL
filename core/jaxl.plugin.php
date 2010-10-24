@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * Jaxl Plugin Framework
      *
      * Available methods:

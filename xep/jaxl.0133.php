@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0133: Service Administration
     */
     class JAXL0133 {

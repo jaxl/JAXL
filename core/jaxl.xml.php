@@ -13,7 +13,10 @@
  * @copyright Hans Anderson
  * @link http://www.hansanderson.com/php/xml/
 */
-  
+
+    /**
+     * XML to Array convertor class
+    */
     class XML {
     
         /*

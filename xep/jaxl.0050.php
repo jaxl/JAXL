@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0050: Ad-Hoc Commands
     */
     class JAXL0050 {

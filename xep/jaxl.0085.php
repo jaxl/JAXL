@@ -41,8 +41,9 @@
  * @link http://code.google.com/p/jaxl
  */
 
-    /*
+    /**
      * XEP-0085: Chat State Notifications
+     * 
      * Adds 5 chat state a.k.a 'composing', 'paused', 'active', 'inactive', 'gone'
     */
     class JAXL0085 {

@@ -41,7 +41,7 @@
  * @link http://code.google.com/p/jaxl
  */
     
-    /*
+    /**
      * XEP-0004 : Data Forms
     */
     class JAXL0004 {
