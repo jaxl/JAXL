@@ -166,14 +166,12 @@
             return $str;
         }
         
-        public static function encryptPassword($data) {
-            global $jaxl;
-            
+        public static function encryptPassword($data, $user, $pass) {
             foreach(array('realm', 'cnonce', 'digest-uri') as $key)
                 if(!isset($data[$key]))
                     $data[$key] = '';
             
-            $pack = md5($jaxl->user.':'.$data['realm'].':'.$jaxl->pass);
+            $pack = md5($user.':'.$data['realm'].':'.$pass);
             
             if(isset($data['authzid'])) {
                     $a1 = pack('H32',$pack).sprintf(':%s:%s:%s',$data['nonce'],$data['cnonce'],$data['authzid']);

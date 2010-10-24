@@ -1,5 +1,8 @@
 version 2.1.2
 ------------
+- JAXL library is now $jaxl independent, you can use anything like $var = new JAXL(); instance your applications now
+  JAXLUtil::encryptPassword now accepts username/password during SASL auth.
+  Previously it used to auto detect the same from JAXL instance, now core has to manually pass these param
 - Added JAXL::startHTTPd method with appropriate docblock on how to convert Jaxl instance into a Jaxl socket (web) server.
   Comments also explains how to still maintaining XMPP communication in the background
 - Updated JAXLHTTPd class to use new constants inside jaxl.ini

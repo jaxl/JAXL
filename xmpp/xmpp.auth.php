@@ -103,7 +103,7 @@
                 }
                         
                 $response = array('username'=>$jaxl->user,
-                'response' => JAXLUtil::encryptPassword(array_merge($decoded,array('nc'=>'00000001'))),
+                'response' => JAXLUtil::encryptPassword(array_merge($decoded,array('nc'=>'00000001')), $jaxl->user, $jaxl->pass),
                 'charset' => 'utf-8',
                 'nc' => '00000001',
                 'qop' => 'auth');
