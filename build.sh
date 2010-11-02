@@ -38,6 +38,8 @@ case "$1" in
             rm -R app/componentbot
 			rm -R app/boshchat
             rm -R app/boshMUChat
+            rm app/preFetchXMPP.php
+            rm app/preFetchBOSH.php
 			rm $PACKAGE_BIN_PATH/jaxl
 		else
 			echo "creating package directories..."
@@ -60,7 +62,9 @@ case "$1" in
 			app/echobot/* \
             app/componentbot/* \
 			app/boshchat/* \
-            app/boshMUChat/*
+            app/boshMUChat/* \
+            app/preFetchXMPP.php \
+            app/preFetchBOSH.php
     ;;
 esac
 

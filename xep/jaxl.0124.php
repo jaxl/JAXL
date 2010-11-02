@@ -67,13 +67,15 @@
             JAXLPlugin::add('jaxl_post_handler', array('JAXL0124', 'postHandler'));
             JAXLPlugin::add('jaxl_get_body', array('JAXL0124', 'processBody'));
             JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
-            JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));   
-            
+            JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
+
             self::setEnv($jaxl);
             self::loadSession($jaxl);
         }
         
         public static function postHandler($payload, $jaxl) {
+            if(!$jaxl->boshOut) return $payload;
+
             $payload = json_encode(self::$buffer);
             $jaxl->log("[[BoshOut]]\n".$payload, 5);
             header('Content-type: application/json');
@@ -123,7 +125,7 @@
                 
                 session_write_close();
                 
-                if(self::$sess) { // session already closed?
+                if(self::$sess && $jaxl->boshOut) {
                     list($body, $xml) = self::unwrapBody($xml);
                     $jaxl->log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));

@@ -197,6 +197,13 @@
          * @var string
         */
         var $boshSuffix = 'http-bind';
+        
+        /**
+         * BOSH auto-output is enabled by default
+         *
+         * @var bool
+        */
+        var $boshOut = true;
 
         /**
          * Log Level of the connected Jaxl instance
@@ -334,6 +341,7 @@
             $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $this->boshHost : JAXL_BOSH_HOST);
             $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $this->boshPort : JAXL_BOSH_PORT);
             $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $this->boshSuffix : JAXL_BOSH_SUFFIX);
+            $this->boshOut = isset($config['boshOut']) ? $config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $this->boshOut : JAXL_BOSH_OUT);
 
             /* Configure instance for platforms and call parent construct */
             $this->configure($config);

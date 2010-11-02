@@ -1,5 +1,8 @@
 version 2.1.2
 ------------
+- Added JAXL contructor config option to disable BOSH module auto-output behaviour.
+  This is utilized inside app/preFetchBOSH.php sample example
+- First checkin of sample application code pre-fetching XMPP/Jabber data for web page population using BOSH XEP
 - Added a sample application file which can be used to pre-fetch XMPP/Jabber data for a webpage without using BOSH XEP or Ajax requests
   As per the discussion on google groups (http://bit.ly/aKavZB) with MOVIM team
 - JAXL library is now $jaxl independent, you can use anything like $var = new JAXL(); instance your applications now
