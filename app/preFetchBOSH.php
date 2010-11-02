@@ -1,7 +1,7 @@
 <?php
 
     /**
-     * Pre-fetch XMPP/Jabber data for webpage without using BOSH XEP or Ajax requests
+     * Pre-fetch XMPP/Jabber data using BOSH for populating a webpage
      * This sample code also demonstrate how to remove your application dependency upon jaxl.ini
      *
      * This sample application demonstrate how to pre-fetch XMPP data from the jabber server
@@ -27,15 +27,19 @@
         'pass'=>'',
         'domain'=>'localhost',
         'host'=>'localhost',
+        'boshHost'=>'localhost',
+        'boshPort'=>5280,
+        'boshSuffix'=>'http-bind',
+        'boshOut'=>false, // Disable auto-output of Jaxl Bosh Module
         'logLevel'=>5
     ));
-
-    // Force CLI mode since we don't intend to use BOSH or Ajax
-    $xmpp->mode = "cli";
-
-    // Demo requires VCard XEP
-    $xmpp->requires('JAXL0054');
     
+    // Include required XEP's
+    $xmpp->requires(array(
+        'JAXL0054', // VCard
+        'JAXL0206'  // XMPP over Bosh
+    ));
+
     function postConnect() {
         global $xmpp;
         $xmpp->startStream();
@@ -55,7 +59,7 @@
         global $xmpp;
         echo "<b>Successfully fetched VCard</b><br/>";
         print_r($payload);
-        $xmpp->shutdown();
+        $xmpp->JAXL0206('endStream');
     }
 
     function postAuthFailure() {
@@ -68,19 +72,8 @@
     JAXLPlugin::add('jaxl_post_auth', 'postAuth');
     JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
 
-    // Run JAXL, Wroom Wroom!
-    try {
-        if($xmpp->connect()) {
-            while($xmpp->stream) {
-                $xmpp->getXML();
-            }
-        }
-    }
-    catch(Exception $e) {
-        die($e->getMessage);
-    }
-
-    // Exit after we are done
-    exit;
+    // Connect to the Bosh Connection Manager
+    $xmpp->action = 'connect';
+    $xmpp->JAXL0206('startStream', $xmpp->host, $xmpp->port, $xmpp->domain);
 
 ?>
