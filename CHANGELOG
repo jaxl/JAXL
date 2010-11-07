@@ -1,5 +1,7 @@
 version 2.1.2
 ------------
+- Added support for usage of name() xpath function inside tag maps of JAXLXml class.
+  Also added some documentation for methods available inside JAXLXml class
 - Fixed JAXLPlugin::remove method to properly remove and manage callback registry.
   Also added some documentation for JAXLPlugin class methods
 - Added JAXL contructor config option to disable BOSH module auto-output behaviour.

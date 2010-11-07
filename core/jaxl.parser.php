@@ -46,12 +46,11 @@
     */
     class JAXLXml {
         
-        /*
+        /**
          * Contains XPath Map for various XMPP stream and stanza's
-         * @url http://tools.ietf.org/html/draft-ietf-xmpp-3920bis-10
+         * http://tools.ietf.org/html/draft-ietf-xmpp-3920bis-18
          * 
-        */
-    
+        */ 
         protected static $tagMap = array(
 
             'starttls'      =>  array(
@@ -73,7 +72,7 @@
             
             'failure'       =>  array(
                 'xmlns'     =>  '//failure/@xmlns',
-                'condition' =>  '//failure/text()',
+                'condition' =>  '//failure/*[1]/name()',
                 'desc'      =>  '//failure/text',
                 'descLang'  =>  '//failure/text/@xml:lang'
             ),
@@ -124,43 +123,45 @@
             
         );
 
-        public static function setupParser($jaxl) {
-            $jaxl->parser = xml_parser_create('UTF-8');
-            xml_parser_set_option($jaxl->parser, XML_OPTION_SKIP_WHITE, 1);
-            xml_parser_set_option($jaxl->parser, XML_OPTION_TARGET_ENCODING, 'UTF-8');
-            xml_set_element_handler($jaxl->parser, array('JAXLXml', 'startXML'), array('JAXLXml', 'endXML'));
-            xml_set_character_data_handler($jaxl->parser, array('JAXLXml', 'charXML'));
-        }
-
-        public static function startXML($parser, $name, $attr) {
-        }
-
-        public static function charXML($parser, $data) {
-        }
-
-        public static function endXML($parser, $name) {
-        } 
-        
-        /*
-         * parse method assumes passed $xml parameter to be a single xmpp packet
+        /**
+         * Parses passed $xml string and returns back parsed nodes as associative array
+         * 
+         * Method assumes passed $xml parameter to be a single xmpp packet.
+         * This method only parses the node xpath mapping defined inside self::$tagMap
+         * Optionally, custom $tagMap can also be passed for parsing custom nodes for passed $xml string
+         *
+         * @param string $xml XML string to be parsed
+         * @param bool $sxe Whether method should return SimpleXMLElement object along with parsed nodes
+         * @param array $tagMap Custom tag mapping to be applied for this parse
+         *
+         * @return array $payload An associative array of parsed xpaths as specified inside tagMap
         */
-        public static function parse($xml) {
+        public static function parse($xml, $sxe=false, &$tagMap=null) {
             $payload = array();
             
             $xml = str_replace('xmlns=', 'ns=', $xml);
             $xml = new SimpleXMLElement($xml);
             $node = $xml->getName();
             $parents = array();
+
+            if(!$tagMap)
+                $tagMap = &self::$tagMap[$node];
             
-            foreach(self::$tagMap[$node] as $tag=>$xpath) {
+            foreach($tagMap as $tag=>$xpath) {
                 $xpath = str_replace('/@xmlns', '/@ns', $xpath);
                 $parentXPath = implode('/', explode('/', $xpath, -1));
                 $tagXPath = str_replace($parentXPath.'/', '', $xpath);
                 
-                if(!isset($parents[$parentXPath])) $parents[$parentXPath] = $xml->xpath($parentXPath);
+                // save parent XPath in buffer
+                if(!isset($parents[$parentXPath])) 
+                    $parents[$parentXPath] = $xml->xpath($parentXPath);
                 
+                // loop through all the extracted parent nodes 
                 foreach($parents[$parentXPath] as $key=>$obj) {
-                    if($tagXPath == 'text()') {
+                    if($tagXPath == 'name()') {
+                        $values = $obj->getName();
+                    }
+                    else if($tagXPath == 'text()') {
                         $values = $obj[0];
                     }
                     else if(substr($tagXPath, 0, 1) == '@') {
@@ -168,13 +169,18 @@
                         $values = $obj->attributes()->{$txpath};
                         unset($txpath);
                     }
-                    else { $values = $obj->{$tagXPath}; }
+                    else {
+                        $values = $obj->{$tagXPath};
+                    }
                     
-                    if(sizeof($values) > 1) {
+                    if(is_array($values) && sizeof($values) > 1) {
                         $temp = array();
                         foreach($values as $value) $temp[] = (string)$value[0];
                         $payload[$node][$tag][] = $temp;
                         unset($temp);
+                    }
+                    else if($tagXPath == 'name()') {
+                        $payload[$node][$tag] = $values;
                     }
                     else {
                         if(sizeof($parents[$parentXPath]) == 1) $payload[$node][$tag] = (string)$values[0];
@@ -183,18 +189,40 @@
                 }
             }
             
+            if($sxe)
+                $payload['xml'] = $xml;
             unset($xml);
+
             return $payload;
         }
-        
+       
+        /**
+         * Add node xpath and corresponding tag mapping for parser
+         *
+         * @param string $node Node for which this tag map should be parsed
+         * @param string $tag Tag associated with this xpath
+         * @param string $map XPath to be extracted
+        */
         public static function addTag($node, $tag, $map) {
             self::$tagMap[$node][$tag] = $map;
         }
         
+        /**
+         * Remove node xpath and corresponding tag mapping for parser
+         * 
+         * @param string $node
+         * @param string $tag
+        */
         public static function removeTag($node, $tag) {
             unset(self::$tagMap[$node][$tag]);
         }
         
+        /**
+         * Creates XML string from passed $tagMap values
+         *
+         * @param array $tagVals
+         * @return string $xml
+        */
         public static function create($tagVals) {
             foreach($tagVals as $node=>$tagVal) {
                 // initialize new XML document
@@ -248,5 +276,4 @@
         }
         
     }
-    
 ?>
