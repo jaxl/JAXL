@@ -112,7 +112,7 @@
                 'xml:lang'  =>  '//iq/@xml:lang',
                 'bindResource'  =>  '//iq/bind/resource',
                 'bindJid'   =>  '//iq/bind/jid',
-                'queryXmlns'    =>  '//iq/query/@xmlns',
+                'queryXmlns'=>  '//iq/query/@xmlns',
                 'queryVer'  =>  '//iq/query/@ver',
                 'queryItemSub'  =>  '//iq/query/item/@subscription',
                 'queryItemJid'  =>  '//iq/query/item/@jid',
@@ -123,6 +123,23 @@
             )
             
         );
+
+        public static function setupParser($jaxl) {
+            $jaxl->parser = xml_parser_create('UTF-8');
+            xml_parser_set_option($jaxl->parser, XML_OPTION_SKIP_WHITE, 1);
+            xml_parser_set_option($jaxl->parser, XML_OPTION_TARGET_ENCODING, 'UTF-8');
+            xml_set_element_handler($jaxl->parser, array('JAXLXml', 'startXML'), array('JAXLXml', 'endXML'));
+            xml_set_character_data_handler($jaxl->parser, array('JAXLXml', 'charXML'));
+        }
+
+        public static function startXML($parser, $name, $attr) {
+        }
+
+        public static function charXML($parser, $data) {
+        }
+
+        public static function endXML($parser, $name) {
+        } 
         
         /*
          * parse method assumes passed $xml parameter to be a single xmpp packet
