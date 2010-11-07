@@ -43,16 +43,18 @@
 
     /**
      * Jaxl Plugin Framework
-     *
-     * Available methods:
-     * add($hook, $callback)
-     * remove($hook, $callback)
-    */
-    
+    */ 
     class JAXLPlugin {
         
         public static $registry = array();
-        
+       
+        /**
+         * Register callback on hook
+         *
+         * @param string $hook
+         * @param string|array $callback A valid callback inside your application code
+         * @param integer $priority When more than one callbacks is attached on hook, they are called in priority order or which ever was registered first
+        */
         public static function add($hook, $callback, $priority=10) {
             if(!isset(self::$registry[$hook]))
                 self::$registry[$hook] = array();
@@ -62,20 +64,32 @@
             
             array_push(self::$registry[$hook][$priority], $callback);
         }
-        
-        public static function remove($hook, $callback) {
-            if(isset(self::$registry[$hook][$callback])) {
-                unset(self::$registry[$hook][$callback]);
-            }
+       
+        /**
+         * Removes a previously registered callback on hook
+         *
+         * @param string $hook
+         * @param string|array $callback
+         * @param integer $priority
+        */
+        public static function remove($hook, $callback, $priority=10) {
+            if(($key = array_search($callback, self::$registry[$hook][$priority])) !== FALSE)
+                unset(self::$registry[$hook][$priority][$key]);
+
+            if(count(self::$registry[$hook][$priority]) == 0)
+                unset(self::$registry[$hook][$priority]);
             
-            if(count(self::$registry[$hook]) == 0) {
+            if(count(self::$registry[$hook]) == 0)
                 unset(self::$registry[$hook]);
-            }
         }
         
         /*
-         * execute methods will only execute those callbacks
-         * Which are passed as $filter paramater
+         * Method calls previously registered callbacks on executing hook
+         * 
+         * @param string $hook
+         * @param mixed $payload
+         * @param object $jaxl
+         * @param array $filter
         */
         public static function execute($hook, $payload=null, $jaxl=false, $filter=false) {
             if(isset(self::$registry[$hook]) && count(self::$registry[$hook]) > 0) {
@@ -91,5 +105,5 @@
         }
         
     }
-
+    
 ?>
