@@ -14,7 +14,7 @@ version of Jaxl 1.x series which was hosted at google code.
 * More robust, flexible, scalable and easy to use
 * Event mechanism for registering callbacks for various xmpp events
 * Integrated support for Real Time Web (XMPP over Bosh) application development
-* 22 implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/)
+* 23 implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/)
 * Setup dynamic number of parallel XMPP sessions on the fly
 * Options for monitoring, usage stat collection, rate limiting, etc.
 

@@ -1,5 +1,6 @@
 version 2.1.2
 ------------
+- First checkin of XEP-0184 Message Receipts
 - Added support for usage of name() xpath function inside tag maps of JAXLXml class.
   Also added some documentation for methods available inside JAXLXml class
 - Fixed JAXLPlugin::remove method to properly remove and manage callback registry.
