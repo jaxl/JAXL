@@ -1,5 +1,7 @@
 version 2.1.2
 ------------
+- Added SAX based XML parser basic methods inside JAXLXml class.
+  In future these methods will take over recv XMPP payload processing inside XMPP::handler method.
 - Added JAXL contructor config option to disable BOSH module auto-output behaviour.
   This is utilized inside app/preFetchBOSH.php sample example
 - First checkin of sample application code pre-fetching XMPP/Jabber data for web page population using BOSH XEP
