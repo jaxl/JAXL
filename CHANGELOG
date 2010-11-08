@@ -1,5 +1,6 @@
 version 2.1.2
 ------------
+- JAXL::log method 2nd parameter now defaults to logLevel=1 (passing 2nd param is now optional)
 - Fixed XPath for iq stanza error condition and error NS extraction inside jaxl.parser.class
 - First checkin of XEP-0184 Message Receipts
 - Added support for usage of name() xpath function inside tag maps of JAXLXml class.

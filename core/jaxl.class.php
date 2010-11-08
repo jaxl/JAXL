@@ -619,7 +619,7 @@
          * @param string $log Datum to be logged
          * @param integer $level Log level for passed datum
         */
-        function log($log, $level) {
+        function log($log, $level=1) {
             JAXLog::log($log, $level, $this);
         }
 
