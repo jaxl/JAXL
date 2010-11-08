@@ -26,8 +26,8 @@ Warning: The development source code at Github is only intended for people that 
 
 ## Documentation
 
-* Visit [http://jaxl.net/](http://jaxl.net/) for online Documentation, Demo, Tutorial, Useful links and Examples
-* Generate PHP documentation locally:
+Visit [http://jaxl.net/](http://jaxl.net/) for online Documentation, Demo, Tutorial, Useful links and Examples
+To generate documentation locally:
     
     phpdoc -o HTML:Smarty:PHP -ti "JAXL (Jabber XMPP Client/Component Library in PHP) Documentation" -t /var/www/ -d xmpp/,xep/,env/,core/
 
