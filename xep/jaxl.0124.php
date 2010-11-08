@@ -122,9 +122,10 @@
                 $_SESSION['sid'] = isset($jaxl->bosh['sid']) ? $jaxl->bosh['sid'] : false;
                 $_SESSION['jid'] = $jaxl->jid;
                 $_SESSION['id'] = $jaxl->lastid;
-                
-                session_write_close();
-                
+
+                if($jaxl->boshOut)
+                    session_write_close();     
+
                 if(self::$sess && $jaxl->boshOut) {
                     list($body, $xml) = self::unwrapBody($xml);
                     $jaxl->log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
