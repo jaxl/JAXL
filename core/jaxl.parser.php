@@ -84,6 +84,8 @@
                 'type'      =>  '//message/@type',
                 'xml:lang'  =>  '//message/@xml:lang',
                 'body'      =>  '//message/body',
+                'subject'   =>  '//message/subject',
+                'thread'    =>  '//message/thread',
                 'xXmlns'    =>  '//presence/x/@xmlns',
                 'errorType' =>  '//message/error/@type',
                 'errorCode' =>  '//message/error/@code'
