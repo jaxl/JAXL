@@ -47,7 +47,7 @@
         'JAXLPlugin'
     ));
     
-    /*
+    /**
      * XMPP Auth class for performing various SASL auth mechanisms
      * DIGEST-MD5, X-FACEBOOK-PLATFORM, SCRAM-SHA-1, CRAM-MD5
     */

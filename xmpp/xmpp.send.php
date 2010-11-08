@@ -48,7 +48,7 @@
         'JAXLog'
     ));
     
-    /*
+    /**
      * XMPP Send Class
      * Provide methods for sending all kind of xmpp stream and stanza's
     */

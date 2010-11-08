@@ -50,7 +50,7 @@
         'XMPPSend'
     ));
     
-    /*
+    /**
      * XMPP Get Class
      * Provide methods for receiving all kind of xmpp streams and stanza's
     */
