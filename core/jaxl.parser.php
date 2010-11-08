@@ -84,8 +84,8 @@
                 'type'      =>  '//message/@type',
                 'xml:lang'  =>  '//message/@xml:lang',
                 'body'      =>  '//message/body',
-                'errorType' =>  '//message/error/@type',
                 'xXmlns'    =>  '//presence/x/@xmlns',
+                'errorType' =>  '//message/error/@type',
                 'errorCode' =>  '//message/error/@code'
             ),
             
@@ -98,8 +98,8 @@
                 'show'      =>  '//presence/show',
                 'status'    =>  '//presence/status',
                 'priority'  =>  '//presence/priority',
-                'errorType' =>  '//presence/error/@type',
                 'xXmlns'    =>  '//presence/x/@xmlns',
+                'errorType' =>  '//presence/error/@type',
                 'errorCode' =>  '//presence/error/@code'
             ),
             
@@ -118,7 +118,9 @@
                 'queryItemName' =>  '//iq/query/item/@name',
                 'queryItemAsk'  =>  '//iq/query/item/@ask',
                 'queryItemGrp'  =>  '//iq/query/item/group',
-                'errorType' =>  '//iq/error/@type'
+                'errorType' =>  '//iq/error/@type',
+                'errorCondition'=>  '//iq/error/*[1]/name()',
+                'errorXmlns'=>  '//iq/error/*[1]/@xmlns'
             )
             
         );
