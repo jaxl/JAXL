@@ -158,6 +158,9 @@
                 if(!isset($parents[$parentXPath])) 
                     $parents[$parentXPath] = $xml->xpath($parentXPath);
                 
+                if(!is_array($parents[$parentXPath]))
+                    continue;
+
                 // loop through all the extracted parent nodes 
                 foreach($parents[$parentXPath] as $key=>$obj) {
                     if($tagXPath == 'name()') {
