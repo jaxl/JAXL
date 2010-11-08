@@ -1,5 +1,6 @@
 version 2.1.2
 ------------
+- Fixed typo where in case of streamError proper description namespace was not parsed/displayed
 - Disabled BOSH session close if application is running in boshOut=false mode
   Suggested by MOVIM dev team who were experiencing loss of session data on end of script
 - JAXL::log method 2nd parameter now defaults to logLevel=1 (passing 2nd param is now optional)

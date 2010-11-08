@@ -90,7 +90,7 @@
         
         public static function streamError($arr, $jaxl) {
             $desc = key($arr['#']);
-            $xmlns = $arr['#']['0']['@']['xmlns'];
+            $xmlns = $arr['#'][$desc]['0']['@']['xmlns'];
             JAXLPlugin::execute('jaxl_get_stream_error', $arr, $jaxl);
             $jaxl->log("Stream error with description ".$desc." and xmlns ".$xmlns, 1);
             return true;
