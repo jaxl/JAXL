@@ -257,13 +257,6 @@
         var $mode = false;
 
         /**
-         * Bosh action being served by this Jaxl instance
-         *
-         * @var bool|string
-        */
-        var $action = false;
-
-        /**
          * Jabber auth mechanism performed by this Jaxl instance
          *
          * @var false|string

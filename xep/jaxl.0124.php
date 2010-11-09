@@ -65,7 +65,6 @@
             JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
             JAXLPlugin::add('jaxl_post_handler', array('JAXL0124', 'postHandler'));
-            //JAXLPlugin::add('jaxl_get_body', array('JAXL0124', 'processBody'));
             JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
             JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
 
@@ -117,7 +116,7 @@
         }
         
         public static function saveSession($xml, $jaxl) {
-            if($_SESSION['auth']) {
+            if($_SESSION['auth'] === true) {
                 $_SESSION['rid'] = isset($jaxl->bosh['rid']) ? $jaxl->bosh['rid'] : false;
                 $_SESSION['sid'] = isset($jaxl->bosh['sid']) ? $jaxl->bosh['sid'] : false;
                 $_SESSION['jid'] = $jaxl->jid;
@@ -128,16 +127,16 @@
 
                 if(self::$sess && $jaxl->boshOut) {
                     list($body, $xml) = self::unwrapBody($xml);
-                    $jaxl->log("[[".$jaxl->action."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
+                    $jaxl->log("[[".$_REQUEST['jaxl']."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
                 }
                 else {
                     self::$sess = true;
-                    $jaxl->log("[[".$jaxl->action."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
+                    $jaxl->log("[[".$_REQUEST['jaxl']."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
                 }
             }
             else {
-                $jaxl->log("[[".$jaxl->action."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
+                $jaxl->log("[[".$_REQUEST['jaxl']."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
             }
             
             return $xml;
@@ -191,7 +190,7 @@
                 list($body, $payload) = self::unwrapBody($payload);
                 
                 if($payload == '') {
-                    if($_SESSION['auth'] == 'disconnect') {
+                    if($_SESSION['auth'] === 'disconnect') {
                         $_SESSION['auth'] = false;
                         JAXLPlugin::execute('jaxl_post_disconnect');
                     }
@@ -200,7 +199,7 @@
                     }
                 }
 
-                if($_SESSION['auth'] == 'connect') {
+                if($_SESSION['auth'] === 'connect') {
                     $arr = $jaxl->xml->xmlize($body);
                     if(isset($arr["body"]["@"]["sid"])) {
                         $_SESSION['auth'] = false;
