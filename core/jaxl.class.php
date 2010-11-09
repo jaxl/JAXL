@@ -42,8 +42,14 @@
  */
 
     declare(ticks=1);
+
+    // Library name/version
     define('JAXL_NAME', 'Jaxl :: Jabber XMPP Client Library');
     define('JAXL_VERSION', '2.1.2');
+    
+    // Set JAXL_BASE_PATH if not already defined by application code
+    if(!@constant('JAXL_BASE_PATH'))
+        define('JAXL_BASE_PATH', dirname(dirname(__FILE__)));
 
     /**
      * Autoload method for Jaxl library and it's applications
@@ -412,6 +418,7 @@
                 if(is_numeric($xep)
                 && class_exists('JAXL'.$xep)
                 ) { return call_user_func_array(array('JAXL'.$xep, $method), $param); }
+                else { $this->log("[[JAXL".$xep."]] Doesn't exists in the environment"); }
             }
         } 
        
@@ -630,6 +637,29 @@
         */
         function requires($class) {
             jaxl_require($class, $this);
+        }
+
+        /**
+         * Starts Jaxl Core
+         *
+         * This method should be called after Jaxl initialization and hook registration inside your application code
+        */
+        function startCore() {
+            if($this->mode == 'cli') {
+                try {
+                    if($this->connect()) {
+                        while($this->stream) {
+                            $this->getXML();
+                        }
+                    }
+                }
+                catch(Exception $e) {
+                    die($e->getMessage);
+                }
+            }
+
+            /* Exit Jaxl after end of loop */
+            exit;
         }
 
         /**

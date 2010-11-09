@@ -1,5 +1,9 @@
 version 2.1.2
-------------
+-------------
+- Defining JAXL_BASE_PATH inside application code made optional.
+  Developers can directly include /path/to/jaxl/core/jaxl.class.php and start writing applications.
+  Also added a JAXL::startCore() method (see usage in /app/preFetchXMPP.php).
+  Jaxl magic method for calling XEP methods now logs a warning inside jaxl.log if XEP doesn't exists in the environment
 - Added tag map for XMPP message thread and subject child elements
 - Fixed typo where in case of streamError proper description namespace was not parsed/displayed
 - Disabled BOSH session close if application is running in boshOut=false mode
