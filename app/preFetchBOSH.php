@@ -18,8 +18,7 @@
     */
 
     // include JAXL core
-    define('JAXL_BASE_PATH', '/usr/share/php/jaxl');
-    require_once JAXL_BASE_PATH.'/core/jaxl.class.php';
+    require_once '/usr/share/php/jaxl/core/jaxl.class.php';
     
     // initialize JAXL instance
     $xmpp = new JAXL(array(
@@ -40,11 +39,6 @@
         'JAXL0206'  // XMPP over Bosh
     ));
 
-    function postConnect() {
-        global $xmpp;
-        $xmpp->startStream();
-    }
-
     function doAuth($mechanism) {
         global $xmpp;
         $xmpp->auth('DIGEST-MD5');
@@ -62,18 +56,21 @@
         $xmpp->JAXL0206('endStream');
     }
 
+    function postDisconnect() {
+        exit;
+    }
+
     function postAuthFailure() {
         echo "OOPS! Auth failed";
     }
 
     // Register callbacks for required events
-    JAXLPlugin::add('jaxl_post_connect', 'postConnect');
     JAXLPlugin::add('jaxl_get_auth_mech', 'doAuth');
     JAXLPlugin::add('jaxl_post_auth', 'postAuth');
     JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
+    JAXLPlugin::add('jaxl_post_disconnect', 'postDisconnect');
 
     // Connect to the Bosh Connection Manager
-    $xmpp->action = 'connect';
     $xmpp->JAXL0206('startStream', $xmpp->host, $xmpp->port, $xmpp->domain);
 
 ?>

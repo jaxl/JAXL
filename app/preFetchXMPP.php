@@ -18,8 +18,7 @@
     */
 
     // include JAXL core
-    define('JAXL_BASE_PATH', '/usr/share/php/jaxl');
-    require_once JAXL_BASE_PATH.'/core/jaxl.class.php';
+    require_once '/usr/share/php/jaxl/core/jaxl.class.php';
     
     // initialize JAXL instance
     $xmpp = new JAXL(array(
@@ -68,19 +67,7 @@
     JAXLPlugin::add('jaxl_post_auth', 'postAuth');
     JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
 
-    // Run JAXL, Wroom Wroom!
-    try {
-        if($xmpp->connect()) {
-            while($xmpp->stream) {
-                $xmpp->getXML();
-            }
-        }
-    }
-    catch(Exception $e) {
-        die($e->getMessage);
-    }
-
-    // Exit after we are done
-    exit;
+    // Fire start JAXL Core
+    $xmpp->startCore();
 
 ?>

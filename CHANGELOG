@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- Updated preFetchBOSH and preFetchXMPP sample example.
+  Application code don't need any JAXL::$action variable now
+  Neither application code need to define JAXL_BASE_PATH (optional from now on)
 - JAXL core and XEP-0206 have no relation and dependency upon JAXL::$action variable now.
 - Deprecated jaxl_get_body hook which was only for XEP-0124 working.
   Also cleaned up XEP-0124 code by removing processBody method which is now handled inside preHandler itself.
