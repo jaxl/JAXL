@@ -51,7 +51,6 @@
         public static function init($jaxl) {
             // Requires Bosh Session Manager
             jaxl_require('JAXL0124', $jaxl);    
-            $jaxl->action = $_REQUEST['jaxl'];
             $jaxl->log("[[JaxlAction]] ".$jaxl->action."\n".json_encode($_REQUEST), 5);
         }
         
@@ -60,6 +59,8 @@
         }
 
         public static function startStream($jaxl, $host, $port, $domain) {
+            $_SESSION['auth'] = 'connect';
+
             $xml = "";
             $xml .= "<body";
             $xml .= " content='".$jaxl->bosh['content']."'";
@@ -76,11 +77,12 @@
             $xml .= " route='xmpp:".$host.":".$port."'";
             $xml .= " xmpp:version='".$jaxl->bosh['xmppversion']."'/>";
             
-            $_SESSION['auth'] = false;
             $jaxl->sendXML($xml);
         }
         
         public static function endStream($jaxl) {
+            $_SESSION['auth'] = 'disconnect';
+
             $xml = "";
             $xml .= "<body";
             $xml .= " rid='".++$jaxl->bosh['rid']."'";
@@ -90,7 +92,6 @@
             $xml .= "<presence type='unavailable' xmlns='jabber:client'/>";
             $xml .= "</body>";
             
-            $_SESSION['auth'] = false;
             $jaxl->sendXML($xml);
         }
         
