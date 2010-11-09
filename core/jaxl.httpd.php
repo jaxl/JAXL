@@ -96,7 +96,12 @@
         
         // list of connected clients
         private static $clients = null;
-        
+       
+        public static function shutdown() {
+            JAXLPlugin::execute('jaxl_httpd_pre_shutdown');
+            exit;
+        }
+
         private static function reset($options) {
             self::$settings = array(
                 'port'  =>  isset($options['port']) ? $options['port'] : 5290,
@@ -109,6 +114,9 @@
         public static function start($options) {
             self::reset($options);
 
+            pcntl_signal(SIGTERM, array("JAXLHTTPd", "shutdown"));
+            pcntl_signal(SIGINT, array("JAXLHTTPd", "shutdown"));
+            
             $options = getopt("p:b:");
             foreach($options as $opt=>$val) {
                 switch($opt) {
@@ -159,7 +167,12 @@
                                 'port'  =>  $port
                             ));
                             
-                            JAXLPlugin::execute('jaxl_httpd_get_request', $request);
+                            if($request['meta']['protocol'] == 'HTTP') {
+                                JAXLPlugin::execute('jaxl_httpd_get_http_request', $request);
+                            }
+                            else {
+                                JAXLPlugin::execute('jaxl_httpd_get_sock_request', $request);
+                            }
                         }
                     }
                 }
