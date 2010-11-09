@@ -65,7 +65,7 @@
             JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
             JAXLPlugin::add('jaxl_post_handler', array('JAXL0124', 'postHandler'));
-            JAXLPlugin::add('jaxl_get_body', array('JAXL0124', 'processBody'));
+            //JAXLPlugin::add('jaxl_get_body', array('JAXL0124', 'processBody'));
             JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
             JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
 
@@ -189,32 +189,27 @@
         public static function preHandler($payload, $jaxl) {
             if(substr($payload, 1, 4) == "body") {
                 list($body, $payload) = self::unwrapBody($payload);
-                JAXLPlugin::execute('jaxl_get_body', $body, $jaxl);
-                if($payload == '') JAXLPlugin::execute('jaxl_get_empty_body', $body, $jaxl);
-            }
-            return $payload;
-        }
-        
-        public static function processBody($xml, $jaxl) {
-            $arr = $jaxl->xml->xmlize($xml);
-            
-            switch($jaxl->action) {
-                case 'connect':
+                
+                if($payload == '') {
+                    if($_SESSION['auth'] == 'disconnect') {
+                        $_SESSION['auth'] = false;
+                        JAXLPlugin::execute('jaxl_post_disconnect');
+                    }
+                    else {
+                        JAXLPlugin::execute('jaxl_get_empty_body', $body, $jaxl);
+                    }
+                }
+
+                if($_SESSION['auth'] == 'connect') {
+                    $arr = $jaxl->xml->xmlize($body);
                     if(isset($arr["body"]["@"]["sid"])) {
+                        $_SESSION['auth'] = false;
                         $_SESSION['sid'] = $arr["body"]["@"]["sid"];
                         $jaxl->bosh['sid'] = $arr["body"]["@"]["sid"];
-                    }
-                    break;
-                case 'disconnect':
-                    JAXLPlugin::execute('jaxl_post_disconnect');
-                    break;
-                case 'ping':
-                    break;
-                default:
-                    break;
+                    } 
+                }
             }
-            
-            return $xml;
+            return $payload;
         }
         
     }
