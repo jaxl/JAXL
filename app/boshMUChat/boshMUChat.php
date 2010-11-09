@@ -121,7 +121,7 @@
         JAXLPlugin::add('jaxl_get_presence', array('boshMUChat', 'getPresence'));
         
         // Handle incoming bosh request
-        switch($jaxl->action) {
+        switch($_REQUEST['jaxl']) {
             case 'connect':
                 $jaxl->user = $_POST['user'];
                 $jaxl->pass = $_POST['pass'];
@@ -140,7 +140,7 @@
                 $jaxl->JAXL0206('jaxl', $_REQUEST['xml']);
                 break;
             default:
-                $response = array('jaxl'=>'400', 'desc'=>$jaxl->action." not implemented");
+                $response = array('jaxl'=>'400', 'desc'=>$_REQUEST['jaxl']." not implemented");
                 $jaxl->JAXL0206('out', $response);
                 break;
         }

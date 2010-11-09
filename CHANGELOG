@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Updated boshChat and boshMUChat sample application which no longer user JAXL::$action variable inside application code
 - Updated preFetchBOSH and preFetchXMPP sample example.
   Application code don't need any JAXL::$action variable now
   Neither application code need to define JAXL_BASE_PATH (optional from now on)
