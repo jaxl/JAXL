@@ -9,7 +9,7 @@
 	*/
     
 	// Ajax poll url
-	define('BOSHCHAT_POLL_URL', 'http://localhost/jaxl.php');
+	define('BOSHCHAT_POLL_URL', 'http://localhost/boshMUChat.php');
 		
 	// Admin jid who will receive all messages sent using this application ui
 	define('BOSHCHAT_ROOM_JID', 'room@muc.localhost');
