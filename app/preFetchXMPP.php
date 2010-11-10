@@ -2,7 +2,6 @@
 
     /**
      * Pre-fetch XMPP/Jabber data for webpage without using BOSH XEP or Ajax requests
-     * This sample code also demonstrate how to remove your application dependency upon jaxl.ini
      *
      * This sample application demonstrate how to pre-fetch XMPP data from the jabber server
      * Specifically, this app will fetch logged in user VCard from the jabber server
@@ -29,7 +28,7 @@
         'logLevel'=>5
     ));
 
-    // Force CLI mode since we don't intend to use BOSH or Ajax
+    // Force CLI mode since this app runs from browser but we don't intend to use BOSH or Ajax
     $xmpp->mode = "cli";
 
     // Demo requires VCard XEP

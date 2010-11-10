@@ -2,7 +2,6 @@
 
     /**
      * Pre-fetch XMPP/Jabber data using BOSH for populating a webpage
-     * This sample code also demonstrate how to remove your application dependency upon jaxl.ini
      *
      * This sample application demonstrate how to pre-fetch XMPP data from the jabber server
      * Specifically, this app will fetch logged in user VCard from the jabber server
@@ -70,7 +69,7 @@
     JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
     JAXLPlugin::add('jaxl_post_disconnect', 'postDisconnect');
 
-    // Connect to the Bosh Connection Manager
-    $xmpp->JAXL0206('startStream', $xmpp->host, $xmpp->port, $xmpp->domain);
+    // Fire start Jaxl in bosh mode
+    $xmpp->startCore('bosh');
 
 ?>

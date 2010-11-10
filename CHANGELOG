@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Removed dependency upon jaxl.ini from all sample applications.
+  First checkin of sample sendMessage.php app.
 - Config parameters for XEP's like 0114 and 0206 are now saved as an array inside JAXL class (later on they will be moved inside respective XEP's).
   Added constructor config option to pre-choose an auth mechanism to be performed
   if an auth mech is pre-chosen app files SHOULD not register callback for jaxl_get_auth_mech hook.
