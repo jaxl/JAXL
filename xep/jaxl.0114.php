@@ -47,19 +47,17 @@
     class JAXL0114 {
         
         public static function init() {
-            JAXLPlugin::add('jaxl_post_connect', array('JAXL0114', 'startStream'));
             JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
         }
         
-        public static function startStream($payload, $jaxl) {
-            $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.$jaxl->component.'">';
+        public static function startStream($jaxl, $payload) {
+            $xml = '<stream:stream xmlns="jabber:component:accept" xmlns:stream="http://etherx.jabber.org/streams" to="'.$jaxl->comp['host'].'">';
             $jaxl->sendXML($xml);
         }
         
         public static function handshake($id, $jaxl) {
-            $pass = JAXLPlugin::execute('jaxl_pre_handshake');
-            $hash = strtolower(sha1($id.$pass));
+            $hash = strtolower(sha1($id.$jaxl->comp['pass']));
             $xml = '<handshake>'.$hash.'</handshake>';
             $jaxl->sendXML($xml);
         }

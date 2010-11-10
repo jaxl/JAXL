@@ -34,12 +34,13 @@ case "$1" in
 			rm -R xmpp
 			rm -R xep
 			rm -R env
-			rm -R app/echobot
-            rm -R app/componentbot
-			rm -R app/boshchat
-            rm -R app/boshMUChat
+            rm app/echobot.php
+            rm app/componentbot.php
+            rm app/boshchat.php
+            rm app/boshMUChat.php
             rm app/preFetchXMPP.php
             rm app/preFetchBOSH.php
+            rm app/sendMessage.php
 			rm $PACKAGE_BIN_PATH/jaxl
 		else
 			echo "creating package directories..."
@@ -59,12 +60,7 @@ case "$1" in
 			xmpp/xmpp* \
 			xep/jaxl* \
 			env/jaxl* \
-			app/echobot/* \
-            app/componentbot/* \
-			app/boshchat/* \
-            app/boshMUChat/* \
-            app/preFetchXMPP.php \
-            app/preFetchBOSH.php
+			app/*.php \
     ;;
 esac
 

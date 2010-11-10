@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Added JAXL_COMPONENT_PASS option inside jaxl.ini. Updated build.sh with new /app file paths.
+  Updated XEP-0114,0124,0206 to use array style configs as defined inside JAXL class
 - Removed dependency upon jaxl.ini from all sample applications.
   First checkin of sample sendMessage.php app.
 - Config parameters for XEP's like 0114 and 0206 are now saved as an array inside JAXL class (later on they will be moved inside respective XEP's).

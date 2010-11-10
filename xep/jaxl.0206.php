@@ -58,7 +58,7 @@
             $jaxl->sendXML(urldecode($xml));
         }
 
-        public static function startStream($jaxl, $host, $port, $domain) {
+        public static function startStream($jaxl) {
             $_SESSION['auth'] = 'connect';
 
             $xml = "";
@@ -72,9 +72,8 @@
             $xml .= " polling='".$jaxl->bosh['polling']."'";
             $xml .= " secure='".$jaxl->bosh['secure']."'";
             $xml .= " xmlns:xmpp='".$jaxl->bosh['xmlnsxmpp']."'";
-            
-            $xml .= " to='".$domain."'";
-            $xml .= " route='xmpp:".$host.":".$port."'";
+            $xml .= " to='".$jaxl->domain."'";
+            $xml .= " route='xmpp:".$jaxl->host.":".$jaxl->port."'";
             $xml .= " xmpp:version='".$jaxl->bosh['xmppversion']."'/>";
             
             $jaxl->sendXML($xml);

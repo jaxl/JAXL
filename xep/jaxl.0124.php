@@ -40,15 +40,6 @@
  * @copyright Abhinav Singh
  * @link http://code.google.com/p/jaxl
  */
-    
-    session_set_cookie_params(
-        JAXL_BOSH_COOKIE_TTL,
-        JAXL_BOSH_COOKIE_PATH,
-        JAXL_BOSH_COOKIE_DOMAIN,
-        JAXL_BOSH_COOKIE_HTTPS,
-        JAXL_BOSH_COOKIE_HTTP_ONLY
-    );
-    session_start();
 
     /**
      * XEP-0124: Bosh Implementation
@@ -60,6 +51,15 @@
         private static $sess = false;
         
         public static function init($jaxl) {
+            session_set_cookie_params(
+                $jaxl->bosh['cookie']['ttl'],
+                $jaxl->bosh['cookie']['path'],
+                $jaxl->bosh['cookie']['domain'],
+                $jaxl->bosh['cookie']['https'],
+                $jaxl->bosh['cookie']['httponly']
+            );
+            session_start();
+            
             JAXLPlugin::add('jaxl_post_bind', array('JAXL0124', 'postBind'));
             JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
@@ -72,11 +72,11 @@
         }
         
         public static function postHandler($payload, $jaxl) {
-            if(!$jaxl->boshOut) return $payload;
+            if(!$jaxl->bosh['out']) return $payload;
 
             $payload = json_encode(self::$buffer);
             $jaxl->log("[[BoshOut]]\n".$payload, 5);
-            header('Content-type: application/json');
+            header($jaxl->bosh['outheaders']);
             echo $payload;
             exit;
         }
@@ -92,18 +92,9 @@
         }
         
         public static function setEnv($jaxl) {
-            $jaxl->bosh = array();
-            $jaxl->bosh['hold'] = "1";
-            $jaxl->bosh['wait'] = "30";
-            $jaxl->bosh['polling'] = "0";
-            $jaxl->bosh['version'] = "1.6";
-            $jaxl->bosh['xmppversion'] = "1.0";
-            $jaxl->bosh['secure'] = "true";
             $jaxl->bosh['xmlns'] = "http://jabber.org/protocol/httpbind";
             $jaxl->bosh['xmlnsxmpp'] = "urn:xmpp:xbosh";
-            $jaxl->bosh['content'] = "text/xml; charset=utf-8";
-            $jaxl->bosh['url'] = "http://".$jaxl->boshHost.":".$jaxl->boshPort."/".$jaxl->boshSuffix."/";
-            $jaxl->bosh['headers'] = array("Accept-Encoding: gzip, deflate","Content-Type: text/xml; charset=utf-8");
+            $jaxl->bosh['url'] = "http://".$jaxl->bosh['host'].":".$jaxl->bosh['port']."/".$jaxl->bosh['suffix']."/";
         }
         
         public static function loadSession($jaxl) {
@@ -121,10 +112,10 @@
                 $_SESSION['jid'] = $jaxl->jid;
                 $_SESSION['id'] = $jaxl->lastid;
 
-                if($jaxl->boshOut)
-                    session_write_close();     
+                if($jaxl->bosh['out'])
+                    session_write_close();
 
-                if(self::$sess && $jaxl->boshOut) {
+                if(self::$sess && $jaxl->bosh['out']) {
                     list($body, $xml) = self::unwrapBody($xml);
                     $jaxl->log("[[".$_REQUEST['jaxl']."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
