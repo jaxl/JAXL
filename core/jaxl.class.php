@@ -176,41 +176,42 @@
         var $resource = false;
 
         /**
-         * Hostname for the connecting Jaxl component (XEP-0115)
+         * External component config array
          *
-         * @var string
-         * @todo This variable will deprecate and move inside jaxl.0115.php
-         *       Will be replaced by $compHost, $compPass, $compPort
+         * @var array
         */
-        var $component = false;
+        var $comp = array(
+            'host'  =>  false,
+            'pass'  =>  false
+        );
 
         /**
-         * BOSH component hostname
+         * XMPP over Bosh config array
          *
-         * @var string
+         * @var array
         */
-        var $boshHost = 'localhost';
-
-        /**
-         * BOSH component port
-         * 
-         * @var integer
-        */
-        var $boshPort = 5280;
-
-        /**
-         * BOSH component suffix
-         *
-         * @var string
-        */
-        var $boshSuffix = 'http-bind';
-        
-        /**
-         * BOSH auto-output is enabled by default
-         *
-         * @var bool
-        */
-        var $boshOut = true;
+        var $bosh = array(
+            'host'  =>  'localhost',
+            'port'  =>  5280,
+            'suffix'=>  'http-bind',
+            'out'   =>  true,
+            'outheaders'    =>  'Content-type: application/json', 
+            'cookie'=>  array(
+                'ttl'   =>  3600,
+                'path'  =>  '/',
+                'domain'=>  false,
+                'https' =>  false,
+                'httponly'  =>  true
+            ),
+            'hold'  =>  '1',
+            'wait'  =>  '30',
+            'polling'   =>  '0',
+            'version'   =>  '1.6',
+            'xmppversion'   =>  '1.0',
+            'secure'=>  true,
+            'content'   =>  'text/xml; charset=utf-8',
+            'headers'   =>  array('Accept-Encoding: gzip, deflate','Content-Type: text/xml; charset=utf-8')
+        );
 
         /**
          * Log Level of the connected Jaxl instance
@@ -331,17 +332,30 @@
             $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (@constant("JAXL_LOG_ROTATE") == null ? $this->logRotate : JAXL_LOG_ROTATE);
             $this->logPath = isset($config['logPath']) ? $config['logPath'] : (@constant("JAXL_LOG_PATH") == null ? $this->logPath : JAXL_LOG_PATH);
             $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : (@constant("JAXL_PID_PATH") == null ? $this->pidPath : JAXL_PID_PATH);
+            
+            /* Handle pre-choosen auth type mechanism */
+            $this->authType = isset($config['authType']) ? $config['authType'] : (@constant("JAXL_AUTH_TYPE") == null ? $this->authType : JAXL_AUTH_TYPE);
+            if($this->authType) 
+                JAXLPlugin::add('jaxl_get_auth_mech', array($this, 'doAuth'));
 
             /* Optional params which can be configured only via constructor $config */
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
            
-            /* Mandatory param while working with XEP-0115 or XEP-0206 */
-            $this->component = isset($config['component']) ? $config['component'] : JAXL_COMPONENT_HOST;
-            $this->boshHost = isset($config['boshHost']) ? $config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $this->boshHost : JAXL_BOSH_HOST);
-            $this->boshPort = isset($config['boshPort']) ? $config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $this->boshPort : JAXL_BOSH_PORT);
-            $this->boshSuffix = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $this->boshSuffix : JAXL_BOSH_SUFFIX);
-            $this->boshOut = isset($config['boshOut']) ? $config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $this->boshOut : JAXL_BOSH_OUT);
+            /* Mandatory param while working with XEP-0115 */
+            $this->comp['host'] = isset($config['compHost']) ? $config['compHost'] : (@constant("JAXL_COMPONENT_HOST") == null ? $this->comp['host'] : JAXL_COMPONENT_HOST);
+            $this->comp['pass'] = isset($config['compPass']) ? $config['compPass'] : (@constant("JAXL_COMPONENT_PASS") == null ? $this->comp['pass'] : JAXL_COMPONENT_PASS);
+
+            /* Mandatory param while working with XEP-0206 */
+            $this->bosh['host'] = isset($config['boshHost']) ? $config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $this->bosh['host'] : JAXL_BOSH_HOST);
+            $this->bosh['port'] = isset($config['boshPort']) ? $config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $this->bosh['port'] : JAXL_BOSH_PORT);
+            $this->bosh['suffix'] = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $this->bosh['suffix'] : JAXL_BOSH_SUFFIX);
+            $this->bosh['out'] = isset($config['boshOut']) ? $config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $this->bosh['out'] : JAXL_BOSH_OUT);
+            $this->bosh['cookie']['ttl'] = isset($config['boshCookieTTL']) ? $config['boshCookieTTL'] : (@constant("JAXL_BOSH_COOKIE_TTL") == null ? $this->bosh['cookie']['ttl'] : JAXL_BOSH_COOKIE_TTL);
+            $this->bosh['cookie']['path'] = isset($config['boshCookiePath']) ? $config['boshCookiePath'] : (@constant("JAXL_BOSH_COOKIE_PATH") == null ? $this->bosh['cookie']['path'] : JAXL_BOSH_COOKIE_PATH);
+            $this->bosh['cookie']['domain'] = isset($config['boshCookieDomain']) ? $config['boshCookieDomain'] : (@constant("JAXL_BOSH_COOKIE_DOMAIN") == null ? $this->bosh['cookie']['domain'] : JAXL_BOSH_COOKIE_DOMAIN);
+            $this->bosh['cookie']['https'] = isset($config['boshCookieHTTPS']) ? $config['boshCookieHTTPS'] : (@constant("JAXL_BOSH_COOKIE_HTTPS") == null ? $this->bosh['cookie']['https'] : JAXL_BOSH_COOKIE_HTTPS);
+            $this->bosh['cookie']['httponly'] = isset($config['boshCookieHTTPOnly']) ? $config['boshCookieHTTPOnly'] : (@constant("JAXL_BOSH_COOKIE_HTTP_ONLY") == null ? $this->bosh['cookie']['httponly'] : JAXL_BOSH_COOKIE_HTTP_ONLY);
 
             /* Configure instance for platforms and call parent construct */
             $this->configure($config);
@@ -447,6 +461,13 @@
         }
        
         /**
+         * Perform pre-choosen auth type for the Jaxl instance
+        */
+        function doAuth($mechanism) {
+            return XMPPSend::startAuth($this);
+        }
+        
+        /**
          * Set status of the connected Jaxl instance
          *
          * @param bool|string $status
@@ -454,12 +475,15 @@
          * @param bool|integer $priority
          * @param bool $caps
         */
-        function setStatus($status=false, $show=false, $priority=false, $caps=false) {
+        function setStatus($status=false, $show=false, $priority=false, $caps=false, $vcard=false) {
             $child = array();
             $child['status'] = ($status === false ? 'Online using Jaxl library http://code.google.com/p/jaxl' : $status);
             $child['show'] = ($show === false ? 'chat' : $show);
             $child['priority'] = ($priority === false ? 1 : $priority);
+
             if($caps) $child['payload'] = $this->JAXL0115('getCaps', $this->features);
+            if($vcard) $child['payload'] .= $this->JAXL0153('getUpdateData', false);
+            
             return XMPPSend::presence($this, false, false, $child, false);
         }
        
@@ -637,8 +661,32 @@
          * Starts Jaxl Core
          *
          * This method should be called after Jaxl initialization and hook registration inside your application code
+         * Optionally, you can pass 'jaxl_post_connect' and 'jaxl_get_auth_mech' response type directly to this method
+         * In that case application code SHOULD NOT register callbacks to above mentioned hooks
+         *
+         * @param string $arg[0] Optionally application code can pre-choose what Jaxl core should do after establishing socket connection.
+         *                            Following are the valid options:
+         *                            a) startStream
+         *                            b) startComponent
+         *                            c) startBosh
         */
-        function startCore() {
+        function startCore($mode=false) {
+            if($mode) {
+                switch($mode) {
+                    case 'stream':
+                        JAXLPlugin::add('jaxl_post_connect', array($this, 'startStream'));
+                        break;
+                    case 'component':
+                        JAXLPlugin::add('jaxl_post_connect', array($this, 'startComponent'));
+                        break;
+                    case 'bosh':
+                        $this->startBosh();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             if($this->mode == 'cli') {
                 try {
                     if($this->connect()) {
@@ -650,10 +698,10 @@
                 catch(Exception $e) {
                     die($e->getMessage);
                 }
+            
+                /* Exit Jaxl after end of loop */
+                exit;
             }
-
-            /* Exit Jaxl after end of loop */
-            exit;
         }
 
         /**
@@ -671,6 +719,20 @@
                 'port'  =>  $port,
                 'maxq'  =>  $maxq
             ));
+        }
+
+        /**
+         * Start instance in bosh mode
+        */
+        function startBosh() {
+            $this->JAXL0206('startStream');
+        }
+
+        /**
+         * Start instance in component mode
+        */
+        function startComponent($payload, $jaxl) {
+            $this->JAXL0114('startStream', $payload);
         }
 
     }

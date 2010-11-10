@@ -1,5 +1,16 @@
 version 2.1.2
 -------------
+- Config parameters for XEP's like 0114 and 0206 are now saved as an array inside JAXL class (later on they will be moved inside respective XEP's).
+  Added constructor config option to pre-choose an auth mechanism to be performed
+  if an auth mech is pre-chosen app files SHOULD not register callback for jaxl_get_auth_mech hook.
+  Bosh cookie settings can now be passed along with Jaxl constructor.
+  Added support for publishing vcard-temp:x:update node along with presence stanzas.
+  Jaxl instance can run in 3 modes a.k.a. stream,component and bosh mode
+  applications should use JAXL::startCore('mode') to configure instance for a specific mode.
+- Removed redundant NS variable from inside XEP-0124
+- Moved JAXLHTTPd setting defines inside the class (if gone missing CPU usage peaks to 100%)
+- Added jaxl_httpd_pre_shutdown, jaxl_httpd_get_http_request, jaxl_httpd_get_sock_request event hooks inside JAXLHTTPd class
+- Added JAXLS5B path (SOCKS5 implementation) inside jaxl_require method
 - Removed all occurance of JAXL::$action variable from /core and /xep class files
 - Updated boshChat and boshMUChat sample application which no longer user JAXL::$action variable inside application code
 - Updated preFetchBOSH and preFetchXMPP sample example.
