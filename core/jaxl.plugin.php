@@ -45,7 +45,10 @@
      * Jaxl Plugin Framework
     */ 
     class JAXLPlugin {
-        
+       
+        /**
+         * Registry of all registered hooks
+        */
         public static $registry = array();
        
         /**
