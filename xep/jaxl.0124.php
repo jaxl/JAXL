@@ -58,7 +58,6 @@
         
         private static $buffer = array();
         private static $sess = false;
-        public static $ns = '';
         
         public static function init($jaxl) {
             JAXLPlugin::add('jaxl_post_bind', array('JAXL0124', 'postBind'));
