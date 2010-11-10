@@ -176,44 +176,6 @@
         var $resource = false;
 
         /**
-         * External component config array
-         *
-         * @var array
-        */
-        var $comp = array(
-            'host'  =>  false,
-            'pass'  =>  false
-        );
-
-        /**
-         * XMPP over Bosh config array
-         *
-         * @var array
-        */
-        var $bosh = array(
-            'host'  =>  'localhost',
-            'port'  =>  5280,
-            'suffix'=>  'http-bind',
-            'out'   =>  true,
-            'outheaders'    =>  'Content-type: application/json', 
-            'cookie'=>  array(
-                'ttl'   =>  3600,
-                'path'  =>  '/',
-                'domain'=>  false,
-                'https' =>  false,
-                'httponly'  =>  true
-            ),
-            'hold'  =>  '1',
-            'wait'  =>  '30',
-            'polling'   =>  '0',
-            'version'   =>  '1.6',
-            'xmppversion'   =>  '1.0',
-            'secure'=>  true,
-            'content'   =>  'text/xml; charset=utf-8',
-            'headers'   =>  array('Accept-Encoding: gzip, deflate','Content-Type: text/xml; charset=utf-8')
-        );
-
-        /**
          * Log Level of the connected Jaxl instance
          * 
          * @var integer
@@ -341,21 +303,6 @@
             /* Optional params which can be configured only via constructor $config */
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
-           
-            /* Mandatory param while working with XEP-0115 */
-            $this->comp['host'] = isset($config['compHost']) ? $config['compHost'] : (@constant("JAXL_COMPONENT_HOST") == null ? $this->comp['host'] : JAXL_COMPONENT_HOST);
-            $this->comp['pass'] = isset($config['compPass']) ? $config['compPass'] : (@constant("JAXL_COMPONENT_PASS") == null ? $this->comp['pass'] : JAXL_COMPONENT_PASS);
-
-            /* Mandatory param while working with XEP-0206 */
-            $this->bosh['host'] = isset($config['boshHost']) ? $config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $this->bosh['host'] : JAXL_BOSH_HOST);
-            $this->bosh['port'] = isset($config['boshPort']) ? $config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $this->bosh['port'] : JAXL_BOSH_PORT);
-            $this->bosh['suffix'] = isset($config['boshSuffix']) ? $config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $this->bosh['suffix'] : JAXL_BOSH_SUFFIX);
-            $this->bosh['out'] = isset($config['boshOut']) ? $config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $this->bosh['out'] : JAXL_BOSH_OUT);
-            $this->bosh['cookie']['ttl'] = isset($config['boshCookieTTL']) ? $config['boshCookieTTL'] : (@constant("JAXL_BOSH_COOKIE_TTL") == null ? $this->bosh['cookie']['ttl'] : JAXL_BOSH_COOKIE_TTL);
-            $this->bosh['cookie']['path'] = isset($config['boshCookiePath']) ? $config['boshCookiePath'] : (@constant("JAXL_BOSH_COOKIE_PATH") == null ? $this->bosh['cookie']['path'] : JAXL_BOSH_COOKIE_PATH);
-            $this->bosh['cookie']['domain'] = isset($config['boshCookieDomain']) ? $config['boshCookieDomain'] : (@constant("JAXL_BOSH_COOKIE_DOMAIN") == null ? $this->bosh['cookie']['domain'] : JAXL_BOSH_COOKIE_DOMAIN);
-            $this->bosh['cookie']['https'] = isset($config['boshCookieHTTPS']) ? $config['boshCookieHTTPS'] : (@constant("JAXL_BOSH_COOKIE_HTTPS") == null ? $this->bosh['cookie']['https'] : JAXL_BOSH_COOKIE_HTTPS);
-            $this->bosh['cookie']['httponly'] = isset($config['boshCookieHTTPOnly']) ? $config['boshCookieHTTPOnly'] : (@constant("JAXL_BOSH_COOKIE_HTTP_ONLY") == null ? $this->bosh['cookie']['httponly'] : JAXL_BOSH_COOKIE_HTTP_ONLY);
 
             /* Configure instance for platforms and call parent construct */
             $this->configure($config);

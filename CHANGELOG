@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Moved indivisual XEP's working parameter (0114,0124) from JAXL core class to XEP classes itself.
+  XEP's make use of JAXL::config array for parsing user options.
 - Added JAXL_COMPONENT_PASS option inside jaxl.ini. Updated build.sh with new /app file paths.
   Updated XEP-0114,0124,0206 to use array style configs as defined inside JAXL class
 - Removed dependency upon jaxl.ini from all sample applications.

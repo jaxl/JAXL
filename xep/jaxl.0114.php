@@ -46,7 +46,18 @@
     */
     class JAXL0114 {
         
-        public static function init() {
+        public static function init($jaxl) {
+            // initialize working parameter for this jaxl instance
+            $jaxl->comp = array(
+                'host'  =>  false,
+                'pass'  =>  false
+            );
+
+            // parse user options
+            $jaxl->comp['host'] = isset($jaxl->config['compHost']) ? $jaxl->config['compHost'] : (@constant("JAXL_COMPONENT_HOST") == null ? $jaxl->comp['host'] : JAXL_COMPONENT_HOST);
+            $jaxl->comp['pass'] = isset($jaxl->config['compPass']) ? $jaxl->config['compPass'] : (@constant("JAXL_COMPONENT_PASS") == null ? $jaxl->comp['pass'] : JAXL_COMPONENT_PASS);
+           
+            // register required callbacks
             JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
         }

@@ -51,7 +51,46 @@
         private static $sess = false;
         
         public static function init($jaxl) {
-            session_set_cookie_params(
+            // initialize working parameters for this jaxl instance
+            $jaxl->bosh = array(
+                'host'  =>  'localhost',
+                'port'  =>  5280,
+                'suffix'=>  'http-bind',
+                'out'   =>  true,
+                'outheaders'    =>  'Content-type: application/json', 
+                'cookie'=>  array(
+                    'ttl'   =>  3600,
+                    'path'  =>  '/',
+                    'domain'=>  false,
+                    'https' =>  false,
+                    'httponly'  =>  true
+                ),
+                'hold'  =>  '1',
+                'wait'  =>  '30',
+                'polling'   =>  '0',
+                'version'   =>  '1.6',
+                'xmppversion'   =>  '1.0',
+                'secure'=>  true,
+                'content'   =>  'text/xml; charset=utf-8',
+                'headers'   =>  array('Accept-Encoding: gzip, deflate','Content-Type: text/xml; charset=utf-8'),
+                'xmlns' =>  'http://jabber.org/protocol/httpbind',
+                'xmlnsxmpp' =>  'urn:xmpp:xbosh',
+                'url'   =>  'http://localhost:5280/http-bind'
+            );
+            
+            // parse user options
+            $jaxl->bosh['host'] = isset($jaxl->config['boshHost']) ? $jaxl->config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $jaxl->bosh['host'] : JAXL_BOSH_HOST);
+            $jaxl->bosh['port'] = isset($jaxl->config['boshPort']) ? $jaxl->config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $jaxl->bosh['port'] : JAXL_BOSH_PORT);
+            $jaxl->bosh['suffix'] = isset($jaxl->config['boshSuffix']) ? $jaxl->config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $jaxl->bosh['suffix'] : JAXL_BOSH_SUFFIX);
+            $jaxl->bosh['out'] = isset($jaxl->config['boshOut']) ? $jaxl->config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $jaxl->bosh['out'] : JAXL_BOSH_OUT);
+            $jaxl->bosh['cookie']['ttl'] = isset($jaxl->config['boshCookieTTL']) ? $jaxl->config['boshCookieTTL'] : (@constant("JAXL_BOSH_COOKIE_TTL") == null ? $jaxl->bosh['cookie']['ttl'] : JAXL_BOSH_COOKIE_TTL);
+            $jaxl->bosh['cookie']['path'] = isset($jaxl->config['boshCookiePath']) ? $jaxl->config['boshCookiePath'] : (@constant("JAXL_BOSH_COOKIE_PATH") == null ? $jaxl->bosh['cookie']['path'] : JAXL_BOSH_COOKIE_PATH);
+            $jaxl->bosh['cookie']['domain'] = isset($jaxl->config['boshCookieDomain']) ? $jaxl->config['boshCookieDomain'] : (@constant("JAXL_BOSH_COOKIE_DOMAIN") == null ? $jaxl->bosh['cookie']['domain'] : JAXL_BOSH_COOKIE_DOMAIN);
+            $jaxl->bosh['cookie']['https'] = isset($jaxl->config['boshCookieHTTPS']) ? $jaxl->config['boshCookieHTTPS'] : (@constant("JAXL_BOSH_COOKIE_HTTPS") == null ? $jaxl->bosh['cookie']['https'] : JAXL_BOSH_COOKIE_HTTPS);
+            $jaxl->bosh['cookie']['httponly'] = isset($jaxl->config['boshCookieHTTPOnly']) ? $jaxl->config['boshCookieHTTPOnly'] : (@constant("JAXL_BOSH_COOKIE_HTTP_ONLY") == null ? $jaxl->bosh['cookie']['httponly'] : JAXL_BOSH_COOKIE_HTTP_ONLY); 
+            $jaxl->bosh['url'] = "http://".$jaxl->bosh['host'].":".$jaxl->bosh['port']."/".$jaxl->bosh['suffix']."/";
+           
+           session_set_cookie_params(
                 $jaxl->bosh['cookie']['ttl'],
                 $jaxl->bosh['cookie']['path'],
                 $jaxl->bosh['cookie']['domain'],
@@ -67,7 +106,6 @@
             JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
             JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
 
-            self::setEnv($jaxl);
             self::loadSession($jaxl);
         }
         
@@ -89,12 +127,6 @@
         
         public static function out($payload) {
             self::$buffer[] = $payload;
-        }
-        
-        public static function setEnv($jaxl) {
-            $jaxl->bosh['xmlns'] = "http://jabber.org/protocol/httpbind";
-            $jaxl->bosh['xmlnsxmpp'] = "urn:xmpp:xbosh";
-            $jaxl->bosh['url'] = "http://".$jaxl->bosh['host'].":".$jaxl->bosh['port']."/".$jaxl->bosh['suffix']."/";
         }
         
         public static function loadSession($jaxl) {
