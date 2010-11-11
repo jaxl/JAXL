@@ -50,7 +50,7 @@
         
         public static function init($jaxl) {
             // Requires Bosh Session Manager
-            jaxl_require('JAXL0124', $jaxl);    
+            $jaxl->requires('JAXL0124');    
             $jaxl->log("[[JaxlAction]] ".$_REQUEST['jaxl']."\n".json_encode($_REQUEST), 5);
         }
         

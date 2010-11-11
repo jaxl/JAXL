@@ -50,7 +50,7 @@
 
         public static function init($jaxl) {
             // requires PEP XEP
-            jaxl_require('JAXL0163', $jaxl);
+            $jaxl->requires('JAXL0163');
 
             // update client feature list
             $jaxl->features[] = self::$ns;

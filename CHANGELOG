@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- As a library convention to include XEP's use JAXL::requires() method, while to include any core/ or xmpp/ base class use jaxl_require() method.
+  Updated library code and xep's to adhere to this convention.
+  Jaxl instance now provide a system specific /tmp folder location accessible by JAXL::tmp
 - Removed JAXL_NAME and JAXL_VERSION constants.
   Instead const variables are now defined per instance accessible by getName() and getVersion() methods.
   Updated XEP-0030,0092,0115 to use the same

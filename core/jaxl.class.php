@@ -267,6 +267,11 @@
         var $lang = 'en';
 
         /**
+         * Location to system temporary folder
+        */
+        var $tmp = null;
+
+        /**
          * Jaxl core constructor
          *
          * Jaxl instance configures itself using the constants inside your application jaxl.ini.
@@ -281,6 +286,7 @@
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->pid = getmypid();
             $this->config = $config;
+            $this->tmp = sys_get_temp_dir();
 
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
@@ -316,7 +322,7 @@
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
             
             // include service discovery XEP-0030, recommended for every XMPP entity
-            jaxl_require('JAXL0030', $this);
+            $this->requires('JAXL0030');
         }
         
         /**
@@ -326,23 +332,37 @@
          * OS compatibility, SSL support and dependencies over PHP methods
         */
         protected function configure() {
+            // register shutdown function
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                $this->log("Registering shutdown for SIGH Terms ...", 1);
+                $this->log("Registering callbacks on SIGH terms.");
             }
-            
-            if(JAXLUtil::sslEnabled()) {
-                $this->log("Openssl enabled ...", 1);
+            else {
+                $this->log("No callbacks registered on SIGH terms.");
             }
-            
+           
+            // check Jaxl dependency on PHP extension in cli mode
             if($this->mode == "cli") {
-                if(!function_exists('fsockopen')) die("Jaxl requires fsockopen method ...");  
-                if(@is_writable($this->pidPath)) file_put_contents($this->pidPath, $this->pid);
+                if(JAXLUtil::sslEnabled()) 
+                    $this->log("OpenSSL extension is loaded.");
+                else
+                    $this->log("OpenSSL extension not loaded.");
+               
+                if(!function_exists('fsockopen'))
+                    die("Jaxl requires fsockopen method");
+                
+                if(@is_writable($this->pidPath))
+                    file_put_contents($this->pidPath, $this->pid);
             }
             
+            // check Jaxl dependency on PHP extension in cgi mode
             if($this->mode == "cgi") {
-                if(!function_exists('curl_init')) die("Jaxl requires curl_init method ...");
+                if(!function_exists('curl_init'))
+                    die("Jaxl requires CURL PHP extension");
+
+                if(!function_exists('json_encode'))
+                    die("Jaxl requires JSON PHP extension.");
             }
         }
        

@@ -47,7 +47,7 @@
     class JAXL0163 {
         
         public static function init($jaxl) {
-            jaxl_require('JAXL0060', $jaxl);
+            $jaxl->requires('JAXL0060');
         }
         
         public static publishItem($jaxl, $from, $node, $item) {

@@ -52,10 +52,10 @@
         
         public static function init($jaxl) {
             // include required XEP's
-            jaxl_require(array(
+            $jaxl->requires(array(
                 'JAXL0004', // Data Forms
                 'JAXL0050'  // Ad-Hoc Commands
-            ), $jaxl);
+            ));
             
             $jaxl->features[] = self::$ns;
         }
