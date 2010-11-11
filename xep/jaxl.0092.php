@@ -61,8 +61,8 @@
         public static function getIq($arr, $jaxl) {
             if(isset($arr['queryXmlns']) && $arr['queryXmlns'] == self::$ns) {
                 $payload = '<query xmlns="'.self::$ns.'">';
-                $payload .= '<name>'.JAXL_NAME.'</name>';
-                $payload .= '<version>'.JAXL_VERSION.'</version>';
+                $payload .= '<name>'.$jaxl->getName().'</name>';
+                $payload .= '<version>'.$jaxl->getVersion().'</version>';
                 $payload .= '<os>'.PHP_OS.'</os>';
                 $payload .= '</query>';
                 

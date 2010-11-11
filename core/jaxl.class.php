@@ -42,10 +42,6 @@
  */
 
     declare(ticks=1);
-
-    // Library name/version
-    define('JAXL_NAME', 'Jaxl :: Jabber XMPP Client Library');
-    define('JAXL_VERSION', '2.1.2');
     
     // Set JAXL_BASE_PATH if not already defined by application code
     if(!@constant('JAXL_BASE_PATH'))
@@ -118,6 +114,16 @@
      * using combination of env/jaxl.php, env/jaxl.ini and env/jaxl.conf
     */
     class JAXL extends XMPP {
+
+        /**
+         * Client version of the connected Jaxl instance
+        */
+        const version = '2.1.2';
+        
+        /**
+         * Client name of the connected Jaxl instance
+        */
+        const name = 'Jaxl :: Jabber XMPP Client Library';
 
         /**
          * Custom config passed to Jaxl constructor
@@ -261,11 +267,6 @@
         var $lang = 'en';
 
         /**
-         * Client name of the connected Jaxl instance
-        */
-        var $name = 'Jaxl :: Jabber XMPP Client Library';
-
-        /**
          * Jaxl core constructor
          *
          * Jaxl instance configures itself using the constants inside your application jaxl.ini.
@@ -376,7 +377,21 @@
                 else { $this->log("[[JAXL".$xep."]] Doesn't exists in the environment"); }
             }
         } 
-       
+      
+        /**
+         * @return string $name Returns name of this Jaxl client
+        */
+        function getName() {
+            return JAXL::name;
+        }
+
+        /**
+         * @return float $version Returns version of this Jaxl client
+        */
+        function getVersion() {
+            return JAXL::version;
+        }
+
         /**
          * Shutdown Jaxl instance cleanly
          *

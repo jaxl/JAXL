@@ -82,7 +82,7 @@
                 $xml .= '>';
                 
                 $xml .= '<identity xml:lang="'.$jaxl->lang.'"';
-                $xml .= ' name="'.$jaxl->name.'"';
+                $xml .= ' name="'.$jaxl->getName().'"';
                 $xml .= ' category="'.$jaxl->category.'"';
                 $xml .= ' type="'.$jaxl->type.'"/>';
                 

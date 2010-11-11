@@ -51,7 +51,7 @@
 
         public static function init($jaxl) {
             $jaxl->features[] = self::$ns;
-            self::$S = $jaxl->category.'/'.$jaxl->type.'/'.$jaxl->lang.'/'.$jaxl->name.'<';
+            self::$S = $jaxl->category.'/'.$jaxl->type.'/'.$jaxl->lang.'/'.$jaxl->getName().'<';
 
             JAXLXml::addTag('presence', 'cXmlns', '//presence/c/@xmlns');
             JAXLXml::addTag('presence', 'cHash', '//presence/c/@hash');

@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- Removed JAXL_NAME and JAXL_VERSION constants.
+  Instead const variables are now defined per instance accessible by getName() and getVersion() methods.
+  Updated XEP-0030,0092,0115 to use the same
 - Moved indivisual XEP's working parameter (0114,0124) from JAXL core class to XEP classes itself.
   XEP's make use of JAXL::config array for parsing user options.
 - Added JAXL_COMPONENT_PASS option inside jaxl.ini. Updated build.sh with new /app file paths.
