@@ -20,9 +20,14 @@ version of Jaxl 1.x series which was hosted at google code.
 
 Warning: The development source code at Github is only intended for people that want to develop Jaxl or absolutely need the latest features still not available on the stable releases.
 
-## Using JAXL library
+## Writing XMPP apps using JAXL library
 
-Jaxl library is based on events. Register callback(s) inside your application code for required XMPP events and write your app logic inside callbacks. Here is how one can send an XMPP chat message using Jaxl library:
+* Download and extract inside `/path/to/jaxl`
+* Jaxl library provide an event based mechanism exposing hooks like `jaxl_post_auth`
+* Register callback(s) inside your app code for required events (see example below)
+* Write your app logic inside callback'd methods
+
+Here is how a simple send chat message app looks like using Jaxl library:
 
     // Include and initialize Jaxl core
     require_once '/path/to/jaxl/core/jaxl.class.php';
@@ -37,8 +42,8 @@ Jaxl library is based on events. Register callback(s) inside your application co
 
     // Send message after successful authentication
     function postAuth() {
-        global $jaxl;
-        $jaxl->sendMessage('anotherUser@gmail.com', 'Test message using Jaxl library');
+        global $jaxl, $argv;
+        $jaxl->sendMessage($argv[1], $argv[2]);
         $jaxl->shutdown();
     }
 
@@ -47,6 +52,10 @@ Jaxl library is based on events. Register callback(s) inside your application co
 
     // Start Jaxl core
     $jaxl->startCore('stream');
+
+Run from command line:
+
+    php sendMessage.php "anotherUser@gmail.com" "This is a test message"
 
 ## Useful Links
 
