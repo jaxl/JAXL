@@ -168,6 +168,13 @@
         var $jid = false;
 
         /**
+         * Bare JID of the connected Jaxl instance
+         *
+         * @var string
+        */
+        var $bareJid = false;
+
+        /**
          * Domain for the connecting Jaxl instance
          * 
          * @var string
@@ -292,10 +299,11 @@
             $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
             $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
             $this->domain = isset($config['domain']) ? $config['domain'] : (@constant("JAXL_HOST_DOMAIN") == null ? $this->domain : JAXL_HOST_DOMAIN);
-            
+            $this->bareJid = $this->user."@".$this->domain;
+
             /* Optional params if not configured using jaxl.ini or $config take default values */
-            $this->port = isset($config['port']) ? $config['port'] : (@constant("JAXL_HOST_PORT") == null ? $this->port : JAXL_HOST_PORT);
             $this->host = isset($config['host']) ? $config['host'] : (@constant("JAXL_HOST_NAME") == null ? $this->domain : JAXL_HOST_NAME);
+            $this->port = isset($config['port']) ? $config['port'] : (@constant("JAXL_HOST_PORT") == null ? $this->port : JAXL_HOST_PORT);
             $this->resource = isset($config['resource']) ? $config['resource'] : (@constant("JAXL_USER_RESC") == null ? "jaxl.".time() : JAXL_USER_RESC);
             $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : (@constant("JAXL_LOG_LEVEL") == null ? $this->logLevel : JAXL_LOG_LEVEL);
             $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (@constant("JAXL_LOG_ROTATE") == null ? $this->logRotate : JAXL_LOG_ROTATE);
@@ -336,10 +344,10 @@
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                $this->log("Registering callbacks on SIGH terms.");
+                $this->log("Registering callbacks for CTRL+C and kill.");
             }
             else {
-                $this->log("No callbacks registered on SIGH terms.");
+                $this->log("No callbacks registered for CTRL+C and kill.");
             }
            
             // check Jaxl dependency on PHP extension in cli mode

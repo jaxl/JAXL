@@ -237,10 +237,10 @@
             else {
                 $this->log("Socket already opened to the jabber host ".$this->host.":".$this->port." ...", 1);
             }
-            
-            JAXLPlugin::execute('jaxl_post_connect', false, $this);
-            if($this->stream) return true;
-            else return false;
+
+            $ret = $this->stream ? true : false;
+            JAXLPlugin::execute('jaxl_post_connect', $ret, $this);
+            return $ret;
         }
         
         /**

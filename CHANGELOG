@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Added JAXL::bareJid public variable for usage inside applications.
+  XMPP base class now return bool on socket connect completion (used by PHPUnit test cases)
 - Removing build.sh file from library for next release
   Users should simply download, extract, include and write their app code without caring about the build script from 2.1.2 release
 - As a library convention to include XEP's use JAXL::requires() method, while to include any core/ or xmpp/ base class use jaxl_require() method.
