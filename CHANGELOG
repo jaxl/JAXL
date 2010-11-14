@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Removed JAXLUtil::includePath and JAXLUtil::getAppFilePath methods which are now redundant after removing jaxl.ini and jaxl.conf from lib core
 - Removed global defines JAXL_BASE_PATH, JAXL_APP_BASE_PATH, JAXL_BOSH_APP_ABS_PATH from inside jaxl.ini (No more required by apps to specify these values)
 - Removing env/jaxl.php and env/jaxl.conf (were required if you run your apps using `jaxl` command line utility)
   Updated env/jaxl.ini so that projects can now directly include their app setting via jaxl.ini (before including core/jaxl.class.php)
