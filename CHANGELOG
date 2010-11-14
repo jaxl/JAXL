@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Removing env/jaxl.php and env/jaxl.conf (were required if you run your apps using `jaxl` command line utility)
+  Updated env/jaxl.ini so that projects can now directly include their app setting via jaxl.ini (before including core/jaxl.class.php)
 - Added JAXL::bareJid public variable for usage inside applications.
   XMPP base class now return bool on socket connect completion (used by PHPUnit test cases)
 - Removing build.sh file from library for next release
