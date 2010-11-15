@@ -285,6 +285,11 @@
         var $ip = null;
 
         /**
+         * PHP OpenSSL module info
+        */
+        var $openSSL = false;
+
+        /**
          * Jaxl core constructor
          *
          * Jaxl instance configures itself using the constants inside your application jaxl.ini.
@@ -366,7 +371,7 @@
            
             // check Jaxl dependency on PHP extension in cli mode
             if($this->mode == "cli") {
-                if(JAXLUtil::sslEnabled()) 
+                if(($this->openSSL = JAXLUtil::sslEnabled())) 
                     $this->log("OpenSSL extension is loaded.");
                 else
                     $this->log("OpenSSL extension not loaded.");

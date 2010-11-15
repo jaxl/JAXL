@@ -72,7 +72,13 @@
         
         public static function streamFeatures($arr, $jaxl) {
             if(isset($arr["#"]["starttls"]) && ($arr["#"]["starttls"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-tls")) {
-                XMPPSend::startTLS($jaxl);
+                if($jaxl->openSSL) {
+                    XMPPSend::startTLS($jaxl);
+                }
+                else {
+                    $jaxl->log("OpenSSL extension required to proceed with TLS encryption");
+                    $jaxl->shutdown();
+                }
             }
             else if(isset($arr["#"]["mechanisms"]) && ($arr["#"]["mechanisms"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-sasl")) {
                 $mechanism = array();
