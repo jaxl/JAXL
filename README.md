@@ -41,13 +41,13 @@ Here is how a simple send chat message app looks like using Jaxl library:
     ));
 
     // Send message after successful authentication
-    function postAuth() {
-        global $jaxl, $argv;
+    function postAuth($payload, $jaxl) {
+        global $argv;
         $jaxl->sendMessage($argv[1], $argv[2]);
         $jaxl->shutdown();
     }
 
-    // Register callback on required hook
+    // Register callback on required hook (callback'd method will always receive 2 params)
     JAXLPlugin::add('jaxl_post_auth', 'postAuth');
 
     // Start Jaxl core
