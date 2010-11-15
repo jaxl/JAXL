@@ -21,14 +21,11 @@
 	// Sample Component class
 	class componentbot {
 		
-		function postAuth() {
-            global $jaxl;
+		function postAuth($payload, $jaxl) {
 			$jaxl->log("Component handshake completed ...");
 		}
 		
-		function getMessage($payloads) {
-			global $jaxl;	
-			
+		function getMessage($payloads, $jaxl) {
 			foreach($payloads as $payload)
 				if(strlen($payload['body']) > 0)
                     $jaxl->sendMessage($payload['from'], $payload['body'], $payload['to']);	

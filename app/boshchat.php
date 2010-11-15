@@ -39,15 +39,12 @@
         // Sample Bosh chat application class
         class boshchat {
             
-            public static function postAuth() {
-                global $jaxl;
+            public static function postAuth($payload, $jaxl) {
                 $response = array('jaxl'=>'connected', 'jid'=>$jaxl->jid);
                 $jaxl->JAXL0206('out', $response);
             }
             
-            public static function handleRosterList($payload) {
-                global $jaxl;
-                
+            public static function handleRosterList($payload, $jaxl) {
                 $roster = array();
                 if(is_array($payload['queryItemJid'])) {
                     foreach($payload['queryItemJid'] as $key=>$jid) {
@@ -61,15 +58,12 @@
                 $jaxl->JAXL0206('out', $response);
             }
             
-            public static function postDisconnect() {
-                global $jaxl;
+            public static function postDisconnect($payload, $jaxl) {
                 $response = array('jaxl'=>'disconnected');
                 $jaxl->JAXL0206('out', $response);
             }
             
-            public static function getMessage($payloads) {
-                global $jaxl;
-
+            public static function getMessage($payloads, $jaxl) {
                 $html = '';
                 foreach($payloads as $payload) {
                     // reject offline message
@@ -96,9 +90,7 @@
                 return $payloads;
             }
             
-            public static function getPresence($payloads) {
-                global $jaxl;
-
+            public static function getPresence($payloads, $jaxl) {
                 $html = '';
                 foreach($payloads as $payload) {
                     if($payload['type'] == '' || in_array($payload['type'], array('available', 'unavailable'))) {
@@ -118,14 +110,12 @@
                 return $payloads;
             }
             
-            public static function postEmptyBody($body) {
-                global $jaxl;
+            public static function postEmptyBody($body, $jaxl) {
                 $response = array('jaxl'=>'pinged');
                 $jaxl->JAXL0206('out', $response);
             }
 
-            public static function postAuthFailure() {
-                global $jaxl;
+            public static function postAuthFailure($payload, $jaxl) {
                 $response = array('jaxl'=>'authFailed');
                 $jaxl->JAXL0206('out', $response);
             }

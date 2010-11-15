@@ -21,8 +21,8 @@
     ));
 
     // Post successful auth send desired message
-    function postAuth() {
-        global $jaxl, $argv;
+    function postAuth($payload, $jaxl) {
+        global $argv;
         $jaxl->sendMessage($argv[1], $argv[2]);
         $jaxl->shutdown();
     }

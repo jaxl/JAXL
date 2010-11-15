@@ -33,8 +33,7 @@
 	// Sample Echobot class
 	class echobot {
 		
-		function postAuth() {
-			global $jaxl;
+		function postAuth($payload, $jaxl) {
             $jaxl->JAXL0030('discoInfo', $jaxl->domain, false, false);
 			$jaxl->getRosterList(array($this, 'handleRosterList'));
 		}
@@ -51,8 +50,7 @@
             $jaxl->setStatus(false, false, false, true);
 		}
 		
-		function getMessage($payloads) {
-			global $jaxl;
+		function getMessage($payloads, $jaxl) {
 			foreach($payloads as $payload) {
 				if($payload['offline'] != JAXL0203::$ns) {
 					if(strlen($payload['body']) > 0) {
@@ -63,8 +61,7 @@
 			}
 		}
 		
-		function getPresence($payloads) {
-			global $jaxl;	
+		function getPresence($payloads, $jaxl) {
 			foreach($payloads as $payload) {
 				if($payload['type'] == "subscribe") {
 					// accept subscription

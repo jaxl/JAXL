@@ -38,28 +38,25 @@
         'JAXL0206'  // XMPP over Bosh
     ));
 
-    function doAuth($mechanism) {
-        global $xmpp;
+    function doAuth($mechanism, $xmpp) {
         $xmpp->auth('DIGEST-MD5');
     }
 
-    function postAuth() {
-        global $xmpp;
+    function postAuth($payload, $xmpp) {
         $xmpp->JAXL0054('getVCard', false, $xmpp->jid, 'handleVCard');
     }
 
-    function handleVCard($payload) {
-        global $xmpp;
+    function handleVCard($payload, $xmpp) {
         echo "<b>Successfully fetched VCard</b><br/>";
         print_r($payload);
         $xmpp->JAXL0206('endStream');
     }
 
-    function postDisconnect() {
+    function postDisconnect($payload, $xmpp) {
         exit;
     }
 
-    function postAuthFailure() {
+    function postAuthFailure($payload, $xmpp) {
         echo "OOPS! Auth failed";
     }
 

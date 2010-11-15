@@ -34,29 +34,25 @@
     // Demo requires VCard XEP
     $xmpp->requires('JAXL0054');
     
-    function postConnect() {
-        global $xmpp;
+    function postConnect($payload, $xmpp) {
         $xmpp->startStream();
     }
 
-    function doAuth($mechanism) {
-        global $xmpp;
+    function doAuth($mechanism, $xmpp) {
         $xmpp->auth('DIGEST-MD5');
     }
 
-    function postAuth() {
-        global $xmpp;
+    function postAuth($payload, $xmpp) {
         $xmpp->JAXL0054('getVCard', false, $xmpp->jid, 'handleVCard');
     }
 
-    function handleVCard($payload) {
-        global $xmpp;
+    function handleVCard($payload, $xmpp) {
         echo "<b>Successfully fetched VCard</b><br/>";
         print_r($payload);
         $xmpp->shutdown();
     }
 
-    function postAuthFailure() {
+    function postAuthFailure($payload, $xmpp) {
         echo "OOPS! Auth failed";
     }
 
