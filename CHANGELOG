@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- As a library convention XEP's exposing user space configuration parameters via JAXL constructor SHOULD utilize JAXL::getConfigByPriority method
+  Added JAXL_TMP_PATH option inside jaxl.ini
 - Jaxl::tmp is now Jaxl::tmpPath. Also added Jaxl config param to specify custom tmp path location
   Jaxl client also self detect the IP of the host it is running upon (to be used by STUN/TURN utilities in Jingle negotitation)
 - Removed JAXLUtil::includePath and JAXLUtil::getAppFilePath methods which are now redundant after removing jaxl.ini and jaxl.conf from lib core

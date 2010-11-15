@@ -79,16 +79,18 @@
             );
             
             // parse user options
-            $jaxl->bosh['host'] = isset($jaxl->config['boshHost']) ? $jaxl->config['boshHost'] : (@constant("JAXL_BOSH_HOST") == null ? $jaxl->bosh['host'] : JAXL_BOSH_HOST);
-            $jaxl->bosh['port'] = isset($jaxl->config['boshPort']) ? $jaxl->config['boshPort'] : (@constant("JAXL_BOSH_PORT") == null ? $jaxl->bosh['port'] : JAXL_BOSH_PORT);
-            $jaxl->bosh['suffix'] = isset($jaxl->config['boshSuffix']) ? $jaxl->config['boshSuffix'] : (@constant("JAXL_BOSH_SUFFIX") == null ? $jaxl->bosh['suffix'] : JAXL_BOSH_SUFFIX);
-            $jaxl->bosh['out'] = isset($jaxl->config['boshOut']) ? $jaxl->config['boshOut'] : (@constant("JAXL_BOSH_OUT") == null ? $jaxl->bosh['out'] : JAXL_BOSH_OUT);
-            $jaxl->bosh['cookie']['ttl'] = isset($jaxl->config['boshCookieTTL']) ? $jaxl->config['boshCookieTTL'] : (@constant("JAXL_BOSH_COOKIE_TTL") == null ? $jaxl->bosh['cookie']['ttl'] : JAXL_BOSH_COOKIE_TTL);
-            $jaxl->bosh['cookie']['path'] = isset($jaxl->config['boshCookiePath']) ? $jaxl->config['boshCookiePath'] : (@constant("JAXL_BOSH_COOKIE_PATH") == null ? $jaxl->bosh['cookie']['path'] : JAXL_BOSH_COOKIE_PATH);
-            $jaxl->bosh['cookie']['domain'] = isset($jaxl->config['boshCookieDomain']) ? $jaxl->config['boshCookieDomain'] : (@constant("JAXL_BOSH_COOKIE_DOMAIN") == null ? $jaxl->bosh['cookie']['domain'] : JAXL_BOSH_COOKIE_DOMAIN);
-            $jaxl->bosh['cookie']['https'] = isset($jaxl->config['boshCookieHTTPS']) ? $jaxl->config['boshCookieHTTPS'] : (@constant("JAXL_BOSH_COOKIE_HTTPS") == null ? $jaxl->bosh['cookie']['https'] : JAXL_BOSH_COOKIE_HTTPS);
-            $jaxl->bosh['cookie']['httponly'] = isset($jaxl->config['boshCookieHTTPOnly']) ? $jaxl->config['boshCookieHTTPOnly'] : (@constant("JAXL_BOSH_COOKIE_HTTP_ONLY") == null ? $jaxl->bosh['cookie']['httponly'] : JAXL_BOSH_COOKIE_HTTP_ONLY); 
+            $jaxl->bosh['host'] = $jaxl->getConfigByPriority($jaxl->config['boshHost'], "JAXL_BOSH_HOST", $jaxl->bosh['host']);
+            $jaxl->bosh['port'] = $jaxl->getConfigByPriority($jaxl->config['boshPort'], "JAXL_BOSH_PORT", $jaxl->bosh['port']);
+            $jaxl->bosh['suffix'] = $jaxl->getConfigByPriority($jaxl->config['boshSuffix'], "JAXL_BOSH_SUFFIX", $jaxl->bosh['suffix']);
+            $jaxl->bosh['out'] = $jaxl->getConfigByPriority($jaxl->config['boshOut'], "JAXL_BOSH_OUT", $jaxl->bosh['out']);
             $jaxl->bosh['url'] = "http://".$jaxl->bosh['host'].":".$jaxl->bosh['port']."/".$jaxl->bosh['suffix']."/";
+            
+            // cookie params
+            $jaxl->bosh['cookie']['ttl'] = $jaxl->getConfigByPriority($jaxl->config['boshCookieTTL'], "JAXL_BOSH_COOKIE_TTL", $jaxl->bosh['cookie']['ttl']);
+            $jaxl->bosh['cookie']['path'] = $jaxl->getConfigByPriority($jaxl->config['boshCookiePath'], "JAXL_BOSH_COOKIE_PATH", $jaxl->bosh['cookie']['path']);
+            $jaxl->bosh['cookie']['domain'] = $jaxl->getConfigByPriority($jaxl->config['boshCookieDomain'], "JAXL_BOSH_COOKIE_DOMAIN", $jaxl->bosh['cookie']['domain']);
+            $jaxl->bosh['cookie']['https'] = $jaxl->getConfigByPriority($jaxl->config['boshCookieHTTPS'], "JAXL_BOSH_COOKIE_HTTPS", $jaxl->bosh['cookie']['https']);
+            $jaxl->bosh['cookie']['httponly'] = $jaxl->getConfigByPriority($jaxl->config['boshCookieHTTPOnly'], "JAXL_BOSH_COOKIE_HTTP_ONLY", $jaxl->bosh['cookie']['httponly']);
            
            session_set_cookie_params(
                 $jaxl->bosh['cookie']['ttl'],
