@@ -276,7 +276,13 @@
         /**
          * Location to system temporary folder
         */
-        var $tmp = null;
+        var $tmpPath = null;
+
+        /**
+         * IP address of the host Jaxl instance is running upon.
+         * To be used by STUN client implementations.
+        */
+        var $ip = null;
 
         /**
          * Jaxl core constructor
@@ -293,25 +299,26 @@
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->pid = getmypid();
             $this->config = $config;
-            $this->tmp = sys_get_temp_dir();
+            $this->ip = gethostbyname(php_uname('n'));
 
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
-            $this->user = isset($config['user']) ? $config['user'] : JAXL_USER_NAME;
-            $this->pass = isset($config['pass']) ? $config['pass'] : JAXL_USER_PASS;
-            $this->domain = isset($config['domain']) ? $config['domain'] : (@constant("JAXL_HOST_DOMAIN") == null ? $this->domain : JAXL_HOST_DOMAIN);
+            $this->user = $this->getConfigByPriority($config['user'], "JAXL_USER_NAME", $this->user);
+            $this->pass = $this->getConfigByPriority($config['pass'], "JAXL_USER_PASS", $this->pass); 
+            $this->domain = $this->getConfigByPriority($config['domain'], "JAXL_HOST_DOMAIN", $this->domain);
             $this->bareJid = $this->user."@".$this->domain;
 
             /* Optional params if not configured using jaxl.ini or $config take default values */
-            $this->host = isset($config['host']) ? $config['host'] : (@constant("JAXL_HOST_NAME") == null ? $this->domain : JAXL_HOST_NAME);
-            $this->port = isset($config['port']) ? $config['port'] : (@constant("JAXL_HOST_PORT") == null ? $this->port : JAXL_HOST_PORT);
-            $this->resource = isset($config['resource']) ? $config['resource'] : (@constant("JAXL_USER_RESC") == null ? "jaxl.".time() : JAXL_USER_RESC);
-            $this->logLevel = isset($config['logLevel']) ? $config['logLevel'] : (@constant("JAXL_LOG_LEVEL") == null ? $this->logLevel : JAXL_LOG_LEVEL);
-            $this->logRotate = isset($config['logRotate']) ? $config['logRotate'] : (@constant("JAXL_LOG_ROTATE") == null ? $this->logRotate : JAXL_LOG_ROTATE);
-            $this->logPath = isset($config['logPath']) ? $config['logPath'] : (@constant("JAXL_LOG_PATH") == null ? $this->logPath : JAXL_LOG_PATH);
-            $this->pidPath = isset($config['pidPath']) ? $config['pidPath'] : (@constant("JAXL_PID_PATH") == null ? $this->pidPath : JAXL_PID_PATH);
+            $this->host = $this->getConfigByPriority($config['host'], "JAXL_HOST_NAME", $this->domain);
+            $this->port = $this->getConfigByPriority($config['port'], "JAXL_HOST_PORT", $this->port);
+            $this->resourse = $this->getConfigByPriority($config['resource'], "JAXL_USER_RESC", "jaxl.".time());
+            $this->logLevel = $this->getConfigByPriority($config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
+            $this->logRotate = $this->getConfigByPriority($config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
+            $this->logPath = $this->getConfigByPriority($config['logPath'], "JAXL_LOG_PATH", $this->logPath);
+            $this->pidPath = $this->getConfigByPriority($config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
+            $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", sys_get_temp_dir());
             
             /* Handle pre-choosen auth type mechanism */
-            $this->authType = isset($config['authType']) ? $config['authType'] : (@constant("JAXL_AUTH_TYPE") == null ? $this->authType : JAXL_AUTH_TYPE);
+            $this->authType = $this->getConfigByPriority($config['authType'], "JAXL_AUTH_TYPE", $this->authType);
             if($this->authType) 
                 JAXLPlugin::add('jaxl_get_auth_mech', array($this, 'doAuth'));
 
@@ -331,6 +338,13 @@
             
             // include service discovery XEP-0030, recommended for every XMPP entity
             $this->requires('JAXL0030');
+        }
+
+        /**
+         * Return Jaxl instance config param depending upon user choice and default values
+        */
+        function getConfigByPriority($config, $constant, $default) {
+            return ($config == null) ? (@constant($constant) == null ? $default : constant($constant)) : $config;
         }
         
         /**
@@ -726,5 +740,4 @@
         }
 
     }
-
 ?>
