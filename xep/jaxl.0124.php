@@ -105,7 +105,6 @@
             JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
             JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
             JAXLPlugin::add('jaxl_post_handler', array('JAXL0124', 'postHandler'));
-            JAXLPlugin::add('jaxl_pre_curl', array('JAXL0124', 'saveSession'));
             JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
 
             self::loadSession($jaxl);
@@ -184,13 +183,11 @@
         }
         
         public static function sendBody($xml, $jaxl) {
-            $xml = JAXLPlugin::execute('jaxl_pre_curl', $xml, $jaxl);
+            $xml = self::saveSession($xml, $jaxl);
             if($xml != false) {
                 $jaxl->log("[[XMPPSend]] body\n".$xml, 4);
-                
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
                 $payload = $payload['content'];
-                
                 $jaxl->handler($payload);
             }
             return $xml;
