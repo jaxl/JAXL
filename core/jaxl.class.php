@@ -315,7 +315,7 @@
             /* Optional params if not configured using jaxl.ini or $config take default values */
             $this->host = $this->getConfigByPriority($config['host'], "JAXL_HOST_NAME", $this->domain);
             $this->port = $this->getConfigByPriority($config['port'], "JAXL_HOST_PORT", $this->port);
-            $this->resourse = $this->getConfigByPriority($config['resource'], "JAXL_USER_RESC", "jaxl.".time());
+            $this->resource = $this->getConfigByPriority($config['resource'], "JAXL_USER_RESC", "jaxl.".time());
             $this->logLevel = $this->getConfigByPriority($config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
             $this->logRotate = $this->getConfigByPriority($config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
             $this->logPath = $this->getConfigByPriority($config['logPath'], "JAXL_LOG_PATH", $this->logPath);
