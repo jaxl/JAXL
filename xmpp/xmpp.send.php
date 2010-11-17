@@ -130,7 +130,7 @@
             if($from) $xml .= ' from="'.$from.'"';
             $xml .= ' to="'.htmlspecialchars($to).'"';
             if($type) $xml .= ' type="'.$type.'"';
-            if($id) $xml .= ' id="'.$jaxl->getId().'"';
+            if($id) $xml .= ' id="'.$id.'"';
             $xml .= '>';
             
             if($child) {
@@ -164,7 +164,7 @@
             if($type) $xml .= ' type="'.$type.'"';
             if($from) $xml .= ' from="'.$from.'"';
             if($to) $xml .= ' to="'.htmlspecialchars($to).'"';
-            if($id) $xml .= ' id="'.$jaxl->getId().'"';
+            if($id) $xml .= ' id="'.$id.'"';
             $xml .= '>';
             
             if($child) {
