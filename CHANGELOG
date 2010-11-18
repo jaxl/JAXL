@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Checking in first version of XEP-0128 (Service Discovery Extension)
 - Fixed bug where message and presence stanza builder were not using passed id value as attribute
 - Removed jaxl_pre_curl event hook which was only used internally by XEP-0124
 - Jaxl now shutdown gracefully is encryption is required and openssl PHP module is not loaded in the environment
