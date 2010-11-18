@@ -341,8 +341,11 @@
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
             
-            // include service discovery XEP-0030, recommended for every XMPP entity
-            $this->requires('JAXL0030');
+            // include service discovery XEP-0030 and it's extensions, recommended for every XMPP entity
+            $this->requires(array(
+                'JAXL0030',
+                'JAXL0128'
+            ));
         }
 
         /**
@@ -437,6 +440,20 @@
         */
         function getVersion() {
             return JAXL::version;
+        }
+
+        /**
+         * Discover items
+        */
+        function discoItems($jid, $callback, $node=false) {
+            $this->JAXL0030('discoItems', $jid, $this->jid, $callback, $node);
+        }
+        
+        /**
+         * Discover info
+        */
+        function discoInfo($jid, $callback, $node=false) {
+            $this->JAXL0030('discoInfo', $jid, $this->jid, $callback, $node);
         }
 
         /**
