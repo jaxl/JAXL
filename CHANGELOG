@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Added tagMap xpath for service identity and feature nodes in service discovery resultset
 - JAXL core now auto includes XEP-0128 along with XEP-0030 on startup.
   Also added two methods JAXL::discoItems and JAXL::discoInfo for service discovery
 - Checking in first version of XEP-0128 (Service Discovery Extension)

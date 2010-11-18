@@ -54,6 +54,12 @@
             $jaxl->features[] = self::$ns['info'];
             $jaxl->features[] = self::$ns['items'];
 
+            JAXLXml::addTag('iq', 'identityCategory', '//iq/query/identity/@category');
+            JAXLXml::addTag('iq', 'identityText', '//iq/query/identity/@text');
+            JAXLXml::addTag('iq', 'identityName', '//iq/query/identity/@name');
+            JAXLXml::addTag('iq', 'identityLang', '//iq/query/identity/@xml:lang');
+            JAXLXml::addTag('iq', 'featureVar', '//iq/query/feature/@var');
+
             // register callbacks
             JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
         }
