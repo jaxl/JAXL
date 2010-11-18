@@ -34,9 +34,19 @@
 	class echobot {
 		
 		function postAuth($payload, $jaxl) {
-            $jaxl->JAXL0030('discoInfo', $jaxl->domain, false, false);
-			$jaxl->getRosterList(array($this, 'handleRosterList'));
+			$jaxl->discoItems($jaxl->domain, array($this, 'handleDiscoItems'));
+            $jaxl->getRosterList(array($this, 'handleRosterList'));
 		}
+
+        function handleDiscoItems($payload, $jaxl) {
+            $items = array_unique($payload['queryItemJid']);
+            foreach($items as $item)
+                $jaxl->discoInfo($item, array($this, 'handleDiscoInfo'));
+        }
+
+        function handleDiscoInfo($payload, $jaxl) {
+            // print_r($payload);
+        }
 
 		function handleRosterList($payload, $jaxl) {
 			if(is_array($payload['queryItemJid'])) {
