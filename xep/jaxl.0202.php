@@ -71,6 +71,7 @@
                 $entityTime .= '</time>';
                 return XMPPSend::iq($jaxl, 'result', $entityTime, $payload['from'], $payload['to'], false, $payload['id']);
             }
+            return $payload;
         }
         
     }

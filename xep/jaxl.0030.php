@@ -81,8 +81,7 @@
         }
 
         public static function handleIq($payload, $jaxl) {
-            $xmlns = $payload['queryXmlns'];
-            if($xmlns == self::$ns['info']) {
+            if($payload['queryXmlns'] == self::$ns['info']) {
                 $xml = '<query xmlns="'.$xmlns.'"';
                 if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
                 $xml .= '>';
@@ -98,7 +97,7 @@
                 
                 XMPPSend::iq($jaxl, 'result', $xml, $payload['from'], $payload['to'], false, $payload['id']);
             }
-            else if($xmlns == self::$ns['items']) {
+            else if($payload['queryXmlns'] == self::$ns['items']) {
                 
             }
             

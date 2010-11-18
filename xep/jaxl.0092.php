@@ -59,7 +59,7 @@
         }
         
         public static function getIq($arr, $jaxl) {
-            if(isset($arr['queryXmlns']) && $arr['queryXmlns'] == self::$ns) {
+            if($arr['queryXmlns'] == self::$ns) {
                 $payload = '<query xmlns="'.self::$ns.'">';
                 $payload .= '<name>'.$jaxl->getName().'</name>';
                 $payload .= '<version>'.$jaxl->getVersion().'</version>';

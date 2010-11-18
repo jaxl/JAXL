@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Updated IQ handling inside XEP-0202 which wasn't returning iq stanza back resulting in no ping/pong
 - Updated echobot to show usage of JAXL::discoItems and JAXL::discoInfo inside application code
 - Added tagMap xpath for service identity and feature nodes in service discovery resultset
 - JAXL core now auto includes XEP-0128 along with XEP-0030 on startup.
