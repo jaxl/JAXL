@@ -82,7 +82,7 @@
 
         public static function handleIq($payload, $jaxl) {
             if($payload['queryXmlns'] == self::$ns['info']) {
-                $xml = '<query xmlns="'.$xmlns.'"';
+                $xml = '<query xmlns="'.$payload['queryXmlns'].'"';
                 if(isset($payload['queryNode'])) $xml .= ' node="'.$payload['queryNode'].'"';
                 $xml .= '>';
                 
