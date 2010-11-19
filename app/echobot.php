@@ -18,6 +18,7 @@
         'host'=>'talk.google.com',
         'domain'=>'gmail.com',
         'authType'=>'PLAIN',
+        'pingInterval'=>60,
         'logLevel'=>5
     ));
 	
@@ -25,9 +26,9 @@
 	$jaxl->requires(array(
 		'JAXL0115', // Entity Capabilities
 		'JAXL0092', // Software Version
+        'JAXL0199', // XMPP Ping
 		'JAXL0203', // Delayed Delivery
-        'JAXL0202', // Entity Time
-		'JAXL0199'  // XMPP Ping
+        'JAXL0202'  // Entity Time
 	));
 	
 	// Sample Echobot class
