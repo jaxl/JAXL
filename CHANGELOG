@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- XEP-0199 (XMPP Ping) can now automatically ping the connected server periodically for keeping connection alive on long running bots
+  (see echobot.php sample app for usage)
 - Updated JAXLCron::add method to accept a number of arguments while adding bckgrnd jobs
   These list of arguments is passed back to the application method
 - Updated IQ handling inside XEP-0202 which wasn't returning iq stanza back resulting in no ping/pong
