@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Added JAXL_PING_INTERVAL configuration option inside jaxl.ini
 - XEP-0199 (XMPP Ping) can now automatically ping the connected server periodically for keeping connection alive on long running bots
   (see echobot.php sample app for usage)
 - Updated JAXLCron::add method to accept a number of arguments while adding bckgrnd jobs
