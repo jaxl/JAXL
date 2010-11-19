@@ -61,15 +61,21 @@
                     || $jaxl->clocked - $job['lastCall'] > $interval // if cron interval has already passed
                     ) {
                         self::$cron[$interval][$key]['lastCall'] = $jaxl->clocked;
-                        call_user_func($job['callback'], $jaxl);
+                        $arg = self::$cron[$interval][$key]['arg'];
+                        array_unshift($arg, $jaxl);
+                        call_user_func_array($job['callback'], $arg);
                     }
                 }
             }
             return $payload;
         }
 		
-		public static function add($callback, $interval) {
-            self::$cron[$interval][] = array('callback'=>$callback, 'lastCall'=>time());
+		public static function add(/* $callback, $interval, $param1, $param2, .. */) {
+            $arg = func_get_args();
+            $callback = array_shift($arg);
+            $interval = array_shift($arg);
+
+            self::$cron[$interval][] = array('callback'=>$callback, 'arg'=>$arg, 'lastCall'=>time());
         }
 		
 		public static function delete($callback, $interval) {}
