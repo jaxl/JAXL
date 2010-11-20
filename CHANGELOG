@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Checking in first version of XEP-0191 (Simple Communication Blocking) (not yet tested)
 - Added JAXL_PING_INTERVAL configuration option inside jaxl.ini
 - XEP-0199 (XMPP Ping) can now automatically ping the connected server periodically for keeping connection alive on long running bots
   (see echobot.php sample app for usage)
