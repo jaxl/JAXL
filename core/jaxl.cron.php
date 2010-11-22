@@ -61,7 +61,7 @@
                     || $jaxl->clocked - $job['lastCall'] > $interval // if cron interval has already passed
                     ) {
                         self::$cron[$interval][$key]['lastCall'] = $jaxl->clocked;
-                        $arg = self::$cron[$interval][$key]['arg'];
+                        $arg = $job['arg'];
                         array_unshift($arg, $jaxl);
                         call_user_func_array($job['callback'], $arg);
                     }
@@ -75,10 +75,18 @@
             $callback = array_shift($arg);
             $interval = array_shift($arg);
 
-            self::$cron[$interval][] = array('callback'=>$callback, 'arg'=>$arg, 'lastCall'=>time());
+            self::$cron[$interval][self::generateCbSignature($callback)] = array('callback'=>$callback, 'arg'=>$arg, 'lastCall'=>time());
         }
 		
-		public static function delete($callback, $interval) {}
+		public static function delete($callback, $interval) {    
+            $sig = self::generateCbSignature($callback);
+            if(isset(self::$cron[$interval][$sig]))
+                unset(self::$cron[$interval][$sig]);
+        }
+
+        protected static function generateCbSignature($callback) {
+            return is_array($callback) ? md5(json_encode($callback)) : md5($callback);
+        }
 		
 	}
 
