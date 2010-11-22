@@ -40,6 +40,9 @@
 		}
 
         function handleDiscoItems($payload, $jaxl) {
+            if(!is_array($payload['queryItemJid']))
+                return $payload;
+
             $items = array_unique($payload['queryItemJid']);
             foreach($items as $item)
                 $jaxl->discoInfo($item, array($this, 'handleDiscoInfo'));
