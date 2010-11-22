@@ -68,11 +68,18 @@
         }
         
         public static function ping($jaxl, $to, $from, $callback) {
-            $payload = "<ping xmlns='urn:xmpp:ping'/>";
-            return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
+            if($jaxl->auth) {
+                $payload = "<ping xmlns='urn:xmpp:ping'/>";
+                return XMPPSend::iq($jaxl, 'get', $payload, $to, $from, $callback);
+            }
         }
 
         public static function pinged($payload, $jaxl) {
+            if($payload['type'] == 'error' && $payload['errorCode'] == 501 && $payload['errorCondition'] == 'feature-not-implemented') {
+                $jaxl->log("[[JAXL0199]] Server doesn't support ping feature, disabling cron tab for periodic ping...");
+                JAXLCron::delete(array('JAXL0199', 'ping'), $jaxl->pingInterval);
+                return $payload;
+            }
             $jaxl->log("[[JAXL0199]] Rcvd ping response from the server...");
         }
     }
