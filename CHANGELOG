@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Corrected handling of error type iq stanza's (removed jaxl_get_iq_error hook)
 - Added iq error code xpath inside JAXLXml class
 - Completed missing JAXLCron::delete method for removing a previously registered cron tab
 - Checking in first version of XEP-0049 (Private XML Storage) (not yet tested)
