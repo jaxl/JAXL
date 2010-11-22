@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Added iq error code xpath inside JAXLXml class
+- Completed missing JAXLCron::delete method for removing a previously registered cron tab
 - Checking in first version of XEP-0049 (Private XML Storage) (not yet tested)
 - Checking in first version of XEP-0191 (Simple Communication Blocking) (not yet tested)
 - Added JAXL_PING_INTERVAL configuration option inside jaxl.ini

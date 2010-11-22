@@ -121,6 +121,7 @@
                 'queryItemAsk'  =>  '//iq/query/item/@ask',
                 'queryItemGrp'  =>  '//iq/query/item/group',
                 'errorType' =>  '//iq/error/@type',
+                'errorCode' =>  '//iq/error/@code',
                 'errorCondition'=>  '//iq/error/*[1]/name()',
                 'errorXmlns'=>  '//iq/error/*[1]/@xmlns'
             )
