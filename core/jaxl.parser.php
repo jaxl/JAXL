@@ -172,6 +172,9 @@
                     else if($tagXPath == 'text()') {
                         $values = $obj[0];
                     }
+                    else if($tagXPath == 'xml()') {
+                        $values = $obj->asXML();
+                    }
                     else if(substr($tagXPath, 0, 1) == '@') {
                         $txpath = str_replace('@', '', $tagXPath);
                         $values = $obj->attributes()->{$txpath};
@@ -188,6 +191,9 @@
                         unset($temp);
                     }
                     else if($tagXPath == 'name()') {
+                        $payload[$node][$tag] = $values;
+                    }
+                    else if($tagXPath == 'xml()') {
                         $payload[$node][$tag] = $values;
                     }
                     else {
@@ -284,4 +290,5 @@
         }
         
     }
+
 ?>
