@@ -189,18 +189,17 @@
         
         public static function iq($arr, $jaxl) {
             switch($arr['type']) {
-                case 'result' || 'error':
-                    $id = $arr['id'];
-                    JAXLPlugin::execute('jaxl_get_iq_'.$id, $arr, $jaxl);
-                    break;
                 case 'get':
                     JAXLPlugin::execute('jaxl_get_iq_get', $arr, $jaxl);
                     break;
                 case 'set':
                     JAXLPlugin::execute('jaxl_get_iq_set', $arr, $jaxl);
                     break;
-                default:
-                    $jaxl->log('Unhandled iq type ...'.json_encode($arr), 1);
+                case 'result':
+                    JAXLPlugin::execute('jaxl_get_iq_'.$arr['id'], $arr, $jaxl);
+                    break;
+                case 'error':
+                    JAXLPlugin::execute('jaxl_get_iq_'.$arr['id'], $arr, $jaxl);
                     break;
             }
             return $arr;

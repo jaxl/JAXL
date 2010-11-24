@@ -56,7 +56,7 @@
          *
          * @param string $hook
          * @param string|array $callback A valid callback inside your application code
-         * @param integer $priority When more than one callbacks is attached on hook, they are called in priority order or which ever was registered first
+         * @param integer $priority (>0) When more than one callbacks is attached on hook, they are called in priority order or which ever was registered first
         */
         public static function add($hook, $callback, $priority=10) {
             if(!isset(self::$registry[$hook]))

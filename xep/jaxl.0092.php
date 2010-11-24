@@ -68,9 +68,7 @@
                 
                 return XMPPSend::iq($jaxl, 'result', $payload, $arr['from'], $arr['to'], false, $arr['id']);
             }
-            else {
-                return $arr;
-            }
+            return $arr;
         }
         
         public static function getVersion($jaxl, $fromJid, $toJid, $callback) {
