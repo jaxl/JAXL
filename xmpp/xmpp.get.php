@@ -76,7 +76,7 @@
                     XMPPSend::startTLS($jaxl);
                 }
                 else {
-                    $jaxl->log("OpenSSL extension required to proceed with TLS encryption");
+                    $jaxl->log("[[XMPPGet]] OpenSSL extension required to proceed with TLS encryption");
                     $jaxl->shutdown();
                 }
             }
@@ -98,7 +98,7 @@
             $desc = key($arr['#']);
             $xmlns = $arr['#'][$desc]['0']['@']['xmlns'];
             JAXLPlugin::execute('jaxl_get_stream_error', $arr, $jaxl);
-            $jaxl->log("Stream error with description ".$desc." and xmlns ".$xmlns, 1);
+            $jaxl->log("[[XMPPGet]] Stream error with description ".$desc." and xmlns ".$xmlns);
             return true;
         }
 
@@ -106,17 +106,17 @@
             $xmlns = $arr['xmlns'];
             switch($xmlns) {
                 case 'urn:ietf:params:xml:ns:xmpp-tls':
-                    $jaxl->log("Unable to start TLS negotiation, see logs for detail...", 1);
+                    $jaxl->log("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('tlsFailure');
                     break;
                 case 'urn:ietf:params:xml:ns:xmpp-sasl':
-                    $jaxl->log("Unable to complete SASL Auth, see logs for detail...", 1);
+                    $jaxl->log("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('saslFailure');
                     break;
                 default:
-                    $jaxl->log("Uncatched failure xmlns received...", 1);
+                    $jaxl->log("[[XMPPGet]] Uncatched failure xmlns received...");
                     break;
             }
         }
@@ -173,7 +173,7 @@
                 }
                 else {
                     $jaxl->auth = true;
-                    $jaxl->log("Auth completed...", 1);
+                    $jaxl->log("[[XMPPGet]] Auth completed...");
                     JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
                 }
             }
@@ -182,7 +182,7 @@
         public static function postSession($arr, $jaxl) {
             if($arr["type"] == "result") {
                 $jaxl->auth = true;
-                $jaxl->log("Auth completed...", 1);
+                $jaxl->log("[[XMPPGet]] Auth completed...");
                 JAXLPlugin::execute('jaxl_post_auth', false, $jaxl);
             }
         }

@@ -93,7 +93,7 @@
             }
             $xml .= '</auth>';
             
-            $jaxl->log("Performing Auth type: ".$type, 1);
+            $jaxl->log("[[XMPPSend]] Performing Auth type: ".$type);
             return $jaxl->sendXML($xml);
         }
         
