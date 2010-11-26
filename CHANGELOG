@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Removed XMPP::isConnected variable which used to tell status of connected socket stream.
+  This is equivalent to checking XMPP:stream variable for true/false
 - Added a (kind of) buggy support for '/xml()' inside parser xpath
 - If Jaxl instance has being configured for auto periodic ping (XEP-0199), pings are holded till auth completion.
   Also if server responds 'feature-not-implemented' for first ping XEP-0199 automatically deleted periodic ping cron tab

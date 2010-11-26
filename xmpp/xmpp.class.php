@@ -62,13 +62,6 @@
         var $auth = false;
 
         /**
-         * Connected socket stream status
-         *
-         * @var bool
-        */
-        var $isConnected = false;
-
-        /**
          * Connected XMPP stream session requirement status
          *
          * @var bool
