@@ -36,7 +36,7 @@
 		
 		function postAuth($payload, $jaxl) {
 			$jaxl->discoItems($jaxl->domain, array($this, 'handleDiscoItems'));
-            $jaxl->getRosterList(array($this, 'handleRosterList'));
+            $jaxl->getRosterList();
 		}
 
         function handleDiscoItems($payload, $jaxl) {
@@ -52,14 +52,10 @@
             // print_r($payload);
         }
 
-		function handleRosterList($payload, $jaxl) {
-			if(is_array($payload['queryItemJid'])) {
-				foreach($payload['queryItemJid'] as $key=>$jid) {
-					$group = $payload['queryItemGrp'][$key];
-					$subscription = $payload['queryItemSub'][$key];
-				}
-			}
-			
+		function postRosterUpdate($payload, $jaxl) {
+            // Use $jaxl->roster which holds retrived roster list
+            // print_r($jaxl->roster);
+
             // set echobot status
             $jaxl->setStatus(false, false, false, true);
 		}
@@ -103,6 +99,7 @@
 	JAXLPlugin::add('jaxl_post_auth', array($echobot, 'postAuth'));
 	JAXLPlugin::add('jaxl_get_message', array($echobot, 'getMessage'));
 	JAXLPlugin::add('jaxl_get_presence', array($echobot, 'getPresence'));
+    JAXLPlugin::add('jaxl_post_roster_update', array($echobot, 'postRosterUpdate'));
 
     // Fire start Jaxl core
     $jaxl->startCore("stream");

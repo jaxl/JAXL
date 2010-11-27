@@ -44,17 +44,8 @@
                 $jaxl->JAXL0206('out', $response);
             }
             
-            public static function handleRosterList($payload, $jaxl) {
-                $roster = array();
-                if(is_array($payload['queryItemJid'])) {
-                    foreach($payload['queryItemJid'] as $key=>$jid) {
-                        $roster[$jid]['group'] = $payload['queryItemGrp'][$key];
-                        $roster[$jid]['subscription'] = $payload['queryItemSub'][$key];
-                        $roster[$jid]['name'] = $payload['queryItemName'][$key];
-                    }
-                }
-                
-                $response = array('jaxl'=>'rosterList', 'roster'=>$roster);
+            public static function postRosterUpdate($payload, $jaxl) {
+                $response = array('jaxl'=>'rosterList', 'roster'=>$jaxl->roster);
                 $jaxl->JAXL0206('out', $response);
             }
             
@@ -129,7 +120,8 @@
         JAXLPlugin::add('jaxl_get_empty_body', array('boshchat', 'postEmptyBody'));
         JAXLPlugin::add('jaxl_get_message', array('boshchat', 'getMessage'));
         JAXLPlugin::add('jaxl_get_presence', array('boshchat', 'getPresence'));
-        
+        JAXLPlugin::add('jaxl_post_roster_update', array('boshchat', 'postRosterUpdate'));
+
         // Handle incoming bosh request
         switch($_REQUEST['jaxl']) {
             case 'connect':
@@ -141,7 +133,7 @@
                 $jaxl->JAXL0206('endStream');
                 break;
             case 'getRosterList':
-                $jaxl->getRosterList(array('boshchat', 'handleRosterList'));
+                $jaxl->getRosterList();
                 break;
             case 'setStatus':
                 $jaxl->setStatus(FALSE, FALSE, FALSE, TRUE);

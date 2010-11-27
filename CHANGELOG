@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Updated echobot and boshchat application to use in memory roster cache maintained by Jaxl core.
+  App files should register callback on hook jaxl_post_roster_update to get notified everytime local roster cache is updated
 - Added provision for local roster cache management inside Jaxl core.
   Retrived roster lists are cached in memory (see updated echobot.php sample example).
   Also added provision for presence tracking (JAXL::trackPresence).
