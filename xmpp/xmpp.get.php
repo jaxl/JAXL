@@ -165,7 +165,9 @@
         public static function postBind($arr, $jaxl) {
             if($arr["type"] == "result") {
                 $jaxl->jid = $arr["bindJid"];
-                
+                list($user, $domain, $resource) = JAXLUtil::splitJid($jaxl->jid);
+                $jaxl->resource = $resource;
+
                 JAXLPlugin::execute('jaxl_post_bind', false, $jaxl);
                 
                 if($jaxl->sessionRequired) {
