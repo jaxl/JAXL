@@ -18,6 +18,7 @@
         'host'=>'talk.google.com',
         'domain'=>'gmail.com',
         'authType'=>'PLAIN',
+        'autoSubscribe'=>true,
         'pingInterval'=>60,
         'logLevel'=>5
     ));
@@ -73,24 +74,17 @@
 		
 		function getPresence($payloads, $jaxl) {
 			foreach($payloads as $payload) {
-				if($payload['type'] == "subscribe") {
-					// accept subscription
-					$jaxl->subscribed($payload['from']);
-				
-					// go for mutual subscription
-					$jaxl->subscribe($payload['from']);
-				}
-				else {
-					if($payload['type'] == "unsubscribe") {
-						// accept subscription
-						$jaxl->unsubscribed($payload['from']);
-
-						// go for mutual subscription
-						$jaxl->unsubscribe($payload['from']);
-					}
-				}
-			}
+			    // print_r($payload);
+            }
 		}
+
+        function postSubscriptionRequest($payload, $jaxl) {
+            $jaxl->log("Subscription request sent to ".$payload['from']);
+        }
+
+        function postSubscriptionAccept($payload, $jaxl) {
+            $jaxl->log("Subscription accepted by ".$payload['from']);
+        }
 		
 	}
 	
@@ -100,6 +94,8 @@
 	JAXLPlugin::add('jaxl_get_message', array($echobot, 'getMessage'));
 	JAXLPlugin::add('jaxl_get_presence', array($echobot, 'getPresence'));
     JAXLPlugin::add('jaxl_post_roster_update', array($echobot, 'postRosterUpdate'));
+    JAXLPlugin::add('jaxl_post_subscription_request', array($echobot, 'postSubscriptionRequest'));
+    JAXLPlugin::add('jaxl_post_subscription_accept', array($echobot, 'postSubscriptionAccept'));
 
     // Fire start Jaxl core
     $jaxl->startCore("stream");

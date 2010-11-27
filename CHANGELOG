@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Updated echobot sample example to make use of autoSubscribe core feature
+  Also registers callback for jaxl_post_subscription_request and jaxl_post_subscription_accept hooks
 - Updated echobot and boshchat application to use in memory roster cache maintained by Jaxl core.
   App files should register callback on hook jaxl_post_roster_update to get notified everytime local roster cache is updated
 - Added provision for local roster cache management inside Jaxl core.
