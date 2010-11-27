@@ -349,12 +349,12 @@
         protected function _sendXML($xml) {
             if($this->stream) {
                 $this->lastSendTime = JAXLUtil::getTime();
-                if(($ret = fwrite($this->stream, $xml)) !== false) $this->log("[[XMPP]] $ret\n".$xml, 4);
-                else $this->log("[[XMPP]] Failed\n".$xml);
+                if(($ret = fwrite($this->stream, $xml)) !== false) $this->log("[[XMPPSend]] $ret\n".$xml, 4);
+                else $this->log("[[XMPPSend]] Failed\n".$xml);
                 return $ret;
             }
             else {
-                $this->log("[[XMPP]] Jaxl stream not connected to jabber host, unable to send xmpp payload...");
+                $this->log("[[XMPPSend]] Jaxl stream not connected to jabber host, unable to send xmpp payload...");
                 return false;
             }
         }
@@ -363,7 +363,7 @@
          * Routes incoming XMPP data to appropriate handlers
         */
         function handler($payload) {
-            $this->log("[[XMPP]] \n".$payload, 4);
+            $this->log("[[XMPPGet]] \n".$payload, 4);
             
             $buffer = array();
             $payload = JAXLPlugin::execute('jaxl_pre_handler', $payload, $this);
@@ -416,7 +416,7 @@
                         XMPPGet::iq($arr['iq'], $this);
                         break;
                     default:
-                        $jaxl->log("[[XMPP]] Unrecognized payload received from jabber server...");
+                        $jaxl->log("[[XMPPGet]] Unrecognized payload received from jabber server...");
                         break;
                 }
             }
