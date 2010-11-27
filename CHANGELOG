@@ -1,5 +1,10 @@
 version 2.1.2
 -------------
+- Added provision for local roster cache management inside Jaxl core.
+  Retrived roster lists are cached in memory (see updated echobot.php sample example).
+  Also added provision for presence tracking (JAXL::trackPresence).
+  If enabled Jaxl core keep a track of jid availability and update local roster cache accordingly.
+  Also added provision for auto-accept subscription (JAXL::autoSubscribe).
 - Removed XMPP::isConnected variable which used to tell status of connected socket stream.
   This is equivalent to checking XMPP:stream variable for true/false
 - Added a (kind of) buggy support for '/xml()' inside parser xpath
