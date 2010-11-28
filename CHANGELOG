@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Jaxl constructor dies if logPath, pidPath and tmpPath doesn't exists on the system
 - Core updates JAXL::resource after successful binding to match resource assigned by the connecting server
 - Updated echobot sample example to make use of autoSubscribe core feature
   Also registers callback for jaxl_post_subscription_request and jaxl_post_subscription_accept hooks
