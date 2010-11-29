@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- On auth faliure core doesn't throw exception since XMPP over Bosh apps are not held inside a try catch block (a better fix may be possible in future)
 - XMPP over BOSH xep wasn't passing back Jaxl instance obj for jaxl_post_disconnect hook, fixed that for clean disconnect
 - Jaxl core attempts to create log and pid files if doesn't already exists
   Also instead of die() core throws relevant exception message wherever required

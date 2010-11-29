@@ -109,19 +109,19 @@
             switch($xmlns) {
                 case 'urn:ietf:params:xml:ns:xmpp-tls':
                     $jaxl->log("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
-                    throw new JAXLException("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
+                    if($jaxl->mode == "cli") throw new JAXLException("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('tlsFailure');
                     break;
                 case 'urn:ietf:params:xml:ns:xmpp-sasl':
                     $jaxl->log("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
-                    throw new JAXLException("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
+                    if($jaxl->mode == "cli") throw new JAXLException("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('saslFailure');
                     break;
                 default:
                     $jaxl->log("[[XMPPGet]] Uncatched failure xmlns received...");
-                    throw new JAXLException("[[XMPPGet]] Uncatched failure xmlns received...");
+                    if($jaxl->mode == "cli") throw new JAXLException("[[XMPPGet]] Uncatched failure xmlns received...");
                     break;
             }
         }
