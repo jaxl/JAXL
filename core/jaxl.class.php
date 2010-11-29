@@ -590,8 +590,8 @@
                         }
                     }
                 }
-                catch(Exception $e) {
-                    throw new JAXLException($e->getMessage());
+                catch(JAXLException $e) {
+                    die($e->getMessage());
                 }
             
                 /* Exit Jaxl after end of loop */
@@ -660,11 +660,11 @@
             $this->logLevel = $this->getConfigByPriority($config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
             $this->logRotate = $this->getConfigByPriority($config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
             $this->logPath = $this->getConfigByPriority($config['logPath'], "JAXL_LOG_PATH", $this->logPath);
-            if(!file_exists($this->logPath)) die("Log file ".$this->logPath." doesn't exists");
+            if(!file_exists($this->logPath) && !touch($this->logPath)) throw new JAXLException("Log file ".$this->logPath." doesn't exists");
             $this->pidPath = $this->getConfigByPriority($config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
-            if(!file_exists($this->pidPath)) die("Pid file ".$this->pidPath." doesn't exists");
+            if(!file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
             $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", sys_get_temp_dir());
-            if(!file_exists($this->tmpPath)) die("Tmp directory ".$this->tmpPath." doesn't exists");
+            if(!file_exists($this->tmpPath)) throw new JAXLException("Tmp directory ".$this->tmpPath." doesn't exists");
 
             /* Handle pre-choosen auth type mechanism */
             $this->authType = $this->getConfigByPriority($config['authType'], "JAXL_AUTH_TYPE", $this->authType);
@@ -728,7 +728,7 @@
                     $this->log("[[JAXL]] OpenSSL extension not loaded.");
                
                 if(!function_exists('fsockopen'))
-                    die("Jaxl requires fsockopen method");
+                    throw new JAXLException("[[JAXL]] Requires fsockopen method");
                 
                 if(@is_writable($this->pidPath))
                     file_put_contents($this->pidPath, $this->pid);
@@ -737,10 +737,10 @@
             // check Jaxl dependency on PHP extension in cgi mode
             if($this->mode == "cgi") {
                 if(!function_exists('curl_init'))
-                    die("Jaxl requires CURL PHP extension");
+                    throw new JAXLException("[[JAXL]] Requires CURL PHP extension");
 
                 if(!function_exists('json_encode'))
-                    die("Jaxl requires JSON PHP extension.");
+                    throw new JAXLException("[[JAXL]] Requires JSON PHP extension.");
             }
         }
        

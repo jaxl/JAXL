@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- Jaxl core attempts to create log and pid files if doesn't already exists
+  Also instead of die() core throws relevant exception message wherever required
+- First commit of JAXLException class. JAXL core now uses JAXLException
 - Jaxl constructor dies if logPath, pidPath and tmpPath doesn't exists on the system
 - Core updates JAXL::resource after successful binding to match resource assigned by the connecting server
 - Updated echobot sample example to make use of autoSubscribe core feature
