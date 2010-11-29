@@ -225,6 +225,7 @@
                 }
                 else {
                     $this->log("[[XMPP]] Unable to open socket to the jabber host ".$this->host.":".$this->port." ...");
+                    throw new JAXLException("[[XMPP]] Unable to open socket to the jabber host");
                 }
             }
             else {
@@ -349,12 +350,18 @@
         protected function _sendXML($xml) {
             if($this->stream) {
                 $this->lastSendTime = JAXLUtil::getTime();
-                if(($ret = fwrite($this->stream, $xml)) !== false) $this->log("[[XMPPSend]] $ret\n".$xml, 4);
-                else $this->log("[[XMPPSend]] Failed\n".$xml);
+                if(($ret = fwrite($this->stream, $xml)) !== false) {
+                    $this->log("[[XMPPSend]] $ret\n".$xml, 4);
+                }
+                else {
+                    $this->log("[[XMPPSend]] Failed\n".$xml);
+                    throw new JAXLException("[[XMPPSend]] Failed");
+                }
                 return $ret;
             }
             else {
                 $this->log("[[XMPPSend]] Jaxl stream not connected to jabber host, unable to send xmpp payload...");
+                throw new JAXLException("[[XMPPSend]] Jaxl stream not connected to jabber host, unable to send xmpp payload...");
                 return false;
             }
         }
@@ -417,6 +424,7 @@
                         break;
                     default:
                         $jaxl->log("[[XMPPGet]] Unrecognized payload received from jabber server...");
+                        throw new JAXLException("[[XMPPGet]] Unrecognized payload received from jabber server...");
                         break;
                 }
             }

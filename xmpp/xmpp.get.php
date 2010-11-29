@@ -77,6 +77,7 @@
                 }
                 else {
                     $jaxl->log("[[XMPPGet]] OpenSSL extension required to proceed with TLS encryption");
+                    throw new JAXLException("[[XMPPGet]] OpenSSL extension required to proceed with TLS encryption");
                     $jaxl->shutdown();
                 }
             }
@@ -99,6 +100,7 @@
             $xmlns = $arr['#'][$desc]['0']['@']['xmlns'];
             JAXLPlugin::execute('jaxl_get_stream_error', $arr, $jaxl);
             $jaxl->log("[[XMPPGet]] Stream error with description ".$desc." and xmlns ".$xmlns);
+            throw new JAXLException("[[XMPPGet]] Stream error with description ".$desc." and xmlns ".$xmlns);
             return true;
         }
 
@@ -107,16 +109,19 @@
             switch($xmlns) {
                 case 'urn:ietf:params:xml:ns:xmpp-tls':
                     $jaxl->log("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
+                    throw new JAXLException("[[XMPPGet]] Unable to start TLS negotiation, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('tlsFailure');
                     break;
                 case 'urn:ietf:params:xml:ns:xmpp-sasl':
                     $jaxl->log("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
+                    throw new JAXLException("[[XMPPGet]] Unable to complete SASL Auth, see logs for detail...");
                     JAXLPlugin::execute('jaxl_post_auth_failure', false, $jaxl);
                     $jaxl->shutdown('saslFailure');
                     break;
                 default:
                     $jaxl->log("[[XMPPGet]] Uncatched failure xmlns received...");
+                    throw new JAXLException("[[XMPPGet]] Uncatched failure xmlns received...");
                     break;
             }
         }
