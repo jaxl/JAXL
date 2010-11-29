@@ -213,7 +213,7 @@
                 if($payload == '') {
                     if($_SESSION['auth'] === 'disconnect') {
                         $_SESSION['auth'] = false;
-                        JAXLPlugin::execute('jaxl_post_disconnect');
+                        JAXLPlugin::execute('jaxl_post_disconnect', $body, $jaxl);
                     }
                     else {
                         JAXLPlugin::execute('jaxl_get_empty_body', $body, $jaxl);
