@@ -65,6 +65,7 @@
             'JAXLPlugin' => '/core/jaxl.plugin.php',
             'JAXLUtil' => '/core/jaxl.util.php',
             'JAXLS5B' => '/core/jaxl.s5b.php',
+            'JAXLException' => '/core/jaxl.exception.php',
             'XML' => '/core/jaxl.xml.php',  
             // xmpp classes
             'XMPP' => '/xmpp/xmpp.class.php',
@@ -99,6 +100,7 @@
         'JAXLUtil',
         'JAXLPlugin',
         'JAXLCron',
+        'JAXLException',
         'XML',
         'XMPP',
     ));
@@ -589,7 +591,7 @@
                     }
                 }
                 catch(Exception $e) {
-                    die($e->getMessage);
+                    throw new JAXLException($e->getMessage());
                 }
             
                 /* Exit Jaxl after end of loop */
