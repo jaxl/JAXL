@@ -1,5 +1,12 @@
 version 2.1.2
 -------------
+- Checking in first version of XEP-0016 (Privacy Lists)
+- Checking in first version of XEP-0055 (Jabber Search)
+- Checking in first version of XEP-0077 (In-Band Registration)
+- Checking in first version of XEP-0144 (Roster Item Exchange)
+- Checking in first version of XEP-0153 (vCard-Based Avatars)
+- Checking in first version of XEP-0237 (Roster Versioning)
+- Using usleep for core clock management
 - On auth faliure core doesn't throw exception since XMPP over Bosh apps are not held inside a try catch block (a better fix may be possible in future)
 - XMPP over BOSH xep wasn't passing back Jaxl instance obj for jaxl_post_disconnect hook, fixed that for clean disconnect
 - Jaxl core attempts to create log and pid files if doesn't already exists
