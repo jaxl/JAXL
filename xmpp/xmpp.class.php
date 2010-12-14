@@ -279,7 +279,7 @@
         */
         function getXML($nap=TRUE) {
             // sleep between two reads
-            if($nap) usleep($this->getSleep*1000);
+            if($nap) sleep($this->getSleep);
             
             // initialize empty lines read
             $emptyLine = 0;
