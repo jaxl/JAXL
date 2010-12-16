@@ -662,7 +662,7 @@
             $this->logPath = $this->getConfigByPriority($config['logPath'], "JAXL_LOG_PATH", $this->logPath);
             if(!file_exists($this->logPath) && !touch($this->logPath)) throw new JAXLException("Log file ".$this->logPath." doesn't exists");
             $this->pidPath = $this->getConfigByPriority($config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
-            if(!file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
+            if($this->mode == "cli" && !file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
             $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", sys_get_temp_dir());
             if(!file_exists($this->tmpPath)) throw new JAXLException("Tmp directory ".$this->tmpPath." doesn't exists");
 
