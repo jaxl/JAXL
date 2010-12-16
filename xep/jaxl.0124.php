@@ -187,6 +187,7 @@
             if($xml != false) {
                 $jaxl->log("[[XMPPSend]] body\n".$xml, 4);
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
+                if($payload['errno'] != 0) $jaxl->log("[[JAXL0124]] Curl errno ".$payload['errno']." encountered");
                 $payload = $payload['content'];
                 $jaxl->handler($payload);
             }
