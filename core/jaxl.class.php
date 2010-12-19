@@ -663,8 +663,11 @@
             if(!file_exists($this->logPath) && !touch($this->logPath)) throw new JAXLException("Log file ".$this->logPath." doesn't exists");
             $this->pidPath = $this->getConfigByPriority($config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
             if($this->mode == "cli" && !file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
-            $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", sys_get_temp_dir());
-            if(!file_exists($this->tmpPath)) throw new JAXLException("Tmp directory ".$this->tmpPath." doesn't exists");
+
+            /* Resolve temporary folder path */
+            if(function_exists('sys_get_temp_dir')) $this->tmpPath = sys_get_temp_dir();
+            $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", $this->tmpPath);
+            if($this->tmpPath && !file_exists($this->tmpPath)) throw new JAXLException("Tmp directory ".$this->tmpPath." doesn't exists");
 
             /* Handle pre-choosen auth type mechanism */
             $this->authType = $this->getConfigByPriority($config['authType'], "JAXL_AUTH_TYPE", $this->authType);
