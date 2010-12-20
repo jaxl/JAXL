@@ -55,7 +55,7 @@
             }
             else {
                 if($level <= $jaxl->logLevel)
-                    error_log($log."\n\n", 3, $logPath);
+                    error_log($log."\n\n", 3, $jaxl->logPath);
             }
 
             return true;
