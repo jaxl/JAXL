@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- JAXLog class now using inbuild php function (error_log)
 - Checking in first version of XEP-0016 (Privacy Lists), XEP-0055 (Jabber Search), XEP-0077 (In-Band Registration), XEP-0144 (Roster Item Exchange), XEP-0153 (vCard-Based Avatars), XEP-0237 (Roster Versioning)
 - On auth faliure core doesn't throw exception since XMPP over Bosh apps are not held inside a try catch block (a better fix may be possible in future)
 - XMPP over BOSH xep wasn't passing back Jaxl instance obj for jaxl_post_disconnect hook, fixed that for clean disconnect

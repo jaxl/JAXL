@@ -46,12 +46,6 @@
     */
     class JAXLog {
         
-        private static function writeLog($logPath, $log) {
-            $fh = fopen($logPath, "a");
-            fwrite($fh, $log."\n\n");
-            fclose($fh);
-        }
-
         public static function log($log, $level=1, $jaxl=false) {
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
             
@@ -61,7 +55,7 @@
             }
             else {
                 if($level <= $jaxl->logLevel)
-                    self::writeLog($jaxl->logPath, $log);
+                    error_log($log."\n\n", 3, $logPath);
             }
 
             return true;
