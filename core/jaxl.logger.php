@@ -48,16 +48,10 @@
         
         public static function log($log, $level=1, $jaxl=false) {
             $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
-            
-            if($level == 0) {
-                if($jaxl->mode == "cli")
-                    print $log."\n";
-            }
-            else {
-                if($level <= $jaxl->logLevel)
-                    error_log($log."\n\n", 3, $jaxl->logPath);
-            }
 
+            if($level <= $jaxl->logLevel
+            ||($level == 0 && $jaxl->mode == "cli"))
+                error_log($log."\n\n", 3, $jaxl->logPath); 
             return true;
         }
 

@@ -703,7 +703,7 @@
          * Return Jaxl instance config param depending upon user choice and default values
         */
         function getConfigByPriority($config, $constant, $default) {
-            return ($config == null) ? (@constant($constant) == null ? $default : constant($constant)) : $config;
+            return ($config === null) ? (@constant($constant) === null ? $default : constant($constant)) : $config;
         }
         
         /**
@@ -756,7 +756,7 @@
             $stat = "[[JAXL]] Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb";
             if(function_exists('memory_get_peak_usage'))
                 $stat .= ", Peak usage: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb";
-            $this->log($stat);
+            $this->log($stat, 0);
         }
         
         /**
