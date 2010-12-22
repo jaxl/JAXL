@@ -187,7 +187,23 @@
             if($xml != false) {
                 $jaxl->log("[[XMPPSend]] body\n".$xml, 4);
                 $payload = JAXLUtil::curl($jaxl->bosh['url'], 'POST', $jaxl->bosh['headers'], $xml);
-                if($payload['errno'] != 0) $jaxl->log("[[JAXL0124]] Curl errno ".$payload['errno']." encountered");
+                
+                // curl error handling
+                if($payload['errno'] != 0) {
+                    $log = "[[JAXL0124]] Curl errno ".$payload['errno']." encountered";
+                    switch($payload['errno']) {
+                        case 7:
+                            $log .= ". Failed to connect with ".$jaxl->bosh['url'];
+                            break;
+                        case 52:
+                            $log .= ". Empty response rcvd from bosh endpoint";
+                            break;
+                        default:
+                            break;
+                    }
+                    $jaxl->log($log);
+                }
+                
                 $payload = $payload['content'];
                 $jaxl->handler($payload);
             }

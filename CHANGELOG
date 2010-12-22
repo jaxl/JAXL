@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Added bosh error response handling and appropriate logging inside XMPP over Bosh core files
 - Code cleanup inside jaxl logger class. 
   Fixed getConfigByPriority method which was malfunctioning in specific cases
 - JAXLog class now using inbuild php function (error_log)
