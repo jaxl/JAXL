@@ -648,29 +648,29 @@
             $this->ip = gethostbyname(php_uname('n'));
 
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
-            $this->user = $this->getConfigByPriority($config['user'], "JAXL_USER_NAME", $this->user);
-            $this->pass = $this->getConfigByPriority($config['pass'], "JAXL_USER_PASS", $this->pass); 
-            $this->domain = $this->getConfigByPriority($config['domain'], "JAXL_HOST_DOMAIN", $this->domain);
+            $this->user = $this->getConfigByPriority(@$config['user'], "JAXL_USER_NAME", $this->user);
+            $this->pass = $this->getConfigByPriority(@$config['pass'], "JAXL_USER_PASS", $this->pass); 
+            $this->domain = $this->getConfigByPriority(@$config['domain'], "JAXL_HOST_DOMAIN", $this->domain);
             $this->bareJid = $this->user."@".$this->domain;
 
             /* Optional params if not configured using jaxl.ini or $config take default values */
-            $this->host = $this->getConfigByPriority($config['host'], "JAXL_HOST_NAME", $this->domain);
-            $this->port = $this->getConfigByPriority($config['port'], "JAXL_HOST_PORT", $this->port);
-            $this->resource = $this->getConfigByPriority($config['resource'], "JAXL_USER_RESC", "jaxl.".time());
-            $this->logLevel = $this->getConfigByPriority($config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
-            $this->logRotate = $this->getConfigByPriority($config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
-            $this->logPath = $this->getConfigByPriority($config['logPath'], "JAXL_LOG_PATH", $this->logPath);
+            $this->host = $this->getConfigByPriority(@$config['host'], "JAXL_HOST_NAME", $this->domain);
+            $this->port = $this->getConfigByPriority(@$config['port'], "JAXL_HOST_PORT", $this->port);
+            $this->resource = $this->getConfigByPriority(@$config['resource'], "JAXL_USER_RESC", "jaxl.".time());
+            $this->logLevel = $this->getConfigByPriority(@$config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
+            $this->logRotate = $this->getConfigByPriority(@$config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
+            $this->logPath = $this->getConfigByPriority(@$config['logPath'], "JAXL_LOG_PATH", $this->logPath);
             if(!file_exists($this->logPath) && !touch($this->logPath)) throw new JAXLException("Log file ".$this->logPath." doesn't exists");
-            $this->pidPath = $this->getConfigByPriority($config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
+            $this->pidPath = $this->getConfigByPriority(@$config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
             if($this->mode == "cli" && !file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
 
             /* Resolve temporary folder path */
             if(function_exists('sys_get_temp_dir')) $this->tmpPath = sys_get_temp_dir();
-            $this->tmpPath = $this->getConfigByPriority($config['tmpPath'], "JAXL_TMP_PATH", $this->tmpPath);
+            $this->tmpPath = $this->getConfigByPriority(@$config['tmpPath'], "JAXL_TMP_PATH", $this->tmpPath);
             if($this->tmpPath && !file_exists($this->tmpPath)) throw new JAXLException("Tmp directory ".$this->tmpPath." doesn't exists");
 
             /* Handle pre-choosen auth type mechanism */
-            $this->authType = $this->getConfigByPriority($config['authType'], "JAXL_AUTH_TYPE", $this->authType);
+            $this->authType = $this->getConfigByPriority(@$config['authType'], "JAXL_AUTH_TYPE", $this->authType);
             if($this->authType) JAXLPlugin::add('jaxl_get_auth_mech', array($this, 'doAuth'));
             
             /* Presence handling */

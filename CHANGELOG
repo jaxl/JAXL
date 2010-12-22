@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Removed warning while reading user config inside Jaxl constructor
+  Upgraded Jaxl Parser class which was malfunctioning on CentOS PHP 5.1.6 (cli)
 - Added bosh error response handling and appropriate logging inside XMPP over Bosh core files
 - Code cleanup inside jaxl logger class. 
   Fixed getConfigByPriority method which was malfunctioning in specific cases
