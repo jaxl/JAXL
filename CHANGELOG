@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Fixed jaxl constructor config read warning and XEP 0114 now make use of JAXL::getConfigByPriority method
 - Removed warning while reading user config inside Jaxl constructor
   Upgraded Jaxl Parser class which was malfunctioning on CentOS PHP 5.1.6 (cli)
 - Added bosh error response handling and appropriate logging inside XMPP over Bosh core files
