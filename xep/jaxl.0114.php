@@ -54,8 +54,8 @@
             );
 
             // parse user options
-            $jaxl->comp['host'] = isset($jaxl->config['compHost']) ? $jaxl->config['compHost'] : (@constant("JAXL_COMPONENT_HOST") == null ? $jaxl->comp['host'] : JAXL_COMPONENT_HOST);
-            $jaxl->comp['pass'] = isset($jaxl->config['compPass']) ? $jaxl->config['compPass'] : (@constant("JAXL_COMPONENT_PASS") == null ? $jaxl->comp['pass'] : JAXL_COMPONENT_PASS);
+            $jaxl->comp['host'] = $jaxl->getConfigByPriority(@$jaxl->config['compHost'], "JAXL_COMPONENT_HOST", $jaxl->comp['host']);
+            $jaxl->pass['pass'] = $jaxl->getConfigByPriority(@$jaxl->config['compPass'], "JAXL_COMPONENT_PASS", $jaxl->comp['pass']);
            
             // register required callbacks
             JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
