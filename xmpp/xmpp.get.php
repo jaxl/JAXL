@@ -90,7 +90,9 @@
                 JAXLPlugin::execute('jaxl_get_auth_mech', $mechanism, $jaxl);
             }
             else if(isset($arr["#"]["bind"]) && ($arr["#"]["bind"][0]["@"]["xmlns"] == "urn:ietf:params:xml:ns:xmpp-bind")) {
-                $jaxl->sessionRequired = isset($arr["#"]["session"]);
+                if(isset($arr["#"]["session"]))
+                    if(!isset($arr["#"]["session"][0]["#"]["optional"]))
+                        $jaxl->sessionRequired = true;
                 $jaxl->startBind();
             }
         }

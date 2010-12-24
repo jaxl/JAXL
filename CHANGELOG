@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Jaxl core doesn't go for a session if it's optional as indicated by the xmpp server
 - Fixed boshChat postBind issues as reported by issue#26 (http://code.google.com/p/jaxl/issues/detail?id=26)
 - Fixed jaxl constructor config read warning and XEP 0114 now make use of JAXL::getConfigByPriority method
 - Removed warning while reading user config inside Jaxl constructor
