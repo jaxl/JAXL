@@ -120,7 +120,7 @@
             exit;
         }
         
-        public static function postBind($jaxl) {
+        public static function postBind($payload, $jaxl) {
             $jaxl->bosh['jid'] = $jaxl->jid;
             $_SESSION['auth'] = true;
             return;
