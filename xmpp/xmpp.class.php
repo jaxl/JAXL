@@ -205,6 +205,7 @@
             $this->clocked = time();
             
             /* Parse configuration parameter */
+            $this->lastid = rand(1, 9);
             $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : 20;
             $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
             $this->getPkts = isset($config['getPkts']) ? $config['getPkts'] : 1600;
@@ -271,7 +272,9 @@
          * @return integer $id
         */
         function getId() {
-            return ++$this->lastid;
+            $id = JAXLPlugin::execute('jaxl_get_id', ++$this->lastid, $this);
+            if($id === $this->lastid) return dechex($this->uid + $this->lastid);
+            else return $id;
         }
         
         /**

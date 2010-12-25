@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- XMPP instance iq id now defaults to a random value between 1 and 9
+  Also added jaxl_get_id event hook for apps to customize iq id for the connected Jaxl instance
+  Also as compared to default numeric iq id, Jaxl core now uses hex iq id's
 - Every jaxl instance per php process id now generate it's own unique id JAXL::$uid
 - Jaxl core doesn't go for a session if it's optional as indicated by the xmpp server
 - Fixed boshChat postBind issues as reported by issue#26 (http://code.google.com/p/jaxl/issues/detail?id=26)
