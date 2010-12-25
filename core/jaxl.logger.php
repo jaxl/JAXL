@@ -47,7 +47,7 @@
     class JAXLog {
         
         public static function log($log, $level=1, $jaxl=false) {
-            $log = '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - ".$log;
+            $log = '['.$jaxl->pid.':'.$jaxl->uid.'] '.date('Y-m-d H:i:s')." - ".$log;
 
             if($level <= $jaxl->logLevel
             ||($level == 0 && $jaxl->mode == "cli"))
@@ -58,7 +58,7 @@
         public static function logRotate($jaxl) {
             if(copy($jaxl->logPath, $jaxl->logPath.'.'.date('Y-m-d-H-i-s')))
                 if($jaxl->mode == 'cli')
-                    print '['.$jaxl->pid.'] '.date('Y-m-d H:i:s')." - Successfully rotated log file...\n";
+                    print '['.$jaxl->pid.':'.$jaxl->uid.'] '.date('Y-m-d H:i:s')." - Successfully rotated log file...\n";
             
             $fh = fopen($jaxl->logPath, "r+");
             ftruncate($fh, 1);

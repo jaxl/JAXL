@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- JAXLog class now also dump connect instance uid per log line
 - XMPP instance iq id now defaults to a random value between 1 and 9
   Also added jaxl_get_id event hook for apps to customize iq id for the connected Jaxl instance
   Also as compared to default numeric iq id, Jaxl core now uses hex iq id's
