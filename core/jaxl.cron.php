@@ -50,7 +50,7 @@
 	
 		private static $cron = array();
         
-		public static function init() {
+		public static function init($jaxl) {
             JAXLPlugin::add('jaxl_get_xml', array('JAXLCron', 'ticker'));
         }
         

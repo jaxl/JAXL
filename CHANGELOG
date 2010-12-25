@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- JAXLPlugin can now register a callback for a dedicated jaxl instance in a multi-instance jaxl application
+  Class functionality remains backward compatible.
 - JAXLog class now also dump connect instance uid per log line
 - XMPP instance iq id now defaults to a random value between 1 and 9
   Also added jaxl_get_id event hook for apps to customize iq id for the connected Jaxl instance
