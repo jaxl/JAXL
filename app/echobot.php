@@ -13,11 +13,10 @@
     // List of constants can be found inside "../../env/jaxl.ini"
     // Note: Values passed to the constructor always overwrite defined constants
     $jaxl = new JAXL(array(
-        'user'=>'',
-        'pass'=>'',
-        'host'=>'talk.google.com',
-        'domain'=>'gmail.com',
-        'authType'=>'PLAIN',
+        'user'=>'jaxl',
+        'pass'=>'lifeislife25A!@()',
+        'domain'=>'dev.jaxl.im',
+        'authType'=>'DIGEST-MD5',
         'autoSubscribe'=>true,
         'pingInterval'=>60,
         'logLevel'=>5
@@ -31,7 +30,7 @@
 		'JAXL0203', // Delayed Delivery
         'JAXL0202'  // Entity Time
 	));
-	
+
 	// Sample Echobot class
 	class echobot {
 		
@@ -85,17 +84,22 @@
         function postSubscriptionAccept($payload, $jaxl) {
             $jaxl->log("Subscription accepted by ".$payload['from']);
         }
+
+        function getId($payload, $jaxl) {
+            return $payload;
+        }
 		
 	}
 	
 	// Add callbacks on various event handlers
 	$echobot = new echobot();
-	JAXLPlugin::add('jaxl_post_auth', array($echobot, 'postAuth'));
-	JAXLPlugin::add('jaxl_get_message', array($echobot, 'getMessage'));
-	JAXLPlugin::add('jaxl_get_presence', array($echobot, 'getPresence'));
-    JAXLPlugin::add('jaxl_post_roster_update', array($echobot, 'postRosterUpdate'));
-    JAXLPlugin::add('jaxl_post_subscription_request', array($echobot, 'postSubscriptionRequest'));
-    JAXLPlugin::add('jaxl_post_subscription_accept', array($echobot, 'postSubscriptionAccept'));
+	$jaxl->addPlugin('jaxl_post_auth', array($echobot, 'postAuth'));
+    $jaxl->addPlugin('jaxl_get_message', array($echobot, 'getMessage'));
+	$jaxl->addPlugin('jaxl_get_presence', array($echobot, 'getPresence'));
+    $jaxl->addPlugin('jaxl_post_roster_update', array($echobot, 'postRosterUpdate'));
+    $jaxl->addPlugin('jaxl_post_subscription_request', array($echobot, 'postSubscriptionRequest'));
+    $jaxl->addPlugin('jaxl_post_subscription_accept', array($echobot, 'postSubscriptionAccept'));
+    $jaxl->addPlugin('jaxl_get_id', array($echobot, 'getId'));
 
     // Fire start Jaxl core
     $jaxl->startCore("stream");

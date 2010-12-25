@@ -28,7 +28,7 @@
     }
 
     // Register callback on required hooks
-    JAXLPlugin::add('jaxl_post_auth', 'postAuth');
+    $jaxl->addPlugin('jaxl_post_auth', 'postAuth');
 
     // Fire start Jaxl core
     $jaxl->startCore("stream");

@@ -57,10 +57,10 @@
     }
 
     // Register callbacks for required events
-    JAXLPlugin::add('jaxl_post_connect', 'postConnect');
-    JAXLPlugin::add('jaxl_get_auth_mech', 'doAuth');
-    JAXLPlugin::add('jaxl_post_auth', 'postAuth');
-    JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
+    $xmpp->addPlugin('jaxl_post_connect', 'postConnect');
+    $xmpp->addPlugin('jaxl_get_auth_mech', 'doAuth');
+    $xmpp->addPlugin('jaxl_post_auth', 'postAuth');
+    $xmpp->addPlugin('jaxl_post_auth_failure', 'postAuthFailure');
 
     // Fire start JAXL Core
     $xmpp->startCore();

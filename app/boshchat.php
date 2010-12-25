@@ -114,13 +114,13 @@
         }
         
         // Add callbacks on various event handlers
-        JAXLPlugin::add('jaxl_post_auth_failure', array('boshchat', 'postAuthFailure'));
-        JAXLPlugin::add('jaxl_post_auth', array('boshchat', 'postAuth'));
-        JAXLPlugin::add('jaxl_post_disconnect', array('boshchat', 'postDisconnect'));
-        JAXLPlugin::add('jaxl_get_empty_body', array('boshchat', 'postEmptyBody'));
-        JAXLPlugin::add('jaxl_get_message', array('boshchat', 'getMessage'));
-        JAXLPlugin::add('jaxl_get_presence', array('boshchat', 'getPresence'));
-        JAXLPlugin::add('jaxl_post_roster_update', array('boshchat', 'postRosterUpdate'));
+        $jaxl->addPlugin('jaxl_post_auth_failure', array('boshchat', 'postAuthFailure'));
+        $jaxl->addPlugin('jaxl_post_auth', array('boshchat', 'postAuth'));
+        $jaxl->addPlugin('jaxl_post_disconnect', array('boshchat', 'postDisconnect'));
+        $jaxl->addPlugin('jaxl_get_empty_body', array('boshchat', 'postEmptyBody'));
+        $jaxl->addPlugin('jaxl_get_message', array('boshchat', 'getMessage'));
+        $jaxl->addPlugin('jaxl_get_presence', array('boshchat', 'getPresence'));
+        $jaxl->addPlugin('jaxl_post_roster_update', array('boshchat', 'postRosterUpdate'));
 
         // Handle incoming bosh request
         switch($_REQUEST['jaxl']) {

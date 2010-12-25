@@ -108,12 +108,12 @@
         }
         
         // Add callbacks on various event handlers
-        JAXLPlugin::add('jaxl_post_auth_failure', array('boshMUChat', 'postAuthFailure'));
-        JAXLPlugin::add('jaxl_post_auth', array('boshMUChat', 'postAuth'));
-        JAXLPlugin::add('jaxl_post_disconnect', array('boshMUChat', 'postDisconnect'));
-        JAXLPlugin::add('jaxl_get_empty_body', array('boshMUChat', 'postEmptyBody'));
-        JAXLPlugin::add('jaxl_get_message', array('boshMUChat', 'getMessage'));
-        JAXLPlugin::add('jaxl_get_presence', array('boshMUChat', 'getPresence'));
+        $jaxl->addPlugin('jaxl_post_auth_failure', array('boshMUChat', 'postAuthFailure'));
+        $jaxl->addPlugin('jaxl_post_auth', array('boshMUChat', 'postAuth'));
+        $jaxl->addPlugin('jaxl_post_disconnect', array('boshMUChat', 'postDisconnect'));
+        $jaxl->addPlugin('jaxl_get_empty_body', array('boshMUChat', 'postEmptyBody'));
+        $jaxl->addPlugin('jaxl_get_message', array('boshMUChat', 'getMessage'));
+        $jaxl->addPlugin('jaxl_get_presence', array('boshMUChat', 'getPresence'));
         
         // Handle incoming bosh request
         switch($_REQUEST['jaxl']) {

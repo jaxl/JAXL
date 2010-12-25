@@ -61,10 +61,10 @@
     }
 
     // Register callbacks for required events
-    JAXLPlugin::add('jaxl_get_auth_mech', 'doAuth');
-    JAXLPlugin::add('jaxl_post_auth', 'postAuth');
-    JAXLPlugin::add('jaxl_post_auth_failure', 'postAuthFailure');
-    JAXLPlugin::add('jaxl_post_disconnect', 'postDisconnect');
+    $xmpp->addPlugin('jaxl_get_auth_mech', 'doAuth');
+    $xmpp->addPlugin('jaxl_post_auth', 'postAuth');
+    $xmpp->addPlugin('jaxl_post_auth_failure', 'postAuthFailure');
+    $xmpp->addPlugin('jaxl_post_disconnect', 'postDisconnect');
 
     // Fire start Jaxl in bosh mode
     $xmpp->startCore('bosh');

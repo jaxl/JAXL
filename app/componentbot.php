@@ -35,8 +35,8 @@
 	
 	// Add callbacks on various event handlers
 	$componentbot = new componentbot();
-	JAXLPlugin::add('jaxl_post_handshake', array($componentbot, 'postAuth'));
-	JAXLPlugin::add('jaxl_get_message', array($componentbot, 'getMessage'));
+	$jaxl->addPlugin('jaxl_post_handshake', array($componentbot, 'postAuth'));
+	$jaxl->addPlugin('jaxl_get_message', array($componentbot, 'getMessage'));
 
     // Fire start Jaxl core
     $jaxl->startCore("component");
