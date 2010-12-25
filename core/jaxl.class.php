@@ -642,10 +642,11 @@
          * @todo Use DNS SRV lookup to set $jaxl->host from provided domain info
         */
         function __construct($config=array()) {
-            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
-            $this->pid = getmypid();
-            $this->config = $config;
             $this->ip = gethostbyname(php_uname('n'));
+            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
+            $this->config = $config;
+            $this->pid = getmypid();
+            $this->uid = rand(10, 99999);
 
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
             $this->user = $this->getConfigByPriority(@$config['user'], "JAXL_USER_NAME", $this->user);
@@ -688,7 +689,7 @@
             $this->xml = new XML();
             
             /* Initialize JAXLCron and register instance cron jobs */
-            JAXLCron::init();
+            JAXLCron::init($jaxl);
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
 
