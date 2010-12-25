@@ -181,7 +181,7 @@
         public static function iq($jaxl, $type, $payload=false, $to=false, $from=false, $callback=false, $id=false, $ns='jabber:client') {
             if($type == 'get' || $type == 'set') {
                 $id = $jaxl->getId();
-                if($callback) JAXLPlugin::add('jaxl_get_iq_'.$id, $callback);
+                if($callback) $jaxl->addPlugin('jaxl_get_iq_'.$id, $callback);
             }
             
             $types = array('get','set','result','error');

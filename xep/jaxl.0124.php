@@ -101,11 +101,11 @@
             );
             session_start();
             
-            JAXLPlugin::add('jaxl_post_bind', array('JAXL0124', 'postBind'));
-            JAXLPlugin::add('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
-            JAXLPlugin::add('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
-            JAXLPlugin::add('jaxl_post_handler', array('JAXL0124', 'postHandler'));
-            JAXLPlugin::add('jaxl_send_body', array('JAXL0124', 'sendBody'));
+            $jaxl->addPlugin('jaxl_post_bind', array('JAXL0124', 'postBind'));
+            $jaxl->addPlugin('jaxl_send_xml', array('JAXL0124', 'wrapBody'));
+            $jaxl->addPlugin('jaxl_pre_handler', array('JAXL0124', 'preHandler'));
+            $jaxl->addPlugin('jaxl_post_handler', array('JAXL0124', 'postHandler'));
+            $jaxl->addPlugin('jaxl_send_body', array('JAXL0124', 'sendBody'));
 
             self::loadSession($jaxl);
         }

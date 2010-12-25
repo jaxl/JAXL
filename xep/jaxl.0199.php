@@ -57,7 +57,7 @@
                 JAXLCron::add(array('JAXL0199', 'ping'), $jaxl->pingInterval, $jaxl->domain, $jaxl->jid, array('JAXL0199', 'pinged'));
 
             JAXLXml::addTag('iq', 'ping', '//iq/ping/@xmlns');
-            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0199', 'handleIq'));
+            $jaxl->addPlugin('jaxl_get_iq_get', array('JAXL0199', 'handleIq'));
         }
         
         public static function handleIq($payload, $jaxl) {

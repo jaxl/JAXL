@@ -61,7 +61,7 @@
             JAXLXml::addTag('iq', 'featureVar', '//iq/query/feature/@var');
 
             // register callbacks
-            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
+            $jaxl->addPlugin('jaxl_get_iq_get', array('JAXL0030', 'handleIq'));
         }
 
         public static function discoInfo($jaxl, $to, $from, $callback, $node=false) {

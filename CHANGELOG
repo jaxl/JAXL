@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Entire Jaxl core including xmpp/, xep/ and core/ class files now make use of JAXL::addPlugin instead of JAXLPlugin to register per instance callbacks
 - JAXLPlugin can now register a callback for a dedicated jaxl instance in a multi-instance jaxl application
   Class functionality remains backward compatible.
 - JAXLog class now also dump connect instance uid per log line

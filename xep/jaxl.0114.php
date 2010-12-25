@@ -58,8 +58,8 @@
             $jaxl->pass['pass'] = $jaxl->getConfigByPriority(@$jaxl->config['compPass'], "JAXL_COMPONENT_PASS", $jaxl->comp['pass']);
            
             // register required callbacks
-            JAXLPlugin::add('jaxl_post_start', array('JAXL0114', 'handshake'));
-            JAXLPlugin::add('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
+            $jaxl->addPlugin('jaxl_post_start', array('JAXL0114', 'handshake'));
+            $jaxl->addPlugin('jaxl_pre_handler', array('JAXL0114', 'preHandler'));
         }
         
         public static function startStream($jaxl, $payload) {

@@ -553,6 +553,20 @@
         }
 
         /**
+         * Use this method instead of JAXLPlugin::add to register a callback for connected instance only
+        */
+        function addPlugin($hook, $callback, $priority=10) {
+            JAXLPlugin::add($hook, $callback, $priority, $this->uid);
+        }
+
+        /**
+         * Use this method instead of JAXLPlugin::remove to remove a callback for connected instance only
+        */
+        function removePlugin($hook, $callback, $priority=10) {
+            JAXLPlugin::remove($hook, $callback, $priority, $this->uid);
+        }
+
+        /**
          * Starts Jaxl Core
          *
          * This method should be called after Jaxl initialization and hook registration inside your application code
@@ -569,10 +583,10 @@
             if($mode) {
                 switch($mode) {
                     case 'stream':
-                        JAXLPlugin::add('jaxl_post_connect', array($this, 'startStream'));
+                        $this->addPlugin('jaxl_post_connect', array($this, 'startStream'));
                         break;
                     case 'component':
-                        JAXLPlugin::add('jaxl_post_connect', array($this, 'startComponent'));
+                        $this->addPlugin('jaxl_post_connect', array($this, 'startComponent'));
                         break;
                     case 'bosh':
                         $this->startBosh();
@@ -672,12 +686,12 @@
 
             /* Handle pre-choosen auth type mechanism */
             $this->authType = $this->getConfigByPriority(@$config['authType'], "JAXL_AUTH_TYPE", $this->authType);
-            if($this->authType) JAXLPlugin::add('jaxl_get_auth_mech', array($this, 'doAuth'));
+            if($this->authType) $this->addPlugin('jaxl_get_auth_mech', array($this, 'doAuth'));
             
             /* Presence handling */
             $this->trackPresence = isset($config['trackPresence']) ? $config['trackPresence'] : true;
             $this->autoSubscribe = isset($config['autoSubscribe']) ? $config['autoSubscribe'] : false;
-            JAXLPlugin::add('jaxl_get_presence', array($this, '_handlePresence'), 0);
+            $this->addPlugin('jaxl_get_presence', array($this, '_handlePresence'), 0);
             
             /* Optional params which can be configured only via constructor $config */
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
@@ -689,7 +703,7 @@
             $this->xml = new XML();
             
             /* Initialize JAXLCron and register instance cron jobs */
-            JAXLCron::init($jaxl);
+            JAXLCron::init($this);
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
 

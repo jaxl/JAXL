@@ -55,7 +55,7 @@
             JAXLXml::addTag('iq', 'softwareVersion', '//iq/query[@xmlns="'.self::$ns.'"]/version');
             JAXLXml::addTag('iq', 'softwareOS', '//iq/query[@xmlns="'.self::$ns.'"]/os');
             
-            JAXLPlugin::add('jaxl_get_iq_get', array('JAXL0092', 'getIq'));
+            $jaxl->addPlugin('jaxl_get_iq_get', array('JAXL0092', 'getIq'));
         }
         
         public static function getIq($arr, $jaxl) {
