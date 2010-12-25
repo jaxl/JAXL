@@ -13,10 +13,10 @@
     // List of constants can be found inside "../../env/jaxl.ini"
     // Note: Values passed to the constructor always overwrite defined constants
     $jaxl = new JAXL(array(
-        'user'=>'jaxl',
-        'pass'=>'lifeislife25A!@()',
-        'domain'=>'dev.jaxl.im',
-        'authType'=>'DIGEST-MD5',
+        'user'=>'',
+        'pass'=>'',
+        'domain'=>'talk.google.com',
+        'authType'=>'PLAIN',
         'autoSubscribe'=>true,
         'pingInterval'=>60,
         'logLevel'=>5
