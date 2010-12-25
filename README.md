@@ -48,7 +48,7 @@ Here is how a simple send chat message app looks like using Jaxl library:
     }
 
     // Register callback on required hook (callback'd method will always receive 2 params)
-    JAXLPlugin::add('jaxl_post_auth', 'postAuth');
+    $jaxl->addPlugin('jaxl_post_auth', 'postAuth');
 
     // Start Jaxl core
     $jaxl->startCore('stream');
