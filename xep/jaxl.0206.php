@@ -40,7 +40,7 @@
  * @copyright Abhinav Singh
  * @link http://code.google.com/p/jaxl
  */
-    
+
     /**
      * XEP-0206: XMPP over BOSH
      * 
@@ -49,9 +49,10 @@
     class JAXL0206 {
         
         public static function init($jaxl) {
-            // Requires Bosh Session Manager
-            $jaxl->requires('JAXL0124');    
             $jaxl->log("[[JaxlAction]] ".$_REQUEST['jaxl']."\n".json_encode($_REQUEST), 5);
+            
+            // Requires Bosh Session Manager
+            $jaxl->requires('JAXL0124');
         }
         
         public static function jaxl($jaxl, $xml) { 
@@ -59,7 +60,7 @@
         }
 
         public static function startStream($jaxl) {
-            $_SESSION['auth'] = 'connect';
+            $_SESSION['jaxl_auth'] = 'connect';
 
             $xml = "";
             $xml .= "<body";

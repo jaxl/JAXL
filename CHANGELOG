@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- PHP CMS looking to integrate Jaxl in their core can now force disable auto start of php session by Jaxl core
+  Simple pass 'boshSession' as false with jaxl constructor config array
 - Entire Jaxl core including xmpp/, xep/ and core/ class files now make use of JAXL::addPlugin instead of JAXLPlugin to register per instance callbacks
 - JAXLPlugin can now register a callback for a dedicated jaxl instance in a multi-instance jaxl application
   Class functionality remains backward compatible.
