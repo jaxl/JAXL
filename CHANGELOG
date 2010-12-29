@@ -1,5 +1,8 @@
 version 2.1.2
 -------------
+- Added hook for jaxl_get_bosh_curl_error which is called when bosh end point returns a non-zero errno
+  Updated Jaxl core session variable names to avoid clash with existing session vars
+  Updated boshchat.php to make use of jaxl_get_bosh_curl_error to disconnect intelligently
 - PHP CMS looking to integrate Jaxl in their core can now force disable auto start of php session by Jaxl core
   Simple pass 'boshSession' as false with jaxl constructor config array
 - Entire Jaxl core including xmpp/, xep/ and core/ class files now make use of JAXL::addPlugin instead of JAXLPlugin to register per instance callbacks

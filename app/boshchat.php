@@ -110,6 +110,11 @@
                 $response = array('jaxl'=>'authFailed');
                 $jaxl->JAXL0206('out', $response);
             }
+
+            public static function postCurlErr($payload, $jaxl) {
+                if($_REQUEST['jaxl'] == 'disconnect') self::postDisconnect($payload, $jaxl);
+                else $jaxl->JAXL0206('out', array('jaxl'=>'curlError', 'code'=>$payload['errno'], 'msg'=>$payload['errmsg']));
+            }
             
         }
         
@@ -118,6 +123,7 @@
         $jaxl->addPlugin('jaxl_post_auth', array('boshchat', 'postAuth'));
         $jaxl->addPlugin('jaxl_post_disconnect', array('boshchat', 'postDisconnect'));
         $jaxl->addPlugin('jaxl_get_empty_body', array('boshchat', 'postEmptyBody'));
+        $jaxl->addPlugin('jaxl_get_bosh_curl_error', array('boshchat', 'postCurlErr'));
         $jaxl->addPlugin('jaxl_get_message', array('boshchat', 'getMessage'));
         $jaxl->addPlugin('jaxl_get_presence', array('boshchat', 'getPresence'));
         $jaxl->addPlugin('jaxl_post_roster_update', array('boshchat', 'postRosterUpdate'));

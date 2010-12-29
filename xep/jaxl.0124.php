@@ -146,7 +146,7 @@
             $jaxl->bosh['sid'] = isset($_SESSION['jaxl_sid']) ? (string) $_SESSION['jaxl_sid'] : false;
             $jaxl->lastid = isset($_SESSION['jaxl_id']) ? $_SESSION['jaxl_id'] : $jaxl->lastid;
             $jaxl->jid = isset($_SESSION['jaxl_jid']) ? $_SESSION['jaxl_jid'] : $jaxl->jid;
-            $jaxl->log("Loading session data\n".json_encode($_SESSION), 5);
+            $jaxl->log("[[JAXL0124]] Loading session data\n".json_encode($_SESSION), 5);
         }
         
         public static function saveSession($xml, $jaxl) {
@@ -157,22 +157,21 @@
                 $_SESSION['jaxl_id'] = $jaxl->lastid;
                 
                 if($jaxl->bosh['out'] && $jaxl->bosh['session']) {
-                    $jaxl->log("[[JAXL0124]] Not closing session as forced by constructor config", 5);
                     session_write_close();
                 }
 
                 if(self::$sess && $jaxl->bosh['out']) {
                     list($body, $xml) = self::unwrapBody($xml);
-                    $jaxl->log("[[".$_REQUEST['jaxl']."]] Auth complete, sync now\n".json_encode($_SESSION), 5);
+                    $jaxl->log("[[JAXL0124]] Auth complete, sync now\n".json_encode($_SESSION), 5);
                     return self::out(array('jaxl'=>'jaxl', 'xml'=>urlencode($xml)));
                 }
                 else {
                     self::$sess = true;
-                    $jaxl->log("[[".$_REQUEST['jaxl']."]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
+                    $jaxl->log("[[JAXL0124]] Auth complete, commiting session now\n".json_encode($_SESSION), 5);
                 }
             }
             else {
-                $jaxl->log("[[".$_REQUEST['jaxl']."]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
+                $jaxl->log("[[JAXL0124]] Not authed yet, Not commiting session\n".json_encode($_SESSION), 5);
             }
             
             return $xml;
@@ -211,7 +210,9 @@
                         default:
                             break;
                     }
-                    $jaxl->log($log); 
+
+                    JAXLPlugin::execute('jaxl_get_bosh_curl_error', $payload, $jaxl);
+                    $jaxl->log($log);
                 }
                 
                 $payload = $payload['content'];
