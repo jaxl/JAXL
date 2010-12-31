@@ -1,5 +1,6 @@
 version 2.1.2
 -------------
+- Updated core class files to make use of JAXL::executePlugin method instead of JAXLPlugin::execute method
 - XMPP base class now make use of socket_select() to poll opened stream efficiently (getting rid of annoying sleep)
   Updated JAXLCron method to adjust to new core changes
 - Added hook for jaxl_get_bosh_curl_error which is called when bosh end point returns a non-zero errno
