@@ -15,7 +15,8 @@
     $jaxl = new JAXL(array(
         'user'=>'',
         'pass'=>'',
-        'domain'=>'talk.google.com',
+        'host'=>'talk.google.com',
+        'domain'=>'gmail.com',
         'authType'=>'PLAIN',
         'autoSubscribe'=>true,
         'pingInterval'=>60,
