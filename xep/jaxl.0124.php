@@ -211,7 +211,7 @@
                             break;
                     }
 
-                    JAXLPlugin::execute('jaxl_get_bosh_curl_error', $payload, $jaxl);
+                    $jaxl->executePlugin('jaxl_get_bosh_curl_error', $payload);
                     $jaxl->log($log);
                 }
                 
@@ -241,10 +241,10 @@
                 if($payload == '') {
                     if($_SESSION['jaxl_auth'] === 'disconnect') {
                         $_SESSION['jaxl_auth'] = false;
-                        JAXLPlugin::execute('jaxl_post_disconnect', $body, $jaxl);
+                        $jaxl->executePlugin('jaxl_post_disconnect', $body);
                     }
                     else {
-                        JAXLPlugin::execute('jaxl_get_empty_body', $body, $jaxl);
+                        $jaxl->executePlugin('jaxl_get_empty_body', $body);
                     }
                 }
 

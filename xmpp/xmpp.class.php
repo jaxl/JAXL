@@ -234,7 +234,7 @@
             }
 
             $ret = $this->stream ? true : false;
-            JAXLPlugin::execute('jaxl_post_connect', $ret, $this);
+            $this->executePlugin('jaxl_post_connect', $ret);
             return $ret;
         }
         
@@ -272,7 +272,7 @@
          * @return integer $id
         */
         function getId() {
-            $id = JAXLPlugin::execute('jaxl_get_id', ++$this->lastid, $this);
+            $id = $this->executePlugin('jaxl_get_id', ++$this->lastid);
             if($id === $this->lastid) return dechex($this->uid + $this->lastid);
             else return $id;
         }
@@ -309,7 +309,7 @@
 
             // route rcvd packet
             $payload = trim($payload);
-            $payload = JAXLPlugin::execute('jaxl_get_xml', $payload, $this);
+            $payload = $this->executePlugin('jaxl_get_xml', $payload);
             $this->handler($payload);
             
             // flush obuffer
@@ -324,10 +324,10 @@
          * Send XMPP XML packet over connected stream
         */
         function sendXML($xml, $force=false) {
-            $xml = JAXLPlugin::execute('jaxl_send_xml', $xml, $this);
+            $xml = $this->executePlugin('jaxl_send_xml', $xml);
             
             if($this->mode == "cgi") {
-                JAXLPlugin::execute('jaxl_send_body', $xml, $this);
+                $this->executePlugin('jaxl_send_body', $xml);
             }
             else {
                 if($this->rateLimit
@@ -383,7 +383,7 @@
             $this->log("[[XMPPGet]] \n".$payload, 4);
             
             $buffer = array();
-            $payload = JAXLPlugin::execute('jaxl_pre_handler', $payload, $this);
+            $payload = $this->executePlugin('jaxl_pre_handler', $payload);
             
             $xmls = JAXLUtil::splitXML($payload);
             $pktCnt = count($xmls);
@@ -443,7 +443,7 @@
             if(isset($buffer['message'])) XMPPGet::message($buffer['message'], $this);
             unset($buffer);
             
-            JAXLPlugin::execute('jaxl_post_handler', $payload, $this);
+            $this->executePlugin('jaxl_post_handler', $payload);
         }
 
     }

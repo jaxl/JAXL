@@ -76,7 +76,7 @@
         public static function preHandler($xml, $jaxl) {
             if($xml == '<handshake/>') {
                 $xml = '';
-                JAXLPlugin::execute('jaxl_post_handshake', false, $jaxl);
+                $jaxl->executePlugin('jaxl_post_handshake', false);
             }
             return $xml;
         }

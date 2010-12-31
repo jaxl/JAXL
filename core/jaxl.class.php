@@ -344,7 +344,7 @@
         */
         function shutdown($signal=false) {
             $this->log("[[JAXL]] Shutting down ...");
-            JAXLPlugin::execute('jaxl_pre_shutdown', $signal, $this);
+            $this->executePlugin('jaxl_pre_shutdown', $signal);
             if($this->stream) $this->endStream();
             $this->stream = false;
         }
@@ -564,6 +564,13 @@
         */
         function removePlugin($hook, $callback, $priority=10) {
             JAXLPlugin::remove($hook, $callback, $priority, $this->uid);
+        }
+
+        /**
+         * Use this method instead of JAXLPlugin::remove to remove a callback for connected instance only
+        */
+        function executePlugin($hook, $callback, $priority=10) {
+            JAXLPlugin::execute($hook, $callback, $priority, $this);
         }
 
         /**
@@ -839,7 +846,7 @@
                 $this->roster[$jid]['subscription'] = $payload['queryItemSub'];
             }
 
-            JAXLPlugin::execute('jaxl_post_roster_update', $payload, $this);
+            $this->executePlugin('jaxl_post_roster_update', $payload);
             return $payload;
         }
 
@@ -864,10 +871,10 @@
                 ) {
                     $this->subscribed($payload['from']);
                     $this->subscribe($payload['from']);
-                    JAXLPlugin::execute('jaxl_post_subscription_request', $payload, $this);
+                    $this->executePlugin('jaxl_post_subscription_request', $payload);
                 }
                 else if($payload['type'] == 'subscribed') {
-                    JAXLPlugin::execute('jaxl_post_subscription_accept', $payload, $this);
+                    $this->executePlugin('jaxl_post_subscription_accept', $payload);
                 }
             }
             return $payloads;
