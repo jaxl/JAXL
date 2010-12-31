@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- XMPP base class now make use of socket_select() to poll opened stream efficiently (getting rid of annoying sleep)
+  Updated JAXLCron method to adjust to new core changes
 - Added hook for jaxl_get_bosh_curl_error which is called when bosh end point returns a non-zero errno
   Updated Jaxl core session variable names to avoid clash with existing session vars
   Updated boshchat.php to make use of jaxl_get_bosh_curl_error to disconnect intelligently

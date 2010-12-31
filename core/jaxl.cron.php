@@ -47,7 +47,8 @@
      * Add periodic cron in your xmpp applications
 	*/
 	class JAXLCron {
-	
+
+        private static $last = 0;
 		private static $cron = array();
         
 		public static function init($jaxl) {
@@ -55,6 +56,8 @@
         }
         
         public static function ticker($payload, $jaxl) {
+            if(self::$last == $jaxl->clock) return $payload;
+
             foreach(self::$cron as $interval => $jobs) {
                 foreach($jobs as $key => $job) {
                     if($jaxl->clock % $interval == 0 // if cron interval matches
@@ -67,6 +70,8 @@
                     }
                 }
             }
+            
+            self::$last = $jaxl->clock;
             return $payload;
         }
 		

@@ -130,10 +130,8 @@
         
         public static function proceed($arr, $jaxl) {
             if($arr['xmlns'] == "urn:ietf:params:xml:ns:xmpp-tls") {
-                stream_set_blocking($jaxl->stream, 1);
                 if(!@stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
                     stream_socket_enable_crypto($jaxl->stream, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
-                stream_set_blocking($jaxl->stream, 0);
                 XMPPSend::startStream($jaxl);
             }
         }
