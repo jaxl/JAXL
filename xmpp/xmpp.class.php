@@ -40,7 +40,7 @@
  * @copyright Abhinav Singh
  * @link http://code.google.com/p/jaxl 
  */
-    
+
     // include required classes
     jaxl_require(array(
         'JAXLPlugin',
@@ -139,28 +139,9 @@
         var $streamBlocking = 1;
         
         /**
-         * Nap in seconds between two socket reads
-         *
-         * @var integer
-        */
-        var $getSleep = 1;
-
-        /**
-         * Number of packets to read in one socket read
-         *
-         * @var integer
-        */
-        var $getPkts = false;
-
-        /**
          * Size of each packet to be read from the socket
         */
         var $getPktSize = false;
-
-        /**
-         * Number of empty packet read before aborting further reads
-        */
-        var $getEmptyLines = false;
 
         /**
          * Maximum rate at which XMPP stanza's can flow out
@@ -208,9 +189,7 @@
             $this->lastid = rand(1, 9);
             $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : 20;
             $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
-            $this->getPkts = isset($config['getPkts']) ? $config['getPkts'] : 1600;
-            $this->getPktSize = isset($config['getPktSize']) ? $config['getPktSize'] : 2048;
-            $this->getEmptyLines = isset($config['getEmptyLines']) ? $config['getEmptyLines'] : 15;
+            $this->getPktSize = isset($config['getPktSize']) ? $config['getPktSize'] : 4096;
             $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : 0.1;
         }
         
@@ -281,7 +260,6 @@
          * Read connected XMPP stream for new data
          * $option = null (read until data is available)
          * $option = integer (read for so many seconds)
-         * $option = bool (core rests for a second (if true) before reading data)
         */
         function getXML($option=2) {
             // reload pending buffer
@@ -325,7 +303,7 @@
         */
         function sendXML($xml, $force=false) {
             $xml = $this->executePlugin('jaxl_send_xml', $xml);
-            
+
             if($this->mode == "cgi") {
                 $this->executePlugin('jaxl_send_body', $xml);
             }

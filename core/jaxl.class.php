@@ -569,8 +569,8 @@
         /**
          * Use this method instead of JAXLPlugin::remove to remove a callback for connected instance only
         */
-        function executePlugin($hook, $callback, $priority=10) {
-            JAXLPlugin::execute($hook, $callback, $priority, $this);
+        function executePlugin($hook, $payload) {
+            return JAXLPlugin::execute($hook, $payload, $this);
         }
 
         /**
