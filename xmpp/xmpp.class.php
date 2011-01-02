@@ -343,10 +343,14 @@
          * Send XMPP XML packet over connected stream
         */
         function sendXML($xml='', $force=false) {
-            $currSendRate = ($this->totalSentSize/(JAXLUtil::getTime()-$this->lastSendTime))/1000000; 
-            if($this->mode == "cgi") { $this->executePlugin('jaxl_send_body', $xml); }
+            $xml = $this->executePlugin('jaxl_send_xml', $xml);
+            if($this->mode == "cgi") { 
+                $this->executePlugin('jaxl_send_body', $xml);
+            }
             else {
+                $currSendRate = ($this->totalSentSize/(JAXLUtil::getTime()-$this->lastSendTime))/1000000; 
                 $this->obuffer .= $xml;
+                
                 if($this->rateLimit
                 && !$force
                 && $this->lastSendTime
@@ -359,7 +363,6 @@
                 $xml = $this->obuffer;
                 $this->obuffer = '';
                 if($currSendRate > $this->sendRate) echo $can.PHP_EOL;
-                $xml = $this->executePlugin('jaxl_send_xml', $xml);
                 return ($xml == '') ? 0 : $this->_sendXML($xml);
             }
         }
@@ -409,7 +412,7 @@
          * Routes incoming XMPP data to appropriate handlers
         */
         function handler($payload) {
-            if($payload == '') return '';
+            if($payload == '' && $this->mode == 'cli') return '';
             $payload = $this->executePlugin('jaxl_pre_handler', $payload);
            
             $xmls = JAXLUtil::splitXML($payload);
