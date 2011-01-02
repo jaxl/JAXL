@@ -362,7 +362,6 @@
 
                 $xml = $this->obuffer;
                 $this->obuffer = '';
-                if($currSendRate > $this->sendRate) echo $can.PHP_EOL;
                 return ($xml == '') ? 0 : $this->_sendXML($xml);
             }
         }
