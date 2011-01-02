@@ -1,5 +1,7 @@
 version 2.1.2
 -------------
+- Simple method of issuing unique id to each connected jaxl instance
+  Improved dumpStat cron to include send/rcv rate, buffer sizes in stats
 - Updated core class files to make use of JAXL::executePlugin method instead of JAXLPlugin::execute method
 - XMPP base class now make use of socket_select() to poll opened stream efficiently (getting rid of annoying sleep)
   Updated JAXLCron method to adjust to new core changes

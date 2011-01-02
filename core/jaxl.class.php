@@ -104,6 +104,10 @@
         'XML',
         'XMPP',
     ));
+    
+    // number of running instance(s)
+    global $jaxl_instance_cnt;
+    $jaxl_instance_cnt = 1;
 
     /**
      * Jaxl class extending base XMPP class
@@ -663,11 +667,14 @@
          * @todo Use DNS SRV lookup to set $jaxl->host from provided domain info
         */
         function __construct($config=array()) {
+            global $jaxl_instance_cnt;
+            parent::__construct($config);
+            
+            $this->uid = $jaxl_instance_cnt++;
             $this->ip = gethostbyname(php_uname('n'));
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->config = $config;
             $this->pid = getmypid();
-            $this->uid = rand(10, 99999);
 
             /* Mandatory params to be supplied either by jaxl.ini constants or constructor $config array */
             $this->user = $this->getConfigByPriority(@$config['user'], "JAXL_USER_NAME", $this->user);
@@ -678,7 +685,7 @@
             /* Optional params if not configured using jaxl.ini or $config take default values */
             $this->host = $this->getConfigByPriority(@$config['host'], "JAXL_HOST_NAME", $this->domain);
             $this->port = $this->getConfigByPriority(@$config['port'], "JAXL_HOST_PORT", $this->port);
-            $this->resource = $this->getConfigByPriority(@$config['resource'], "JAXL_USER_RESC", "jaxl.".time());
+            $this->resource = $this->getConfigByPriority(@$config['resource'], "JAXL_USER_RESC", "jaxl.".$this->uid.".".$this->clocked);
             $this->logLevel = $this->getConfigByPriority(@$config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
             $this->logRotate = $this->getConfigByPriority(@$config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
             $this->logPath = $this->getConfigByPriority(@$config['logPath'], "JAXL_LOG_PATH", $this->logPath);
@@ -704,9 +711,8 @@
             $this->sigh = isset($config['sigh']) ? $config['sigh'] : true;
             $this->dumpStat = isset($config['dumpStat']) ? $config['dumpStat'] : 300;
 
-            /* Configure instance for platforms and call parent construct */
+            /* Configure instance for platforms */
             $this->configure($config);
-            parent::__construct($config);
             $this->xml = new XML();
             
             /* Initialize JAXLCron and register instance cron jobs */
@@ -739,18 +745,18 @@
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                $this->log("[[JAXL]] Registering callbacks for CTRL+C and kill.");
+                $this->log("[[JAXL]] Registering callbacks for CTRL+C and kill.", 4);
             }
             else {
-                $this->log("[[JAXL]] No callbacks registered for CTRL+C and kill.");
+                $this->log("[[JAXL]] No callbacks registered for CTRL+C and kill.", 4);
             }
            
             // check Jaxl dependency on PHP extension in cli mode
             if($this->mode == "cli") {
                 if(($this->openSSL = JAXLUtil::sslEnabled())) 
-                    $this->log("[[JAXL]] OpenSSL extension is loaded.");
+                    $this->log("[[JAXL]] OpenSSL extension is loaded.", 4);
                 else
-                    $this->log("[[JAXL]] OpenSSL extension not loaded.");
+                    $this->log("[[JAXL]] OpenSSL extension not loaded.", 4);
                
                 if(!function_exists('fsockopen'))
                     throw new JAXLException("[[JAXL]] Requires fsockopen method");
@@ -775,10 +781,13 @@
          * Jaxl instance periodically calls this methods every JAXL::$dumpStat seconds.
         */
         function dumpStat() {
-            $stat = "[[JAXL]] Memory usage: ".round(memory_get_usage()/pow(1024,2), 2)." Mb";
-            if(function_exists('memory_get_peak_usage'))
-                $stat .= ", Peak usage: ".round(memory_get_peak_usage()/pow(1024,2), 2)." Mb";
-            $this->log($stat, 0);
+            $stat = "[[JAXL]] Memory:".round(memory_get_usage()/pow(1024,2), 2)."Mb";
+            if(function_exists('memory_get_peak_usage')) $stat .= ", PeakMemory:".round(memory_get_peak_usage()/pow(1024,2), 2)."Mb";
+            $stat .= ", obuffer: ".strlen($this->obuffer);
+            $stat .= ", buffer: ".strlen($this->buffer);
+            $stat .= ", RcvdRate: ".$this->totalRcvdSize/$this->clock."Kb";
+            $stat .= ", SentRate: ".$this->totalSentSize/$this->clock."Kb";
+            $this->log($stat, 1);
         }
         
         /**
@@ -830,20 +839,20 @@
          * Core method that accepts retrieved roster list and manage local cache
         */
         function _handleRosterList($payload, $jaxl) {
-            if(is_array($payload['queryItemJid'])) {
+            if(@is_array($payload['queryItemJid'])) {
                 foreach($payload['queryItemJid'] as $key=>$jid) {
                     $this->_addRosterNode($jid);
-                    $this->roster[$jid]['groups'] = $payload['queryItemGrp'][$key];
-                    $this->roster[$jid]['name'] = $payload['queryItemName'][$key];
-                    $this->roster[$jid]['subscription'] = $payload['queryItemSub'][$key];
+                    $this->roster[$jid]['groups'] = @$payload['queryItemGrp'][$key];
+                    $this->roster[$jid]['name'] = @$payload['queryItemName'][$key];
+                    $this->roster[$jid]['subscription'] = @$payload['queryItemSub'][$key];
                 }
             }
             else {
-                $jid = $payload['queryItemJid'];
+                $jid = @$payload['queryItemJid'];
                 $this->_addRosterNode($jid);
-                $this->roster[$jid]['groups'] = $payload['queryItemGrp'];
-                $this->roster[$jid]['name'] = $payload['queryItemName'];
-                $this->roster[$jid]['subscription'] = $payload['queryItemSub'];
+                $this->roster[$jid]['groups'] = @$payload['queryItemGrp'];
+                $this->roster[$jid]['name'] = @$payload['queryItemName'];
+                $this->roster[$jid]['subscription'] = @$payload['queryItemSub'];
             }
 
             $this->executePlugin('jaxl_post_roster_update', $payload);
