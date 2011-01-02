@@ -68,7 +68,7 @@
                         
                 list($secret, $decoded['api_key'], $decoded['session_key']) = $jaxl->executePlugin('jaxl_get_facebook_key', false);
                         
-                $decoded['call_id'] = time();
+                $decoded['call_id'] = $jaxl->clock;
                 $decoded['v'] = '1.0';
                         
                 $base_string = '';

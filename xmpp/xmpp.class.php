@@ -137,16 +137,6 @@
          * @var bool
         */
         var $streamBlocking = 1;
-        
-        /**
-         * Size of each packet to be read from the socket
-        */
-        var $getPktSize = false;
-
-        /**
-         * Maximum rate at which XMPP stanza's can flow out
-        */
-        var $sendRate = false;
 
         /**
          * Input XMPP stream buffer
@@ -157,6 +147,11 @@
          * Output XMPP stream buffer
         */
         var $obuffer = '';
+
+        /**
+         * Instance start time
+        */
+        var $startTime = false;
 
         /**
          * Current value of instance clock
@@ -179,18 +174,36 @@
         var $lastSendTime = false;
         
         /**
+         * Maximum rate at which XMPP stanza's can flow out
+        */
+        var $sendRate = false;
+        
+        /**
+         * Size of each packet to be read from the socket
+        */
+        var $getPktSize = false;
+
+        /**
+         * Pkt count and sizes
+        */
+        var $totalRcvdPkt = 0;
+        var $totalRcvdSize = 0;
+        var $totalSentPkt = 0;
+        var $totalSentSize = 0;
+        
+        /**
          * XMPP constructor
         */
         function __construct($config) {
             $this->clock = 0;
-            $this->clocked = time();
+            $this->clocked = $this->startTime = time();
             
             /* Parse configuration parameter */
             $this->lastid = rand(1, 9);
             $this->streamTimeout = isset($config['streamTimeout']) ? $config['streamTimeout'] : 20;
             $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
             $this->getPktSize = isset($config['getPktSize']) ? $config['getPktSize'] : 4096;
-            $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : 0.1;
+            $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : .4;
         }
         
         /**
@@ -261,63 +274,93 @@
          * $option = null (read until data is available)
          * $option = integer (read for so many seconds)
         */
-        function getXML($option=2) {
-            // reload pending buffer
-            $payload = $this->buffer;
-            $this->buffer = '';
-
+        function getXML($option=5) { 
             // prepare streams to select
-            $read = array($this->stream); $write = array(); $except = array();
-            $secs = $option; $usecs = 0;
+            $stream = array(); $jaxls = array($this);
+            $jaxls = $this->executePlugin('jaxl_pre_get_xml_stream', $jaxls);
+            foreach($jaxls as $jaxl) $streams[] = $jaxl->stream;
+            $read = $streams;
 
             // get num changed streams
-            if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
+            $write = null; $except = null; $secs = $option; $usecs = 0;
+            if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
                 $this->log("[[XMPPGet]] \nError while reading packet from stream", 5);
-                @fclose($this->stream);
-                $this->socket = null;
-                return false;
             }
-            else if($changed > 0) { $payload .= @fread($this->stream, $this->getPktSize); }
-            else {}
+            else {
+                $this->log("[[XMPPGet]] $changed streams ready for read out of total ".sizeof($streams)." streams", 7);
+                if($changed == 0) $now = $this->clocked+$secs;
+                else $now = time();
 
-            // update clock
-            $now = time();
-            $this->clock += $now-$this->clocked;
-            $this->clocked = $now;
+                foreach($read as $k=>$r) {
+                    // get jaxl instance we are dealing with
+                    $ret = $payload = '';
+                    $key = array_search($r, $streams);
+                    $jaxl = $jaxls[$key];
+                    unset($jaxls[$key]);
+                    
+                    // update clock
+                    if($now > $jaxl->clocked) {
+                        $jaxl->clock += $now-$jaxl->clocked;
+                        $jaxl->clocked = $now;
+                    }
 
-            // route rcvd packet
-            $payload = trim($payload);
-            $payload = $this->executePlugin('jaxl_get_xml', $payload);
-            $this->handler($payload);
-            
-            // flush obuffer
-            if($this->obuffer != '') {
-                $payload = $this->obuffer;
-                $this->obuffer = '';
-                $this->_sendXML($payload);
+                    // reload pending buffer
+                    $payload = $jaxl->buffer;
+                    $jaxl->buffer = '';
+
+                    // read stream
+                    $ret = @fread($jaxl->stream, $jaxl->getPktSize);
+                    $jaxl->log("[[XMPPGet]] \n".$ret, 4);
+                    $jaxl->totalRcvdSize = strlen($ret);
+                    $ret = $jaxl->executePlugin('jaxl_get_xml', $ret);
+                    $payload .= $ret;
+
+                    // route packets
+                    $jaxl->handler($payload);
+                    
+                    // clear buffer
+                    if($jaxl->obuffer != '') $jaxl->sendXML();
+                }
+                
+                foreach($jaxls as $jaxl) {
+                    // update clock
+                    if($now > $jaxl->clocked) {
+                        $jaxl->clock += $now-$jaxl->clocked;
+                        $jaxl->clocked = $now;
+                        $payload = $jaxl->executePlugin('jaxl_get_xml', '');
+                    }
+
+                    // clear buffer
+                    if($jaxl->obuffer != '') $jaxl->sendXML();
+                }
             }
+
+            unset($jaxls, $streams);
+            return $changed;
         }
-        
+
         /**
          * Send XMPP XML packet over connected stream
         */
-        function sendXML($xml, $force=false) {
-            $xml = $this->executePlugin('jaxl_send_xml', $xml);
-
-            if($this->mode == "cgi") {
-                $this->executePlugin('jaxl_send_body', $xml);
-            }
+        function sendXML($xml='', $force=false) {
+            $currSendRate = ($this->totalSentSize/(JAXLUtil::getTime()-$this->lastSendTime))/1000000; 
+            if($this->mode == "cgi") { $this->executePlugin('jaxl_send_body', $xml); }
             else {
+                $this->obuffer .= $xml;
                 if($this->rateLimit
                 && !$force
                 && $this->lastSendTime
-                && JAXLUtil::getTime() - $this->lastSendTime < $this->sendRate
-                ) { $this->obuffer .= $xml; }
-                else {
-                    $xml = $this->obuffer.$xml;
-                    $this->obuffer = '';
-                    return $this->_sendXML($xml);
+                && ($currSendRate > $this->sendRate)
+                ) {
+                    $this->log("[[XMPPSend]] rateLimit\nBufferSize:".strlen($this->obuffer).", maxSendRate:".$this->sendRate.", currSendRate:".$currSendRate, 5);
+                    return 0;
                 }
+
+                $xml = $this->obuffer;
+                $this->obuffer = '';
+                if($currSendRate > $this->sendRate) echo $can.PHP_EOL;
+                $xml = $this->executePlugin('jaxl_send_xml', $xml);
+                return ($xml == '') ? 0 : $this->_sendXML($xml);
             }
         }
 
@@ -325,31 +368,40 @@
          * Send XMPP XML packet over connected stream
         */
         protected function _sendXML($xml) {
-            if($this->stream) {
-                $this->lastSendTime = JAXLUtil::getTime();
-
-                // prepare streams to select
+            if($this->stream && $xml != '') {
                 $read = array(); $write = array($this->stream); $except = array();
                 $secs = null; $usecs = null;
 
-                // try sending packet
-                if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
+                if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
                     $this->log("[[XMPPSend]] \nError while trying to send packet", 5);
+                    throw new JAXLException("[[XMPPSend]] \nError while trying to send packet");
+                    return 0;
                 }
                 else if($changed > 0) {
+                    $this->lastSendTime = JAXLUtil::getTime();
+                    $xmls = JAXLUtil::splitXML($xml);
+                    $pktCnt = count($xmls);
+                    $this->totalSentPkt += $pktCnt;
+                    
                     $ret = @fwrite($this->stream, $xml);
+                    $this->totalSentSize += $ret;
                     $this->log("[[XMPPSend]] $ret\n".$xml, 4);
+                    return $ret;
                 }
                 else {
                     $this->log("[[XMPPSend]] Failed\n".$xml);
                     throw new JAXLException("[[XMPPSend]] \nFailed");
+                    return 0;
                 }
-                return $ret;
+            }
+            else if($xml == '') {
+                $this->log("[[XMPPSend]] Tried to send an empty stanza, not processing", 1);
+                return 0;
             }
             else {
                 $this->log("[[XMPPSend]] \nJaxl stream not connected to jabber host, unable to send xmpp payload...");
                 throw new JAXLException("[[XMPPSend]] Jaxl stream not connected to jabber host, unable to send xmpp payload...");
-                return false;
+                return 0;
             }
         }
         
@@ -358,27 +410,25 @@
         */
         function handler($payload) {
             if($payload == '') return '';
-            $this->log("[[XMPPGet]] \n".$payload, 4);
-            
-            $buffer = array();
             $payload = $this->executePlugin('jaxl_pre_handler', $payload);
-            
+           
             $xmls = JAXLUtil::splitXML($payload);
             $pktCnt = count($xmls);
+            $this->totalRcvdPkt += $pktCnt;
+            $buffer = array();
             
-            foreach($xmls as $pktNo => $xml) {  
+            foreach($xmls as $pktNo => $xml) {
                 if($pktNo == $pktCnt-1) {
                     if(substr($xml, -1, 1) != '>') {
-                        $this->buffer = $xml;
+                        $this->buffer .= $xml;
                         break;
                     }
                 }
                 
-                if(substr($xml, 0, 7) == '<stream') 
-                    $arr = $this->xml->xmlize($xml);
-                else 
-                    $arr = JAXLXml::parse($xml);
-                
+                if(substr($xml, 0, 7) == '<stream') $arr = $this->xml->xmlize($xml);
+                else $arr = JAXLXml::parse($xml);
+                if($arr === false) { $this->buffer .= $xml; continue; }
+
                 switch(true) {
                     case isset($arr['stream:stream']):
                         XMPPGet::streamStream($arr['stream:stream'], $this);
@@ -419,9 +469,10 @@
             
             if(isset($buffer['presence'])) XMPPGet::presence($buffer['presence'], $this);
             if(isset($buffer['message'])) XMPPGet::message($buffer['message'], $this);
-            unset($buffer);
-            
+            unset($buffer); 
+
             $this->executePlugin('jaxl_post_handler', $payload);
+            return $payload;
         }
 
     }
