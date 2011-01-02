@@ -184,7 +184,13 @@
         var $getPktSize = false;
 
         /**
-         * Pkt count and sizes
+         * Read select timeouts
+        */
+        var $getSelectSecs = 5;
+        var $getSelectUsecs = 0;
+
+        /**
+         * Packet count and sizes
         */
         var $totalRcvdPkt = 0;
         var $totalRcvdSize = 0;
@@ -274,15 +280,16 @@
          * $option = null (read until data is available)
          * $option = integer (read for so many seconds)
         */
-        function getXML($option=5) { 
-            // prepare streams to select
-            $stream = array(); $jaxls = array($this);
-            $jaxls = $this->executePlugin('jaxl_pre_get_xml_stream', $jaxls);
-            foreach($jaxls as $jaxl) $streams[] = $jaxl->stream;
-            $read = $streams;
+        function getXML() { 
+            // prepare select streams
+            $streams = array(); $jaxls = $this->instances['jaxl'];
+            foreach($jaxls as $cnt=>$jaxl) {
+                if($jaxl->stream) $streams[$cnt] = $jaxl->stream;
+                else unset($jaxls[$cnt]);
+            }
 
             // get num changed streams
-            $write = null; $except = null; $secs = $option; $usecs = 0;
+            $read = $streams; $write = null; $except = null; $secs = $this->getSelectSecs; $usecs = $this->getSelectUsecs;
             if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
                 $this->log("[[XMPPGet]] \nError while reading packet from stream", 5);
             }

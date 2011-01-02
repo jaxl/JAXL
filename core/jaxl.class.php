@@ -46,7 +46,7 @@
     // Set JAXL_BASE_PATH if not already defined by application code
     if(!@constant('JAXL_BASE_PATH'))
         define('JAXL_BASE_PATH', dirname(dirname(__FILE__)));
-
+    
     /**
      * Autoload method for Jaxl library and it's applications
      *
@@ -94,6 +94,10 @@
         return;
     }
 
+    // cnt of connected instances
+    global $jaxl_instance_cnt;
+    $jaxl_instance_cnt = 0;
+
     // Include core classes and xmpp base
     jaxl_require(array(
         'JAXLog',
@@ -105,10 +109,6 @@
         'XMPP',
     ));
     
-    // number of running instance(s)
-    global $jaxl_instance_cnt;
-    $jaxl_instance_cnt = 1;
-
     /**
      * Jaxl class extending base XMPP class
      *
@@ -309,6 +309,8 @@
          * PHP OpenSSL module info
         */
         var $openSSL = false;
+
+        var $instances = false;
 
         /**
          * @return string $name Returns name of this Jaxl client
@@ -577,6 +579,12 @@
             return JAXLPlugin::execute($hook, $payload, $this);
         }
 
+        function addCore($jaxl) {
+            $jaxl->addPlugin('jaxl_post_connect', array($jaxl, 'startStream'));
+            $jaxl->connect();
+            $this->instances['jaxl'][] = $jaxl;
+        }
+
         /**
          * Starts Jaxl Core
          *
@@ -670,7 +678,7 @@
             global $jaxl_instance_cnt;
             parent::__construct($config);
             
-            $this->uid = $jaxl_instance_cnt++;
+            $this->uid = ++$jaxl_instance_cnt;
             $this->ip = gethostbyname(php_uname('n'));
             $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->config = $config;
@@ -720,11 +728,15 @@
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
 
-            // include service discovery XEP-0030 and it's extensions, recommended for every XMPP entity
+            /* include service discovery XEP-0030 and it's extensions, recommended for every XMPP entity */
             $this->requires(array(
                 'JAXL0030',
                 'JAXL0128'
             ));
+
+            /* add to instance */
+            if($jaxl_instance_cnt == 1) $this->instances = array('jaxl'=>array());
+            $this->instances['jaxl'][] = $this;
         }
 
         /**

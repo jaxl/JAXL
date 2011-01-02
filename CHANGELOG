@@ -1,6 +1,7 @@
 version 2.1.2
 -------------
-- Simple method of issuing unique id to each connected jaxl instance
+- Better handling for multi-instance jaxl applications (Use JAXL::addCore to add new instance)
+  Simple method of issuing unique id to each connected jaxl instance
   Improved dumpStat cron to include send/rcv rate, buffer sizes in stats
   Core logged class prefix log data with instance uid, pid and current clock
   Parse class return false if unable to parse as xml for recv'd xmpp packet
