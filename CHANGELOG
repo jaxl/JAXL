@@ -4,6 +4,7 @@ version 2.1.2
   Improved dumpStat cron to include send/rcv rate, buffer sizes in stats
   Core logged class prefix log data with instance uid, pid and current clock
   Parse class return false if unable to parse as xml for recv'd xmpp packet
+  Lots of core improvement in XMPP base class related to performance and multi-instance app handling
 - Updated core class files to make use of JAXL::executePlugin method instead of JAXLPlugin::execute method
 - XMPP base class now make use of socket_select() to poll opened stream efficiently (getting rid of annoying sleep)
   Updated JAXLCron method to adjust to new core changes
