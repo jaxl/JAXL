@@ -25,7 +25,7 @@
         'pass'=>'',
         'domain'=>'localhost',
         'host'=>'localhost',
-        'logLevel'=>5
+        'logLevel'=>4
     ));
 
     // Force CLI mode since this app runs from browser but we don't intend to use BOSH or Ajax

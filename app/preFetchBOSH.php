@@ -29,7 +29,7 @@
         'boshPort'=>5280,
         'boshSuffix'=>'http-bind',
         'boshOut'=>false, // Disable auto-output of Jaxl Bosh Module
-        'logLevel'=>5
+        'logLevel'=>4
     ));
     
     // Include required XEP's

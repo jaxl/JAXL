@@ -17,7 +17,7 @@
         'host'=>'talk.google.com',
         'domain'=>'gmail.com',
         'authType'=>'PLAIN',
-        'logLevel'=>5
+        'logLevel'=>4
     ));
 
     // Post successful auth send desired message

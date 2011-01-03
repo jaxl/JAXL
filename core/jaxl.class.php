@@ -579,10 +579,13 @@
             return JAXLPlugin::execute($hook, $payload, $this);
         }
 
+        /**
+         * Add another jaxl instance in a running core
+        */
         function addCore($jaxl) {
             $jaxl->addPlugin('jaxl_post_connect', array($jaxl, 'startStream'));
             $jaxl->connect();
-            $this->instances['jaxl'][] = $jaxl;
+            $this->instances['xmpp'][] = $jaxl;
         }
 
         /**
@@ -598,7 +601,10 @@
          *                            b) startComponent
          *                            c) startBosh
         */
-        function startCore($mode=false) {
+        function startCore(/* $mode, $param1, $param2, ... */) {
+            $argv = func_get_args();
+            $mode = $argv[0];
+
             if($mode) {
                 switch($mode) {
                     case 'stream':
@@ -638,9 +644,6 @@
          * startHTTPd converts Jaxl instance into a Jaxl socket server (may or may not be a HTTP server)
          * Same Jaxl socket server instance <b>SHOULD NOT</b> be used for XMPP communications.
          * Instead separate "new Jaxl();" instances should be created for such XMPP communications.
-         *
-         * @param integer $port Port at which to start the socket server
-         * @param integer $maxq JAXLHTTPd socket server max queue
         */
         function startHTTPd($port, $maxq) {
             JAXLHTTPd::start(array(
@@ -721,22 +724,24 @@
 
             /* Configure instance for platforms */
             $this->configure($config);
+
+            /* Initialize xml to array class (will deprecate in future) */
             $this->xml = new XML();
             
-            /* Initialize JAXLCron and register instance cron jobs */
+            /* Initialize JAXLCron and register core jobs */
             JAXLCron::init($this);
             if($this->dumpStat) JAXLCron::add(array($this, 'dumpStat'), $this->dumpStat);
             if($this->logRotate) JAXLCron::add(array('JAXLog', 'logRotate'), $this->logRotate);
 
-            /* include service discovery XEP-0030 and it's extensions, recommended for every XMPP entity */
+            /* include recommended XEP's for every XMPP entity */
             $this->requires(array(
-                'JAXL0030',
-                'JAXL0128'
+                'JAXL0030', // service discovery
+                'JAXL0128'  // entity capabilities
             ));
 
-            /* add to instance */
-            if($jaxl_instance_cnt == 1) $this->instances = array('jaxl'=>array());
-            $this->instances['jaxl'][] = $this;
+            /* initialize multi-core instance holder */
+            if($jaxl_instance_cnt == 1) $this->instances = array('xmpp'=>array(),'http'=>array());
+            $this->instances['xmpp'][] = $this;
         }
 
         /**

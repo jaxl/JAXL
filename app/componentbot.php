@@ -12,7 +12,7 @@
 		'port'=>5559,
         'compHost'=>'component.localhost',
         'compPass'=>'',
-        'logLevel'=>5
+        'logLevel'=>4
 	));
 
 	// Include required XEP's

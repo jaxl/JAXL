@@ -282,7 +282,7 @@
         */
         function getXML() { 
             // prepare select streams
-            $streams = array(); $jaxls = $this->instances['jaxl'];
+            $streams = array(); $jaxls = $this->instances['xmpp'];
             foreach($jaxls as $cnt=>$jaxl) {
                 if($jaxl->stream) $streams[$cnt] = $jaxl->stream;
                 else unset($jaxls[$cnt]);

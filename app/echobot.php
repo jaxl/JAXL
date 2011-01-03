@@ -20,7 +20,7 @@
         'authType'=>'PLAIN',
         'autoSubscribe'=>true,
         'pingInterval'=>60,
-        'logLevel'=>5
+        'logLevel'=>4
     ));
 	
 	// Include required XEP's

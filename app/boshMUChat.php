@@ -18,12 +18,11 @@
         // Initialize Jaxl Library
         require_once '/usr/share/php/jaxl/core/jaxl.class.php';
 	    $jaxl = new JAXL(array(
-            'host'=>'localhost',
             'domain'=>'localhost',
             'port'=>5222,
             'boshHost'=>'localhost',
             'authType'=>'PLAIN',
-            'logLevel'=>5
+            'logLevel'=>4
         ));
 	
         // Include required XEP's
