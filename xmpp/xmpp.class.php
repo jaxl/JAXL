@@ -198,6 +198,11 @@
         var $totalSentSize = 0;
         
         /**
+         * Whether Jaxl core should return a SimpleXMLElement object of parsed string with callback payloads?
+        */
+        var $getSXE = false;
+
+        /**
          * XMPP constructor
         */
         function __construct($config) {
@@ -210,6 +215,8 @@
             $this->rateLimit = isset($config['rateLimit']) ? $config['rateLimit'] : true;
             $this->getPktSize = isset($config['getPktSize']) ? $config['getPktSize'] : 4096;
             $this->sendRate = isset($config['sendRate']) ? $config['sendRate'] : .4;
+            $this->getSelectSecs = isset($config['getSelectSecs']) ? $config['getSelectSecs'] : 5;
+            $this->getSXE = isset($config['getSXE']) ? $config['getSXE'] : false;
         }
         
         /**
@@ -435,7 +442,7 @@
                 }
                 
                 if(substr($xml, 0, 7) == '<stream') $arr = $this->xml->xmlize($xml);
-                else $arr = JAXLXml::parse($xml);
+                else $arr = JAXLXml::parse($xml, $this->getSXE);
                 if($arr === false) { $this->buffer .= $xml; continue; }
 
                 switch(true) {
