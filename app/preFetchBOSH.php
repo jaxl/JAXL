@@ -17,6 +17,7 @@
     */
 
     // include JAXL core
+    ini_set('xdebug.max_nesting_level', 200);
     require_once '/usr/share/php/jaxl/core/jaxl.class.php';
     
     // initialize JAXL instance
@@ -47,8 +48,18 @@
     }
 
     function handleVCard($payload, $xmpp) {
-        echo "<b>Successfully fetched VCard</b><br/>";
-        print_r($payload);
+        echo "<form action='' method=''>";
+        echo "<img src='data:".$payload['vCardPhotoType'].";base64,".$payload['vCardPhotoBinVal']."' alt='".$payload['vCardFN']."' title='".$payload['vCardFN']."'/>";
+        echo "<p><b>Nickname:</b>".$payload['vCardNickname']."</p>";
+        echo "<p><b>Url:</b>".$payload['vCardUrl']."</p>";
+        echo "<p><b>BDay:</b>".$payload['vCardBDay']."</p>";
+        echo "<p><b>OrgName:</b>".$payload['vCardOrgName']."</p>";
+        echo "<p><b>OrgUnit:</b>".$payload['vCardOrgUnit']."</p>";
+        echo "<p><b>Title:</b>".$payload['vCardTitle']."</p>";
+        echo "<p><b>Role:</b>".$payload['vCardRole']."</p>";
+        echo "<p><b>Desc:</b>".$payload['vCardDesc']."</p>";
+        echo "<input type='button' name='submit' value='Submit'/>";
+        echo "</form>";
         $xmpp->JAXL0206('endStream');
     }
 
