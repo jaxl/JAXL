@@ -25,11 +25,10 @@
         'pass'=>'',
         'domain'=>'localhost',
         'host'=>'localhost',
-        'logLevel'=>4
+        'logLevel'=>4,
+        // Force CLI mode since this app runs from browser but we don't intend to use BOSH or Ajax
+        'mode'=>'cli'
     ));
-
-    // Force CLI mode since this app runs from browser but we don't intend to use BOSH or Ajax
-    $xmpp->mode = "cli";
 
     // Demo requires VCard XEP
     $xmpp->requires('JAXL0054');
@@ -47,8 +46,18 @@
     }
 
     function handleVCard($payload, $xmpp) {
-        echo "<b>Successfully fetched VCard</b><br/>";
-        print_r($payload);
+        echo "<form action='' method=''>";
+        echo "<img src='data:".$payload['vCardPhotoType'].";base64,".$payload['vCardPhotoBinVal']."' alt='".$payload['vCardFN']."' title='".$payload['vCardFN']."'/>";
+        echo "<p><b>Nickname:</b>".$payload['vCardNickname']."</p>";
+        echo "<p><b>Url:</b>".$payload['vCardUrl']."</p>";
+        echo "<p><b>BDay:</b>".$payload['vCardBDay']."</p>";
+        echo "<p><b>OrgName:</b>".$payload['vCardOrgName']."</p>";
+        echo "<p><b>OrgUnit:</b>".$payload['vCardOrgUnit']."</p>";
+        echo "<p><b>Title:</b>".$payload['vCardTitle']."</p>";
+        echo "<p><b>Role:</b>".$payload['vCardRole']."</p>";
+        echo "<p><b>Desc:</b>".$payload['vCardDesc']."</p>";
+        echo "<input type='button' name='submit' value='Submit'/>";
+        echo "</form>";
         $xmpp->shutdown();
     }
 
