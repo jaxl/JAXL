@@ -324,7 +324,7 @@
 
                     // read stream
                     $ret = @fread($jaxl->stream, $jaxl->getPktSize);
-                    if($ret != '') $jaxl->log("[[XMPPGet]] \n".$ret, 4);
+                    if(trim($ret) != '') $jaxl->log("[[XMPPGet]] \n".$ret, 4);
                     $jaxl->totalRcvdSize = strlen($ret);
                     $ret = $jaxl->executePlugin('jaxl_get_xml', $ret);
                     $payload .= $ret;
@@ -426,6 +426,7 @@
         */
         function handler($payload) {
             if($payload == '' && $this->mode == 'cli') return '';
+            if($payload != '' && $this->mode == 'cgi') $this->log("[[XMPPGet]] \n".$payload, 4);
             $payload = $this->executePlugin('jaxl_pre_handler', $payload);
            
             $xmls = JAXLUtil::splitXML($payload);
