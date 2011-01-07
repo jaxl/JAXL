@@ -324,7 +324,7 @@
 
                     // read stream
                     $ret = @fread($jaxl->stream, $jaxl->getPktSize);
-                    $jaxl->log("[[XMPPGet]] \n".$ret, 4);
+                    if($ret != '') $jaxl->log("[[XMPPGet]] \n".$ret, 4);
                     $jaxl->totalRcvdSize = strlen($ret);
                     $ret = $jaxl->executePlugin('jaxl_get_xml', $ret);
                     $payload .= $ret;
