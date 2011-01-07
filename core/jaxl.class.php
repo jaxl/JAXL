@@ -683,7 +683,6 @@
             
             $this->uid = ++$jaxl_instance_cnt;
             $this->ip = gethostbyname(php_uname('n'));
-            $this->mode = (PHP_SAPI == "cli") ? PHP_SAPI : "cgi";
             $this->config = $config;
             $this->pid = getmypid();
 
@@ -702,6 +701,7 @@
             $this->logPath = $this->getConfigByPriority(@$config['logPath'], "JAXL_LOG_PATH", $this->logPath);
             if(!file_exists($this->logPath) && !touch($this->logPath)) throw new JAXLException("Log file ".$this->logPath." doesn't exists");
             $this->pidPath = $this->getConfigByPriority(@$config['pidPath'], "JAXL_PID_PATH", $this->pidPath);
+            $this->mode = $this->getConfigByPriority(@$config['mode'], "JAXL_MODE", (PHP_SAPI == "cli") ? PHP_SAPI : "cgi");
             if($this->mode == "cli" && !file_exists($this->pidPath) && !touch($this->pidPath)) throw new JAXLException("Pid file ".$this->pidPath." doesn't exists");
 
             /* Resolve temporary folder path */
@@ -825,8 +825,14 @@
                 $xep = substr($xep, 4, 4);
                 if(is_numeric($xep)
                 && class_exists('JAXL'.$xep)
-                ) { return call_user_func_array(array('JAXL'.$xep, $method), $param); }
+                ) {
+                    $this->log("[[JAXL]] Calling JAXL$xep method ".$method, 5);
+                    return call_user_func_array(array('JAXL'.$xep, $method), $param);
+                }
                 else { $this->log("[[JAXL]] JAXL$xep Doesn't exists in the environment"); }
+            }
+            else {
+                $this->log("[[JAXL]] Call to an unidentified XEP");
             }
         } 
         
