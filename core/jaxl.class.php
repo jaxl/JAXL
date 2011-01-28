@@ -748,18 +748,18 @@
             if(!JAXLUtil::isWin() && JAXLUtil::pcntlEnabled() && $this->sigh) {
                 pcntl_signal(SIGTERM, array($this, "shutdown"));
                 pcntl_signal(SIGINT, array($this, "shutdown"));
-                $this->log("[[JAXL]] Registering callbacks for CTRL+C and kill.", 4);
+                $this->log("[[JAXL]] Registering shutdown callbacks", 5);
             }
             else {
-                $this->log("[[JAXL]] No callbacks registered for CTRL+C and kill.", 4);
+                $this->log("[[JAXL]] No callbacks for shutdown", 5);
             }
            
             // check Jaxl dependency on PHP extension in cli mode
             if($this->mode == "cli") {
                 if(($this->openSSL = JAXLUtil::sslEnabled())) 
-                    $this->log("[[JAXL]] OpenSSL extension is loaded.", 4);
+                    $this->log("[[JAXL]] OpenSSL extension is loaded.", 5);
                 else
-                    $this->log("[[JAXL]] OpenSSL extension not loaded.", 4);
+                    $this->log("[[JAXL]] OpenSSL extension not loaded.", 5);
                
                 if(!function_exists('fsockopen'))
                     throw new JAXLException("[[JAXL]] Requires fsockopen method");
