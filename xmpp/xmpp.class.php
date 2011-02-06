@@ -297,7 +297,7 @@
 
             // get num changed streams
             $read = $streams; $write = null; $except = null; $secs = $this->getSelectSecs; $usecs = $this->getSelectUsecs;
-            if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
+            if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
                 $this->log("[[XMPPGet]] \nError while reading packet from stream", 1);
             }
             else {
@@ -389,7 +389,7 @@
                 $read = array(); $write = array($this->stream); $except = array();
                 $secs = 0; $usecs = 200000;
 
-                if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
+                if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
                     $this->log("[[XMPPSend]] \nError while trying to send packet", 5);
                     throw new JAXLException("[[XMPPSend]] \nError while trying to send packet");
                     return 0;
