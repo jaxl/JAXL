@@ -49,6 +49,9 @@
         public static function curl($url, $type='GET', $headers=false, $data=false, $user=false, $pass=false) {
             $ch = curl_init($url);
             
+            // added by Movim Project
+            if(defined('JAXL_CURL_ASYNC') && JAXL_CURL_ASYNC) curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+            
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_HEADER, false);
             if($headers) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);

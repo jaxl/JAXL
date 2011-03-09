@@ -200,6 +200,11 @@
         var $roster = array();
         
         /**
+         * Default status of connected Jaxl instance
+         */
+        var $status = 'Online using Jaxl library http://code.google.com/p/jaxl';
+        
+        /**
          * Jaxl will track presence stanza's and update local $roster cache
         */
         var $trackPresence = true;
@@ -379,7 +384,7 @@
         */
         function setStatus($status=false, $show=false, $priority=false, $caps=false, $vcard=false) {
             $child = array();
-            $child['status'] = ($status === false ? 'Online using Jaxl library http://code.google.com/p/jaxl' : $status);
+            $child['status'] = ($status === false ? $this->status : $status);
             $child['show'] = ($show === false ? 'chat' : $show);
             $child['priority'] = ($priority === false ? 1 : $priority);
             if($caps) $child['payload'] = $this->JAXL0115('getCaps', $this->features);
@@ -677,11 +682,12 @@
             $this->pass = $this->getConfigByPriority(@$config['pass'], "JAXL_USER_PASS", $this->pass); 
             $this->domain = $this->getConfigByPriority(@$config['domain'], "JAXL_HOST_DOMAIN", $this->domain);
             $this->bareJid = $this->user."@".$this->domain;
-
+			
             /* Optional params if not configured using jaxl.ini or $config take default values */
             $this->host = $this->getConfigByPriority(@$config['host'], "JAXL_HOST_NAME", $this->domain);
             $this->port = $this->getConfigByPriority(@$config['port'], "JAXL_HOST_PORT", $this->port);
             $this->resource = $this->getConfigByPriority(@$config['resource'], "JAXL_USER_RESC", "jaxl.".$this->uid.".".$this->clocked);
+            $this->status = $this->getConfigByPriority(@$config['status'], "JAXL_USER_STATUS", $this->status);
             $this->logLevel = $this->getConfigByPriority(@$config['logLevel'], "JAXL_LOG_LEVEL", $this->logLevel);
             $this->logRotate = $this->getConfigByPriority(@$config['logRotate'], "JAXL_LOG_ROTATE", $this->logRotate);
             $this->logPath = $this->getConfigByPriority(@$config['logPath'], "JAXL_LOG_PATH", $this->logPath);
