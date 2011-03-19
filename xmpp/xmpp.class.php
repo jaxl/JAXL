@@ -287,7 +287,7 @@
          * $option = null (read until data is available)
          * $option = integer (read for so many seconds)
         */
-        function getXML() { 
+        function getXML() {
             // prepare select streams
             $streams = array(); $jaxls = $this->instances['xmpp'];
             foreach($jaxls as $cnt=>$jaxl) {
@@ -297,7 +297,7 @@
 
             // get num changed streams
             $read = $streams; $write = null; $except = null; $secs = $this->getSelectSecs; $usecs = $this->getSelectUsecs;
-            if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
+            if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
                 $this->log("[[XMPPGet]] \nError while reading packet from stream", 1);
             }
             else {
@@ -389,7 +389,7 @@
                 $read = array(); $write = array($this->stream); $except = array();
                 $secs = 0; $usecs = 200000;
 
-                if(false === ($changed = @stream_select($read, $write, $except, $secs, $usecs))) {
+                if(false === ($changed = @stream_select(&$read, &$write, &$except, $secs, $usecs))) {
                     $this->log("[[XMPPSend]] \nError while trying to send packet", 5);
                     throw new JAXLException("[[XMPPSend]] \nError while trying to send packet");
                     return 0;
@@ -407,9 +407,14 @@
                     $this->log("[[XMPPSend]] $ret\n".$xml, 4);
                     return $ret;
                 }
-                else {
+                else if($changed === 0) {
                     $this->obuffer .= $xml;
                     $this->log("[[XMPPSend]] Not ready for write, obuffer size:".strlen($this->obuffer), 1);
+                    return 0;
+                }
+                else {
+                    $this->obuffer .= $xml;
+                    $this->log("[[XMPPSend]] Something horibly wrong here", 1);
                     return 0;
                 }
             }
