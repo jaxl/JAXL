@@ -12,7 +12,7 @@
 
 	// Initialize Jaxl Library
     require_once '../core/jaxl.class.php';
-
+	
     // Values passed to the constructor can also be defined as constants
     // List of constants can be found inside "../../env/jaxl.ini"
     // Note: Values passed to the constructor always overwrite defined constants

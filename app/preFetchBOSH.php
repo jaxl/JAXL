@@ -10,13 +10,13 @@
      * Usage: Symlink or copy whole Jaxl library folder inside your web folder
      * 		  Edit user/pass/domain/host below for your account
      * 		  Run this app file from the browser e.g. http://path/to/jaxl/app/preFetchBOSH.php
-     * 		  View /var/log/jaxl.log for debug info
+     * 		  View /var/log/jaxl.log and your web server error log for debug info
      * 
      * Read More: http://jaxl.net/examples/preFetchBOSH.php
     */
 
     // include JAXL core
-    require_once '/usr/share/php/jaxl/core/jaxl.class.php';
+    require_once '../core/jaxl.class.php';
     
     // initialize JAXL instance
     $xmpp = new JAXL(array(

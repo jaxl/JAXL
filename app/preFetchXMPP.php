@@ -10,13 +10,13 @@
      * Usage: Put this file under your web folder
      * 		  Edit user/pass/domain/host below for your account
      * 		  Hit this file in your browser
-     *		  View jaxl.log for detail
+     *		  View jaxl.log and your web server error log for debug info
      *
      * Read More: http://jaxl.net/examples/preFetchXMPP.php
     */
 
     // include JAXL core
-    require_once '/usr/share/php/jaxl/core/jaxl.class.php';
+    require_once '../core/jaxl.class.php';
     
     // initialize JAXL instance
     $xmpp = new JAXL(array(

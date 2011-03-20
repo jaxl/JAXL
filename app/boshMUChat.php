@@ -153,7 +153,7 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
                 <title>Web MUC Chat Application using Jaxl Library</title>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-                <script type="text/javascript" src="jaxl.js"></script>
+                <script type="text/javascript" src="<?php echo dirname(BOSHCHAT_POLL_URL) ?>/../env/jaxl.js"></script>
                 <script type="text/javascript">jaxl.pollUrl = "<?php echo BOSHCHAT_POLL_URL; ?>";</script>
 		<style type="text/css">
 body { color:#444; background-color:#F7F7F7; font:62.5% "lucida grande","lucida sans unicode",helvetica,arial,sans-serif; }
