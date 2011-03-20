@@ -2,7 +2,12 @@
 
     /**
      * Sample command line bot for sending a message
-     * Usage: php sendMessage.php "username@gmail.com" "Your message"
+     * Usage: cd /path/to/jaxl
+     * 	      Edit username/password below
+     * 		  Run from command line: /path/to/php sendMessage.php "username@gmail.com" "Your message"
+     * 		  View jaxl.log for detail
+     * 
+     * Read More: http://jaxl.net/examples/sendMessage.php
     */
 
 	// Initialize Jaxl Library
@@ -12,8 +17,8 @@
     // List of constants can be found inside "../../env/jaxl.ini"
     // Note: Values passed to the constructor always overwrite defined constants
     $jaxl = new JAXL(array(
-        'user'=>'',
-        'pass'=>'',
+        'user'=>'username',
+        'pass'=>'password',
         'host'=>'talk.google.com',
         'domain'=>'gmail.com',
         'authType'=>'PLAIN',

@@ -1,18 +1,17 @@
 <?php
 	
-	/*
+	/**
 	 * Sample browser based MUC chat room application using Jaxl library
-     * Usage: Copy this application file (along with /path/to/jaxl/env/jaxl.js) into your web folder.
-     *        Edit "BOSHCHAT_POLL_URL" below to suit your environment.
-     *        Run this app file from the browser.
-	 * Read more: http://bit.ly/aMozMy
+     * Usage: Symlink or copy whole Jaxl library folder inside your web folder
+     *        Edit "BOSHCHAT_POLL_URL" and "BOSHCHAT_ROOM_JID" below to suit your environment
+     *        Run this app file from the browser e.g. http://path/to/jaxl/app/boshMUChat.php
+     *        View /var/log/jaxl.log for debug info
+     * 
+	 * Read more: http://jaxl.net/example/boshMUChat.php
 	*/
     
 	// Ajax poll url
-	define('BOSHCHAT_POLL_URL', 'http://localhost/boshMUChat.php');
-		
-	// Admin jid who will receive all messages sent using this application ui
-	define('BOSHCHAT_ROOM_JID', 'room@muc.localhost');
+	define('BOSHCHAT_POLL_URL', $_SERVER['PHP_SELF']);
 	
 	if(isset($_REQUEST['jaxl'])) { // Valid bosh request	    
         // Initialize Jaxl Library
@@ -24,6 +23,9 @@
             'authType'=>'PLAIN',
             'logLevel'=>4
         ));
+         	
+		// Room jid which user join by default
+		define('BOSHCHAT_ROOM_JID', 'room@muc.'.$jaxl->domain);
 	
         // Include required XEP's
         $jaxl->requires(array(
@@ -33,7 +35,7 @@
             'JAXL0202', // Entity Time
             'JAXL0206', // XMPP over Bosh
             'JAXL0045'  // Multi-User Chat
-        ), $jaxl);
+        ));
         
         // Sample Bosh MUC chat room application class
         class boshMUChat {

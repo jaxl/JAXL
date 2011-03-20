@@ -1,19 +1,18 @@
 <?php
 	
-	/*
+	/**
 	 * Sample browser based one-to-one chat application using Jaxl library
-     * Usage: Copy this application file (along with /path/to/jaxl/env/jaxl.js) into your web folder.
-     *        Edit "BOSHCHAT_POLL_URL" below to suit your environment.
-     *        Run this app file from the browser.
-	 * Read more: http://bit.ly/aMozMy
+     * Usage: Symlink or copy whole Jaxl library folder inside your web folder
+     *        Edit "BOSHCHAT_POLL_URL" and "BOSHCHAT_ADMIN_JID" below to suit your environment
+     *        Run this app file from the browser e.g. http://path/to/jaxl/app/boshchat.php
+     *        View /var/log/jaxl.log for debug info
+     * 
+	 * Read more: http://jaxl.net/example/boshchat.php
 	*/
 	
 	// Ajax poll url
-	define('BOSHCHAT_POLL_URL', 'http://'.$_SERVER['HTTP_HOST'].'/boshchat.php');
-		
-	// Admin jid who will receive all messages sent using this application ui
-	define('BOSHCHAT_ADMIN_JID', 'admin@localhost');
-
+	define('BOSHCHAT_POLL_URL', $_SERVER['PHP_SELF']);
+	
 	if(isset($_REQUEST['jaxl'])) { // Valid bosh request	
         // Initialize Jaxl Library
         require_once '/usr/share/php/jaxl/core/jaxl.class.php';
@@ -24,6 +23,9 @@
             'authType'=>'DIGEST-MD5',
             'logLevel'=>4
         ));
+        
+		// Admin jid who will receive all messages sent using this application ui
+		define('BOSHCHAT_ADMIN_JID', 'admin@'.$jaxl->domain);
         
         // Include required XEP's
         $jaxl->requires(array(
@@ -170,7 +172,7 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
                 <title>Web Chat Application using Jaxl Library</title>
                 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-                <script type="text/javascript" src="jaxl.js"></script>
+                <script type="text/javascript" src="<?php echo dirname(BOSHCHAT_POLL_URL) ?>/../env/jaxl.js"></script>
 		        <script type="text/javascript">jaxl.pollUrl = "<?php echo BOSHCHAT_POLL_URL; ?>";</script>
 		<style type="text/css">
 body { color:#444; background-color:#F7F7F7; font:62.5% "lucida grande","lucida sans unicode",helvetica,arial,sans-serif; }

@@ -1,19 +1,18 @@
 <?php
 
     /**
-     * Pre-fetch XMPP/Jabber data for webpage without using BOSH XEP or Ajax requests
+     * Pre-fetch XMPP/Jabber data for webpage without using BOSH extension or Ajax requests
      *
      * This sample application demonstrate how to pre-fetch XMPP data from the jabber server
      * Specifically, this app will fetch logged in user VCard from the jabber server
      * Pre-fetched data can later be htmlized and displayed on the webpage
      *
-     * Usage:
-     * ------
-     * 1) Put this file under your web folder
-     * 2) Edit user/pass/domain/host below for your account
-     * 3) Hit this file in your browser
+     * Usage: Put this file under your web folder
+     * 		  Edit user/pass/domain/host below for your account
+     * 		  Hit this file in your browser
+     *		  View jaxl.log for detail
      *
-     * View jaxl.log for detail
+     * Read More: http://jaxl.net/examples/preFetchXMPP.php
     */
 
     // include JAXL core
@@ -21,10 +20,9 @@
     
     // initialize JAXL instance
     $xmpp = new JAXL(array(
-        'user'=>'',
-        'pass'=>'',
+        'user'=>'username',
+        'pass'=>'password',
         'domain'=>'localhost',
-        'host'=>'localhost',
         'logLevel'=>4,
         // Force CLI mode since this app runs from browser but we don't intend to use BOSH or Ajax
         'mode'=>'cli'

@@ -57,14 +57,12 @@
         static $included = array();
         $tagMap = array(
             // core classes
-            'JAXLBosh' => '/core/jaxl.bosh.php',
             'JAXLCron' => '/core/jaxl.cron.php',
             'JAXLHTTPd' => '/core/jaxl.httpd.php',
             'JAXLog' => '/core/jaxl.logger.php',
             'JAXLXml' => '/core/jaxl.parser.php',
             'JAXLPlugin' => '/core/jaxl.plugin.php',
             'JAXLUtil' => '/core/jaxl.util.php',
-            'JAXLS5B' => '/core/jaxl.s5b.php',
             'JAXLException' => '/core/jaxl.exception.php',
             'XML' => '/core/jaxl.xml.php',  
             // xmpp classes
@@ -93,7 +91,7 @@
         }
         return;
     }
-
+	
     // cnt of connected instances
     global $jaxl_instance_cnt;
     $jaxl_instance_cnt = 0;
@@ -116,8 +114,8 @@
      * Include Jaxl core in you application and start connecting and managing multiple XMPP accounts
      * Packaged library is custom configured for running <b>single instance</b> Jaxl applications
      * 
-     * For connecting <b>multiple instance</b> XMPP accounts inside your application rewrite Jaxl controller
-     * using combination of env/jaxl.php, env/jaxl.ini and env/jaxl.conf
+     * For connecting <b>multiple instance</b> XMPP accounts inside your application see documentation for
+     * <b>addCore()</b> method
     */
     class JAXL extends XMPP {
 

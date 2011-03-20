@@ -1,23 +1,21 @@
 <?php
 
     /**
-     * Pre-fetch XMPP/Jabber data using BOSH for populating a webpage
+     * Pre-fetch XMPP/Jabber data using BOSH before loading a web page
      *
      * This sample application demonstrate how to pre-fetch XMPP data from the jabber server
      * Specifically, this app will fetch logged in user VCard from the jabber server
      * Pre-fetched data can later be htmlized and displayed on the webpage
      *
-     * Usage:
-     * ------
-     * 1) Put this file under your web folder
-     * 2) Edit user/pass/domain/host below for your account
-     * 3) Hit this file in your browser
-     *
-     * View jaxl.log for detail
+     * Usage: Symlink or copy whole Jaxl library folder inside your web folder
+     * 		  Edit user/pass/domain/host below for your account
+     * 		  Run this app file from the browser e.g. http://path/to/jaxl/app/preFetchBOSH.php
+     * 		  View /var/log/jaxl.log for debug info
+     * 
+     * Read More: http://jaxl.net/examples/preFetchBOSH.php
     */
 
     // include JAXL core
-    ini_set('xdebug.max_nesting_level', 200);
     require_once '/usr/share/php/jaxl/core/jaxl.class.php';
     
     // initialize JAXL instance
@@ -25,7 +23,6 @@
         'user'=>'',
         'pass'=>'',
         'domain'=>'localhost',
-        'host'=>'localhost',
         'boshHost'=>'localhost',
         'boshPort'=>5280,
         'boshSuffix'=>'http-bind',

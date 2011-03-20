@@ -1,9 +1,13 @@
 <?php
 	
-	/*
-	 * Sample command line XMPP component bot using Jaxl library
-     * Usage: php componentbot.php
-	 * Read more: http://bit.ly/aGpYf8
+	/**
+	 * Sample external jabber component echobot using Jaxl library
+     * Usage: cd /path/to/jaxl/app
+     * 		  Edit compHost, compPass and port below to suit your environment
+     * 		  Run from command line as: /path/to/php componentbot.php
+     * 		  View /var/log/jaxl.log for debug info
+     * 
+	 * Read more: http://jaxl.net/examples/componentbot.php
 	*/
 	
 	// Initialize Jaxl Library
@@ -11,7 +15,7 @@
 	$jaxl = new JAXL(array(
 		'port'=>5559,
         'compHost'=>'component.localhost',
-        'compPass'=>'',
+        'compPass'=>'secret',
         'logLevel'=>4
 	));
 

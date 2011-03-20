@@ -1,20 +1,24 @@
 <?php
 	
-	/*
-	 * Sample command line echobot using Jaxl library
-     * Usage: php echobot.php
-	 * Read More: http://bit.ly/bz9KXb
+	/**
+	 * Sample command line echobot client using Jaxl library
+     * Usage: cd /path/to/jaxl/app
+     * 		  Edit passed config array to Jaxl constructor below to suit your environment
+     * 		  Run from command line as: /path/to/php componentbot.php
+     * 		  View /var/log/jaxl.log for debug info
+     * 
+	 * Read More: http://jaxl.net/examples/echobot.php
 	*/
 	
 	// Initialize Jaxl Library
     require_once '../core/jaxl.class.php';
-
+	
     // Values passed to the constructor can also be defined as constants
     // List of constants can be found inside "../../env/jaxl.ini"
     // Note: Values passed to the constructor always overwrite defined constants
     $jaxl = new JAXL(array(
-        'user'=>'',
-        'pass'=>'',
+        'user'=>'username',
+        'pass'=>'password',
         'host'=>'talk.google.com',
         'domain'=>'gmail.com',
         'authType'=>'PLAIN',
