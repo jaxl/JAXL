@@ -181,7 +181,17 @@
         public static function iq($jaxl, $type, $payload=false, $to=false, $from=false, $callback=false, $id=false, $ns='jabber:client') {
             if($type == 'get' || $type == 'set') {
                 $id = $jaxl->getId();
-                if($callback) $jaxl->addPlugin('jaxl_get_iq_'.$id, $callback);
+                
+                if($callback) {
+                	$jaxl->addPlugin('jaxl_get_iq_'.$id, $callback);
+                
+                	// In bosh environment following scenario needs to be taken care:
+                	// request-1 pinging for new data
+                	// request-2 sends an iq get request
+                	// request-1 receives iq result response
+                	// callback registered during request-2 is unavailable in request-1 loop
+                	// as a result user application doesn't receive any callback for data
+                }
             }
             
             $types = array('get','set','result','error');
