@@ -64,7 +64,8 @@
             'JAXLPlugin' => '/core/jaxl.plugin.php',
             'JAXLUtil' => '/core/jaxl.util.php',
             'JAXLException' => '/core/jaxl.exception.php',
-            'XML' => '/core/jaxl.xml.php',  
+            'XML' => '/core/jaxl.xml.php',
+        	'S5B' => '/core/jaxl.s5b.php',
             // xmpp classes
             'XMPP' => '/xmpp/xmpp.class.php',
             'XMPPGet' => '/xmpp/xmpp.get.php',
