@@ -1,5 +1,19 @@
-version 2.1.2
--------------
+version 2.1.2-rc2
+-----------------
+- Checkin for XEP 0166 (Jingle), 0167 (Jingle RTP Session), 0176 (Jingle ICE-UDP), 0234 (Jingle File), 0261 (Jingle In-band bytestream)
+- Checkin for XEP-0096: Stream Initiated File Transfer Profile
+- Checkin for XEP 0071 (XHTML-IM), 0095 (Stream Initiation)
+- Checkin for RFC-1928 (SOCK5) implementation
+- Checking XEP 0012 (last activity), 0047 (in-band bytestream), 0065 (SOCKS5 ByteStream)
+- Checking of google xep implementations (unfinished)
+- Added some TO-DO for later release if this problem really is a problem
+- Forcing curl CURLOPT_ENCODING to gzip,deflate (boshchat now works with jabber.fr)
+- Fix for Call-time pass-by-reference 
+- Added xep-0077 inband registration
+
+version 2.1.2-rc1
+-----------------
+- Updated app files, added broken jaxl.js file url
 - Merged Movim 0.1 patched Jaxl lib into 'master' 
 - Merge branch 'master' of https://github.com/oldschoolindustries/JAXL into oldschoolindustries-master 
 - Improved httpd class and related changed in core jaxl class. Also fixed a few typos inside core classes 
