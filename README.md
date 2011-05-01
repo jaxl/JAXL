@@ -7,7 +7,7 @@ version of Jaxl 1.x series which was hosted at google code.
 * More robust, flexible, scalable and easy to use with event mechanism for registering callbacks for xmpp events
 * Integrated support for Real Time Web (XMPP over Bosh) application development
 * Support for DIGEST-MD5, PLAIN, ANONYMOUS, X-FACEBOOK-PLATFORM authentication mechanisms
-* 32 implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/) including MUC, PubSub and PEP
+* 51 implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/) including MUC, PubSub, PEP, Jingle, File Transfer
 * Setup dynamic number of parallel XMPP instance on the fly
 * Monitoring, usage stat collection, rate limiting and production ready goodies
 
