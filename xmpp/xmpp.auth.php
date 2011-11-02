@@ -59,35 +59,19 @@
             $xml = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">';
             
             if($authType == 'X-FACEBOOK-PLATFORM') {
-                $decoded = explode('&', $decoded);
-                foreach($decoded as $k=>$v) {
-                    list($kk, $vv) = explode('=', $v);
-                    $decoded[$kk] = $vv;
-                    unset($decoded[$k]);
-                }
-                        
-                list($secret, $decoded['api_key'], $decoded['session_key']) = $jaxl->executePlugin('jaxl_get_facebook_key', false);
-                        
+
+		// see https://developers.facebook.com/docs/chat/#jabber
+            	 
+		$decoded = urldecode($decoded);
+                parse_str($decoded, $d);
+                $decoded = $d;
+
+                list($secret, $decoded['api_key'], $decoded['access_token']) = $jaxl->executePlugin('jaxl_get_facebook_key', false);
+
                 $decoded['call_id'] = $jaxl->clock;
                 $decoded['v'] = '1.0';
-                        
-                $base_string = '';
-                foreach(array('api_key', 'call_id', 'method', 'nonce', 'session_key', 'v') as $key) {
-                    if(isset($decoded[$key])) {
-                        $response[$key] = $decoded[$key];
-                        $base_string .= $key.'='.$decoded[$key];
-                    }
-                }
-                        
-                $base_string .= $secret;
-                $response['sig'] = md5($base_string);
-                        
-                $responseURI = '';
-                foreach($response as $k=>$v) {
-                    if($responseURI == '') $responseURI .= $k.'='.urlencode($v);
-                    else $responseURI .= '&'.$k.'='.urlencode($v);
-                }
-                        
+                
+                $responseURI = http_build_query($decoded);
                 $xml .= base64_encode($responseURI);
             }
             else if($authType == 'DIGEST-MD5') {
