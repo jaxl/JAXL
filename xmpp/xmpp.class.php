@@ -74,6 +74,7 @@
          * @var bool
         */
         var $secondChallenge = false;
+        var check -2=false;
 
         /**
          * Id of connected Jaxl instance
