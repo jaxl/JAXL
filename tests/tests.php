@@ -3,6 +3,25 @@
 require_once 'xmpp/xml_node.php';
 require_once 'xmpp/xml_stream.php';
 require_once 'xmpp/xmpp_jid.php';
+require_once 'xmpp/fsm.php';
+
+function fsm_state_connected($data, $param) {
+	print_r($data);
+	print_r($param);
+}
+
+function fsm_state_setup($data, $param) {
+	print_r($data);
+	print_r($param);
+	$data['setup']=true;
+	return array("fsm_state_connected", $data);
+} 
+
+function test_fsm() {
+	$fsm = new Fsm("fsm_state_setup", array());
+	$fsm->move(array('dummy'=>'data'));
+	$fsm->move(array('dummy'=>'data'));
+}
 
 function test_xml_node() {
 	$node = new XmlNode('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
@@ -60,10 +79,11 @@ function test_xmpp_stream() {
 }
 
 function test() {
+	/*test_fsm();
 	test_xml_node();
 	test_xmpp_jid();
 	test_xml_stream();
-	test_xmpp_socket();
+	test_xmpp_socket();*/
 	test_xmpp_stream();
 }
 

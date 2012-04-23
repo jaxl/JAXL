@@ -36,6 +36,8 @@
 *
 */
 
+require_once 'fsm.php';
+
 /**
  * 
  * Enter description here ...
@@ -44,18 +46,71 @@
  */
 class XmppStream {
 	
-	private $jid = NULL;
-	private $pass = NULL;
-	
-	private $sock = NULL;
-	private $xml = NULL;
+	private $fsm;
 	
 	public function __construct() {
-		
+		$ctx = $this->ctx_init();
+		$fsm = new Fsm(array(&$this, "setup"), $ctx);
 	}
 	
 	public function __destruct() {
 		
+	}
+	
+	//
+	// Fsm States
+	// 
+	public function setup() {
+		
+	}
+	
+	public function connected() {
+		
+	}
+	
+	public function wait_for_stream_start() {
+		
+	}
+	
+	public function wait_for_stream_features() {
+		
+	}
+	
+	public function wait_for_tls_result() {
+	
+	}
+
+	public function wait_for_compression_result() {
+	
+	}
+	
+	public function wait_for_sasl_response() {
+	
+	}
+	
+	public function wait_for_bind_response() {
+	
+	}
+	
+	public function wait_for_session_response() {
+	
+	}
+	
+	public function logged_in() {
+		
+	}
+	
+	//
+	// Internal Methods
+	//
+	private function ctx_init() {
+		return
+		array(
+			'jid'	=>	NULL,
+			'pass'	=>	NULL,
+			'sock'	=>	NULL,
+			'xml'	=>	NULL
+		);
 	}
 	
 }
