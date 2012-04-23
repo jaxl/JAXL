@@ -100,26 +100,72 @@ class XmlNode {
 			default:
 				break;
 		}
+		
+		$this->rover = &$this;
 	}
 	
+	public function __destruct() {
+		
+	}
+	
+	// merge new attrs with attributes of current rover
 	public function attrs($attrs) {
-		
+		$this->rover->attrs = array_merge($this->rover->attrs, $attrs);
+		return $this;
 	}
 	
-	public function c($name, $ns, $attrs, $text) {
-		
-	}
-	
-	public function cnode($node) {
-		
-	}
-	
+	// update text of current rover
 	public function t($text) {
-		
+		$this->rover->text = &$text;
+		return $this;
 	}
 	
+	// append a child node at current rover
+	public function c($name, $ns='', $attrs=array(), $text='') {
+		$node = new XmlNode($name, $ns, $attrs, $text);
+		$node->parent = &$this->rover;
+		$this->rover->childrens[] = &$node;
+		$this->rover = &$node;
+		return $this;
+	}
+	
+	// append a XmlNode at current rover
+	public function cnode($node) {
+		$node->parent = &$this->rover;
+		$this->rover->childrens[] = &$node;
+		$this->rover = &$node;
+		return $this;
+	}
+	
+	// move rover to one step up
+	public function up() {
+		if($this->rover->parent) $this->rover = &$this->rover->parent;
+		return $this;
+	}
+	
+	// checks if a child with $name exists
+	// return child XmlNode if found otherwise false
+	public function e($name) {
+		foreach($this->childrens as $child) {
+			if($child->name == $name) return $child;
+		}
+		return false;
+	}
+	
+	// to string conversion
 	public function to_str() {
+		$xml = '';
 		
+		$xml .= '<'.$this->name;
+		if($this->ns != '') $xml .= ' xmlns="'.$this->ns.'"';
+		foreach($this->attrs as $k=>$v) $xml .= ' '.$k.'="'.$v.'"';
+		$xml .= '>';
+		
+		foreach($this->childrens as $child) $xml .= $child->to_str();
+		
+		if($this->text != '') $xml .= $this->text;
+		$xml .= '</'.$this->name.'>';
+		return $xml;
 	}
 	
 }

@@ -36,4 +36,28 @@
 *
 */
 
+/**
+ * 
+ * Enter description here ...
+ * @author abhinavsingh
+ *
+ */
+class XmppSocket {
+	
+	private $host = "localhost";
+	private $port = 5222;
+	private $transport = "tcp";
+	
+	private $cb = NULL;
+	
+	public function __construct() {
+		
+	}
+	
+	public function __destruct() {
+		
+	}
+	
+}
+
 ?>

@@ -36,4 +36,45 @@
 *
 */
 
+/**
+ * 
+ * Xmpp Jid
+ * 
+ * @author abhinavsingh
+ *
+ */
+class XmppJid {
+	
+	public $node = NULL;
+	public $domain = NULL;
+	public $resource = NULL;
+	
+	public function __construct($str) {
+		$tmp = explode("@", $str);
+		if(sizeof($tmp) == 2) {
+			$this->node = $tmp[0];
+			$tmp = explode("/", $tmp[1]);
+			if(sizeof($tmp) == 2) {
+				$this->domain = $tmp[0];
+				$this->resource = $tmp[1];
+			}
+			else {
+				$this->domain = $tmp[0];
+			}
+		}
+		else if(sizeof($tmp) == 1) {
+			$this->domain = $tmp[0];
+		}
+	}
+	
+	public function to_str() {
+		$str = "";
+		if($this->node) $str .= $this->node.'@'.$this->domain;
+		else if($this->domain) $str .= $this->domain;
+		if($this->resource) $str .= '/'.$this->resource;
+		return $str;
+	}
+	
+}
+
 ?>

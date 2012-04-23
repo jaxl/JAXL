@@ -36,4 +36,28 @@
 *
 */
 
+/**
+ * 
+ * Enter description here ...
+ * @author abhinavsingh
+ *
+ */
+class XmppStream {
+	
+	private $jid = NULL;
+	private $pass = NULL;
+	
+	private $sock = NULL;
+	private $xml = NULL;
+	
+	public function __construct() {
+		
+	}
+	
+	public function __destruct() {
+		
+	}
+	
+}
+
 ?>
