@@ -3,7 +3,6 @@
 require_once 'xmpp/xml_node.php';
 require_once 'xmpp/xml_stream.php';
 require_once 'xmpp/xmpp_jid.php';
-require_once 'xmpp/fsm.php';
 
 function fsm_state_connected($data, $param) {
 	print_r($data);

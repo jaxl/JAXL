@@ -36,7 +36,36 @@
 *
 */
 
-require_once 'fsm.php';
+class Fsm {
+
+	private $state;
+	private $ctx;
+
+	public function __construct($state, $ctx=NULL) {
+		$this->state = $state;
+		$this->ctx = $ctx;
+	}
+
+	public function __destruct() {
+
+	}
+
+	public function move($arg) {
+		$ret = call_user_func($this->state, $this->data, $arg);
+		$this->state = $ret[0];
+		$this->data = $ret[1];
+	}
+
+}
+
+class XmppStreamCtx {
+	
+	public $jid = NULL;
+	public $pass = NULL;
+	public $sock = NULL;
+	public $xml = NULL;
+	
+}
 
 /**
  * 
@@ -49,7 +78,7 @@ class XmppStream {
 	private $fsm;
 	
 	public function __construct() {
-		$ctx = $this->ctx_init();
+		$ctx = new XmppStreamCtx();
 		$fsm = new Fsm(array(&$this, "setup"), $ctx);
 	}
 	
