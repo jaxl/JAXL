@@ -1,0 +1,9 @@
+Jaxl v3.x (A work in progress):
+--------------------------------
+Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
+carrying a lot of code from v2.x while throwing away the redundant part.
+Several components have been re-written keeping in my mind feedback from
+the developer community over the last 4 years.
+
+Jaxl v3.x is an object oriented XMPP library in PHP for developing 
+real time applications on top of XMPP without knowing the underlying protocol.

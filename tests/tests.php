@@ -8,101 +8,108 @@ require_once 'xmpp/xml_stream.php';
 require_once 'xmpp/xmpp_jid.php';
 require_once 'xmpp/xmpp_stream.php';
 require_once 'xmpp/xmpp_socket.php';
+require_once 'core/jaxl_event.php';
 
-function fsm_state_connected($data, $param) {
-	print_r($data);
-	print_r($param);
-}
-
-function fsm_state_setup($data, $param) {
-	print_r($data);
-	print_r($param);
-	$data['setup']=true;
-	return array("fsm_state_connected", $data);
-}
-
-function test_fsm() {
-	$fsm = new Fsm("fsm_state_setup", array());
-	$fsm->move(array('dummy'=>'data'));
-	$fsm->move(array('dummy'=>'data'));
-}
-
-function test_xml_stanza() {
-	$stanza = new XmlStanza('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
-	$stanza
-	->c('body')->attrs(array('xml:lang'=>'en'))->t('hello')->up()
-	->c('thread')->t('1234')->up()
-	->c('nested')
-	->c('nest')->t('nest1')->up()
-	->c('nest')->t('nest2')->up()
-	->c('nest')->t('nest3')->up()->up()
-	->c('c')->attrs(array('hash'=>'84jsdmnskd'));
-	echo $stanza->to_string()."\n";
-}
-
-function test_xmpp_jid() {
-	$jid = new XmppJid("1@domain.tld/res");
-	echo $jid->to_string()."\n";
-	$jid = new XmppJid("domain.tld/res");
-	echo $jid->to_string()."\n";
-	$jid = new XmppJid("component.domain.tld");
-	echo $jid->to_string()."\n";
-	$jid = new XmppJid("1@domain.tld");
-	echo $jid->to_string()."\n";
-}
-
-function xml_start_cb($node) {
-	echo $node->to_string()."\n";
-}
-
-function xml_end_cb($node) {
-	echo $node->to_string()."\n";
-}
-
-function xml_stanza_cb($node) {
-	echo $node->to_string()."\n";
-}
-
-function test_xml_stream() {
-	$xml = new XmlStream();
-	$xml->set_callback("xml_start_cb", "xml_end_cb", "xml_stanza_cb");
-	$xml->parse('<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">');
-	$xml->parse('<features>');
-	$xml->parse('<mechanisms>');
-	$xml->parse('</mechanisms>');
-	$xml->parse('</features>');
-	$xml->parse('</stream:stream>');
-}
-
-function test_xmpp_socket() {
-	$sock = new XmppSocket("127.0.0.1", 5222);
-	$sock->connect();
+class XMLStanzaTest extends PHPUnit_Framework_TestCase {
 	
-	$sock->send("<stream:stream>");
-	while($sock->fd) {
-		$sock->recv();
+	function test_xml_stanza() {
+		$stanza = new XMLStanza('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
+		$stanza
+		->c('body')->attrs(array('xml:lang'=>'en'))->t('hello')->up()
+		->c('thread')->t('1234')->up()
+		->c('nested')
+		->c('nest')->t('nest1')->up()
+		->c('nest')->t('nest2')->up()
+		->c('nest')->t('nest3')->up()->up()
+		->c('c')->attrs(array('hash'=>'84jsdmnskd'));
+		
+		$this->assertEquals(
+			'<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested><nest>nest1</nest><nest>nest2</nest><nest>nest3</nest></nested><c hash="84jsdmnskd"></c></message>', 
+			$stanza->to_string()
+		);
 	}
-}
-
-function test_xmpp_stream() {
-	$xmpp = new XmppStream("test@localhost", "password");
-	$xmpp->connect();
 	
-	$xmpp->start_stream();
-	while($xmpp->sock->fd) {
-		$xmpp->sock->recv();
+	function test_xmpp_jid() {
+		$jid = new XMPPJid("1@domain.tld/res");
+		$this->assertEquals('1@domain.tld/res', $jid->to_string());
+		
+		$jid = new XMPPJid("domain.tld/res");
+		$this->assertEquals('domain.tld/res', $jid->to_string());
+		
+		$jid = new XMPPJid("component.domain.tld");
+		$this->assertEquals('component.domain.tld', $jid->to_string());
+		
+		$jid = new XMPPJid("1@domain.tld");
+		$this->assertEquals('1@domain.tld', $jid->to_string());
 	}
-}
+	
+	function xml_start_cb($node) {
+		$this->assertEquals('stream', $node->name);
+		$this->assertEquals(NS_XMPP, $node->ns);
+	}
+	
+	function xml_end_cb($node) {
+		$this->assertEquals('stream', $node->name);
+	}
+	
+	function xml_stanza_cb($node) {
+		$this->assertEquals('features', $node->name);
+		$this->assertEquals(1, sizeof($node->childrens));
+	}
+	
+	function test_xml_stream() {
+		$xml = new XMLStream();
+		$xml->set_callback(array(&$this, "xml_start_cb"), array(&$this, "xml_end_cb"), array(&$this, "xml_stanza_cb"));
+		$xml->parse('<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">');
+		$xml->parse('<features>');
+		$xml->parse('<mechanisms>');
+		$xml->parse('</mechanisms>');
+		$xml->parse('</features>');
+		$xml->parse('</stream:stream>');
+	}
+	
+	/*function test_xmpp_socket() {
+		$sock = new XMPPSocket("127.0.0.1", 5222);
+		$sock->connect();
+		
+		$sock->send("<stream:stream>");
+		while($sock->fd) {
+			$sock->recv();
+		}
+	}
+	
+	function test_xmpp_stream() {
+		$xmpp = new XMPPStream("test@localhost", "password");
+		$xmpp->connect();
+		
+		$xmpp->start_stream();
+		while($xmpp->sock->fd) {
+			$xmpp->sock->recv();
+		}
+	}
+	
+	function test_jaxl_event() {
+		$ev = new JAXLEvent();
+		
+		$ref1 = $ev->add('on_connect', 'some_func', 0);
+		$ref2 = $ev->add('on_connect', 'some_func1', 0);
+		$ref3 = $ev->add('on_connect', 'some_func2', 1);
+		$ref4 = $ev->add('on_connect', 'some_func3', 4);
+		$ref5 = $ev->add('on_disconnect', 'some_func', 1);
+		$ref6 = $ev->add('on_disconnect', 'some_func1', 1);
+		
+		//$ev->emit('on_connect', null);
+		
+		$ev->del($ref2);
+		$ev->del($ref1);
+		$ev->del($ref6);
+		$ev->del($ref5);
+		$ev->del($ref4);
+		$ev->del($ref3);
+		
+		//print_r($ev->reg);
+	}*/
 
-function test() {
-	//test_fsm();
-	//test_xml_stanza();
-	//test_xmpp_jid();
-	//test_xml_stream();
-	//test_xmpp_socket();
-	//test_xmpp_stream();
 }
-
-test();
 
 ?>

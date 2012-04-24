@@ -36,43 +36,56 @@
 *
 */
 
-/**
- * 
- * Xmpp Jid
- * 
- * @author abhinavsingh
- *
- */
-class XMPPJid {
+class JAXLEvent {
 	
-	public $node = NULL;
-	public $domain = NULL;
-	public $resource = NULL;
+	protected $reg = array();
 	
-	public function __construct($str) {
-		$tmp = explode("@", $str);
-		if(sizeof($tmp) == 2) {
-			$this->node = $tmp[0];
-			$tmp = explode("/", $tmp[1]);
-			if(sizeof($tmp) == 2) {
-				$this->domain = $tmp[0];
-				$this->resource = $tmp[1];
-			}
-			else {
-				$this->domain = $tmp[0];
-			}
-		}
-		else if(sizeof($tmp) == 1) {
-			$this->domain = $tmp[0];
-		}
+	public function __construct() {
+		
 	}
 	
-	public function to_string() {
-		$str = "";
-		if($this->node) $str .= $this->node.'@'.$this->domain;
-		else if($this->domain) $str .= $this->domain;
-		if($this->resource) $str .= '/'.$this->resource;
-		return $str;
+	public function __destruct() {
+		
+	}
+	
+	// add callback on a event
+	// returns a reference to be used while deleting callback
+	// callback'd method must return TRUE to be persistent
+	// if none returned or FALSE, callback will be removed automatically
+	public function add($ev, $cb, $pri) {
+		if(!isset($this->reg[$ev]))
+			$this->reg[$ev] = array();
+		
+		$ref = sizeof($this->reg[$ev]);
+		$this->reg[$ev][] = array($pri, $cb);
+		return $ev."-".$ref;
+	}
+	
+	// emit event to notify registered callbacks
+	// is a pqueue required here for performance enhancement
+	// in case we have too many cbs on a specific event?
+	public function emit($ev, $data) {
+		$cbs = array();
+		
+		foreach($this->reg[$ev] as $cb) {
+			if(!isset($cbs[$cb[0]]))
+				$cbs[$cb[0]] = array();
+			$cbs[$cb[0]][] = $cb[1];
+		}
+		
+		foreach($cbs as $pri => $cb) {
+			foreach($cb as $c) {
+				call_user_func_array($c, $data);
+			}
+		}
+		
+		unset($cbs);
+	}
+	
+	// remove previous registered callback
+	public function del($ref) {
+		$ref = explode("-", $ref);
+		unset($this->reg[$ref[0]][$ref[1]]);
 	}
 	
 }

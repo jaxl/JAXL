@@ -42,7 +42,7 @@
  * @author abhinavsingh
  *
  */
-class XmppSocket {
+class XMPPSocket {
 	
 	private $host = "localhost";
 	private $port = 5222;
@@ -62,6 +62,16 @@ class XmppSocket {
 	private $send_bytes = 0;
 	
 	private $recv_cb = null;
+	
+	// TODO: logic moves to jaxl class
+	// after cth failed attempt
+	// retry connect after k * $retry_interval seconds
+	// where k is a random number between 0 and 2^c − 1.
+	public $retry = true;
+	private $retry_interval = 1;
+	private $retry_attempt = 0;
+	private $retry_max = 10; // -1 means infinite
+	private $retry_max_interval = 64; // 2^5 seconds
 	
 	public function __construct($host="localhost", $port=5222) {
 		$this->host = $host;
@@ -89,9 +99,18 @@ class XmppSocket {
 			stream_set_blocking($this->fd, $this->blocking);
 			return true;
 		}
+		// 110 : Connection timed out
+		// 111 : Connection refused
+		else if($this->errno == 110 || $this->errno == 111) {
+			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
+			$this->retry_attempt++;
+			
+			echo "unable to connect, will try again in ".$retry_after." seconds\n";
+			sleep($retry_after);
+			
+			$this->connect($host, $port);
+		}
 		else {
-			// TODO: add reconnect strategy for below error condition
-			// error no: 110, error str: Connection timed out
 			echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
 			$this->disconnect();
 			return false;

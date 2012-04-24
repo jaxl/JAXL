@@ -40,18 +40,18 @@
  * 
  * Usage:
  * ------
- * XmlStanza($name, $ns, $attrs, $text)
- * XmlStanza($name, $ns, $attrs)
- * XmlStanza($name, $ns, $text)
- * XmlStanza($name, $attrs, $text)
- * XmlStanza($name, $attrs)
- * XmlStanza($name, $ns)
- * XmlStanza($name)
+ * XMLStanza($name, $ns, $attrs, $text)
+ * XMLStanza($name, $ns, $attrs)
+ * XMLStanza($name, $ns, $text)
+ * XMLStanza($name, $attrs, $text)
+ * XMLStanza($name, $attrs)
+ * XMLStanza($name, $ns)
+ * XMLStanza($name)
  * 
  * @author abhinavsingh
  *
  */
-class XmlStanza {
+class XMLStanza {
 	
 	public $name;
 	public $ns = '';
@@ -122,7 +122,7 @@ class XmlStanza {
 	
 	// append a child node at current rover
 	public function c($name, $ns='', $attrs=array(), $text='') {
-		$node = new XmlStanza($name, $ns, $attrs, $text);
+		$node = new XMLStanza($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
 		$this->rover = &$node;
