@@ -90,13 +90,13 @@ class XmlStream {
 			$this->ns = $name[1];
 			
 			if($this->start_cb) {
-				$node = new XmlNode($name[1], $name[0], $attrs);
+				$node = new XmlStanza($name[1], $name[0], $attrs);
 				call_user_func($this->start_cb, $node);
 			}
 		}
 		else {
 			if(!$this->node) {
-				$node = new XmlNode($name[1], $name[0], $attrs);
+				$node = new XmlStanza($name[1], $name[0], $attrs);
 				$this->node = &$node;
 			}
 			else {
@@ -113,7 +113,7 @@ class XmlStream {
 		
 		if($this->depth == 1) {
 			if($this->end_cb) {
-				$node = new XmlNode($name[1], $this->ns);
+				$node = new XmlStanza($name[1], $this->ns);
 				call_user_func($this->end_cb, $node);
 			}
 		}

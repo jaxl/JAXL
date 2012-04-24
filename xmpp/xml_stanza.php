@@ -40,18 +40,18 @@
  * 
  * Usage:
  * ------
- * XmlNode($name, $ns, $attrs, $text)
- * XmlNode($name, $ns, $attrs)
- * XmlNode($name, $ns, $text)
- * XmlNode($name, $attrs, $text)
- * XmlNode($name, $attrs)
- * XmlNode($name, $ns)
- * XmlNode($name)
+ * XmlStanza($name, $ns, $attrs, $text)
+ * XmlStanza($name, $ns, $attrs)
+ * XmlStanza($name, $ns, $text)
+ * XmlStanza($name, $attrs, $text)
+ * XmlStanza($name, $attrs)
+ * XmlStanza($name, $ns)
+ * XmlStanza($name)
  * 
  * @author abhinavsingh
  *
  */
-class XmlNode {
+class XmlStanza {
 	
 	public $name;
 	public $ns = '';
@@ -122,14 +122,14 @@ class XmlNode {
 	
 	// append a child node at current rover
 	public function c($name, $ns='', $attrs=array(), $text='') {
-		$node = new XmlNode($name, $ns, $attrs, $text);
+		$node = new XmlStanza($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
 		$this->rover = &$node;
 		return $this;
 	}
 	
-	// append a XmlNode at current rover
+	// append a XmlStanza at current rover
 	public function cnode($node) {
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
@@ -144,7 +144,7 @@ class XmlNode {
 	}
 	
 	// checks if a child with $name exists
-	// return child XmlNode if found otherwise false
+	// return child XmlStanza if found otherwise false
 	public function e($name) {
 		foreach($this->childrens as $child) {
 			if($child->name == $name) return $child;
