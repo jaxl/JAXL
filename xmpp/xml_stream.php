@@ -47,7 +47,7 @@ class XmlStream {
 	private $delimiter = '\\';
 	private $ns;
 	private $parser;
-	private $node;
+	private $stanza;
 	private $depth = 0;
 	private $start_cb;
 	private $stanza_cb;
@@ -90,17 +90,17 @@ class XmlStream {
 			$this->ns = $name[1];
 			
 			if($this->start_cb) {
-				$node = new XmlStanza($name[1], $name[0], $attrs);
-				call_user_func($this->start_cb, $node);
+				$stanza = new XmlStanza($name[1], $name[0], $attrs);
+				call_user_func($this->start_cb, $stanza);
 			}
 		}
 		else {
-			if(!$this->node) {
-				$node = new XmlStanza($name[1], $name[0], $attrs);
-				$this->node = &$node;
+			if(!$this->stanza) {
+				$stanza = new XmlStanza($name[1], $name[0], $attrs);
+				$this->stanza = &$stanza;
 			}
 			else {
-				$this->node->c($name[1], $name[0], $attrs);
+				$this->stanza->c($name[1], $name[0], $attrs);
 			}
 		}
 		
@@ -113,15 +113,15 @@ class XmlStream {
 		
 		if($this->depth == 1) {
 			if($this->end_cb) {
-				$node = new XmlStanza($name[1], $this->ns);
-				call_user_func($this->end_cb, $node);
+				$stanza = new XmlStanza($name[1], $this->ns);
+				call_user_func($this->end_cb, $stanza);
 			}
 		}
 		else {
 			if($this->depth == 2) {
 				if($this->stanza_cb) {
-					call_user_func($this->stanza_cb, $this->node);
-					$this->node = NULL;
+					call_user_func($this->stanza_cb, $this->stanza);
+					$this->stanza = NULL;
 				}
 			}
 		}
@@ -130,7 +130,7 @@ class XmlStream {
 	}
 	
 	protected function handle_character($parser, $data) {
-		$this->node->t($data);
+		$this->stanza->t($data);
 	}
 	
 }

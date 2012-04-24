@@ -1,8 +1,9 @@
 <?php
 
-require_once 'xmpp/xml_node.php';
+require_once 'xmpp/xml_stanza.php';
 require_once 'xmpp/xml_stream.php';
 require_once 'xmpp/xmpp_jid.php';
+require_once 'xmpp/xmpp_stream.php';
 
 function fsm_state_connected($data, $param) {
 	print_r($data);
@@ -22,9 +23,9 @@ function test_fsm() {
 	$fsm->move(array('dummy'=>'data'));
 }
 
-function test_xml_node() {
-	$node = new XmlNode('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
-	$node
+function test_xml_stanza() {
+	$stanza = new XmlStanza('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
+	$stanza
 	->c('body')->attrs(array('xml:lang'=>'en'))->t('hello')->up()
 	->c('thread')->t('1234')->up()
 	->c('nested')
@@ -32,7 +33,7 @@ function test_xml_node() {
 	->c('nest')->t('nest2')->up()
 	->c('nest')->t('nest3')->up()->up()
 	->c('c')->attrs(array('hash'=>'84jsdmnskd'));
-	echo $node->to_str()."\n";
+	echo $stanza->to_str()."\n";
 }
 
 function test_xmpp_jid() {
@@ -78,11 +79,11 @@ function test_xmpp_stream() {
 }
 
 function test() {
-	/*test_fsm();
-	test_xml_node();
+	test_fsm();
+	test_xml_stanza();
 	test_xmpp_jid();
 	test_xml_stream();
-	test_xmpp_socket();*/
+	test_xmpp_socket();
 	test_xmpp_stream();
 }
 

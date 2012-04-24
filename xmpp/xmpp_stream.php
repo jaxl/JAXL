@@ -51,7 +51,7 @@ class Fsm {
 	}
 
 	public function move($arg) {
-		$ret = call_user_func($this->state, $this->data, $arg);
+		$ret = call_user_func($this->state, $this->ctx, $arg);
 		$this->state = $ret[0];
 		$this->data = $ret[1];
 	}
