@@ -36,43 +36,13 @@
 *
 */
 
-/**
- * 
- * Xmpp Jid
- * 
- * @author abhinavsingh
- *
- */
-class XmppJid {
+class JAXLUtil {
 	
-	public $node = NULL;
-	public $domain = NULL;
-	public $resource = NULL;
-	
-	public function __construct($str) {
-		$tmp = explode("@", $str);
-		if(sizeof($tmp) == 2) {
-			$this->node = $tmp[0];
-			$tmp = explode("/", $tmp[1]);
-			if(sizeof($tmp) == 2) {
-				$this->domain = $tmp[0];
-				$this->resource = $tmp[1];
-			}
-			else {
-				$this->domain = $tmp[0];
-			}
-		}
-		else if(sizeof($tmp) == 1) {
-			$this->domain = $tmp[0];
-		}
-	}
-	
-	public function to_string() {
-		$str = "";
-		if($this->node) $str .= $this->node.'@'.$this->domain;
-		else if($this->domain) $str .= $this->domain;
-		if($this->resource) $str .= '/'.$this->resource;
-		return $str;
+	public static function get_nonce($binary=true) {
+		$nce = '';
+		mt_srand((double) microtime()*10000000);
+		for($i=0; $i<32; $i++) $nce .= chr(mt_rand(0, 255));
+		return $binary ? $nce : base64_encode($nce);
 	}
 	
 }

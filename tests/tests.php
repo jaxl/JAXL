@@ -1,9 +1,13 @@
 <?php
 
+// TODO: support for php unit and add more tests
+error_reporting(E_ALL);
+
 require_once 'xmpp/xml_stanza.php';
 require_once 'xmpp/xml_stream.php';
 require_once 'xmpp/xmpp_jid.php';
 require_once 'xmpp/xmpp_stream.php';
+require_once 'xmpp/xmpp_socket.php';
 
 function fsm_state_connected($data, $param) {
 	print_r($data);
@@ -15,7 +19,7 @@ function fsm_state_setup($data, $param) {
 	print_r($param);
 	$data['setup']=true;
 	return array("fsm_state_connected", $data);
-} 
+}
 
 function test_fsm() {
 	$fsm = new Fsm("fsm_state_setup", array());
@@ -33,30 +37,30 @@ function test_xml_stanza() {
 	->c('nest')->t('nest2')->up()
 	->c('nest')->t('nest3')->up()->up()
 	->c('c')->attrs(array('hash'=>'84jsdmnskd'));
-	echo $stanza->to_str()."\n";
+	echo $stanza->to_string()."\n";
 }
 
 function test_xmpp_jid() {
 	$jid = new XmppJid("1@domain.tld/res");
-	echo $jid->to_str()."\n";
+	echo $jid->to_string()."\n";
 	$jid = new XmppJid("domain.tld/res");
-	echo $jid->to_str()."\n";
+	echo $jid->to_string()."\n";
 	$jid = new XmppJid("component.domain.tld");
-	echo $jid->to_str()."\n";
+	echo $jid->to_string()."\n";
 	$jid = new XmppJid("1@domain.tld");
-	echo $jid->to_str()."\n";
+	echo $jid->to_string()."\n";
 }
 
 function xml_start_cb($node) {
-	echo $node->to_str()."\n";
+	echo $node->to_string()."\n";
 }
 
 function xml_end_cb($node) {
-	echo $node->to_str()."\n";
+	echo $node->to_string()."\n";
 }
 
 function xml_stanza_cb($node) {
-	echo $node->to_str()."\n";
+	echo $node->to_string()."\n";
 }
 
 function test_xml_stream() {
@@ -71,20 +75,32 @@ function test_xml_stream() {
 }
 
 function test_xmpp_socket() {
+	$sock = new XmppSocket("127.0.0.1", 5222);
+	$sock->connect();
 	
+	$sock->send("<stream:stream>");
+	while($sock->fd) {
+		$sock->recv();
+	}
 }
 
 function test_xmpp_stream() {
+	$xmpp = new XmppStream("test@localhost", "password");
+	$xmpp->connect();
 	
+	$xmpp->start_stream();
+	while($xmpp->sock->fd) {
+		$xmpp->sock->recv();
+	}
 }
 
 function test() {
-	test_fsm();
-	test_xml_stanza();
-	test_xmpp_jid();
-	test_xml_stream();
-	test_xmpp_socket();
-	test_xmpp_stream();
+	//test_fsm();
+	//test_xml_stanza();
+	//test_xmpp_jid();
+	//test_xml_stream();
+	//test_xmpp_socket();
+	//test_xmpp_stream();
 }
 
 test();

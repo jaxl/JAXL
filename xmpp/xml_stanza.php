@@ -59,8 +59,8 @@ class XmlStanza {
 	public $text = '';
 	
 	public $childrens = array();
-	public $parent = NULL;
-	public $rover = NULL;
+	public $parent = null;
+	public $rover = null;
 	
 	public function __construct() {
 		$argv = func_get_args();
@@ -145,7 +145,7 @@ class XmlStanza {
 	
 	// checks if a child with $name exists
 	// return child XmlStanza if found otherwise false
-	public function e($name) {
+	public function exists($name) {
 		foreach($this->childrens as $child) {
 			if($child->name == $name) return $child;
 		}
@@ -153,7 +153,7 @@ class XmlStanza {
 	}
 	
 	// to string conversion
-	public function to_str() {
+	public function to_string() {
 		$xml = '';
 		
 		$xml .= '<'.$this->name;
@@ -161,7 +161,7 @@ class XmlStanza {
 		foreach($this->attrs as $k=>$v) $xml .= ' '.$k.'="'.$v.'"';
 		$xml .= '>';
 		
-		foreach($this->childrens as $child) $xml .= $child->to_str();
+		foreach($this->childrens as $child) $xml .= $child->to_string();
 		
 		if($this->text != '') $xml .= $this->text;
 		$xml .= '</'.$this->name.'>';

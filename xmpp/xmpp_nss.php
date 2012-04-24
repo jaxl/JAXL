@@ -36,45 +36,23 @@
 *
 */
 
-/**
- * 
- * Xmpp Jid
- * 
- * @author abhinavsingh
- *
- */
-class XmppJid {
-	
-	public $node = NULL;
-	public $domain = NULL;
-	public $resource = NULL;
-	
-	public function __construct($str) {
-		$tmp = explode("@", $str);
-		if(sizeof($tmp) == 2) {
-			$this->node = $tmp[0];
-			$tmp = explode("/", $tmp[1]);
-			if(sizeof($tmp) == 2) {
-				$this->domain = $tmp[0];
-				$this->resource = $tmp[1];
-			}
-			else {
-				$this->domain = $tmp[0];
-			}
-		}
-		else if(sizeof($tmp) == 1) {
-			$this->domain = $tmp[0];
-		}
-	}
-	
-	public function to_string() {
-		$str = "";
-		if($this->node) $str .= $this->node.'@'.$this->domain;
-		else if($this->domain) $str .= $this->domain;
-		if($this->resource) $str .= '/'.$this->resource;
-		return $str;
-	}
-	
-}
+// XML
+define('NS_XML_pfx',                  "xml");
+define('NS_XML',                      'http://www.w3.org/XML/1998/namespace');
+
+// XMPP Core (RFC 3920)
+define('NS_XMPP_pfx',                 "stream");
+define('NS_XMPP',                     'http://etherx.jabber.org/streams');
+define('NS_STREAM_ERRORS',            'urn:ietf:params:xml:ns:xmpp-streams');
+define('NS_TLS',                      'urn:ietf:params:xml:ns:xmpp-tls');
+define('NS_SASL',                     'urn:ietf:params:xml:ns:xmpp-sasl');
+define('NS_BIND',                     'urn:ietf:params:xml:ns:xmpp-bind');
+define('NS_STANZA_ERRORS',            'urn:ietf:params:xml:ns:xmpp-stanzas');
+
+// XMPP-IM (RFC 3921)
+define('NS_JABBER_CLIENT',            'jabber:client');
+define('NS_JABBER_SERVER',            'jabber:server');
+define('NS_SESSION',                  'urn:ietf:params:xml:ns:xmpp-session');
+define('NS_ROSTER',                   'jabber:iq:roster');
 
 ?>

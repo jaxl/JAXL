@@ -48,12 +48,18 @@ class XmlStream {
 	private $ns;
 	private $parser;
 	private $stanza;
-	private $depth = 0;
+	private $depth = -1;
+	
 	private $start_cb;
 	private $stanza_cb;
 	private $end_cb;
 	
 	public function __construct() {
+		$this->init_parser();
+	}
+	
+	private function init_parser() {
+		$this->depth = -1;
 		$this->parser = xml_parser_create_ns("UTF-8", $this->delimiter);
 		
 		xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);
@@ -65,7 +71,16 @@ class XmlStream {
 	}
 	
 	public function __destruct() {
-		
+		echo "cleaning up xml parser...\n";
+		@xml_parser_free($this->parser);
+	}
+	
+	public function reset_parser() {
+		$this->parse_final(null);
+		@xml_parser_free($this->parser);
+		$this->parser = null;
+		$this->init_parser();
+		echo "parse reset to depth ".$this->depth."\n";
 	}
 	
 	public function set_callback($start_cb, $end_cb, $stanza_cb) {
@@ -86,7 +101,8 @@ class XmlStream {
 		$name = explode($this->delimiter, $name);
 		$name = sizeof($name) == 1 ? array('', $name[0]) : $name; 
 		
-		if($this->depth == 0) {
+		if($this->depth <= 0) {
+			$this->depth = 0;
 			$this->ns = $name[1];
 			
 			if($this->start_cb) {
@@ -111,17 +127,21 @@ class XmlStream {
 		$name = explode($this->delimiter, $name);
 		$name = sizeof($name) == 1 ? array('', $name[0]) : $name;
 		
+		//echo "depth ".$this->depth.", $name[1] tag ended\n";
+		
 		if($this->depth == 1) {
 			if($this->end_cb) {
 				$stanza = new XmlStanza($name[1], $this->ns);
 				call_user_func($this->end_cb, $stanza);
 			}
 		}
-		else {
+		else if($this->depth > 1) {
+			if($this->stanza) $this->stanza->up();
+			
 			if($this->depth == 2) {
 				if($this->stanza_cb) {
 					call_user_func($this->stanza_cb, $this->stanza);
-					$this->stanza = NULL;
+					$this->stanza = null;
 				}
 			}
 		}

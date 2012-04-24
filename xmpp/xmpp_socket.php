@@ -47,15 +47,133 @@ class XmppSocket {
 	private $host = "localhost";
 	private $port = 5222;
 	private $transport = "tcp";
+	private $blocking = 0;
 	
-	private $cb = NULL;
+	public $fd = null;
 	
-	public function __construct() {
-		
+	private $errno = null;
+	private $errstr = null;
+	private $timeout = 10;
+	
+	private $ibuffer = "";
+	private $obuffer = "";
+	
+	private $recv_bytes = 0;
+	private $send_bytes = 0;
+	
+	private $recv_cb = null;
+	
+	public function __construct($host="localhost", $port=5222) {
+		$this->host = $host;
+		$this->port = $port;
 	}
 	
 	public function __destruct() {
+		echo "cleaning up xmpp socket...\n";
+		$this->disconnect();
+	}
+	
+	public function set_callback($recv_cb) {
+		$this->recv_cb = $recv_cb;
+	}
+	
+	public function connect($host=null, $port=null) {
+		$this->host = $host ? $host : $this->host;
+		$this->port = $port ? $port : $this->port;
 		
+		$remote_socket = $this->transport."://".$this->host.":".$this->port;
+		$flags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT;
+		
+		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, $flags);
+		if($this->fd) {
+			stream_set_blocking($this->fd, $this->blocking);
+			return true;
+		}
+		else {
+			// TODO: add reconnect strategy for below error condition
+			// error no: 110, error str: Connection timed out
+			echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
+			$this->disconnect();
+			return false;
+		}
+	}
+	
+	public function disconnect() {
+		@fclose($this->fd);
+		$this->fd = null;
+	}
+	
+	public function recv() {
+		$read = array($this->fd);
+		$write = $except = null;
+		$secs = 1; $usecs = 0;
+		
+		$changed = @stream_select($read, $write, $except, $secs, $usecs);
+		if($changed === false) {
+			echo "error while selecting stream for read\n";
+			print_r(stream_get_meta_data($this->fd));
+			$this->disconnect();
+			return;
+		}
+		else if($changed === 1) {
+			$raw = @fread($this->fd, 1024);
+			$bytes = strlen($raw);
+			
+			if($bytes === 0) {
+				$meta = stream_get_meta_data($this->fd);
+				if($meta['eof'] === TRUE) {
+					echo "socket has reached eof, closing now\n";
+					$this->disconnect();
+					return;
+				}
+			}
+			
+			$this->recv_bytes += $bytes;
+			$total = $this->ibuffer.$raw;
+			$this->ibuffer = "";
+			echo "read ".$bytes."/".$this->recv_bytes." of data\n";
+			echo $raw."\n\n";
+			
+			// callback
+			if($this->recv_cb) call_user_func($this->recv_cb, $raw);
+		}
+		//else if($changed === 0) {
+			//echo "nothing changed while selecting for read\n";
+		//}
+		
+		if($this->obuffer != "") $this->flush();
+	}
+	
+	public function send($data) {
+		$this->obuffer .= $data;
+	}
+	
+	protected function flush() {
+		$read = $except = array();
+		$write = array($this->fd);
+		$secs = 0; $usecs = 200000;
+		
+		$changed = @stream_select($read, $write, $except, $secs, $usecs);
+		if($changed === false) {
+			echo "error while selecting stream for write\n";
+			print_r(stream_get_meta_data($this->fd));
+			$this->disconnect();
+			return;
+		}
+		else if($changed === 0) {
+			echo "nothing changed while selecting for write\n";
+		}
+		else if($changed === 1) {
+			$total = strlen($this->obuffer);
+			$bytes = @fwrite($this->fd, $this->obuffer);
+			$this->send_bytes += $bytes;
+			
+			echo "sent ".$bytes."/".$this->send_bytes." of data\n";
+			echo $this->obuffer."\n\n";
+			
+			$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
+			//echo "current obuffer size: ".strlen($this->obuffer)."\n";
+		}
 	}
 	
 }
