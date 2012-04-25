@@ -80,7 +80,6 @@ class JAXLXmlStream {
 		@xml_parser_free($this->parser);
 		$this->parser = null;
 		$this->init_parser();
-		echo "parse reset to depth ".$this->depth."\n";
 	}
 	
 	public function set_callback($start_cb, $end_cb, $stanza_cb) {
@@ -150,7 +149,7 @@ class JAXLXmlStream {
 	}
 	
 	protected function handle_character($parser, $data) {
-		$this->stanza->t($data);
+		if($this->stanza) $this->stanza->t($data);
 	}
 	
 }

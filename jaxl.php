@@ -36,17 +36,73 @@
 *
 */
 
+declare(ticks = 1);
+
 require_once 'xmpp/xmpp_stream.php';
 require_once 'core/jaxl_event.php';
 
 class JAXL {
 	
-	public function __construct() {
+	protected $cfg = array();
+	protected $ev = null;
+	protected $xmpp = null;
+	
+	public function __construct($config) {
+		pcntl_signal(SIGINT, array(&$this, 'signal_handler'));
+		pcntl_signal(SIGTERM, array(&$this, 'signal_handler'));
 		
+		$this->cfg = $config;
+		$this->ev = new JAXLEvent();
+		
+		$this->xmpp = new XMPPStream(
+			$this->cfg['user']."@".$this->cfg['domain'], 
+			$this->cfg['pass'], 
+			$this->cfg['auth_type']
+		);
 	}
 	
 	public function __destruct() {
 		
+	}
+	
+	public function start($as) {
+		switch($as) {
+			case 'client':
+				$this->start_client();
+				break;
+			case 'component':
+				break;
+			default:
+				break;
+		}
+	}
+	
+	public function add_cb($ev, $cb, $pri=1) {
+		return $this->ev->add($ev, $cb, $pri);
+	}
+	
+	public function del_cb($ref) {
+		$this->ev->del($ref);
+	}
+	
+	public function signal_handler($sig) {
+		switch($sig) {
+			case SIGINT:
+				echo "caught sigint\n";
+				break;
+			case SIGTERM:
+				echo "caught sigterm\n";
+				break;
+		}
+	}
+	
+	private function start_client() {
+		if($this->xmpp->connect($this->cfg['host'])) {
+			$this->xmpp->start_stream();
+			while($this->xmpp->sock->fd) {
+				$this->xmpp->sock->recv();
+			}
+		}
 	}
 	
 }

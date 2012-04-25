@@ -49,6 +49,8 @@ class JAXLSocket {
 	private $transport = "tcp";
 	private $blocking = 0;
 	
+	public $compressed = false;
+	
 	public $fd = null;
 	
 	private $errno = null;
@@ -97,6 +99,7 @@ class JAXLSocket {
 		echo "trying ".$remote_socket."\n";
 		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, $flags);
 		if($this->fd) {
+			echo "connected to ".$remote_socket."\n";
 			stream_set_blocking($this->fd, $this->blocking);
 			return true;
 		}
@@ -126,7 +129,7 @@ class JAXLSocket {
 	public function recv() {
 		$read = array($this->fd);
 		$write = $except = null;
-		$secs = 1; $usecs = 0;
+		$secs = 0; $usecs = 200000;
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
@@ -137,6 +140,7 @@ class JAXLSocket {
 		}
 		else if($changed === 1) {
 			$raw = @fread($this->fd, 1024);
+			if($this->compressed) $raw = gzuncompress($raw);
 			$bytes = strlen($raw);
 			
 			if($bytes === 0) {
@@ -165,13 +169,14 @@ class JAXLSocket {
 	}
 	
 	public function send($data) {
+		if($this->compressed) $data = gzcompress($data);
 		$this->obuffer .= $data;
 	}
 	
 	protected function flush() {
 		$read = $except = array();
 		$write = array($this->fd);
-		$secs = 0; $usecs = 200000;
+		$secs = 0; $usecs = 100000;
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
@@ -179,9 +184,6 @@ class JAXLSocket {
 			print_r(stream_get_meta_data($this->fd));
 			$this->disconnect();
 			return;
-		}
-		else if($changed === 0) {
-			echo "nothing changed while selecting for write\n";
 		}
 		else if($changed === 1) {
 			$total = strlen($this->obuffer);
@@ -194,6 +196,9 @@ class JAXLSocket {
 			$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
 			//echo "current obuffer size: ".strlen($this->obuffer)."\n";
 		}
+		//else if($changed === 0) {
+			//echo "nothing changed while selecting for write\n";
+		//}
 	}
 	
 }
