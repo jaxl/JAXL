@@ -42,7 +42,7 @@
  * @author abhinavsingh
  *
  */
-class XMPPSocket {
+class JAXLSocket {
 	
 	private $host = "localhost";
 	private $port = 5222;
@@ -93,7 +93,8 @@ class XMPPSocket {
 		
 		$remote_socket = $this->transport."://".$this->host.":".$this->port;
 		$flags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT;
-		
+
+		echo "trying ".$remote_socket."\n";
 		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, $flags);
 		if($this->fd) {
 			stream_set_blocking($this->fd, $this->blocking);

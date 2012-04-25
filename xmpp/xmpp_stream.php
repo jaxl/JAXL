@@ -37,7 +37,12 @@
 */
 
 require_once 'xmpp/xmpp_nss.php';
+require_once 'xmpp/xmpp_jid.php';
+
+require_once 'core/jaxl_xml.php';
+require_once 'core/jaxl_xml_stream.php';
 require_once 'core/jaxl_util.php';
+require_once 'core/jaxl_socket.php';
 
 /**
  * 
@@ -65,8 +70,12 @@ class XMPPStream {
 		$this->pref_auth_type = $pref_auth_type;
 		$this->jid = new XMPPJid($jid);
 		$this->pass = $pass;
-		$this->sock = new XMPPSocket($this->jid->domain);
-		$this->xml = new XMLStream();
+		
+		list($host, $port) = JAXLUtil::get_dns_srv($this->jid->domain);
+		$this->sock = new JAXLSocket($host, $port);
+		
+		$this->xml = new JAXLXmlStream();
+		
 		$this->sock->set_callback(array(&$this->xml, "parse"));
 		$this->xml->set_callback(array(&$this, "start_cb"), array(&$this, "end_cb"), array(&$this, "stanza_cb"));
 	}
@@ -106,12 +115,12 @@ class XMPPStream {
 	}
 	
 	public function get_starttls_stanza() {
-		$stanza = new XMLStanza('starttls', NS_TLS);
+		$stanza = new JAXLXml('starttls', NS_TLS);
 		return $stanza;
 	}
 	
 	public function get_auth_stanza($mechanism, $user, $pass) {
-		$stanza = new XMLStanza('auth', NS_SASL, array('mechanism'=>$mechanism));
+		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism'=>$mechanism));
 		
 		switch($mechanism) {
 			case 'PLAIN':
@@ -129,7 +138,7 @@ class XMPPStream {
 	}
 	
 	public function get_challenge_response_pkt($challenge) {
-		$stanza = new XMLStanza('response', NS_SASL);
+		$stanza = new JAXLXml('response', NS_SASL);
 		$decoded = $this->explode_data(base64_decode($challenge));
 		
 		if(!isset($decoded['rspauth'])) {
@@ -170,7 +179,7 @@ class XMPPStream {
 	}
 	
 	public function get_bind_pkt($resource) {
-		$stanza = new XMLStanza('bind', NS_BIND);
+		$stanza = new JAXLXml('bind', NS_BIND);
 		$stanza->c('resource')->t($resource);
 		return $this->get_iq_pkt(array(
 			'type' => 'set'
@@ -178,7 +187,7 @@ class XMPPStream {
 	}
 	
 	public function get_session_pkt() {
-		$stanza = new XMLStanza('session', NS_SESSION);
+		$stanza = new JAXLXml('session', NS_SESSION);
 		return $this->get_iq_pkt(array(
 			'type' => 'set'
 		), $stanza);
@@ -186,7 +195,7 @@ class XMPPStream {
 	
 	public function get_msg_pkt($attrs, $subject=null, $body=null, $thread=null, $payload=null) {
 		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new XMLStanza('message', NS_JABBER_CLIENT);
+		$stanza = new JAXLXml('message', NS_JABBER_CLIENT);
 		$stanza->attrs($attrs);
 		
 		if($subject) $stanza->c('subject')->t($subject)->up();
@@ -199,7 +208,7 @@ class XMPPStream {
 	
 	public function get_pres_pkt($attrs, $show, $status, $priority, $payload) {
 		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new XMLStanza('presence', NS_JABBER_CLIENT);
+		$stanza = new JAXLXml('presence', NS_JABBER_CLIENT);
 		$stanza->attrs($attrs);
 		
 		if($show) $stanza->c('show')->t($show)->up();
@@ -212,7 +221,7 @@ class XMPPStream {
 	
 	public function get_iq_pkt($attrs, $payload) {
 		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new XMLStanza('iq', NS_JABBER_CLIENT);
+		$stanza = new JAXLXml('iq', NS_JABBER_CLIENT);
 		$stanza->attrs($attrs);
 		
 		if($payload) $stanza->cnode($payload);

@@ -42,7 +42,7 @@
  * @author abhinavsingh
  *
  */
-class XMLStream {
+class JAXLXmlStream {
 	
 	private $delimiter = '\\';
 	private $ns;
@@ -106,13 +106,13 @@ class XMLStream {
 			$this->ns = $name[1];
 			
 			if($this->start_cb) {
-				$stanza = new XMLStanza($name[1], $name[0], $attrs);
+				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				call_user_func($this->start_cb, $stanza);
 			}
 		}
 		else {
 			if(!$this->stanza) {
-				$stanza = new XMLStanza($name[1], $name[0], $attrs);
+				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				$this->stanza = &$stanza;
 			}
 			else {
@@ -131,7 +131,7 @@ class XMLStream {
 		
 		if($this->depth == 1) {
 			if($this->end_cb) {
-				$stanza = new XMLStanza($name[1], $this->ns);
+				$stanza = new JAXLXml($name[1], $this->ns);
 				call_user_func($this->end_cb, $stanza);
 			}
 		}

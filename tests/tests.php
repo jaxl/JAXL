@@ -3,17 +3,12 @@
 // TODO: support for php unit and add more tests
 error_reporting(E_ALL);
 
-require_once 'xmpp/xml_stanza.php';
-require_once 'xmpp/xml_stream.php';
-require_once 'xmpp/xmpp_jid.php';
-require_once 'xmpp/xmpp_stream.php';
-require_once 'xmpp/xmpp_socket.php';
-require_once 'core/jaxl_event.php';
+require_once "jaxl.php";
 
-class XMLStanzaTest extends PHPUnit_Framework_TestCase {
+class JAXLTest extends PHPUnit_Framework_TestCase {
 	
 	function test_xml_stanza() {
-		$stanza = new XMLStanza('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
+		$stanza = new JAXLXml('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
 		$stanza
 		->c('body')->attrs(array('xml:lang'=>'en'))->t('hello')->up()
 		->c('thread')->t('1234')->up()
@@ -58,7 +53,7 @@ class XMLStanzaTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function test_xml_stream() {
-		$xml = new XMLStream();
+		$xml = new JAXLXmlStream();
 		$xml->set_callback(array(&$this, "xml_start_cb"), array(&$this, "xml_end_cb"), array(&$this, "xml_stanza_cb"));
 		$xml->parse('<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">');
 		$xml->parse('<features>');
@@ -68,8 +63,8 @@ class XMLStanzaTest extends PHPUnit_Framework_TestCase {
 		$xml->parse('</stream:stream>');
 	}
 	
-	/*function test_xmpp_socket() {
-		$sock = new XMPPSocket("127.0.0.1", 5222);
+	/*function test_jaxl_socket() {
+		$sock = new JAXLSocket("127.0.0.1", 5222);
 		$sock->connect();
 		
 		$sock->send("<stream:stream>");
