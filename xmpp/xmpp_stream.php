@@ -54,6 +54,8 @@ class XMPPStream {
 	
 	private $state = "setup";
 	
+	public $full_jid = null;
+	
 	public $jid = null;
 	private $pass = null;
 	
@@ -415,10 +417,11 @@ class XMPPStream {
 					}
 					return "wait_for_sasl_response";
 				}
-				else if($comp) {
+				// compression not supported due to bug in php stream filters
+				/*else if($comp) {
 					$this->send_compress_pkt("zlib");
 					return "wait_for_compression_result";
-				}
+				}*/
 				else if($bind) {
 					$resource = md5(time());
 					$this->send_bind_pkt($resource);
@@ -475,6 +478,7 @@ class XMPPStream {
 				if($stanza->name == 'compressed' && $stanza->ns == NS_COMPRESSION_PROTOCOL) {
 					$this->xml->reset_parser();
 					$this->sock->compressed = true;
+					$this->sock->compress();
 					$this->send_start_stream($this->jid->domain);
 					return "wait_for_stream_start";
 				}
@@ -523,8 +527,18 @@ class XMPPStream {
 	public function wait_for_bind_response($event, $args) {
 		switch($event) {
 			case "stanza_cb":
-				$this->send_session_pkt();
-				return "wait_for_session_response";
+				$stanza = $args[0];
+				
+				// TODO: chk on id
+				if($stanza->name == 'iq' && $stanza->attrs['type'] == 'result'
+				&& ($jid = $stanza->exists('bind', NS_BIND)->exists('jid'))) {
+					$this->full_jid = new XMPPJid($jid->text);
+					$this->send_session_pkt();
+					return "wait_for_session_response";
+				}
+				else {
+					// FIXME: 
+				}
 				break;
 			default:
 				echo "not catched $event\n";
@@ -552,6 +566,10 @@ class XMPPStream {
 				return "logged_in";
 				break;
 			case "end_cb":
+				$this->send_end_stream();
+				return "logged_out";
+				break;
+			case "end_stream":
 				$this->send_end_stream();
 				return "logged_out";
 				break;

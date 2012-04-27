@@ -49,8 +49,6 @@ class JAXLSocket {
 	private $transport = "tcp";
 	private $blocking = 0;
 	
-	public $compressed = false;
-	
 	public $fd = null;
 	
 	private $errno = null;
@@ -126,6 +124,11 @@ class JAXLSocket {
 		$this->fd = null;
 	}
 	
+	public function compress() {
+		stream_filter_append($this->fd, 'zlib.inflate', STREAM_FILTER_READ);
+		stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE);
+	}
+	
 	public function recv() {
 		$read = array($this->fd);
 		$write = $except = null;
@@ -140,7 +143,6 @@ class JAXLSocket {
 		}
 		else if($changed === 1) {
 			$raw = @fread($this->fd, 1024);
-			if($this->compressed) $raw = gzuncompress($raw);
 			$bytes = strlen($raw);
 			
 			if($bytes === 0) {
@@ -169,7 +171,6 @@ class JAXLSocket {
 	}
 	
 	public function send($data) {
-		if($this->compressed) $data = gzcompress($data);
 		$this->obuffer .= $data;
 	}
 	

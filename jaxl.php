@@ -86,6 +86,7 @@ class JAXL {
 	}
 	
 	public function signal_handler($sig) {
+		$this->xmpp->end_stream();
 		switch($sig) {
 			case SIGINT:
 				echo "caught sigint\n";
