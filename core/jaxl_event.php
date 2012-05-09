@@ -36,6 +36,11 @@
 *
 */
 
+/**
+ * 
+ * @author abhinavsingh
+ *
+ */
 class JAXLEvent {
 	
 	protected $reg = array();
@@ -64,7 +69,7 @@ class JAXLEvent {
 	// emit event to notify registered callbacks
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
-	public function emit($ev, $data) {
+	public function emit($ev, $data=array()) {
 		$cbs = array();
 		
 		foreach($this->reg[$ev] as $cb) {

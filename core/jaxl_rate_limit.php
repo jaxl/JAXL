@@ -38,6 +38,11 @@
 
 require_once 'core/jaxl_util.php';
 
+/**
+ * 
+ * @author abhinavsingh
+ *
+ */
 class JAXLRateLimit {
 	
 	private $max_rate;

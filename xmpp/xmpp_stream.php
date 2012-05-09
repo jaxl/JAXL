@@ -50,29 +50,41 @@ require_once 'core/jaxl_socket.php';
  * @author abhinavsingh
  *
  */
-class XMPPStream {
+abstract class XMPPStream {
 	
 	private $state = "setup";
 	
+	// jid with binding resource value
 	public $full_jid = null;
 	
+	// input parameters
 	public $jid = null;
-	private $pass = null;
+	protected $pass = null;
 	
-	public $sock = null;
-	private $xml = null;
+	// underlying socket and xml stream ref
+	protected $sock = null;
+	protected $xml = null;
 	
-	public $mechs = array();
-	private $pref_auth_type = "PLAIN";
-	private $force_tls = true;
-	private $last_id = 0;
+	protected $force_tls = true;
+	protected $last_id = 0;
+	
+	//
+	// abstract methods
+	//
+	
+	abstract public function handle_auth_mechs($mechs);
+	abstract public function handle_auth_success();
+	abstract public function handle_auth_failure($reason);
+	abstract public function handle_iq($stanza);
+	abstract public function handle_presence($stanza);
+	abstract public function handle_message($stanza);
+	abstract public function handle_other($stanza);
 	
 	//
 	// public api
 	// 
 	
-	public function __construct($jid, $pass, $pref_auth_type="PLAIN") {
-		$this->pref_auth_type = $pref_auth_type;
+	public function __construct($jid, $pass) {
 		$this->jid = new XMPPJid($jid);
 		$this->pass = $pass;
 		
@@ -104,6 +116,8 @@ class XMPPStream {
 			else {
 				$this->state = $r;
 			}
+			
+			//echo "current state ".$this->state."\n";
 		}
 		else {
 			echo "invalid state found, nothing called for event ".$event."\n";
@@ -149,6 +163,10 @@ class XMPPStream {
 				$stanza->t(base64_encode("\x00".$user."\x00".$pass));
 				break;
 			case 'DIGEST-MD5':
+				break;
+			case 'CRAM-MD5':
+				break;
+			case 'SCRAM-SHA-1':
 				break;
 			case 'ANONYMOUS':
 				break;
@@ -305,7 +323,7 @@ class XMPPStream {
 		$this->send_raw($this->get_start_stream($domain));
 	}
 	
-	protected function send_end_stream() {
+	public function send_end_stream() {
 		$this->send_raw($this->get_end_stream());
 	}
 	
@@ -333,6 +351,18 @@ class XMPPStream {
 		$this->send($this->get_session_pkt());
 	}
 	
+	private function do_connect($args) {
+		$host = isset($args[0]) ? $args[0] : null;
+		$port = isset($args[1]) ? $args[1] : null;
+		
+		if($this->sock->connect($host, $port)) {
+			return array("connected", 1);
+		}
+		else {
+			return array("disconnected", 0);
+		}
+	}
+	
 	//
 	// fsm States
 	// 
@@ -340,16 +370,8 @@ class XMPPStream {
 	public function setup($event, $args) {
 		switch($event) {
 			case "connect":
-				//echo "got $event\n";
-				$host = isset($args[0]) ? $args[0] : null;
-				$port = isset($args[1]) ? $args[1] : null;
-				
-				if($this->sock->connect($host, $port)) {
-					return array("connected", 1);
-				}
-				else {
-					return array("disconnected", 0);
-				}
+				return $this->do_connect($args);
+				break;
 			default:
 				//echo "not catched $event\n";
 				//print_r($args);
@@ -371,11 +393,27 @@ class XMPPStream {
 		}
 	}
 	
+	public function disconnected($event, $args) {
+		switch($event) {
+			case "connect":
+				return $this->do_connect($args);
+				break;
+			case "end_stream":
+				$this->send_end_stream();
+				return "logged_out";
+				break;
+			default:
+				echo "not catched $event\n";
+				return array("disconnected", 0);
+				break;
+		}
+	}
+	
 	public function wait_for_stream_start($event, $args) {
 		switch($event) {
 			case "start_cb":
 				// TODO: save stream id and other meta info
-				echo "stream started\n";
+				//echo "stream started\n";
 				return "wait_for_stream_features";
 				break;
 			default:
@@ -395,38 +433,37 @@ class XMPPStream {
 				$starttls = $stanza->exists('starttls', NS_TLS);
 				$required = $starttls ? ($starttls->exists('required') ? true : false) : false;
 				
+				if($starttls && $required) {
+					$this->send_starttls_pkt();
+					return "wait_for_tls_result";
+				}
+				
 				// get available mechs
-				$this->mechs = array();
+				$mechanisms = array();
 				$mechs = $stanza->exists('mechanisms', NS_SASL);
-				if($mechs) foreach($mechs->childrens as $mech) $this->mechs[$mech->text] = true;
+				if($mechs) foreach($mechs->childrens as $mech) $mechanisms[$mech->text] = true;
+				
+				if(sizeof($mechanisms) > 0) {
+					// TODO: user land callback api
+					$this->handle_auth_mechs($mechanisms);
+					return "wait_for_sasl_response";
+				}
 				
 				// post auth
 				$bind = $stanza->exists('bind', NS_BIND) ? true : false;
 				$sess = $stanza->exists('session', NS_SESSION) ? true : false;
 				$comp = $stanza->exists('compression', NS_COMPRESSION_FEATURE) ? true : false;
 				
-				if($starttls && $required) {
-					$this->send_starttls_pkt();
-					return "wait_for_tls_result";
-				}
-				else if(sizeof($this->mechs) > 0) {
-					// TODO: user land callback api
-					if(isset($this->mechs[$this->pref_auth_type])) {
-						// try preferred auth mechanism
-						$this->send_auth_pkt($this->pref_auth_type, $this->jid->to_string(), $this->pass);
-					}
-					return "wait_for_sasl_response";
-				}
-				// compression not supported due to bug in php stream filters
-				/*else if($comp) {
-					$this->send_compress_pkt("zlib");
-					return "wait_for_compression_result";
-				}*/
-				else if($bind) {
+				if($bind) {
 					$resource = md5(time());
 					$this->send_bind_pkt($resource);
 					return "wait_for_bind_response";
 				}
+				/*// compression not supported due to bug in php stream filters
+				else if($comp) {
+					$this->send_compress_pkt("zlib");
+					return "wait_for_compression_result";
+				}*/
 				else {
 					echo "no catch\n";
 				}
@@ -445,14 +482,22 @@ class XMPPStream {
 				$stanza = $args[0];
 				
 				if($stanza->name == 'proceed' && $stanza->ns == NS_TLS) {
+					// set blocking (since tls negotiation fails if stream is non-blocking)
+					stream_set_blocking($this->sock->fd, true);
+					
 					$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
 					if($ret == false) {
-						echo "encryption failed ===========>\n";
 						$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
 						if($ret == false) {
-							echo "encryption failed yet again ===========>\n";
+							$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
+							if($ret == false) {
+								$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+							}
 						}
 					}
+					
+					// switch back to non-blocking
+					stream_set_blocking($this->sock->fd, false);
 					
 					$this->xml->reset_parser();
 					$this->send_start_stream($this->jid->domain);
@@ -477,11 +522,11 @@ class XMPPStream {
 				
 				if($stanza->name == 'compressed' && $stanza->ns == NS_COMPRESSION_PROTOCOL) {
 					$this->xml->reset_parser();
-					$this->sock->compressed = true;
 					$this->sock->compress();
 					$this->send_start_stream($this->jid->domain);
 					return "wait_for_stream_start";
 				}
+				
 				break;
 			default:
 				echo "not catched $event\n";
@@ -497,8 +542,8 @@ class XMPPStream {
 				
 				if($stanza->name == 'failure' && $stanza->ns == NS_SASL) {
 					$reason = $stanza->childrens[0]->name;
-					echo "sasl failed with reason ".$reason."\n";
-					$this->send_end_stream();
+					//echo "sasl failed with reason ".$reason."\n";
+					$this->handle_auth_failure($reason);
 					return "logged_out";
 				}
 				else if($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
@@ -550,6 +595,7 @@ class XMPPStream {
 	public function wait_for_session_response($event, $args) {
 		switch($event) {
 			case "stanza_cb":
+				$this->handle_auth_success();
 				return "logged_in";
 				break;
 			default:
@@ -562,7 +608,21 @@ class XMPPStream {
 	public function logged_in($event, $args) {
 		switch($event) {
 			case "stanza_cb":
-				echo "got it in logged in\n";
+				$stanza = $args[0];
+				
+				if($stanza->name == 'message') {
+					$this->handle_message($stanza);
+				}
+				else if($stanza->name == 'presence') {
+					$this->handle_presence($stanza);
+				}
+				else if($stanza->name == 'iq') {
+					$this->handle_iq($stanza);
+				}
+				else {
+					$this->handle_other($stanza);
+				}
+				
 				return "logged_in";
 				break;
 			case "end_cb":
@@ -587,17 +647,9 @@ class XMPPStream {
 				return "disconnected";
 				break;
 			default:
+				// exit for any other event in logged_out state
 				echo "not catched $event\n";
 				return array("logged_out", 0);
-				break;
-		}
-	}
-	
-	public function disconnected($event, $args) {
-		switch($event) {
-			default:
-				echo "not catched $event\n";
-				return array("disconnected", 0);
 				break;
 		}
 	}

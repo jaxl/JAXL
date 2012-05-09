@@ -40,6 +40,11 @@
 error_reporting(E_ALL);
 require_once "jaxl.php";
 
+/**
+ * 
+ * @author abhinavsingh
+ *
+ */
 class JAXLTest extends PHPUnit_Framework_TestCase {
 	
 	function test_xml_stanza() {

@@ -47,31 +47,22 @@ class JAXLSocket {
 	private $host = "localhost";
 	private $port = 5222;
 	private $transport = "tcp";
-	private $blocking = 0;
+	private $blocking = false;
 	
 	public $fd = null;
 	
-	private $errno = null;
-	private $errstr = null;
+	public $errno = null;
+	public $errstr = null;
 	private $timeout = 10;
 	
 	private $ibuffer = "";
 	private $obuffer = "";
+	private $compressed = false;
 	
 	private $recv_bytes = 0;
 	private $send_bytes = 0;
 	
 	private $recv_cb = null;
-	
-	// TODO: logic moves to jaxl class
-	// after cth failed attempt
-	// retry connect after k * $retry_interval seconds
-	// where k is a random number between 0 and 2^c − 1.
-	public $retry = true;
-	private $retry_interval = 1;
-	private $retry_attempt = 0;
-	private $retry_max = 10; // -1 means infinite
-	private $retry_max_interval = 64; // 2^5 seconds
 	
 	public function __construct($host="localhost", $port=5222) {
 		$this->host = $host;
@@ -92,28 +83,17 @@ class JAXLSocket {
 		$this->port = $port ? $port : $this->port;
 		
 		$remote_socket = $this->transport."://".$this->host.":".$this->port;
-		$flags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT;
-
-		echo "trying ".$remote_socket."\n";
-		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, $flags);
+		
+		//echo "trying ".$remote_socket."\n";
+		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout);
+		
 		if($this->fd) {
-			echo "connected to ".$remote_socket."\n";
+			//echo "connected to ".$remote_socket."\n";
 			stream_set_blocking($this->fd, $this->blocking);
 			return true;
 		}
-		// 110 : Connection timed out
-		// 111 : Connection refused
-		else if($this->errno == 110 || $this->errno == 111) {
-			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
-			$this->retry_attempt++;
-			
-			echo "unable to connect, will try again in ".$retry_after." seconds\n";
-			sleep($retry_after);
-			
-			$this->connect($host, $port);
-		}
 		else {
-			echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
+			//echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
 			$this->disconnect();
 			return false;
 		}
@@ -125,8 +105,9 @@ class JAXLSocket {
 	}
 	
 	public function compress() {
-		stream_filter_append($this->fd, 'zlib.inflate', STREAM_FILTER_READ);
-		stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE);
+		$this->compressed = true;
+		//stream_filter_append($this->fd, 'zlib.inflate', STREAM_FILTER_READ);
+		//stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE);
 	}
 	
 	public function recv() {
@@ -137,7 +118,7 @@ class JAXLSocket {
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
 			echo "error while selecting stream for read\n";
-			print_r(stream_get_meta_data($this->fd));
+			//print_r(stream_get_meta_data($this->fd));
 			$this->disconnect();
 			return;
 		}
@@ -155,7 +136,10 @@ class JAXLSocket {
 			}
 			
 			$this->recv_bytes += $bytes;
+			
+			if($this->compressed) $raw = gzinflate($data);
 			$total = $this->ibuffer.$raw;
+			
 			$this->ibuffer = "";
 			echo "read ".$bytes."/".$this->recv_bytes." of data\n";
 			echo $raw."\n\n";
@@ -163,14 +147,15 @@ class JAXLSocket {
 			// callback
 			if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 		}
-		//else if($changed === 0) {
-			//echo "nothing changed while selecting for read\n";
-		//}
+		/*else if($changed === 0) {
+			echo "nothing changed while selecting for read\n";
+		}*/
 		
 		if($this->obuffer != "") $this->flush();
 	}
 	
 	public function send($data) {
+		if($this->compressed) $data = gzdeflate($data);
 		$this->obuffer .= $data;
 	}
 	
@@ -197,9 +182,9 @@ class JAXLSocket {
 			$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
 			//echo "current obuffer size: ".strlen($this->obuffer)."\n";
 		}
-		//else if($changed === 0) {
-			//echo "nothing changed while selecting for write\n";
-		//}
+		else if($changed === 0) {
+			echo "nothing changed while selecting for write\n";
+		}
 	}
 	
 }

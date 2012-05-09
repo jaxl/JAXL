@@ -41,23 +41,60 @@ declare(ticks = 1);
 require_once 'xmpp/xmpp_stream.php';
 require_once 'core/jaxl_event.php';
 
-class JAXL {
+/**
+ * Jaxl class extends base XMPPStream class
+ * Adds a event loop and other xmpp-im utilities on top of base stream fsm
+ * 
+ * @author abhinavsingh
+ *
+ */
+class JAXL extends XMPPStream {
 	
+	// cached init config array
 	protected $cfg = array();
+	
+	// event callback engine for xmpp stream lifecycle
 	protected $ev = null;
-	protected $xmpp = null;
+	
+	// after cth failed attempt
+	// retry connect after k * $retry_interval seconds
+	// where k is a random number between 0 and 2^c - 1.
+	/*public $retry = true;
+	private $retry_interval = 1;
+	private $retry_attempt = 0;
+	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
+	
+	else {
+		// 110 : Connection timed out
+		// 111 : Connection refused
+		if($this->sock->errno == 110 || $this->sock->errno == 111) {
+			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
+			$this->retry_attempt++;
+	
+			echo "unable to connect, will try again in ".$retry_after." seconds\n";
+			// use sigalrm instead (if possible)
+			sleep($retry_after);
+			$this->start_client();
+		}
+	}*/
 	
 	public function __construct($config) {
+		// handle signals
+		pcntl_signal(SIGHUP, array(&$this, 'signal_handler'));
 		pcntl_signal(SIGINT, array(&$this, 'signal_handler'));
 		pcntl_signal(SIGTERM, array(&$this, 'signal_handler'));
+		pcntl_signal(SIGALRM, array(&$this, 'signal_handler'));
 		
+		// save config
 		$this->cfg = $config;
+		
+		// initialize event
 		$this->ev = new JAXLEvent();
 		
-		$this->xmpp = new XMPPStream(
-			$this->cfg['user']."@".$this->cfg['domain'], 
-			$this->cfg['pass'], 
-			$this->cfg['auth_type']
+		// initialize xmpp stream
+		parent::__construct(
+			$this->cfg['jid'], 
+			$this->cfg['pass']
 		);
 	}
 	
@@ -65,16 +102,8 @@ class JAXL {
 		
 	}
 	
-	public function start($as) {
-		switch($as) {
-			case 'client':
-				$this->start_client();
-				break;
-			case 'component':
-				break;
-			default:
-				break;
-		}
+	public function requires($xeps) {
+		
 	}
 	
 	public function add_cb($ev, $cb, $pri=1) {
@@ -85,24 +114,91 @@ class JAXL {
 		$this->ev->del($ref);
 	}
 	
-	public function signal_handler($sig) {
-		$this->xmpp->end_stream();
-		switch($sig) {
-			case SIGINT:
-				echo "caught sigint\n";
-				break;
-			case SIGTERM:
-				echo "caught sigterm\n";
-				break;
+	public function start() {
+		if($this->connect(@$this->cfg['host'])) {
+			$this->ev->emit('on_connect');
+			
+			$this->start_stream();
+			while($this->sock->fd) {
+				$this->sock->recv();
+			}
+			
+			$this->ev->emit('on_disconnect');
+		}
+		else {
+			$this->ev->emit('on_connect_error', array(
+				$this->sock->errno,
+				$this->sock->errstr
+			));
 		}
 	}
 	
-	private function start_client() {
-		if($this->xmpp->connect($this->cfg['host'])) {
-			$this->xmpp->start_stream();
-			while($this->xmpp->sock->fd) {
-				$this->xmpp->sock->recv();
-			}
+	//
+	// abstract method implementation
+	//
+	
+	public function handle_auth_mechs($mechs) {
+		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
+		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
+		
+		if($pref_auth_exists) {
+			$this->send_auth_pkt($pref_auth, $this->jid->to_string(), $this->pass);
+		}
+		else {
+			echo "preferred auth type not supported\n";
+		}
+	}
+	
+	public function handle_auth_success() {
+		$this->ev->emit('on_auth_success');
+	}
+	
+	public function handle_auth_failure($reason) {
+		$this->ev->emit('on_auth_failure', array(
+			$reason
+		));
+	}
+	
+	public function handle_iq($stanza) {
+		
+	}
+	
+	public function handle_presence($stanza) {
+		
+	}
+	
+	public function handle_message($stanza) {
+		
+	}
+	
+	public function handle_other($stanza) {
+		
+	}
+	
+	//
+	// sig handler
+	//
+	
+	public function signal_handler($sig) {
+		$this->end_stream();
+	
+		switch($sig) {
+			// terminal line hangup
+			case SIGHUP:
+				echo "caught sighup\n";
+				break;
+			// interrupt program
+			case SIGINT:
+				echo "caught sigint\n";
+				break;
+			// software termination signal
+			case SIGTERM:
+				echo "caught sigterm\n";
+				break;
+			// real-time timer expired
+			case SIGALRM:
+				echo "caught sigalrm\n";
+				break;
 		}
 	}
 	

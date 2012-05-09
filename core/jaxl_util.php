@@ -36,6 +36,11 @@
 *
 */
 
+/**
+ * 
+ * @author abhinavsingh
+ *
+ */
 class JAXLUtil {
 	
 	public static function get_nonce($binary=true) {
