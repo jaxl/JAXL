@@ -36,7 +36,7 @@
 *
 */
 
-require_once 'core/jaxl_util.php';
+require_once JAXL_CWD.'/core/jaxl_util.php';
 
 /**
  * 

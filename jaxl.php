@@ -37,13 +37,17 @@
 */
 
 declare(ticks = 1);
+define('JAXL_CWD', getcwd());
 
-require_once 'xmpp/xmpp_stream.php';
-require_once 'core/jaxl_event.php';
+require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
+require_once JAXL_CWD.'/core/jaxl_event.php';
 
 /**
- * Jaxl class extends base XMPPStream class
- * Adds a event loop and other xmpp-im utilities on top of base stream fsm
+ * Jaxl class extends base XMPPStream class with following functionalities:
+ * 1) Adds an event based wrapper
+ * 2) Provides restart strategy
+ * 3) Roster management as specified in XMPP-IM
+ * 4) Management of XEP's and other basic xmpp client work
  * 
  * @author abhinavsingh
  *
@@ -55,6 +59,9 @@ class JAXL extends XMPPStream {
 	
 	// event callback engine for xmpp stream lifecycle
 	protected $ev = null;
+	
+	// reference to various xep instance objects
+	protected $xeps = array();
 	
 	// after cth failed attempt
 	// retry connect after k * $retry_interval seconds
@@ -99,11 +106,23 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function __destruct() {
-		
+		parent::__destruct();
 	}
 	
-	public function requires($xeps) {
-		
+	public function require_xep($xeps) {
+		foreach($xeps as $xep) {
+			$filename = 'xep_'.$xep.'.php';
+			$classname = 'XEP'.$xep;
+			
+			// include xep
+			require_once JAXL_CWD.'/xep/'.$filename;
+			$this->xeps[$xep] = new $classname($this);
+			
+			// add necessary requested callback on events
+			foreach($this->xeps[$xep]->init() as $ev=>$cb) {
+				$this->add_cb($ev, array($this->xeps[$xep], $cb));
+			}
+		}
 	}
 	
 	public function add_cb($ev, $cb, $pri=1) {
@@ -115,10 +134,16 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function start() {
-		if($this->connect(@$this->cfg['host'])) {
+		// if on_connect event have no callbacks
+		// set default on_connect callback to $this->start_stream()
+		// i.e. xmpp client mode
+		if(!isset($this->ev->reg['on_connect']))
+			$this->add_cb('on_connect', array($this, 'start_stream'));
+		
+		// start
+		if($this->connect(@$this->cfg['host'], @$this->cfg['port'])) {
 			$this->ev->emit('on_connect');
 			
-			$this->start_stream();
 			while($this->sock->fd) {
 				$this->sock->recv();
 			}
@@ -136,6 +161,11 @@ class JAXL extends XMPPStream {
 	//
 	// abstract method implementation
 	//
+	
+	public function handle_stream_start($stanza) {
+		$this->ev->emit('on_stream_start', array($stanza));
+		return array('connected', 1);
+	}
 	
 	public function handle_auth_mechs($mechs) {
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
@@ -171,8 +201,9 @@ class JAXL extends XMPPStream {
 		
 	}
 	
-	public function handle_other($stanza) {
-		
+	public function handle_other($event, $args) {
+		$stanza = $args[0];
+		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
 	
 	//

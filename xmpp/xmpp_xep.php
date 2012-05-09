@@ -36,56 +36,25 @@
  *
  */
 
-//
-// initialize JAXL object with initial config
-//
-require_once 'jaxl.php';
-$comp = new JAXL(array(
-	// same as component host
-	'jid' => 'component.localhost',
-	// same as component secret
-	'pass' => 'secret',
-	// required
-	'host' => 'dev.local',
-	// required
-	'port' => 5270
-));
-
-//
-// XEP's required
-//
-$comp->require_xep(array(
-	'0114' // jabber component protocol (required for component)
-));
-
-//
-// add necessary event callbacks here
-//
-/*$comp->add_cb('on_connect', function() {
-	echo "got on_connect cb\n";
-});*/
-
-$comp->add_cb('on_connect_error', function($errno, $errstr) {
-	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
-});
-
-$comp->add_cb('on_auth_success', function() {
-	echo "got on_auth_success cb\n";
-});
-
-$comp->add_cb('on_auth_failure', function($reason) {
-	global $comp;
-	$comp->send_end_stream();
-	echo "got on_auth_failure cb with reason $reason\n";
-});
-
-$comp->add_cb('on_disconnect', function() {
-	echo "got on_disconnect cb\n";
-});
-
-//
-// finally start configured xmpp stream
-//
-$comp->start();
+/**
+ * 
+ * @author abhinavsingh
+ *
+ */
+abstract class XMPPXep {
+	
+	abstract public function init();
+	
+	protected $jaxl = null;
+	
+	public function __construct($jaxl) {
+		$this->jaxl = $jaxl;
+	}
+	
+	public function __destruct() {
+		
+	}
+	
+}
 
 ?>

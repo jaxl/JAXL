@@ -36,56 +36,59 @@
  *
  */
 
-//
-// initialize JAXL object with initial config
-//
-require_once 'jaxl.php';
-$comp = new JAXL(array(
-	// same as component host
-	'jid' => 'component.localhost',
-	// same as component secret
-	'pass' => 'secret',
-	// required
-	'host' => 'dev.local',
-	// required
-	'port' => 5270
-));
+require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-//
-// XEP's required
-//
-$comp->require_xep(array(
-	'0114' // jabber component protocol (required for component)
-));
+define('NS_JABBER_COMPONENT_ACCEPT', 'jabber:component:accept');
 
-//
-// add necessary event callbacks here
-//
-/*$comp->add_cb('on_connect', function() {
-	echo "got on_connect cb\n";
-});*/
-
-$comp->add_cb('on_connect_error', function($errno, $errstr) {
-	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
-});
-
-$comp->add_cb('on_auth_success', function() {
-	echo "got on_auth_success cb\n";
-});
-
-$comp->add_cb('on_auth_failure', function($reason) {
-	global $comp;
-	$comp->send_end_stream();
-	echo "got on_auth_failure cb with reason $reason\n";
-});
-
-$comp->add_cb('on_disconnect', function() {
-	echo "got on_disconnect cb\n";
-});
-
-//
-// finally start configured xmpp stream
-//
-$comp->start();
+class XEP0114 extends XMPPXep {
+	
+	//
+	// abstract method
+	//
+	
+	public function init() {
+		return array(
+			'on_connect' => 'start_stream',
+			'on_stream_start' => 'start_handshake',
+			'on_handshake_stanza' => 'logged_in',
+			'on_error_stanza' => 'logged_out'
+		);
+	}
+	
+	//
+	// event callbacks
+	//
+	
+	public function start_stream() {
+		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" to="'.$this->jaxl->jid->to_string().'" xmlns="'.NS_JABBER_COMPONENT_ACCEPT.'">';
+		$this->jaxl->send_raw($xml);
+	}
+	
+	public function start_handshake($stanza) {
+		// send handshake
+		$id = $stanza->attrs['id'];
+		$hash = strtolower(sha1($id.$this->jaxl->pass));
+		$stanza = new JAXLXml('handshake', '', $hash);
+		$this->jaxl->send($stanza);
+	}
+	
+	public function logged_in($stanza) {
+		$this->jaxl->handle_auth_success();
+		return array("logged_in", 1);
+	}
+	
+	public function logged_out($stanza) {
+		if($stanza->name == "error" && $stanza->ns == NS_XMPP) {
+			$reason = $stanza->childrens[0]->name;
+			$this->jaxl->handle_auth_failure($reason);
+			$this->jaxl->send_end_stream();
+			return array("logged_out", 0);
+		}
+		else {
+			echo "uncatched stanza received in logged_out\n";
+		}
+	}
+	
+}
 
 ?>

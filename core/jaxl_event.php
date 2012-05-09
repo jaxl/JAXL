@@ -37,13 +37,19 @@
 */
 
 /**
+ * following kind of events are possible:
+ * 1) hook i.e. if a callback for such an event is registered, calling function is responsible for the workflow from their on
+ * 2) filter i.e. calling function will manipulate passed arguments and modified arguments will be passed to next chain of filter
+ * 
+ * As a rule of thumb, only 1 hook can be registered for an event, while more than 1 filter is allowed for an event
+ * hook and filter both cannot be applied on an event
  * 
  * @author abhinavsingh
  *
  */
 class JAXLEvent {
 	
-	protected $reg = array();
+	public $reg = array();
 	
 	public function __construct() {
 		
@@ -72,6 +78,8 @@ class JAXLEvent {
 	public function emit($ev, $data=array()) {
 		$cbs = array();
 		
+		if(!isset($this->reg[$ev])) return $data;
+		
 		foreach($this->reg[$ev] as $cb) {
 			if(!isset($cbs[$cb[0]]))
 				$cbs[$cb[0]] = array();
@@ -80,11 +88,12 @@ class JAXLEvent {
 		
 		foreach($cbs as $pri => $cb) {
 			foreach($cb as $c) {
-				call_user_func_array($c, $data);
+				$data = call_user_func_array($c, $data);
 			}
 		}
 		
 		unset($cbs);
+		return $data;
 	}
 	
 	// remove previous registered callback

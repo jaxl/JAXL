@@ -54,20 +54,20 @@ $client = new JAXL(array(
 //
 // XEP's required
 //
-$client->requires(array(
+/*$client->require_xep(array(
 	'0115', // entity capibilities
 	'0092', // software version
 	'0199', // xmpp ping
 	'0203', // delayed delivery
 	'0202'  // entity time
-));
+));*/
 
 //
 // add necessary event callbacks here
 //
-$client->add_cb('on_connect', function() {
+/*$client->add_cb('on_connect', function() {
 	echo "got on_connect cb\n";
-});
+});*/
 
 $client->add_cb('on_connect_error', function($errno, $errstr) {
 	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";

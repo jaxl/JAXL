@@ -36,13 +36,12 @@
 *
 */
 
-require_once 'xmpp/xmpp_nss.php';
-require_once 'xmpp/xmpp_jid.php';
-
-require_once 'core/jaxl_xml.php';
-require_once 'core/jaxl_xml_stream.php';
-require_once 'core/jaxl_util.php';
-require_once 'core/jaxl_socket.php';
+require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
+require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
+require_once JAXL_CWD.'/core/jaxl_xml.php';
+require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
+require_once JAXL_CWD.'/core/jaxl_util.php';
+require_once JAXL_CWD.'/core/jaxl_socket.php';
 
 /**
  * 
@@ -59,7 +58,7 @@ abstract class XMPPStream {
 	
 	// input parameters
 	public $jid = null;
-	protected $pass = null;
+	public $pass = null;
 	
 	// underlying socket and xml stream ref
 	protected $sock = null;
@@ -72,13 +71,14 @@ abstract class XMPPStream {
 	// abstract methods
 	//
 	
+	abstract public function handle_stream_start($stanza);
 	abstract public function handle_auth_mechs($mechs);
 	abstract public function handle_auth_success();
 	abstract public function handle_auth_failure($reason);
 	abstract public function handle_iq($stanza);
 	abstract public function handle_presence($stanza);
 	abstract public function handle_message($stanza);
-	abstract public function handle_other($stanza);
+	abstract public function handle_other($event, $args);
 	
 	//
 	// public api
@@ -108,9 +108,8 @@ abstract class XMPPStream {
 			
 			if(is_array($r) && sizeof($r) == 2) {
 				list($this->state, $ret) = $r;
-				return $ret;
 			}
-			if(is_array($r) && sizeof($r) == 1) {
+			else if(is_array($r) && sizeof($r) == 1) {
 				$this->state = $r[0];
 			}
 			else {
@@ -118,6 +117,7 @@ abstract class XMPPStream {
 			}
 			
 			//echo "current state ".$this->state."\n";
+			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {
 			echo "invalid state found, nothing called for event ".$event."\n";
@@ -375,6 +375,7 @@ abstract class XMPPStream {
 			default:
 				//echo "not catched $event\n";
 				//print_r($args);
+				return $this->handle_other($event, $args);
 				return array("setup", 0);
 				break;
 		}
@@ -386,8 +387,14 @@ abstract class XMPPStream {
 				$this->send_start_stream($this->jid->domain);
 				return array("wait_for_stream_start", 1);
 				break;
+			// someone else already started the stream before us
+			case "start_cb":
+				$stanza = $args[0];
+				return $this->handle_stream_start($stanza);
+				break;
 			default:
 				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("connected", 0);
 				break;
 		}
@@ -403,7 +410,8 @@ abstract class XMPPStream {
 				return "logged_out";
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("disconnected", 0);
 				break;
 		}
@@ -417,7 +425,8 @@ abstract class XMPPStream {
 				return "wait_for_stream_features";
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_stream_start", 0);
 				break;
 		}
@@ -470,7 +479,8 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_stream_features", 0);
 				break;
 		}
@@ -509,7 +519,8 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_tls_result", 0);
 				break;
 		}
@@ -529,7 +540,8 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_compression_result", 0);
 				break;
 		}
@@ -563,7 +575,8 @@ abstract class XMPPStream {
 				return "wait_for_sasl_response";
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_sasl_response", 0);
 				break;
 		}
@@ -586,7 +599,8 @@ abstract class XMPPStream {
 				}
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_bind_response", 0);
 				break;
 		}
@@ -599,7 +613,8 @@ abstract class XMPPStream {
 				return "logged_in";
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("wait_for_session_response", 0);
 				break;
 		}
@@ -634,7 +649,8 @@ abstract class XMPPStream {
 				return "logged_out";
 				break;
 			default:
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("logged_in", 0);
 				break;
 		}
@@ -648,7 +664,8 @@ abstract class XMPPStream {
 				break;
 			default:
 				// exit for any other event in logged_out state
-				echo "not catched $event\n";
+				//echo "not catched $event\n";
+				return $this->handle_other($event, $args);
 				return array("logged_out", 0);
 				break;
 		}

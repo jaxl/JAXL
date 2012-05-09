@@ -167,7 +167,7 @@ class JAXLSocket {
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
 			echo "error while selecting stream for write\n";
-			print_r(stream_get_meta_data($this->fd));
+			print_r(@stream_get_meta_data($this->fd));
 			$this->disconnect();
 			return;
 		}
