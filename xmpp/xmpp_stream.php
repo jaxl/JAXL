@@ -38,6 +38,10 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
 require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
+require_once JAXL_CWD.'/xmpp/xmpp_msg.php';
+require_once JAXL_CWD.'/xmpp/xmpp_pres.php';
+require_once JAXL_CWD.'/xmpp/xmpp_iq.php';
+
 require_once JAXL_CWD.'/core/jaxl_xml.php';
 require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
 require_once JAXL_CWD.'/core/jaxl_util.php';
@@ -233,39 +237,25 @@ abstract class XMPPStream {
 		), $stanza);
 	}
 	
-	public function get_msg_pkt($attrs, $subject=null, $body=null, $thread=null, $payload=null) {
-		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new JAXLXml('message', NS_JABBER_CLIENT);
-		$stanza->attrs($attrs);
-		
-		if($subject) $stanza->c('subject')->t($subject)->up();
-		if($body) $stanza->c('body')->t($body)->up();
-		if($thread) $stanza->c('thread')->t($thread)->up();
-		
-		if($payload) $stanza->cnode($payload);
-		return $stanza;
+	public function get_msg_pkt($attrs, $body=null, $thread=null, $subject=null, $payload=null) {
+		$msg = new XMPPMsg($attrs, $body, $thread, $subject);
+		if(!$msg->id) $msg->id = $this->get_id();
+		if($payload) $msg->cnode($payload);
+		return $msg;
 	}
 	
-	public function get_pres_pkt($attrs, $show, $status, $priority, $payload) {
-		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new JAXLXml('presence', NS_JABBER_CLIENT);
-		$stanza->attrs($attrs);
-		
-		if($show) $stanza->c('show')->t($show)->up();
-		if($status) $stanza->c('status')->t($status)->up();
-		if($priority) $stanza->c('priority')->t($priority)->up();
-		
-		if($payload) $stanza->cnode($payload);
-		return $stanza;
+	public function get_pres_pkt($attrs, $status=null, $show=null, $priority=null, $payload=null) {
+		$pres = new XMPPPres($attrs, $status, $show, $priority);
+		if(!$pres->id) $pres->id = $this->get_id();
+		if($payload) $pres->cnode($payload);
+		return $pres;
 	}
 	
 	public function get_iq_pkt($attrs, $payload) {
-		if(!isset($attrs['id'])) $attrs['id'] = $this->get_id();
-		$stanza = new JAXLXml('iq', NS_JABBER_CLIENT);
-		$stanza->attrs($attrs);
-		
-		if($payload) $stanza->cnode($payload);
-		return $stanza;
+		$iq = new XMPPIq($attrs);
+		if(!$iq->id) $iq->id = $this->get_id();
+		if($payload) $iq->cnode($payload);
+		return $iq;
 	}
 	
 	public function get_id() {
@@ -635,7 +625,7 @@ abstract class XMPPStream {
 					$this->handle_iq($stanza);
 				}
 				else {
-					$this->handle_other($stanza);
+					$this->handle_other($event, $args);
 				}
 				
 				return "logged_in";

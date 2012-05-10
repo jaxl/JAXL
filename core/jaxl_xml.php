@@ -54,9 +54,9 @@
 class JAXLXml {
 	
 	public $name;
-	public $ns = '';
+	public $ns = null;
 	public $attrs = array();
-	public $text = '';
+	public $text = null;
 	
 	public $childrens = array();
 	public $parent = null;
@@ -157,13 +157,13 @@ class JAXLXml {
 		$xml = '';
 		
 		$xml .= '<'.$this->name;
-		if($this->ns != '') $xml .= ' xmlns="'.$this->ns.'"';
+		if($this->ns) $xml .= ' xmlns="'.$this->ns.'"';
 		foreach($this->attrs as $k=>$v) $xml .= ' '.$k.'="'.$v.'"';
 		$xml .= '>';
 		
 		foreach($this->childrens as $child) $xml .= $child->to_string();
 		
-		if($this->text != '') $xml .= $this->text;
+		if($this->text) $xml .= $this->text;
 		$xml .= '</'.$this->name.'>';
 		return $xml;
 	}

@@ -46,7 +46,7 @@ $comp = new JAXL(array(
 	// same as component secret
 	'pass' => 'secret',
 	// required
-	'host' => 'dev.local',
+	'host' => 'localhost',
 	// required
 	'port' => 5270
 ));
@@ -61,9 +61,6 @@ $comp->require_xep(array(
 //
 // add necessary event callbacks here
 //
-/*$comp->add_cb('on_connect', function() {
-	echo "got on_connect cb\n";
-});*/
 
 $comp->add_cb('on_connect_error', function($errno, $errstr) {
 	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
@@ -87,5 +84,6 @@ $comp->add_cb('on_disconnect', function() {
 // finally start configured xmpp stream
 //
 $comp->start();
+echo "done\n";
 
 ?>

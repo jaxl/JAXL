@@ -36,56 +36,25 @@
  *
  */
 
-//
-// initialize JAXL object with initial config
-//
-require_once 'jaxl.php';
-$client = new JAXL(array(
-	'jid' => 'user@domain.tld',
-	'pass' => 'password',
-	// (optional) srv lookup is done if not provided
-	//'host' => 'xmpp.domain.tld',
-	// (optional) result from srv lookup used by default
-	//'port' => 5222,
-	// (optional)
-	'auth_type' => 'PLAIN'
-));
+require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-//
-// XEP's required
-//
-$client->require_xep(array(
-	'0115' // entity capibilities
-));
+define('NS_CAPS', 'http://jabber.org/protocol/caps');
 
-//
-// add necessary event callbacks here
-//
-
-$client->add_cb('on_connect_error', function($errno, $errstr) {
-	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
-});
-
-$client->add_cb('on_auth_success', function() {
-	echo "got on_auth_success cb\n";
-	global $client;
-	$client->set_status("available!", "dnd", 10);
-});
-
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	echo "got on_auth_failure cb with reason $reason\n";
-});
-
-$client->add_cb('on_disconnect', function() {
-	echo "got on_disconnect cb\n";
-});
-
-//
-// finally start configured xmpp stream
-//
-$client->start();
-echo "done\n";
+class XEP0115 extends XMPPXep {
+	
+	public function init() {
+		return array();
+	}
+	
+	public function get_caps_pkt($cat, $type, $lang, $name, $node, $features) {
+		asort($features);
+		$S = $cat.'/'.$type.'/'.$lang.'/'.$name.'<';
+		foreach($features as $feature) $S .= $feature.'<';
+		$ver = base64_encode(sha1($S, true));
+		
+		$stanza = new JAXLXml('c', NS_CAPS, array('hash'=>'sha1', 'node'=>$node, 'ver'=>$ver));
+		return $stanza;
+	}
+}
 
 ?>

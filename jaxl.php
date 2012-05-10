@@ -133,6 +133,15 @@ class JAXL extends XMPPStream {
 		$this->ev->del($ref);
 	}
 	
+	public function set_status($status, $show, $priority) {
+		$this->send($this->get_pres_pkt(
+			array(),
+			$status,
+			$show,
+			$priority
+		));
+	}
+	
 	public function start() {
 		// if on_connect event have no callbacks
 		// set default on_connect callback to $this->start_stream()
