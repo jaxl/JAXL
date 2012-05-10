@@ -121,7 +121,7 @@ class JAXLXml {
 	}
 	
 	// append a child node at current rover
-	public function c($name, $ns='', $attrs=array(), $text='') {
+	public function c($name, $ns=null, $attrs=array(), $text=null) {
 		$node = new JAXLXml($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
@@ -152,13 +152,26 @@ class JAXLXml {
 		return false;
 	}
 	
+	// update child element
+	public function update($name, $ns=null, $attrs=array(), $text=null) {
+		foreach($this->childrens as $k=>$child) {
+			if($child->name == $name) {
+				$child->ns = $ns;
+				$child->attrs($attrs);
+				$child->text = $text;
+				$this->childrens[$k] = $child;
+				break;
+			}
+		}
+	}
+	
 	// to string conversion
 	public function to_string() {
 		$xml = '';
 		
 		$xml .= '<'.$this->name;
 		if($this->ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach($this->attrs as $k=>$v) $xml .= ' '.$k.'="'.$v.'"';
+		foreach($this->attrs as $k=>$v) if($v) $xml .= ' '.$k.'="'.$v.'"';
 		$xml .= '>';
 		
 		foreach($this->childrens as $child) $xml .= $child->to_string();

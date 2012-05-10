@@ -44,10 +44,12 @@ require_once JAXL_CWD.'/core/jaxl_event.php';
 
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
- * 1) Adds an event based wrapper
- * 2) Provides restart strategy
+ * 1) Adds an event based wrapper over xmpp stream lifecycle
+ * 2) Provides restart strategy and signal handling to ensure connectivity of xmpp stream
  * 3) Roster management as specified in XMPP-IM
- * 4) Management of XEP's and other basic xmpp client work
+ * 4) Management of XEP's inside xmpp stream lifecycle
+ * 5) Adds a logging facility
+ * 6) Adds a cron job facility in sync with connected xmpp stream timeline
  * 
  * @author abhinavsingh
  *

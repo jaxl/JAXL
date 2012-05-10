@@ -119,8 +119,10 @@ class XMPPStanza extends JAXLXml {
 			case 'body':
 			case 'thread':
 			case 'subject':
-				// TODO:
-				return false;
+				$val1 = $this->exists($prop);
+				if(!$val1) $this->c($prop)->t($val)->up();
+				else $this->update($prop, $val1->ns, $val1->attrs, $val);
+				return true;
 				break;
 	
 			default:
