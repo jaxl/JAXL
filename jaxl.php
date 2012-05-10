@@ -170,7 +170,7 @@ class JAXL extends XMPPStream {
 	public function require_xep($xeps) {
 		foreach($xeps as $xep) {
 			$filename = 'xep_'.$xep.'.php';
-			$classname = 'XEP'.$xep;
+			$classname = 'XEP_'.$xep;
 			
 			// include xep
 			require_once JAXL_CWD.'/xep/'.$filename;
@@ -198,6 +198,11 @@ class JAXL extends XMPPStream {
 			$show,
 			$priority
 		));
+	}
+	
+	public function send_chat_msg($to, $body) {
+		$msg = new XMPPMsg(array('type'=>'chat', 'to'=>$to, 'from'=>$this->full_jid->to_string()), $body);
+		$this->send($msg);
 	}
 	
 	public function start() {

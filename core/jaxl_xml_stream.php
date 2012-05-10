@@ -98,7 +98,7 @@ class JAXLXmlStream {
 	
 	protected function handle_start_tag($parser, $name, $attrs) {
 		$name = explode($this->delimiter, $name);
-		$name = sizeof($name) == 1 ? array('', $name[0]) : $name; 
+		$name = sizeof($name) == 1 ? array(null, $name[0]) : $name;
 		
 		if($this->depth <= 0) {
 			$this->depth = 0;
