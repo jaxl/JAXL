@@ -36,25 +36,52 @@
  *
  */
 
-require_once 'xmpp/xmpp_nss.php';
-require_once 'xmpp/xmpp_jid.php';
-require_once 'core/jaxl_xml.php';
+require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
+require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
+require_once JAXL_CWD.'/core/jaxl_xml.php';
 
-class XMPPStanza extends JAXLXml {
+/**
+ * Generic xmpp stanza object which provide convinient access pattern over xml objects
+ * Also to be able to convert an existing xml object into stanza object (to get access patterns going)
+ * this class doesn't extend xml, but infact works on a reference of xml object
+ * If not provided during constructor, new xml object is created and saved as reference
+ * 
+ * @author abhinavsingh
+ *
+ */
+class XMPPStanza {
+	
+	private $xml;
 	
 	public function __construct($name, $attrs=array(), $ns=NS_JABBER_CLIENT) {
-		parent::__construct($name, $ns, $attrs);
+		if($name instanceof JAXLXml) $this->xml = $name;
+		else $this->xml = new JAXLXml($name, $ns, $attrs);
+	}
+	
+	public function __call($method, $args) {
+		return call_user_func_array(array($this->xml, $method), $args);
 	}
 	
 	public function __get($prop) {
 		switch($prop) {
+			// access to jaxl xml properties
+			case 'name':
+			case 'ns':
+			case 'text':
+			case 'attrs':
+			case 'childrens':
+				return $this->xml->$prop;
+				break;
+				
+			// access to common xml attributes
 			case 'to':
 			case 'from':
 			case 'id':
 			case 'type':
-				return @$this->attrs[$prop] ? $this->attrs[$prop] : null;
+				return @$this->xml->attrs[$prop] ? $this->xml->attrs[$prop] : null;
 				break;
 			
+			// access to parts of common xml attributes
 			case 'to_node':
 			case 'to_domain':
 			case 'to_resource':
@@ -62,20 +89,21 @@ class XMPPStanza extends JAXLXml {
 			case 'from_domain':
 			case 'from_resource':
 				list($attr, $key) = explode('_', $prop);
-				$val = @$this->attrs[$attr] ? $this->attrs[$attr] : null;
+				$val = @$this->xml->attrs[$attr] ? $this->xml->attrs[$attr] : null;
 				if(!$val) return null;
-	
+				
 				$val = new XMPPJid($val);
 				return $val->$key;
 				break;
 			
+			// access to first child element text
 			case 'status':
 			case 'show':
 			case 'priority':
 			case 'body':
 			case 'thread':
 			case 'subject':
-				$val = $this->exists($prop);
+				$val = $this->xml->exists($prop);
 				if(!$val) return null;
 				return $val->text;
 				break;
@@ -88,14 +116,25 @@ class XMPPStanza extends JAXLXml {
 	
 	public function __set($prop, $val) {
 		switch($prop) {
+			// access to jaxl xml properties
+			case 'name':
+			case 'ns':
+			case 'text':
+			case 'attrs':
+			case 'childrens':
+				return $this->xml->$prop = $val;
+				break;
+			
+			// access to common xml attributes
 			case 'to':
 			case 'from':
 			case 'id':
 			case 'type':
-				$this->attrs[$prop] = $val;
+				$this->xml->attrs[$prop] = $val;
 				return true;
 				break;
 			
+			// access to parts of common xml attributes
 			case 'to_node':
 			case 'to_domain':
 			case 'to_resource':
@@ -103,25 +142,26 @@ class XMPPStanza extends JAXLXml {
 			case 'from_domain':
 			case 'from_resource':
 				list($attr, $key) = explode('_', $prop);
-				$val1 = @$this->attrs[$attr];
+				$val1 = @$this->xml->attrs[$attr];
 				if(!$val1) $val1 = '';
 				
 				$val1 = new XMPPJid($val1);
 				$val1->$key = $val;
 				
-				$this->attrs[$attr] = $val1->to_string();
+				$this->xml->attrs[$attr] = $val1->to_string();
 				return true;
 				break;
 			
+			// access to first child element text
 			case 'status':
 			case 'show':
 			case 'priority':
 			case 'body':
 			case 'thread':
 			case 'subject':
-				$val1 = $this->exists($prop);
-				if(!$val1) $this->c($prop)->t($val)->up();
-				else $this->update($prop, $val1->ns, $val1->attrs, $val);
+				$val1 = $this->xml->exists($prop);
+				if(!$val1) $this->xml->c($prop)->t($val)->up();
+				else $this->xml->update($prop, $val1->ns, $val1->attrs, $val);
 				return true;
 				break;
 	
@@ -130,6 +170,7 @@ class XMPPStanza extends JAXLXml {
 				break;
 		}
 	}
+	
 }
 
 ?>
