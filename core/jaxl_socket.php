@@ -60,9 +60,17 @@ class JAXLSocket {
 	private $compressed = false;
 	
 	private $recv_bytes = 0;
-	private $send_bytes = 0;
-	
 	private $recv_cb = null;
+	private $recv_secs = 0;
+	private $recv_usecs = 200000;
+	private $recv_chunk_size = 1024;
+	
+	private $send_bytes = 0;
+	private $send_secs = 0;
+	private $send_usecs = 100000;
+	
+	private $clock = 0;
+	private $time = 0;
 	
 	public function __construct($host="localhost", $port=5222) {
 		$this->host = $host;
@@ -93,7 +101,7 @@ class JAXLSocket {
 			return true;
 		}
 		else {
-			//echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
+			echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
 			$this->disconnect();
 			return false;
 		}
@@ -113,7 +121,7 @@ class JAXLSocket {
 	public function recv() {
 		$read = array($this->fd);
 		$write = $except = null;
-		$secs = 0; $usecs = 200000;
+		$secs = $this->recv_secs; $usecs = $this->recv_usecs;
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
@@ -123,7 +131,7 @@ class JAXLSocket {
 			return;
 		}
 		else if($changed === 1) {
-			$raw = @fread($this->fd, 1024);
+			$raw = @fread($this->fd, $this->recv_chunk_size);
 			$bytes = strlen($raw);
 			
 			if($bytes === 0) {
@@ -147,9 +155,10 @@ class JAXLSocket {
 			// callback
 			if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 		}
-		/*else if($changed === 0) {
-			echo "nothing changed while selecting for read\n";
-		}*/
+		else if($changed === 0) {
+			//echo "nothing changed while selecting for read\n";
+			$this->clock = $this->recv_secs + $this->recv_usecs/pow(10,6);
+		}
 		
 		if($this->obuffer != "") $this->flush();
 	}
@@ -162,7 +171,7 @@ class JAXLSocket {
 	protected function flush() {
 		$read = $except = array();
 		$write = array($this->fd);
-		$secs = 0; $usecs = 100000;
+		$secs = $this->send_secs; $usecs = $this->send_usecs;
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {

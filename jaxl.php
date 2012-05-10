@@ -56,6 +56,10 @@ require_once JAXL_CWD.'/core/jaxl_event.php';
  */
 class JAXL extends XMPPStream {
 	
+	// lib meta info
+	const version = '3.0.0-alpha-1';
+	const name = 'JAXL :: Jabber XMPP Library';
+	
 	// cached init config array
 	protected $cfg = array();
 	
@@ -64,6 +68,40 @@ class JAXL extends XMPPStream {
 	
 	// reference to various xep instance objects
 	protected $xeps = array();
+	
+	// local cache of roster list
+	public $roster = array();
+	
+	// whether jaxl must also populate local roster cache with
+	// received presence information about the contacts
+	public $manager_roster = true;
+	
+	// automatically accept new subscription requests
+	public $auto_accept_subscribe = false;
+	
+	// path variables
+	public $tmp_path;
+	public $log_path;
+	public $pid_path;
+	public $pid;
+	
+	// local ip address
+	public $local_ip;
+	
+	// cgi | cli
+	public $mode;
+	
+	// periodically dump stats
+	public $dump_stats = true;
+	
+	// current status message
+	public $status;
+	
+	// identity
+	public $features = array();
+	public $category = 'client';
+	public $type = 'bot';
+	public $lang = 'en';
 	
 	// after cth failed attempt
 	// retry connect after k * $retry_interval seconds
@@ -87,12 +125,30 @@ class JAXL extends XMPPStream {
 		}
 	}*/
 	
+	public function signal_handler($sig) {
+		$this->end_stream();
+		
+		switch($sig) {
+			// terminal line hangup
+			case SIGHUP:
+				echo "got sighup\n";
+				break;
+				// interrupt program
+			case SIGINT:
+				echo "got sigint\n";
+				break;
+				// software termination signal
+			case SIGTERM:
+				echo "got sigterm\n";
+				break;
+		}
+	}
+	
 	public function __construct($config) {
 		// handle signals
-		pcntl_signal(SIGHUP, array(&$this, 'signal_handler'));
-		pcntl_signal(SIGINT, array(&$this, 'signal_handler'));
-		pcntl_signal(SIGTERM, array(&$this, 'signal_handler'));
-		pcntl_signal(SIGALRM, array(&$this, 'signal_handler'));
+		pcntl_signal(SIGHUP, array($this, 'signal_handler'));
+		pcntl_signal(SIGINT, array($this, 'signal_handler'));
+		pcntl_signal(SIGTERM, array($this, 'signal_handler'));
 		
 		// save config
 		$this->cfg = $config;
@@ -173,11 +229,6 @@ class JAXL extends XMPPStream {
 	// abstract method implementation
 	//
 	
-	public function handle_stream_start($stanza) {
-		$this->ev->emit('on_stream_start', array($stanza));
-		return array('connected', 1);
-	}
-	
 	public function handle_auth_mechs($mechs) {
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
 		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
@@ -200,48 +251,31 @@ class JAXL extends XMPPStream {
 		));
 	}
 	
-	public function handle_iq($stanza) {
+	public function handle_stream_start($stanza) {
+		$stanza = new XMPPStanza($stanza);
 		
+		$this->ev->emit('on_stream_start', array($stanza));
+		return array('connected', 1);
+	}
+	
+	public function handle_iq($stanza) {
+		$stanza = new XMPPStanza($stanza);
 	}
 	
 	public function handle_presence($stanza) {
-		
+		$stanza = new XMPPStanza($stanza);
 	}
 	
 	public function handle_message($stanza) {
-		
+		$stanza = new XMPPStanza($stanza);
+		$this->ev->emit('on_'.$stanza->type.'_message', array($stanza));
 	}
 	
+	// unhandled event and arguments bubbled up
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
+		$stanza = new XMPPStanza($stanza);
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
-	}
-	
-	//
-	// sig handler
-	//
-	
-	public function signal_handler($sig) {
-		$this->end_stream();
-	
-		switch($sig) {
-			// terminal line hangup
-			case SIGHUP:
-				echo "caught sighup\n";
-				break;
-			// interrupt program
-			case SIGINT:
-				echo "caught sigint\n";
-				break;
-			// software termination signal
-			case SIGTERM:
-				echo "caught sigterm\n";
-				break;
-			// real-time timer expired
-			case SIGALRM:
-				echo "caught sigalrm\n";
-				break;
-		}
 	}
 	
 }

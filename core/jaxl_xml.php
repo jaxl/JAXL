@@ -143,6 +143,12 @@ class JAXLXml {
 		return $this;
 	}
 	
+	// move rover back to top element
+	public function top() {
+		$this->rover = &$this;
+		return $this;
+	}
+	
 	// checks if a child with $name exists
 	// return child XmlStanza if found otherwise false
 	public function exists($name) {

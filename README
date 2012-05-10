@@ -6,3 +6,6 @@ Several components have been re-written keeping in my mind feedback from
 the developer community over the last 4 years.
 
 Jaxl v3.x is an object oriented XMPP client and component library
+
+Design:
+-------

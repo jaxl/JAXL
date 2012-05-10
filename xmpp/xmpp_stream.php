@@ -615,6 +615,7 @@ abstract class XMPPStream {
 			case "stanza_cb":
 				$stanza = $args[0];
 				
+				// call abstract
 				if($stanza->name == 'message') {
 					$this->handle_message($stanza);
 				}
