@@ -97,8 +97,29 @@ class JAXLXmlStream {
 	}
 	
 	protected function handle_start_tag($parser, $name, $attrs) {
-		$name = explode($this->delimiter, $name);
-		$name = sizeof($name) == 1 ? array(null, $name[0]) : $name;
+		$name = $this->explode($name);
+		//echo "start of tag ".$name[1]." with ns ".$name[0]."\n";
+		
+		// replace ns with prefix
+		foreach($attrs as $key=>$v) {
+			$k = $this->explode($key);
+			
+			// no ns specified
+			if($k[0] == null) {
+				$attrs[$k[1]] = $v;
+			}
+			// xml ns
+			else if($k[0] == NS_XML) {
+				unset($attrs[$key]);
+				$attrs['xml:'.$k[1]] = $v;
+			}
+			else {
+				echo "==================> unhandled ns prefix on attribute";
+				// remove attribute else will cause error with bad stanza format
+				// report to developer if above error message is ever encountered
+				unset($attrs[$key]);
+			}
+		}
 		
 		if($this->depth <= 0) {
 			$this->depth = 0;
@@ -150,6 +171,16 @@ class JAXLXmlStream {
 	
 	protected function handle_character($parser, $data) {
 		if($this->stanza) $this->stanza->t($data);
+	}
+	
+	private function implode($data) {
+		return implode($this->delimiter, $data);
+	}
+	
+	private function explode($data) {
+		$data = explode($this->delimiter, $data);
+		$data = sizeof($data) == 1 ? array(null, $data[0]) : $data;
+		return $data;
 	}
 	
 }

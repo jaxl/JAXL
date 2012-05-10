@@ -172,15 +172,15 @@ class JAXLXml {
 	}
 	
 	// to string conversion
-	public function to_string() {
+	public function to_string($parent_ns=null) {
 		$xml = '';
 		
 		$xml .= '<'.$this->name;
-		if($this->ns) $xml .= ' xmlns="'.$this->ns.'"';
+		if($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
 		foreach($this->attrs as $k=>$v) if($v) $xml .= ' '.$k.'="'.$v.'"';
 		$xml .= '>';
 		
-		foreach($this->childrens as $child) $xml .= $child->to_string();
+		foreach($this->childrens as $child) $xml .= $child->to_string($this->ns);
 		
 		if($this->text) $xml .= $this->text;
 		$xml .= '</'.$this->name.'>';
