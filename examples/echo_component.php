@@ -42,11 +42,11 @@
 require_once 'jaxl.php';
 $comp = new JAXL(array(
 	// same as component host
-	'jid' => 'component.localhost',
+	'jid' => 'component.domain.tld',
 	// same as component secret
 	'pass' => 'secret',
 	// required
-	'host' => 'localhost',
+	'host' => 'xmpp.domain.tld',
 	// required
 	'port' => 5270
 ));
@@ -77,7 +77,7 @@ $comp->add_cb('on_chat_message', function($stanza) {
 	
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
+	$stanza->from = $comp->jid->to_string();
 	$comp->send($stanza);
 });
 
