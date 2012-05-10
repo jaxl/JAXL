@@ -102,7 +102,7 @@ abstract class XMPPStream {
 	}
 	
 	public function __destruct() {
-		echo "cleaning up xmpp stream...\n";
+		//echo "cleaning up xmpp stream...\n";
 	}
 	
 	public function __call($event, $args) {

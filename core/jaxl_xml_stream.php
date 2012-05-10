@@ -71,7 +71,7 @@ class JAXLXmlStream {
 	}
 	
 	public function __destruct() {
-		echo "cleaning up xml parser...\n";
+		//echo "cleaning up xml parser...\n";
 		@xml_parser_free($this->parser);
 	}
 	

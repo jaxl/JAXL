@@ -70,7 +70,7 @@ class JAXLSocket {
 	}
 	
 	public function __destruct() {
-		echo "cleaning up xmpp socket...\n";
+		//echo "cleaning up xmpp socket...\n";
 		$this->disconnect();
 	}
 	
