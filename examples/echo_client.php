@@ -52,7 +52,7 @@ $client = new JAXL(array(
 ));
 
 //
-// XEP's required
+// XEP's required (optional)
 //
 $client->require_xep(array(
 	'0115' // entity capibilities
@@ -61,10 +61,6 @@ $client->require_xep(array(
 //
 // add necessary event callbacks here
 //
-
-$client->add_cb('on_connect_error', function($errno, $errstr) {
-	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
-});
 
 $client->add_cb('on_auth_success', function() {
 	echo "got on_auth_success cb\n";
@@ -76,6 +72,15 @@ $client->add_cb('on_auth_failure', function($reason) {
 	global $client;
 	$client->send_end_stream();
 	echo "got on_auth_failure cb with reason $reason\n";
+});
+
+$client->add_cb('on_chat_message', function($stanza) {
+	global $client;
+	
+	// echo back incoming message stanza
+	$stanza->to = $stanza->from;
+	$stanza->from = $client->full_jid->to_string();
+	$client->send($stanza);
 });
 
 $client->add_cb('on_disconnect', function() {

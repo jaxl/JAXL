@@ -52,19 +52,15 @@ $comp = new JAXL(array(
 ));
 
 //
-// XEP's required
+// XEP's required (required)
 //
 $comp->require_xep(array(
-	'0114' // jabber component protocol (required for component)
+	'0114' // jabber component protocol
 ));
 
 //
 // add necessary event callbacks here
 //
-
-$comp->add_cb('on_connect_error', function($errno, $errstr) {
-	echo "got on_connect_error cb with errno $errno and errstr $errstr\n";
-});
 
 $comp->add_cb('on_auth_success', function() {
 	echo "got on_auth_success cb\n";
@@ -74,6 +70,15 @@ $comp->add_cb('on_auth_failure', function($reason) {
 	global $comp;
 	$comp->send_end_stream();
 	echo "got on_auth_failure cb with reason $reason\n";
+});
+
+$comp->add_cb('on_chat_message', function($stanza) {
+	global $comp;
+	
+	// echo back incoming message stanza
+	$stanza->to = $stanza->from;
+	$stanza->from = $client->full_jid->to_string();
+	$comp->send($stanza);
 });
 
 $comp->add_cb('on_disconnect', function() {

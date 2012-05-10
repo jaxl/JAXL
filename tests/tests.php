@@ -161,6 +161,20 @@ class JAXLTest extends PHPUnit_Framework_TestCase {
 		echo $msg->to_node.PHP_EOL;
 		echo $msg->from.PHP_EOL;
 		echo $msg->to_string().PHP_EOL;
+	}
+	
+	function test_xmpp_stanza() {
+		// stanza text
+		$stanza = new XMPPStanza('message', array('to'=>'2@3.com', 'from'=>'4@r.p/q'));
+		$stanza->c('body')->t('hello world');
+		echo $stanza->to_string()."\n";
+		
+		// xml to stanza test
+		$xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to'=>'2@3.com', 'from'=>'4@r.p/q'));
+		$stanza = new XMPPStanza($xml);
+		$stanza->c('body')->t('hello world');
+		echo $stanza->to."\n";
+		echo $stanza->to_string()."\n";
 	}*/
 
 }
