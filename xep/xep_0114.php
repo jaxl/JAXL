@@ -66,9 +66,9 @@ class XEP0114 extends XMPPXep {
 	
 	public function start_handshake($stanza) {
 		// send handshake
-		$id = $stanza->attrs['id'];
+		$id = $stanza->id;
 		$hash = strtolower(sha1($id.$this->jaxl->pass));
-		$stanza = new JAXLXml('handshake', '', $hash);
+		$stanza = new JAXLXml('handshake', null, $hash);
 		$this->jaxl->send($stanza);
 	}
 	
