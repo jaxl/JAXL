@@ -9,3 +9,32 @@ Jaxl v3.x is an object oriented XMPP client and component library
 
 Design:
 -------
+Following folders can be found inside JAXL project directory:
+
+/xmpp       contains generic xmpp rfc and other components
+/xep        contains various xmpp xep implementation
+/core       contains generic framework components
+/tests      test suite
+/examples   a bunch of working examples
+/jaxl.php   api file (that needs to be included by examples/app files)
+
+With v3.x, every thing is mapped into an object:
+
+XMPPStream		abstract xmpp stream
+XMPPIq			xmpp iq stanza object
+XMPPMsg			xmpp msg stanza object
+XMPPPres		xmpp pres stanza object
+XMPPStanza		any xmpp stanza object
+XMPPXep			abstract xmpp extension
+XMPPJid			xmpp jid object
+JAXLEvent		generic event registry and execution class
+JAXLSocket		generic socket level operations
+JAXLXmlStream	generic SAX style XML parser
+JAXLXml			generic XML object implementation
+
+XMPPStream is an abstract class and implement core xmpp rfc. It utilizes 
+JAXLXmlStream for SAX-style XML parsing and JAXLSocket for socket operations.
+
+JAXL class extends abstract XMPPStream class to add XMPP-IM functionalities
+on top of the base xmpp stream. JAXLEvent is also used to provide an event based
+framework on top of underlying xmpp stream.
