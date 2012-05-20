@@ -142,7 +142,7 @@ class JAXL extends XMPPStream {
 		// initialize xmpp stream
 		parent::__construct(
 			$transport,
-			$jid, 
+			$jid,
 			@$this->cfg['pass'],
 			@$this->cfg['resource'] ? 'jaxl.'.$this->cfg['resource'] : 'jaxl.'.md5(time()),
 			@$this->cfg['force_tls']
