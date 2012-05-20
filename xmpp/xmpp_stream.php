@@ -63,12 +63,14 @@ abstract class XMPPStream {
 	// input parameters
 	public $jid = null;
 	public $pass = null;
+	public $resource = null;
+	public $force_tls = false;
 	
 	// underlying socket and xml stream ref
 	protected $sock = null;
 	protected $xml = null;
 	
-	protected $force_tls = false;
+	// stanza id
 	protected $last_id = 0;
 	
 	//
@@ -88,9 +90,11 @@ abstract class XMPPStream {
 	// public api
 	// 
 	
-	public function __construct($jid, $pass=null) {
+	public function __construct($jid, $pass=null, $resource=null, $force_tls=false) {
 		$this->jid = new XMPPJid($jid);
 		$this->pass = $pass;
+		$this->resource = $resource ? $resource : md5(time());
+		$this->force_tls = $force_tls;
 		
 		list($host, $port) = JAXLUtil::get_dns_srv($this->jid->domain);
 		$this->sock = new JAXLSocket($host, $port);
@@ -454,8 +458,7 @@ abstract class XMPPStream {
 				$comp = $stanza->exists('compression', NS_COMPRESSION_FEATURE) ? true : false;
 				
 				if($bind) {
-					$resource = md5(time());
-					$this->send_bind_pkt($resource);
+					$this->send_bind_pkt($this->resource);
 					return "wait_for_bind_response";
 				}
 				/*// compression not supported due to bug in php stream filters

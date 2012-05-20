@@ -52,8 +52,10 @@ $client = new JAXL(array(
 	//'host' => 'xmpp.domain.tld',
 	// (optional) result from srv lookup used by default
 	//'port' => 5222,
+	//'force_tls' => true,
+	//'resource' => 'resource',
 	// (optional)
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
+	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
 ));
 
 //

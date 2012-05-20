@@ -76,8 +76,9 @@ class JAXL extends XMPPStream {
 	// received presence information about the contacts
 	public $manager_roster = true;
 	
-	// automatically accept new subscription requests
-	public $auto_accept_subscribe = false;
+	// what to do with presence sub requests
+	// "none" | "accept" | "accept_and_add"
+	public $subscription = "none";
 	
 	// path variables
 	public $tmp_path;
@@ -106,6 +107,7 @@ class JAXL extends XMPPStream {
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));
 		
+		// TODO: check permissions and existence
 		$this->tmp_path = "/var/tmp/jaxl";
 		$this->log_path = "/var/log/jaxl.log";
 		$this->pid_path = "/var/run/jaxl.pid";
@@ -133,7 +135,9 @@ class JAXL extends XMPPStream {
 		// initialize xmpp stream
 		parent::__construct(
 			$this->cfg['jid'], 
-			$this->cfg['pass']
+			@$this->cfg['pass'],
+			@$this->cfg['resource'] ? 'jaxl.'.$this->cfg['resource'] : 'jaxl.'.md5(time()),
+			@$this->cfg['force_tls']
 		);
 	}
 	
