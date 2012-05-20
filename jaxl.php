@@ -61,7 +61,7 @@ class JAXL extends XMPPStream {
 	const name = 'JAXL :: Jabber XMPP Library';
 	
 	// cached init config array
-	protected $cfg = array();
+	public $cfg = array();
 	
 	// event callback engine for xmpp stream lifecycle
 	protected $ev = null;
@@ -76,8 +76,9 @@ class JAXL extends XMPPStream {
 	// received presence information about the contacts
 	public $manager_roster = true;
 	
-	// automatically accept new subscription requests
-	public $auto_accept_subscribe = false;
+	// what to do with presence sub requests
+	// "none" | "accept" | "accept_and_add"
+	public $subscription = "none";
 	
 	// path variables
 	public $tmp_path;
@@ -106,9 +107,13 @@ class JAXL extends XMPPStream {
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));
 		
+		// TODO: check permissions and existence
 		$this->tmp_path = "/var/tmp/jaxl";
 		$this->log_path = "/var/log/jaxl.log";
 		$this->pid_path = "/var/run/jaxl.pid";
+		
+		// initialize event
+		$this->ev = new JAXLEvent();
 		
 		// handle signals
 		if(extension_loaded('pcntl')) {
@@ -119,21 +124,28 @@ class JAXL extends XMPPStream {
 		
 		// save config
 		$this->cfg = $config;
+		$jid = new XMPPJid($this->cfg['jid']);
 		
-		// initialize event
-		$this->ev = new JAXLEvent();
-		
-		// include necessary xmpp xep's
-		// required by every xmpp entity
-		$this->require_xep(array(
-			'0030',	// service discovery
-			'0115'	// entity caps
-		));
+		// if 'bosh_url' cfg is defined include 0206
+		// also do include mandatory xep's for every xmpp entity
+		// i.e. service disco and entity caps
+		$this->require_xep(array('0030', '0115'));
+		if(@$this->cfg['bosh_url']) {
+			$this->require_xep('0206');
+			$transport = $this->xeps['0206'];
+		}
+		else {
+			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+			$transport = new JAXLSocket($host, $port);
+		}
 		
 		// initialize xmpp stream
 		parent::__construct(
-			$this->cfg['jid'], 
-			$this->cfg['pass']
+			$transport,
+			$jid, 
+			@$this->cfg['pass'],
+			@$this->cfg['resource'] ? 'jaxl.'.$this->cfg['resource'] : 'jaxl.'.md5(time()),
+			@$this->cfg['force_tls']
 		);
 	}
 	
@@ -202,6 +214,12 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function start() {
+		// bosh session
+		if(@$this->cfg['bosh_url']) {
+			$this->xeps['0206']->session_start();
+			return;
+		}
+		
 		// if on_connect event have no callbacks
 		// set default on_connect callback to $this->start_stream()
 		// i.e. xmpp client mode
@@ -212,16 +230,16 @@ class JAXL extends XMPPStream {
 		if($this->connect(@$this->cfg['host'], @$this->cfg['port'])) {
 			$this->ev->emit('on_connect');
 			
-			while($this->sock->fd) {
-				$this->sock->recv();
+			while($this->trans->fd) {
+				$this->trans->recv();
 			}
 			
 			$this->ev->emit('on_disconnect');
 		}
 		else {
 			$this->ev->emit('on_connect_error', array(
-				$this->sock->errno,
-				$this->sock->errstr
+				$this->trans->errno,
+				$this->trans->errstr
 			));
 		}
 	}

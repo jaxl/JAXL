@@ -63,12 +63,14 @@ abstract class XMPPStream {
 	// input parameters
 	public $jid = null;
 	public $pass = null;
+	public $resource = null;
+	public $force_tls = false;
 	
-	// underlying socket and xml stream ref
-	protected $sock = null;
+	// underlying socket/bosh and xml stream ref
+	protected $trans = null;
 	protected $xml = null;
 	
-	protected $force_tls = false;
+	// stanza id
 	protected $last_id = 0;
 	
 	//
@@ -88,16 +90,16 @@ abstract class XMPPStream {
 	// public api
 	// 
 	
-	public function __construct($jid, $pass=null) {
-		$this->jid = new XMPPJid($jid);
+	public function __construct($transport, $jid, $pass=null, $resource=null, $force_tls=false) {
+		$this->jid = $jid;
 		$this->pass = $pass;
+		$this->resource = $resource ? $resource : md5(time());
+		$this->force_tls = $force_tls;
 		
-		list($host, $port) = JAXLUtil::get_dns_srv($this->jid->domain);
-		$this->sock = new JAXLSocket($host, $port);
-		
+		$this->trans = $transport;
 		$this->xml = new JAXLXmlStream();
 		
-		$this->sock->set_callback(array(&$this->xml, "parse"));
+		$this->trans->set_callback(array(&$this->xml, "parse"));
 		$this->xml->set_callback(array(&$this, "start_cb"), array(&$this, "end_cb"), array(&$this, "stanza_cb"));
 	}
 	
@@ -129,11 +131,11 @@ abstract class XMPPStream {
 	}
 	
 	public function send($stanza) {
-		$this->sock->send($stanza->to_string());
+		$this->trans->send($stanza->to_string());
 	}
 	
 	public function send_raw($data) {
-		$this->sock->send($data);
+		$this->trans->send($data);
 	}
 	
 	//
@@ -345,7 +347,7 @@ abstract class XMPPStream {
 		$host = isset($args[0]) ? $args[0] : null;
 		$port = isset($args[1]) ? $args[1] : null;
 		
-		if($this->sock->connect($host, $port)) {
+		if($this->trans->connect($host, $port)) {
 			return array("connected", 1);
 		}
 		else {
@@ -454,8 +456,7 @@ abstract class XMPPStream {
 				$comp = $stanza->exists('compression', NS_COMPRESSION_FEATURE) ? true : false;
 				
 				if($bind) {
-					$resource = md5(time());
-					$this->send_bind_pkt($resource);
+					$this->send_bind_pkt($this->resource);
 					return "wait_for_bind_response";
 				}
 				/*// compression not supported due to bug in php stream filters
@@ -482,23 +483,7 @@ abstract class XMPPStream {
 				$stanza = $args[0];
 				
 				if($stanza->name == 'proceed' && $stanza->ns == NS_TLS) {
-					// set blocking (since tls negotiation fails if stream is non-blocking)
-					stream_set_blocking($this->sock->fd, true);
-					
-					$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-					if($ret == false) {
-						$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
-						if($ret == false) {
-							$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
-							if($ret == false) {
-								$ret = stream_socket_enable_crypto($this->sock->fd, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
-							}
-						}
-					}
-					
-					// switch back to non-blocking
-					stream_set_blocking($this->sock->fd, false);
-					
+					$this->trans->crypt();
 					$this->xml->reset_parser();
 					$this->send_start_stream($this->jid->domain);
 					return "wait_for_stream_start";
@@ -523,7 +508,7 @@ abstract class XMPPStream {
 				
 				if($stanza->name == 'compressed' && $stanza->ns == NS_COMPRESSION_PROTOCOL) {
 					$this->xml->reset_parser();
-					$this->sock->compress();
+					$this->trans->compress();
 					$this->send_start_stream($this->jid->domain);
 					return "wait_for_stream_start";
 				}
@@ -650,7 +635,7 @@ abstract class XMPPStream {
 	public function logged_out($event, $args) {
 		switch($event) {
 			case "end_cb":
-				$this->sock->disconnect();
+				$this->trans->disconnect();
 				return "disconnected";
 				break;
 			default:

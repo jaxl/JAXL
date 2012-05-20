@@ -118,6 +118,25 @@ class JAXLSocket {
 		//stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE);
 	}
 	
+	public function crypt() {
+		// set blocking (since tls negotiation fails if stream is non-blocking)
+		stream_set_blocking($this->fd, true);
+		
+		$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+		if($ret == false) {
+			$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
+			if($ret == false) {
+				$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
+				if($ret == false) {
+					$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+				}
+			}
+		}
+		
+		// switch back to non-blocking
+		stream_set_blocking($this->fd, false);
+	}
+	
 	public function recv() {
 		$read = array($this->fd);
 		$write = $except = null;
@@ -144,8 +163,6 @@ class JAXLSocket {
 			}
 			
 			$this->recv_bytes += $bytes;
-			
-			if($this->compressed) $raw = gzinflate($data);
 			$total = $this->ibuffer.$raw;
 			
 			$this->ibuffer = "";
@@ -164,7 +181,6 @@ class JAXLSocket {
 	}
 	
 	public function send($data) {
-		if($this->compressed) $data = gzdeflate($data);
 		$this->obuffer .= $data;
 	}
 	

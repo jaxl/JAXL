@@ -20,17 +20,17 @@ Following folders can be found inside JAXL project directory:
 
 With v3.x, every thing is mapped into an object:
 
-XMPPStream		abstract xmpp stream
-XMPPIq			xmpp iq stanza object
-XMPPMsg			xmpp msg stanza object
-XMPPPres		xmpp pres stanza object
-XMPPStanza		any xmpp stanza object
-XMPPXep			abstract xmpp extension
-XMPPJid			xmpp jid object
-JAXLEvent		generic event registry and execution class
-JAXLSocket		generic socket level operations
-JAXLXmlStream	generic SAX style XML parser
-JAXLXml			generic XML object implementation
+JAXLEvent       generic event registry and execution class
+JAXLSocket      generic socket level operations
+JAXLXmlStream   generic SAX style XML parser
+JAXLXml         generic XML object implementation
+XMPPStream      abstract xmpp stream
+XMPPIq          xmpp iq stanza object
+XMPPMsg         xmpp msg stanza object
+XMPPPres        xmpp pres stanza object
+XMPPStanza      any xmpp stanza object
+XMPPXep         abstract xmpp extension
+XMPPJid         xmpp jid object
 
 XMPPStream is an abstract class and implement core xmpp rfc. It utilizes 
 JAXLXmlStream for SAX-style XML parsing and JAXLSocket for socket operations.

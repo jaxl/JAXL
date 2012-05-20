@@ -52,8 +52,11 @@ $client = new JAXL(array(
 	//'host' => 'xmpp.domain.tld',
 	// (optional) result from srv lookup used by default
 	//'port' => 5222,
+	//'force_tls' => true,
+	//'resource' => 'resource',
+	//'bosh_url' => 'http://localhost:5280/http-bind',
 	// (optional)
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
+	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
 ));
 
 //
