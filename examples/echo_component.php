@@ -36,19 +36,24 @@
  *
  */
 
+if(sizeof($argv) < 5) {
+	echo "Usage: $argv[0] jid pass host port\n";
+	exit;
+}
+
 //
 // initialize JAXL object with initial config
 //
 require_once 'jaxl.php';
 $comp = new JAXL(array(
 	// same as component host
-	'jid' => 'component.domain.tld',
+	'jid' => $argv[1],
 	// same as component secret
-	'pass' => 'secret',
+	'pass' => $argv[2],
 	// required
-	'host' => 'xmpp.domain.tld',
+	'host' => @$argv[3],
 	// required
-	'port' => 5270
+	'port' => $argv[4]
 ));
 
 //

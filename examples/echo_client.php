@@ -36,26 +36,24 @@
  *
  */
 
+if(sizeof($argv) < 3) {
+	echo "Usage: $argv[0] jid pass\n";
+	exit;
+}
+
 //
 // initialize JAXL object with initial config
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	'jid' => 'user@domain.tld',
-	'pass' => 'password',
+	'jid' => $argv[1],
+	'pass' => $argv[2],
 	// (optional) srv lookup is done if not provided
 	//'host' => 'xmpp.domain.tld',
 	// (optional) result from srv lookup used by default
 	//'port' => 5222,
 	// (optional)
-	'auth_type' => 'PLAIN'
-));
-
-//
-// XEP's required (optional)
-//
-$client->require_xep(array(
-	'0115' // entity capibilities
+	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
 ));
 
 //

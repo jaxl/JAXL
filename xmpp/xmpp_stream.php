@@ -68,7 +68,7 @@ abstract class XMPPStream {
 	protected $sock = null;
 	protected $xml = null;
 	
-	protected $force_tls = true;
+	protected $force_tls = false;
 	protected $last_id = 0;
 	
 	//
@@ -88,7 +88,7 @@ abstract class XMPPStream {
 	// public api
 	// 
 	
-	public function __construct($jid, $pass) {
+	public function __construct($jid, $pass=null) {
 		$this->jid = new XMPPJid($jid);
 		$this->pass = $pass;
 		
@@ -430,7 +430,7 @@ abstract class XMPPStream {
 				
 				// get starttls requirements
 				$starttls = $stanza->exists('starttls', NS_TLS);
-				$required = $starttls ? ($starttls->exists('required') ? true : false) : false;
+				$required = $starttls ? ($this->force_tls ? true : ($starttls->exists('required') ? true : false)) : false;
 				
 				if($starttls && $required) {
 					$this->send_starttls_pkt();

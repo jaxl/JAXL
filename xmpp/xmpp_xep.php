@@ -43,8 +43,12 @@
  */
 abstract class XMPPXep {
 	
+	// init() method defines various callbacks
+	// required by this xep extension
 	abstract public function init();
 	
+	// reference to jaxl instance
+	// which required me
 	protected $jaxl = null;
 	
 	public function __construct($jaxl) {

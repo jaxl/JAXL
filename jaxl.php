@@ -83,12 +83,10 @@ class JAXL extends XMPPStream {
 	public $tmp_path;
 	public $log_path;
 	public $pid_path;
-	public $pid;
 	
-	// local ip address
+	// env
 	public $local_ip;
-	
-	// cgi | cli
+	public $pid;
 	public $mode;
 	
 	// periodically dump stats
@@ -103,27 +101,45 @@ class JAXL extends XMPPStream {
 	public $type = 'bot';
 	public $lang = 'en';
 	
-	// after cth failed attempt
-	// retry connect after k * $retry_interval seconds
-	// where k is a random number between 0 and 2^c - 1.
-	/*public $retry = true;
-	private $retry_interval = 1;
-	private $retry_attempt = 0;
-	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
-	
-	else {
-		// 110 : Connection timed out
-		// 111 : Connection refused
-		if($this->sock->errno == 110 || $this->sock->errno == 111) {
-			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
-			$this->retry_attempt++;
-	
-			echo "unable to connect, will try again in ".$retry_after." seconds\n";
-			// use sigalrm instead (if possible)
-			sleep($retry_after);
-			$this->start_client();
+	public function __construct($config) {
+		$this->pid = getmypid();
+		$this->mode = PHP_SAPI;
+		$this->local_ip = gethostbyname(php_uname('n'));
+		
+		$this->tmp_path = "/var/tmp/jaxl";
+		$this->log_path = "/var/log/jaxl.log";
+		$this->pid_path = "/var/run/jaxl.pid";
+		
+		// handle signals
+		if(extension_loaded('pcntl')) {
+			pcntl_signal(SIGHUP, array($this, 'signal_handler'));
+			pcntl_signal(SIGINT, array($this, 'signal_handler'));
+			pcntl_signal(SIGTERM, array($this, 'signal_handler'));
 		}
-	}*/
+		
+		// save config
+		$this->cfg = $config;
+		
+		// initialize event
+		$this->ev = new JAXLEvent();
+		
+		// include necessary xmpp xep's
+		// required by every xmpp entity
+		$this->require_xep(array(
+			'0030',	// service discovery
+			'0115'	// entity caps
+		));
+		
+		// initialize xmpp stream
+		parent::__construct(
+			$this->cfg['jid'], 
+			$this->cfg['pass']
+		);
+	}
+	
+	public function __destruct() {
+		parent::__destruct();
+	}
 	
 	public function signal_handler($sig) {
 		$this->end_stream();
@@ -144,30 +160,10 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
-	public function __construct($config) {
-		// handle signals
-		pcntl_signal(SIGHUP, array($this, 'signal_handler'));
-		pcntl_signal(SIGINT, array($this, 'signal_handler'));
-		pcntl_signal(SIGTERM, array($this, 'signal_handler'));
-		
-		// save config
-		$this->cfg = $config;
-		
-		// initialize event
-		$this->ev = new JAXLEvent();
-		
-		// initialize xmpp stream
-		parent::__construct(
-			$this->cfg['jid'], 
-			$this->cfg['pass']
-		);
-	}
-	
-	public function __destruct() {
-		parent::__destruct();
-	}
-	
 	public function require_xep($xeps) {
+		if(!is_array($xeps)) 
+			$xeps = array($xeps);
+		
 		foreach($xeps as $xep) {
 			$filename = 'xep_'.$xep.'.php';
 			$classname = 'XEP_'.$xep;
@@ -282,6 +278,28 @@ class JAXL extends XMPPStream {
 		$stanza = new XMPPStanza($stanza);
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
+	
+	// after cth failed attempt
+	// retry connect after k * $retry_interval seconds
+	// where k is a random number between 0 and 2^c - 1.
+	/*public $retry = true;
+	private $retry_interval = 1;
+	private $retry_attempt = 0;
+	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
+	
+	else {
+		// 110 : Connection timed out
+		// 111 : Connection refused
+		if($this->sock->errno == 110 || $this->sock->errno == 111) {
+			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
+			$this->retry_attempt++;
+	
+			echo "unable to connect, will try again in ".$retry_after." seconds\n";
+			// use sigalrm instead (if possible)
+			sleep($retry_after);
+			$this->start_client();
+		}
+	}*/
 	
 }
 
