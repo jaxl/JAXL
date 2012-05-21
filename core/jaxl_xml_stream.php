@@ -71,7 +71,7 @@ class JAXLXmlStream {
 	}
 	
 	public function __destruct() {
-		//echo "cleaning up xml parser...\n";
+		//_debug("cleaning up xml parser...");
 		@xml_parser_free($this->parser);
 	}
 	
@@ -98,7 +98,7 @@ class JAXLXmlStream {
 	
 	protected function handle_start_tag($parser, $name, $attrs) {
 		$name = $this->explode($name);
-		//echo "start of tag ".$name[1]." with ns ".$name[0]."\n";
+		//_debug("start of tag ".$name[1]." with ns ".$name[0]."");
 		
 		// replace ns with prefix
 		foreach($attrs as $key=>$v) {
@@ -114,7 +114,7 @@ class JAXLXmlStream {
 				$attrs['xml:'.$k[1]] = $v;
 			}
 			else {
-				echo "==================> unhandled ns prefix on attribute";
+				_debug("==================> unhandled ns prefix on attribute");
 				// remove attribute else will cause error with bad stanza format
 				// report to developer if above error message is ever encountered
 				unset($attrs[$key]);
@@ -147,7 +147,7 @@ class JAXLXmlStream {
 		$name = explode($this->delimiter, $name);
 		$name = sizeof($name) == 1 ? array('', $name[0]) : $name;
 		
-		//echo "depth ".$this->depth.", $name[1] tag ended\n";
+		//_debug("depth ".$this->depth.", $name[1] tag ended");
 		
 		if($this->depth == 1) {
 			if($this->end_cb) {

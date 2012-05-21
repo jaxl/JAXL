@@ -41,6 +41,7 @@ define('JAXL_CWD', getcwd());
 
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
+require_once JAXL_CWD.'/core/jaxl_logger.php';
 
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
@@ -81,9 +82,10 @@ class JAXL extends XMPPStream {
 	public $subscription = "none";
 	
 	// path variables
-	public $tmp_path;
-	public $log_path;
-	public $pid_path;
+	public $log_level = 4;
+	public $tmp_dir;
+	public $log_dir;
+	public $pid_dir;
 	
 	// env
 	public $local_ip;
@@ -103,14 +105,21 @@ class JAXL extends XMPPStream {
 	public $lang = 'en';
 	
 	public function __construct($config) {
+		// TODO: check permissions and existence
+		$this->tmp_dir = JAXL_CWD."/priv/tmp";
+		$this->pid_dir = JAXL_CWD."/priv/run";
+		$this->log_dir = JAXL_CWD."/priv/log";
+		
+		// touch pid file
 		$this->pid = getmypid();
+		touch($this->pid_dir."/jaxl_".$this->pid.".pid");
+		
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));
 		
-		// TODO: check permissions and existence
-		$this->tmp_path = "/var/tmp/jaxl";
-		$this->log_path = "/var/log/jaxl.log";
-		$this->pid_path = "/var/run/jaxl.pid";
+		// setup logger
+		JAXLLogger::$path = $this->log_dir."/jaxl.log";
+		JAXLLogger::$level = $this->log_level;
 		
 		// initialize event
 		$this->ev = new JAXLEvent();
@@ -150,6 +159,9 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function __destruct() {
+		// delete pid file
+		unlink($this->pid_dir."/jaxl_".$this->pid.".pid");
+		
 		parent::__destruct();
 	}
 	
@@ -159,15 +171,15 @@ class JAXL extends XMPPStream {
 		switch($sig) {
 			// terminal line hangup
 			case SIGHUP:
-				echo "got sighup\n";
+				_debug("got sighup");
 				break;
 				// interrupt program
 			case SIGINT:
-				echo "got sigint\n";
+				_debug("got sigint");
 				break;
 				// software termination signal
 			case SIGTERM:
-				echo "got sigterm\n";
+				_debug("got sigterm");
 				break;
 		}
 	}
@@ -214,8 +226,8 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function start() {
-		// bosh session
-		if(@$this->cfg['bosh_url']) {
+		// is bosh bot?
+		if(@$this->cfg['bosh_url'] && $this->mode == 'cli') {
 			$this->xeps['0206']->session_start();
 			return;
 		}
@@ -284,12 +296,12 @@ class JAXL extends XMPPStream {
 					return "wait_for_sasl_response";
 				}
 				else {
-					echo "got unhandled sasl response, should never happen here\n";
+					_debug("got unhandled sasl response, should never happen here");
 					exit;
 				}
 				break;
 			default:
-				echo "not catched $event, should never happen here\n";
+				_debug("not catched $event, should never happen here");
 				exit;
 				break;
 		}
@@ -306,7 +318,7 @@ class JAXL extends XMPPStream {
 			}
 		}
 		else {
-			echo "preferred auth type not supported\n";
+			_debug("preferred auth type not supported");
 		}
 	}
 	
@@ -363,7 +375,7 @@ class JAXL extends XMPPStream {
 			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
 			$this->retry_attempt++;
 	
-			echo "unable to connect, will try again in ".$retry_after." seconds\n";
+			_debug("unable to connect, will try again in ".$retry_after." seconds");
 			// use sigalrm instead (if possible)
 			sleep($retry_after);
 			$this->start_client();

@@ -85,7 +85,7 @@ class XEP_0114 extends XMPPXep {
 			return array("logged_out", 0);
 		}
 		else {
-			echo "uncatched stanza received in logged_out\n";
+			_debug("uncatched stanza received in logged_out");
 		}
 	}
 	

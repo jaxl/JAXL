@@ -35,6 +35,7 @@ XMPPJid         xmpp jid object
 Working:
 --------
 1) include jaxl.php and initialize a new JAXL object
-2) depending upon configuration array, JAXL will decide on what transport to use for xmpp stream
-   if bosh_url config param is passed, XEP_0206 is used as transport instead of JAXLSocket
-3) underlying xmpp stream uses configured transport for all send/recv of xmpp stanza's
+2) depending upon passed configuration array
+   JAXL will decide on what transport to use for requested xmpp stream
+   JAXLSocket is the default transport for all tcp/ip xmpp streams
+   however, for bosh clients XEP_0206 acts as default transport

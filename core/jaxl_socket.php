@@ -78,7 +78,7 @@ class JAXLSocket {
 	}
 	
 	public function __destruct() {
-		//echo "cleaning up xmpp socket...\n";
+		//_debug("cleaning up xmpp socket...");
 		$this->disconnect();
 	}
 	
@@ -92,16 +92,16 @@ class JAXLSocket {
 		
 		$remote_socket = $this->transport."://".$this->host.":".$this->port;
 		
-		//echo "trying ".$remote_socket."\n";
+		//_debug("trying ".$remote_socket."");
 		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout);
 		
 		if($this->fd) {
-			//echo "connected to ".$remote_socket."\n";
+			//_debug("connected to ".$remote_socket."");
 			stream_set_blocking($this->fd, $this->blocking);
 			return true;
 		}
 		else {
-			echo "unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."\n";
+			_debug("unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."");
 			$this->disconnect();
 			return false;
 		}
@@ -144,7 +144,7 @@ class JAXLSocket {
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
-			echo "error while selecting stream for read\n";
+			_debug("error while selecting stream for read");
 			//print_r(stream_get_meta_data($this->fd));
 			$this->disconnect();
 			return;
@@ -156,7 +156,7 @@ class JAXLSocket {
 			if($bytes === 0) {
 				$meta = stream_get_meta_data($this->fd);
 				if($meta['eof'] === TRUE) {
-					echo "socket has reached eof, closing now\n";
+					_debug("socket has reached eof, closing now");
 					$this->disconnect();
 					return;
 				}
@@ -166,14 +166,14 @@ class JAXLSocket {
 			$total = $this->ibuffer.$raw;
 			
 			$this->ibuffer = "";
-			echo "read ".$bytes."/".$this->recv_bytes." of data\n";
-			echo $raw."\n\n";
+			_debug("read ".$bytes."/".$this->recv_bytes." of data");
+			_debug($raw);
 			
 			// callback
 			if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 		}
 		else if($changed === 0) {
-			//echo "nothing changed while selecting for read\n";
+			//_debug("nothing changed while selecting for read");
 			$this->clock = $this->recv_secs + $this->recv_usecs/pow(10,6);
 		}
 		
@@ -191,7 +191,7 @@ class JAXLSocket {
 		
 		$changed = @stream_select($read, $write, $except, $secs, $usecs);
 		if($changed === false) {
-			echo "error while selecting stream for write\n";
+			_debug("error while selecting stream for write");
 			print_r(@stream_get_meta_data($this->fd));
 			$this->disconnect();
 			return;
@@ -201,14 +201,14 @@ class JAXLSocket {
 			$bytes = @fwrite($this->fd, $this->obuffer);
 			$this->send_bytes += $bytes;
 			
-			echo "sent ".$bytes."/".$this->send_bytes." of data\n";
-			echo $this->obuffer."\n\n";
+			_debug("sent ".$bytes."/".$this->send_bytes." of data");
+			_debug($this->obuffer);
 			
 			$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
-			//echo "current obuffer size: ".strlen($this->obuffer)."\n";
+			//_debug("current obuffer size: ".strlen($this->obuffer)."");
 		}
 		else if($changed === 0) {
-			echo "nothing changed while selecting for write\n";
+			_debug("nothing changed while selecting for write");
 		}
 	}
 	
