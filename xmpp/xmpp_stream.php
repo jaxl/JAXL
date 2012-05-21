@@ -109,7 +109,7 @@ abstract class XMPPStream {
 	
 	public function __call($event, $args) {
 		if($this->state) {
-			//echo "calling ".$this->state." for event ".$event."\n";
+			echo "calling ".$this->state." for event ".$event."\n";
 			$r = call_user_func(array(&$this, $this->state), $event, $args);
 			
 			if(is_array($r) && sizeof($r) == 2) {
@@ -122,7 +122,7 @@ abstract class XMPPStream {
 				$this->state = $r;
 			}
 			
-			//echo "current state ".$this->state."\n";
+			echo "current state ".$this->state."\n";
 			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {
@@ -445,9 +445,8 @@ abstract class XMPPStream {
 				if($mechs) foreach($mechs->childrens as $mech) $mechanisms[$mech->text] = true;
 				
 				if(sizeof($mechanisms) > 0) {
-					// TODO: user land callback api
-					$this->handle_auth_mechs($mechanisms);
-					return "wait_for_sasl_response";
+					$new_state = $this->handle_auth_mechs($mechanisms);
+					return $new_state ? $new_state : "wait_for_sasl_response";
 				}
 				
 				// post auth
@@ -552,7 +551,7 @@ abstract class XMPPStream {
 			default:
 				//echo "not catched $event\n";
 				return $this->handle_other($event, $args);
-				return array("wait_for_sasl_response", 0);
+				//return array("wait_for_sasl_response", 0);
 				break;
 		}
 	}

@@ -248,12 +248,62 @@ class JAXL extends XMPPStream {
 	// abstract method implementation
 	//
 	
+	protected function send_fb_challenge_response($challenge) {
+		$this->send($this->get_fb_challenge_response_pkt($challenge));
+	}
+	
+	// refer https://developers.facebook.com/docs/chat/#jabber
+	public function get_fb_challenge_response_pkt($challenge) {
+		$stanza = new JAXLXml('response', NS_SASL);
+		
+		$challenge = base64_decode($challenge);
+		$challenge = urldecode($challenge);
+		parse_str($challenge, $challenge_arr);
+		
+		$response = http_build_query(array(
+			'method' => $challenge_arr['method'],
+			'nonce' => $challenge_arr['nonce'],
+			'access_token' => $this->cfg['fb_access_token'],
+			'api_key' => $this->cfg['fb_app_key'],
+			'call_id' => 0,
+			'v' => '1.0',
+		));
+		
+		$stanza->t(base64_encode($response));
+		return $stanza;
+	}
+	
+	public function wait_for_fb_sasl_response($event, $args) {
+		switch($event) {
+			case "stanza_cb":
+				$stanza = $args[0];
+				
+				if($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+					$challenge = $stanza->text;
+					$this->send_fb_challenge_response($challenge);
+					return "wait_for_sasl_response";
+				}
+				else {
+					echo "got unhandled sasl response, should never happen here\n";
+					exit;
+				}
+				break;
+			default:
+				echo "not catched $event, should never happen here\n";
+				exit;
+				break;
+		}
+	}
+	
 	public function handle_auth_mechs($mechs) {
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
 		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
 		
 		if($pref_auth_exists) {
 			$this->send_auth_pkt($pref_auth, $this->jid->to_string(), $this->pass);
+			if($pref_auth == 'X-FACEBOOK-PLATFORM') {
+				return "wait_for_fb_sasl_response";
+			}
 		}
 		else {
 			echo "preferred auth type not supported\n";
@@ -291,6 +341,7 @@ class JAXL extends XMPPStream {
 	}
 	
 	// unhandled event and arguments bubbled up
+	// TODO: in a lot of cases this will be called, need more checks
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);

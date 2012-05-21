@@ -36,8 +36,8 @@
  *
  */
 
-if(sizeof($argv) < 3) {
-	echo "Usage: $argv[0] jid pass\n";
+if($argc != 5) {
+	echo "Usage: $argv[0] jid pass host port\n";
 	exit;
 }
 
@@ -45,53 +45,54 @@ if(sizeof($argv) < 3) {
 // initialize JAXL object with initial config
 //
 require_once 'jaxl.php';
-$client = new JAXL(array(
+$comp = new JAXL(array(
+	// (required) component host and secret
 	'jid' => $argv[1],
 	'pass' => $argv[2],
-	// (optional) srv lookup is done if not provided
-	//'host' => 'xmpp.domain.tld',
-	// (optional) result from srv lookup used by default
-	//'port' => 5222,
-	//'force_tls' => true,
-	//'resource' => 'resource',
-	//'bosh_url' => 'http://localhost:5280/http-bind',
-	// (optional)
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
+	
+	// (required)
+	'host' => @$argv[3],
+	'port' => $argv[4]
+));
+
+//
+// XEP's required (required)
+//
+$comp->require_xep(array(
+	'0114' // jabber component protocol
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
+$comp->add_cb('on_auth_success', function() {
 	echo "got on_auth_success cb\n";
-	global $client;
-	$client->set_status("available!", "dnd", 10);
 });
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
+$comp->add_cb('on_auth_failure', function($reason) {
+	global $comp;
+	$comp->send_end_stream();
 	echo "got on_auth_failure cb with reason $reason\n";
 });
 
-$client->add_cb('on_chat_message', function($stanza) {
-	global $client;
+$comp->add_cb('on_chat_message', function($stanza) {
+	global $comp;
 	
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
-	$client->send($stanza);
+	$stanza->from = $comp->jid->to_string();
+	$comp->send($stanza);
 });
 
-$client->add_cb('on_disconnect', function() {
+$comp->add_cb('on_disconnect', function() {
 	echo "got on_disconnect cb\n";
 });
 
 //
 // finally start configured xmpp stream
 //
-$client->start();
+$comp->start();
 echo "done\n";
 
 ?>

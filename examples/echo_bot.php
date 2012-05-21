@@ -36,8 +36,8 @@
  *
  */
 
-if(sizeof($argv) < 5) {
-	echo "Usage: $argv[0] jid pass host port\n";
+if($argc != 3) {
+	echo "Usage: $argv[0] jid pass\n";
 	exit;
 }
 
@@ -45,55 +45,60 @@ if(sizeof($argv) < 5) {
 // initialize JAXL object with initial config
 //
 require_once 'jaxl.php';
-$comp = new JAXL(array(
-	// same as component host
+$client = new JAXL(array(
+	// (required) credentials
 	'jid' => $argv[1],
-	// same as component secret
 	'pass' => $argv[2],
-	// required
-	'host' => @$argv[3],
-	// required
-	'port' => $argv[4]
-));
+	
+	// (optional) srv lookup is done if not provided
+	//'host' => 'xmpp.domain.tld',
 
-//
-// XEP's required (required)
-//
-$comp->require_xep(array(
-	'0114' // jabber component protocol
+	// (optional) result from srv lookup used by default
+	//'port' => 5222,
+
+	// (optional) defaults to false
+	//'force_tls' => true,
+
+	// (optional)
+	//'resource' => 'resource',
+
+	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
+	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$comp->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function() {
 	echo "got on_auth_success cb\n";
+	global $client;
+	$client->set_status("available!", "dnd", 10);
 });
 
-$comp->add_cb('on_auth_failure', function($reason) {
-	global $comp;
-	$comp->send_end_stream();
+$client->add_cb('on_auth_failure', function($reason) {
+	global $client;
+	$client->send_end_stream();
 	echo "got on_auth_failure cb with reason $reason\n";
 });
 
-$comp->add_cb('on_chat_message', function($stanza) {
-	global $comp;
+$client->add_cb('on_chat_message', function($stanza) {
+	global $client;
 	
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
-	$stanza->from = $comp->jid->to_string();
-	$comp->send($stanza);
+	$stanza->from = $client->full_jid->to_string();
+	$client->send($stanza);
 });
 
-$comp->add_cb('on_disconnect', function() {
+$client->add_cb('on_disconnect', function() {
 	echo "got on_disconnect cb\n";
 });
 
 //
 // finally start configured xmpp stream
 //
-$comp->start();
+$client->start();
 echo "done\n";
 
 ?>
