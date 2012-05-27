@@ -198,7 +198,7 @@ class XEP_0206 extends XMPPXep {
 			'content' => 'text/xml; charset=utf-8',
 			'from' => $this->jaxl->cfg['jid'],
 			'to' => $this->jaxl->jid->domain,
-			//'route' => 'xmpp:'.$this->jaxl->cfg['host'].':'.$this->jaxl->cfg['port'],
+			'route' => 'xmpp:'.$this->jaxl->cfg['host'].':'.$this->jaxl->cfg['port'],
 			'secure' => 'true',
 			'xml:lang' => 'en',
 			'xmpp:version' => '1.0',

@@ -5,37 +5,42 @@ carrying a lot of code from v2.x while throwing away the redundant part.
 Several components have been re-written keeping in my mind feedback from
 the developer community over the last 4 years.
 
-Jaxl v3.x is an object oriented XMPP client and component library
+Jaxl v3.x is an object oriented, non-blocking, event based and extendible 
+XMPP client/component library.
 
 Structure:
 ----------
-Following folders can be found inside JAXL project directory:
+Library src folder contains following sub-folders:
 
-/xmpp       contains generic xmpp rfc and other components
-/xep        contains various xmpp xep implementation
-/core       contains generic framework components
-/tests      test suite
-/examples   a bunch of working examples
-/jaxl.php   api file
+* /examples   a bunch of working examples
+* /xmpp       contains generic xmpp rfc implementation
+* /xep        contains various xmpp xep implementation
+* /core       contains generic networking and event components
+* /tests      test suite
+* /jaxl.php   main file
 
-With v3.x, every thing is mapped into an object:
+With v3.x, every thing has been mapped into an object:
 
-JAXLEvent       generic event registry and execution class
-JAXLSocket      generic socket level operations
-JAXLXmlStream   generic SAX style XML parser
-JAXLXml         generic XML object implementation
-XMPPStream      abstract xmpp stream
-XMPPIq          xmpp iq stanza object
-XMPPMsg         xmpp msg stanza object
-XMPPPres        xmpp pres stanza object
-XMPPStanza      any xmpp stanza object
-XMPPXep         abstract xmpp extension
-XMPPJid         xmpp jid object
+* JAXLEvent       generic event registry and execution class
+* JAXLSocket      generic socket level operations
+* JAXLXmlStream   generic SAX style XML parser
+* JAXLXml         generic XML object implementation
+* XMPPStream      abstract xmpp stream
+* XMPPIq          xmpp iq stanza object
+* XMPPMsg         xmpp msg stanza object
+* XMPPPres        xmpp pres stanza object
+* XMPPStanza      any xmpp stanza object
+* XMPPXep         abstract xmpp extension
+* XMPPJid         xmpp jid object
 
-Working:
---------
-1) include jaxl.php and initialize a new JAXL object
-2) depending upon passed configuration array
-   JAXL will decide on what transport to use for requested xmpp stream
-   JAXLSocket is the default transport for all tcp/ip xmpp streams
-   however, for bosh clients XEP_0206 acts as default transport
+Getting Started:
+----------------
+1) include jaxl.php and initialize a new JAXL instance
+   $cfg = array('jid'=>'user@domain.dtl', 'pass'=>'password');
+   $xmpp = new JAXL($cfg);
+   
+2) register callbacks on events
+   $xmpp->add_cb('on_auth_success', function() {});
+   
+3) finally start configured JAXL instance
+   $xmpp->start();

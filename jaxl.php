@@ -37,7 +37,7 @@
 */
 
 declare(ticks = 1);
-define('JAXL_CWD', getcwd());
+define('JAXL_CWD', dirname(__FILE__));
 
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
@@ -104,7 +104,22 @@ class JAXL extends XMPPStream {
 	public $type = 'bot';
 	public $lang = 'en';
 	
+	// after cth failed attempt
+	// retry connect after k * $retry_interval seconds
+	// where k is a random number between 0 and 2^c - 1.
+	public $retry = true;
+	private $retry_interval = 1;
+	private $retry_attempt = 0;
+	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
+	
 	public function __construct($config) {
+		// handle signals
+		if(extension_loaded('pcntl')) {
+			pcntl_signal(SIGHUP, array($this, 'signal_handler'));
+			pcntl_signal(SIGINT, array($this, 'signal_handler'));
+			pcntl_signal(SIGTERM, array($this, 'signal_handler'));
+		}
+		
 		// TODO: check permissions and existence
 		$this->tmp_dir = JAXL_CWD."/priv/tmp";
 		$this->pid_dir = JAXL_CWD."/priv/run";
@@ -121,27 +136,26 @@ class JAXL extends XMPPStream {
 		JAXLLogger::$path = $this->log_dir."/jaxl.log";
 		JAXLLogger::$level = $this->log_level;
 		
-		// initialize event
+		// initialize event api
 		$this->ev = new JAXLEvent();
-		
-		// handle signals
-		if(extension_loaded('pcntl')) {
-			pcntl_signal(SIGHUP, array($this, 'signal_handler'));
-			pcntl_signal(SIGINT, array($this, 'signal_handler'));
-			pcntl_signal(SIGTERM, array($this, 'signal_handler'));
-		}
 		
 		// save config
 		$this->cfg = $config;
 		$jid = new XMPPJid($this->cfg['jid']);
 		
-		// if 'bosh_url' cfg is defined include 0206
-		// also do include mandatory xep's for every xmpp entity
-		// i.e. service disco and entity caps
+		// include mandatory xmpp xeps
+		// service discovery and entity caps
 		$this->require_xep(array('0030', '0115'));
+		
+		// do dns lookup, update $cfg
+		// if not already specified
+		$host = @$this->cfg['host']; $port = @$this->cfg['port'];
+		if(!$host && !$port) list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
+		
+		// if 'bosh_url' cfg is defined include 0206
 		if(@$this->cfg['bosh_url']) {
 			$this->require_xep('0206');
-			// TODO: do dns srv and update cfg, bosh will use that in route attr
 			$transport = $this->xeps['0206'];
 		}
 		else {
@@ -149,7 +163,7 @@ class JAXL extends XMPPStream {
 			$transport = new JAXLSocket($host, $port);
 		}
 		
-		// initialize xmpp stream
+		// initialize xmpp stream with configured transport
 		parent::__construct(
 			$transport,
 			$jid,
@@ -247,6 +261,7 @@ class JAXL extends XMPPStream {
 			return;
 		}
 		
+		// is xmpp client or component?
 		// if on_connect event have no callbacks
 		// set default on_connect callback to $this->start_stream()
 		// i.e. xmpp client mode
@@ -264,10 +279,25 @@ class JAXL extends XMPPStream {
 			$this->ev->emit('on_disconnect');
 		}
 		else {
-			$this->ev->emit('on_connect_error', array(
-				$this->trans->errno,
-				$this->trans->errstr
-			));
+			if($this->trans->errno == 61 
+			|| $this->trans->errno == 110 
+			|| $this->trans->errno == 111
+			) {
+				$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
+				$this->retry_attempt++;
+				
+				_debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr."), will try again in ".$retry_after." seconds");
+				
+				// TODO: use sigalrm instead (if possible)
+				sleep($retry_after);
+				$this->start();
+			}
+			else {
+				$this->ev->emit('on_connect_error', array(
+					$this->trans->errno,
+					$this->trans->errstr
+				));
+			}
 		}
 	}
 	
@@ -374,28 +404,6 @@ class JAXL extends XMPPStream {
 		$stanza = new XMPPStanza($stanza);
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
-	
-	// after cth failed attempt
-	// retry connect after k * $retry_interval seconds
-	// where k is a random number between 0 and 2^c - 1.
-	/*public $retry = true;
-	private $retry_interval = 1;
-	private $retry_attempt = 0;
-	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
-	
-	else {
-		// 110 : Connection timed out
-		// 111 : Connection refused
-		if($this->sock->errno == 110 || $this->sock->errno == 111) {
-			$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
-			$this->retry_attempt++;
-	
-			_debug("unable to connect, will try again in ".$retry_after." seconds");
-			// use sigalrm instead (if possible)
-			sleep($retry_after);
-			$this->start_client();
-		}
-	}*/
 	
 }
 
