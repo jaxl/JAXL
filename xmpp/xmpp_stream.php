@@ -122,7 +122,7 @@ abstract class XMPPStream {
 				$this->state = $r;
 			}
 			
-			_debug("current state ".$this->state."");
+			_debug("current state ".$this->state);
 			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {
@@ -364,6 +364,13 @@ abstract class XMPPStream {
 			case "connect":
 				return $this->do_connect($args);
 				break;
+			// someone else already started the stream
+			// even before "connect" was called
+			// must be bosh
+			case "start_cb":
+				$stanza = $args[0];
+				return $this->handle_stream_start($stanza);
+				break;
 			default:
 				//_debug("not catched $event");
 				//print_r($args);
@@ -380,6 +387,8 @@ abstract class XMPPStream {
 				return array("wait_for_stream_start", 1);
 				break;
 			// someone else already started the stream before us
+			// even before "start_stream" was called
+			// must be component
 			case "start_cb":
 				$stanza = $args[0];
 				return $this->handle_stream_start($stanza);

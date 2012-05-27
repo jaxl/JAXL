@@ -98,7 +98,7 @@ class JAXLXmlStream {
 	
 	protected function handle_start_tag($parser, $name, $attrs) {
 		$name = $this->explode($name);
-		//_debug("start of tag ".$name[1]." with ns ".$name[0]."");
+		//_debug("start of tag ".$name[1]." with ns ".$name[0]);
 		
 		// replace ns with prefix
 		foreach($attrs as $key=>$v) {
@@ -114,7 +114,7 @@ class JAXLXmlStream {
 				$attrs['xml:'.$k[1]] = $v;
 			}
 			else {
-				_debug("==================> unhandled ns prefix on attribute");
+				_error("==================> unhandled ns prefix on attribute");
 				// remove attribute else will cause error with bad stanza format
 				// report to developer if above error message is ever encountered
 				unset($attrs[$key]);

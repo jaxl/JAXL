@@ -141,6 +141,7 @@ class JAXL extends XMPPStream {
 		$this->require_xep(array('0030', '0115'));
 		if(@$this->cfg['bosh_url']) {
 			$this->require_xep('0206');
+			// TODO: do dns srv and update cfg, bosh will use that in route attr
 			$transport = $this->xeps['0206'];
 		}
 		else {
@@ -228,7 +229,21 @@ class JAXL extends XMPPStream {
 	public function start() {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url'] && $this->mode == 'cli') {
-			$this->xeps['0206']->session_start();
+			$this->trans->session_start();
+			
+			for(;;) {
+				// while any of the curl request is pending
+				// keep receiving response
+				while(sizeof($this->trans->chs) != 0) {
+					$this->trans->recv();
+				}
+				
+				// if no request in queue, ping bosh end point
+				// and repeat recv
+				$this->trans->ping();
+			}
+			
+			$this->trans->session_end();
 			return;
 		}
 		
@@ -318,7 +333,7 @@ class JAXL extends XMPPStream {
 			}
 		}
 		else {
-			_debug("preferred auth type not supported");
+			_error("preferred auth type not supported");
 		}
 	}
 	
@@ -336,7 +351,7 @@ class JAXL extends XMPPStream {
 		$stanza = new XMPPStanza($stanza);
 		
 		$this->ev->emit('on_stream_start', array($stanza));
-		return array('connected', 1);
+		return array(@$this->cfg['bosh_url'] ? 'wait_for_stream_features' : 'connected', 1);
 	}
 	
 	public function handle_iq($stanza) {

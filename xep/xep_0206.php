@@ -43,7 +43,16 @@ define('NS_BOSH', 'urn:xmpp:xbosh');
 
 class XEP_0206 extends XMPPXep {
 	
+	private $mch = null;
+	public $chs = array();
 	private $recv_cb = null;
+	
+	private $rid = null;
+	private $sid = null;
+	private $hold = 1;
+	private $wait = 30;
+	
+	private $restarted = false;
 	
 	public $headers = array(
 		'Accept-Encoding: gzip, deflate',
@@ -64,16 +73,112 @@ class XEP_0206 extends XMPPXep {
 	// event callbacks
 	//
 	
+	public function send($body) {
+		if(is_object($body)) {
+			$body = $body->to_string();
+		}
+		else {
+			if(substr($body, 0, 15) == '<stream:stream ') {
+				$this->restarted = true;
+				
+				$body = new JAXLXml('body', NS_HTTP_BIND, array(
+					'sid' => $this->sid,
+					'rid' => ++$this->rid,
+					'to' => $this->jaxl->jid->domain,
+					'xmpp:restart' => 'true',
+					'xmlns:xmpp' => NS_BOSH
+				));
+				
+				$body = $body->to_string();
+			}
+			else if(substr($body, 0, 16) == '</stream:stream>') {
+				$body = new JAXLXml('body', NS_HTTP_BIND, array(
+					'sid' => $this->sid,
+					'rid' => ++$this->rid,
+					'type' => 'terminate'
+				));
+				
+				$body = $body->to_string();
+			}
+			else {
+				$body = $this->wrap($body);
+			}
+		}
+		_debug("send ".$body);
+		
+		$this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
+		curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($this->chs[$this->rid], CURLOPT_ENCODING, 'gzip,deflate');
+		curl_setopt($this->chs[$this->rid], CURLOPT_HTTPHEADER, $this->headers);
+		curl_setopt($this->chs[$this->rid], CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($this->chs[$this->rid], CURLOPT_VERBOSE, false);
+		curl_setopt($this->chs[$this->rid], CURLOPT_POST, 1);
+		curl_setopt($this->chs[$this->rid], CURLOPT_POSTFIELDS, $body);
+		
+		curl_multi_add_handle($this->mch, $this->chs[$this->rid]);
+	}
+	
+	public function recv() {
+		if($this->restarted) {
+			$this->restarted = false;
+			
+			// fool xmpp_stream state machine with stream start packet
+			// and make transition to wait_for_stream_features state
+			if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream("bosh.jaxl"));
+		}
+		
+		_debug("recving for $this->rid");
+		do {
+			$ret = curl_multi_exec($this->mch, $running);
+			$changed = curl_multi_select($this->mch, 0.1);
+			
+			if($changed == 0 && $running == 0) {
+				$ch = @$this->chs[$this->rid];
+				if($ch) {
+					$data = curl_multi_getcontent($ch);
+					
+					curl_multi_remove_handle($this->mch, $ch);
+					unset($this->chs[$this->rid]);
+					_debug("recvd for $this->rid ".$data);
+				
+					list($body, $stanza) = $this->unwrap($data);
+					$body = new SimpleXMLElement($body);
+					$attrs = $body->attributes();
+						
+					if(@$attrs['type'] == 'terminate') {
+						// fool me again
+						if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
+					}
+					else {
+						if(!$this->sid) {
+							$this->sid = $attrs['sid'];
+						}
+				
+						if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
+					}
+				}
+				else {
+					_error("no ch found");
+					exit;
+				}
+			}
+		} while($running);
+	}
+	
 	public function set_callback($recv_cb) {
 		$this->recv_cb = $recv_cb;
+	}
+	
+	public function wrap($stanza) {
+		return '<body sid="'.$this->sid.'" rid="'.++$this->rid.'" xmlns="'.NS_HTTP_BIND.'">'.$stanza.'</body>';
 	}
 	
 	public function unwrap($body) {
 		if(substr($body -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
 		else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
 		
-		if(isset($m[1][0])) $envelop = "<body ".$m[1][0].">";
-		else $envelop = "<body>";
+		if(isset($m[1][0])) $envelop = "<body ".$m[1][0]."/>";
+		else $envelop = "<body/>";
 		
 		if(isset($m[2][0])) $payload = $m[2][0];
 		else $payload = '';
@@ -81,13 +186,14 @@ class XEP_0206 extends XMPPXep {
 		return array($envelop, $payload);
 	}
 	
-	public function send($body) {
-		$rs = JAXLUtil::curl($this->jaxl->cfg['bosh_url'], 'POST', $this->headers, $body->to_string());
-		list($body, $stanza) = $this->unwrap($rs['content']);
-		if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
-	}
-	
 	public function session_start() {
+		$this->mch = curl_multi_init();
+		$this->rid = rand(1000, 10000);
+		
+		// fool xmpp_stream state machine with stream start packet
+		// and make transition to wait_for_stream_features state
+		if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream("bosh.jaxl"));
+		
 		$body = new JAXLXml('body', NS_HTTP_BIND, array(
 			'content' => 'text/xml; charset=utf-8',
 			'from' => $this->jaxl->cfg['jid'],
@@ -97,35 +203,16 @@ class XEP_0206 extends XMPPXep {
 			'xml:lang' => 'en',
 			'xmpp:version' => '1.0',
 			'xmlns:xmpp' => NS_BOSH,
-			'hold' => 1,
-			'wait' => 30,
-			'rid' => rand(1000, 10000)
+			'hold' => $this->hold,
+			'wait' => $this->wait,
+			'rid' => $this->rid
 		));
-		$this->send($body);
-	}
-	
-	public function session_end() {
-		$body = new JAXLXml('body', NS_HTTP_BIND, array(
-			'sid' => '',
-			'rid' => '',
-			'type' => 'terminate'
-		));
-		$this->send($body);
-	}
-	
-	public function restart_stream() {
-		$body = new JAXLXml('body', NS_HTTP_BIND, array(
-			'sid' => '',
-			'rid' => '',
-			'to' => '',
-			'xmpp:restart' => 'true',
-			'xmlns:xmpp' => NS_BOSH
-		));
+		
 		$this->send($body);
 	}
 	
 	public function ping() {
-		$body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => '', 'rid' => ''));
+		$body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
 		$this->send($body);
 	}
 	

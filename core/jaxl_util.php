@@ -58,30 +58,6 @@ class JAXLUtil {
 		}
 	}
 	
-	public static function curl($url, $method='GET', $headers=array(), $data=null) {
-		$ch = curl_init($url);
-		
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_VERBOSE, false);
-		
-		if($method == 'POST') {
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		}
-		
-		$rs = array();
-		$rs['content'] = curl_exec($ch);
-		$rs['errno'] = curl_errno($ch);
-		$rs['errstr'] = curl_error($ch);
-		$rs['headers'] = curl_getinfo($ch);
-		
-		curl_close($ch);
-		return $rs;
-	}
-	
 }
 
 ?>
