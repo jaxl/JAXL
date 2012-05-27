@@ -51,6 +51,13 @@ $xmpp->add_cb('on_auth_success', function() {
 	$xmpp->get_vcard();               // fetch your vcard
 	$xmpp->get_roster();              // fetch your roster list
 });
+
+$xmpp->add_cb('on_chat_message', function($msg) {
+	global $xmpp;
+	$msg->to = $msg->from;
+	$msg->from = $xmpp->full_jid->to_string();
+	$xmpp->send($msg);
+});
 </pre>
    
 3) finally start configured JAXL instance
