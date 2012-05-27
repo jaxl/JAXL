@@ -1,5 +1,5 @@
-Jaxl v3.x (A work in progress):
---------------------------------
+Jaxl v3.x:
+-----------
 Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
 carrying a lot of code from v2.x while throwing away the redundant part.
 Several components have been re-written keeping in my mind feedback from
@@ -38,7 +38,7 @@ Getting Started:
 1) include `jaxl.php` and initialize a new JAXL instance
 
 <pre>
-$cfg = array('jid'=>'user@domain.dtl', 'pass'=>'password', ...);
+$cfg = array('jid'=>'user@domain.dtl', 'pass'=>'password');
 $xmpp = new JAXL($cfg);
 </pre>
    
@@ -54,6 +54,8 @@ $xmpp->add_cb('on_auth_success', function() {
 
 $xmpp->add_cb('on_chat_message', function($msg) {
 	global $xmpp;
+	
+	// echo back
 	$msg->to = $msg->from;
 	$msg->from = $xmpp->full_jid->to_string();
 	$xmpp->send($msg);
