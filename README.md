@@ -35,20 +35,26 @@ With v3.x, every thing has been mapped into an object:
 
 Getting Started:
 ----------------
-1) include jaxl.php and initialize a new JAXL instance
+1) include `jaxl.php` and initialize a new JAXL instance
 
-   $cfg = array('jid'=>'user@domain.dtl', 'pass'=>'password', ...);
-   $xmpp = new JAXL($cfg);
+<pre>
+$cfg = array('jid'=>'user@domain.dtl', 'pass'=>'password', ...);
+$xmpp = new JAXL($cfg);
+</pre>
    
 2) register callbacks on events
 
-   $xmpp->add_cb('on_auth_success', function() {
-       global $xmpp;
-       $xmpp->set_status("available!");  // set your status
-       $xmpp->get_vcard();               // fetch your vcard
-       $xmpp->get_roster();              // fetch your roster list
-   });
+<pre>
+$xmpp->add_cb('on_auth_success', function() {
+	global $xmpp;
+	$xmpp->set_status("available!");  // set your status
+	$xmpp->get_vcard();               // fetch your vcard
+	$xmpp->get_roster();              // fetch your roster list
+});
+</pre>
    
 3) finally start configured JAXL instance
 
-   $xmpp->start();
+<pre>
+$xmpp->start();
+</pre>
