@@ -21,16 +21,16 @@ Library src folder contains following sub-folders:
 
 With v3.x, every thing has been mapped into an object:
 
-* `JAXLEvent`       generic event registry and execution class
-* `JAXLSocket`      generic socket level operations
-* `JAXLXmlStream`   generic SAX style XML parser
-* `JAXLXml`         generic XML object implementation
-* `XMPPStream`      abstract xmpp stream
-* `XMPPIq`          xmpp iq stanza object
-* `XMPPMsg`         xmpp msg stanza object
-* `XMPPPres`        xmpp pres stanza object
-* `XMPPStanza`      any xmpp stanza object
-* `XMPPXep`         abstract xmpp extension
+* `JAXLEvent`       event registry and emitter class
+* `JAXLSocket`      socket level operations
+* `JAXLXmlStream`   streaming XML parser
+* `JAXLXml`         internal XML object implementation
+* `XMPPStream`      base xmpp rfc implementation
+* `XMPPStanza`      wrapper over `JAXLXml` for easy access patterns
+* `XMPPIq`          xmpp iq stanza object (extends `XMPPStanza`)
+* `XMPPMsg`         xmpp msg stanza object (extends `XMPPStanza`)
+* `XMPPPres`        xmpp pres stanza object (extends `XMPPStanza`)
+* `XMPPXep`         abstract xmpp extension (extended by every XEP implementation)
 * `XMPPJid`         xmpp jid object
 
 Getting Started:
