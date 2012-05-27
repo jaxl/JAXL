@@ -61,7 +61,7 @@ $client = new JAXL(array(
 
 	// (optional)
 	//'resource' => 'resource',
-
+	
 	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
 	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
 ));
@@ -71,9 +71,17 @@ $client = new JAXL(array(
 //
 
 $client->add_cb('on_auth_success', function() {
-	echo "got on_auth_success cb\n";
 	global $client;
+	echo "got on_auth_success cb, jid ".$client->full_jid->to_string()."\n";
+	
+	// set status
 	$client->set_status("available!", "dnd", 10);
+	
+	// fetch vcard
+	$client->get_vcard();
+	
+	// fetch roster list
+	$client->get_roster();
 });
 
 $client->add_cb('on_auth_failure', function($reason) {
@@ -89,6 +97,19 @@ $client->add_cb('on_chat_message', function($stanza) {
 	$stanza->to = $stanza->from;
 	$stanza->from = $client->full_jid->to_string();
 	$client->send($stanza);
+});
+
+$client->add_cb('on_presence_stanza', function($stanza) {
+	global $client;
+	
+	$type = ($stanza->type ? $stanza->type : "available");
+	$show = ($stanza->show ? $stanza->show : "???");
+	echo $stanza->from." is now ".$type." ($show)\n";
+	
+	if($type == "available") {
+		// fetch vcard
+		$client->get_vcard($stanza->from);
+	}
 });
 
 $client->add_cb('on_disconnect', function() {

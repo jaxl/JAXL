@@ -43,6 +43,22 @@ require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
 require_once JAXL_CWD.'/core/jaxl_logger.php';
 
+class RosterItem {
+	
+	public $jid = null;
+	public $subscription = null;
+	public $groups = array();
+	public $resources = array();
+	public $vcard = null;
+	
+	public function __construct($jid, $subscription, $groups) {
+		$this->jid = $jid;
+		$this->subscription = $subscription;
+		$this->groups = $groups;
+	}
+	
+}
+
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
  * 1) Adds an event based wrapper over xmpp stream lifecycle
@@ -75,14 +91,14 @@ class JAXL extends XMPPStream {
 	
 	// whether jaxl must also populate local roster cache with
 	// received presence information about the contacts
-	public $manager_roster = true;
+	public $manage_roster = true;
 	
 	// what to do with presence sub requests
 	// "none" | "accept" | "accept_and_add"
 	public $subscription = "none";
 	
 	// path variables
-	public $log_level = 4;
+	public $log_level = JAXL_DEBUG;
 	public $tmp_dir;
 	public $log_dir;
 	public $pid_dir;
@@ -91,9 +107,6 @@ class JAXL extends XMPPStream {
 	public $local_ip;
 	public $pid;
 	public $mode;
-	
-	// periodically dump stats
-	public $dump_stats = true;
 	
 	// current status message
 	public $status;
@@ -153,6 +166,7 @@ class JAXL extends XMPPStream {
 		if(!$host && !$port) list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
 		
+		// choose appropriate transport
 		// if 'bosh_url' cfg is defined include 0206
 		if(@$this->cfg['bosh_url']) {
 			$this->require_xep('0206');
@@ -238,6 +252,37 @@ class JAXL extends XMPPStream {
 	public function send_chat_msg($to, $body) {
 		$msg = new XMPPMsg(array('type'=>'chat', 'to'=>$to, 'from'=>$this->full_jid->to_string()), $body);
 		$this->send($msg);
+	}
+	
+	public function get_vcard($jid=null) {
+		$attrs = array(
+			'type'=>'get',
+			'from'=>$this->full_jid->to_string()
+		);
+		
+		if($jid) {
+			$jid = new XMPPJid($jid);
+			$attrs['to'] = $jid->node."@".$jid->domain;
+		}
+		
+		$this->send(
+			$this->get_iq_pkt(
+				$attrs,
+				new JAXLXml('vCard', 'vcard-temp')
+			)
+		);
+	}
+	
+	public function get_roster() {
+		$this->send(
+			$this->get_iq_pkt(
+				array(
+					'type'=>'get',
+					'from'=>$this->full_jid->to_string()
+				),
+				new JAXLXml('query', 'jabber:iq:roster')
+			)
+		);
 	}
 	
 	public function start() {
@@ -356,14 +401,28 @@ class JAXL extends XMPPStream {
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
 		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
 		
+		_debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
+		
 		if($pref_auth_exists) {
-			$this->send_auth_pkt($pref_auth, $this->jid->to_string(), $this->pass);
-			if($pref_auth == 'X-FACEBOOK-PLATFORM') {
-				return "wait_for_fb_sasl_response";
-			}
+			$mech = $pref_auth;
 		}
 		else {
-			_error("preferred auth type not supported");
+			foreach($mechs as $mech=>$any) {
+				if($mech == 'X-FACEBOOK-PLATFORM') {
+					if(@$this->cfg['fb_access_token']) {
+						break;
+					}
+				}
+				else {
+					break;
+				}
+			}
+			_error("preferred auth type not supported, trying $mech");
+		}
+		
+		$this->send_auth_pkt($mech, $this->jid->to_string(), $this->pass);
+		if($pref_auth == 'X-FACEBOOK-PLATFORM') {
+			return "wait_for_fb_sasl_response";
 		}
 	}
 	
@@ -386,10 +445,53 @@ class JAXL extends XMPPStream {
 	
 	public function handle_iq($stanza) {
 		$stanza = new XMPPStanza($stanza);
+		
+		// catch roster list
+		if($stanza->type == 'result' && ($query = $stanza->exists('query', 'jabber:iq:roster'))) {
+			foreach($query->childrens as $child) {
+				if($child->name == 'item') {
+					$jid = $child->attrs['jid'];
+					$subscription = $child->attrs['subscription'];
+					
+					$groups = array();
+					foreach($child->childrens as $group) {
+						if($group->name == 'group') {
+							$groups[] = $group->name;
+						}
+					}
+					
+					$this->roster[$jid] = new RosterItem($jid, $subscription, $groups);
+				}
+			}
+		}
+		
+		// if managing roster
+		// catch contact vcard results
+		if($this->manage_roster && $stanza->type == 'result' && ($query = $stanza->exists('vCard', 'vcard-temp'))) {
+			$this->roster[$stanza->from]->vcard = $query;
+		}
+		
+		$this->ev->emit('on_'.$stanza->type.'_iq', array($stanza));
 	}
 	
 	public function handle_presence($stanza) {
 		$stanza = new XMPPStanza($stanza);
+		
+		// if managing roster
+		// catch available/unavailable type stanza
+		if($this->manage_roster) {
+			$type = ($stanza->type ? $stanza->type : "available");
+			$jid = new XMPPJid($stanza->from);
+			
+			if($type == 'available') {
+				$this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
+			}
+			else if($type == 'unavailable') {
+				unset($this->roster[$jid->bare]->resources[$jid->resource]);
+			}
+		}
+		
+		$this->ev->emit('on_presence_stanza', array($stanza));
 	}
 	
 	public function handle_message($stanza) {

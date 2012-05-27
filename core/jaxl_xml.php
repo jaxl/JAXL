@@ -151,9 +151,10 @@ class JAXLXml {
 	
 	// checks if a child with $name exists
 	// return child XmlStanza if found otherwise false
-	public function exists($name) {
+	public function exists($name, $ns=null) {
 		foreach($this->childrens as $child) {
-			if($child->name == $name) return $child;
+			if(($ns && $child->name == $name && $child->ns == $ns) 
+			|| $child->name == $name) return $child;
 		}
 		return false;
 	}

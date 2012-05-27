@@ -610,6 +610,7 @@ abstract class XMPPStream {
 				
 				// call abstract
 				if($stanza->name == 'message') {
+					$stanza->type = ($stanza->type ? $stanza->type : 'normal');
 					$this->handle_message($stanza);
 				}
 				else if($stanza->name == 'presence') {

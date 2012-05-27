@@ -73,8 +73,8 @@ $client = new JAXL(array(
 //
 
 $client->add_cb('on_auth_success', function() {
-	echo "got on_auth_success cb\n";
 	global $client;
+	echo "got on_auth_success cb, jid ".$client->full_jid->to_string()."\n";
 	$client->set_status("available!", "dnd", 10);
 });
 
