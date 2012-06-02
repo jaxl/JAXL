@@ -548,7 +548,7 @@ abstract class XMPPStream {
 				}
 				else if($stanza->name == 'success' && $stanza->ns == NS_SASL) {
 					$this->xml->reset_parser();
-					$this->send_start_stream($this->jid->domain);
+					$this->send_start_stream(@$this->jid->domain);
 					return "wait_for_stream_start";
 				}
 				else {

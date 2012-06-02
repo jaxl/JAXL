@@ -37,17 +37,52 @@
  */
 
 // http pre bind php script
+$body = file_get_contents("php://input");
+$body = new SimpleXMLElement($body);
+$attrs = $body->attributes();
+
+if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
+	echo "invalid input";
+	exit;
+}
+
+define('JAXL_SRC_DIR', '/Users/abhinavsingh/git/JAXL');
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
-$bosh = new JAXL();
+require_once JAXL_SRC_DIR.'/jaxl.php';
+
+$to = $attrs['to'];
+$rid = $attrs['rid'];
+$wait = $attrs['wait'];
+$hold = $attrs['hold'];
+echo $to." ".$rid." ".$wait." ".$hold; exit;
+list($host, $port) = JAXLUtil::get_dns_srv($to);
+
+$client = new JAXL(array(
+	'domain' => $to,
+	'host' => $host,
+	'port' => $port,
+	'bosh_url' => 'http://localhost:5280/http-bind',
+	'bosh_rid' => $rid,
+	'bosh_wait' => $wait,
+	'bosh_hold' => $hold,
+	'auth_type' => 'ANONYMOUS'
+));
+
+$client->add_cb('on_auth_success', function() {
+	global $client;
+	echo $client->full_jid->to_string()."\n";
+	echo $client->xeps['0206']->sid."\n";
+	echo $client->xeps['0206']->rid."\n";
+	exit;
+});
 
 //
 // finally start configured xmpp stream
 //
-$bosh->start();
+$client->start();
 echo "done\n";
 
 ?>

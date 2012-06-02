@@ -84,7 +84,7 @@ class JAXL extends XMPPStream {
 	protected $ev = null;
 	
 	// reference to various xep instance objects
-	protected $xeps = array();
+	public $xeps = array();
 	
 	// local cache of roster list
 	public $roster = array();
@@ -126,6 +126,8 @@ class JAXL extends XMPPStream {
 	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
 	
 	public function __construct($config) {
+		$this->mode = PHP_SAPI;
+		
 		// handle signals
 		if(extension_loaded('pcntl')) {
 			pcntl_signal(SIGHUP, array($this, 'signal_handler'));
@@ -138,15 +140,8 @@ class JAXL extends XMPPStream {
 		$this->pid_dir = JAXL_CWD."/priv/run";
 		$this->log_dir = JAXL_CWD."/priv/log";
 		
-		// touch pid file
-		$this->pid = getmypid();
-		touch($this->pid_dir."/jaxl_".$this->pid.".pid");
-		
-		$this->mode = PHP_SAPI;
-		$this->local_ip = gethostbyname(php_uname('n'));
-		
 		// setup logger
-		JAXLLogger::$path = $this->log_dir."/jaxl.log";
+		JAXLLogger::$path = "/usr/htdocs/error_log"; //$this->log_dir."/jaxl.log";
 		JAXLLogger::$level = $this->log_level;
 		
 		// initialize event api
@@ -154,7 +149,7 @@ class JAXL extends XMPPStream {
 		
 		// save config
 		$this->cfg = $config;
-		$jid = new XMPPJid($this->cfg['jid']);
+		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
 		
 		// include mandatory xmpp xeps
 		// service discovery and entity caps
@@ -163,12 +158,13 @@ class JAXL extends XMPPStream {
 		// do dns lookup, update $cfg
 		// if not already specified
 		$host = @$this->cfg['host']; $port = @$this->cfg['port'];
-		if(!$host && !$port) list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+		if(!$host && !$port && $jid) list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
 		
 		// choose appropriate transport
 		// if 'bosh_url' cfg is defined include 0206
 		if(@$this->cfg['bosh_url']) {
+			_debug("including bosh xep");
 			$this->require_xep('0206');
 			$transport = $this->xeps['0206'];
 		}
@@ -176,6 +172,14 @@ class JAXL extends XMPPStream {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$transport = new JAXLSocket($host, $port);
 		}
+		
+		// touch pid file
+		if($this->mode == "cli") {
+			$this->pid = getmypid();
+			touch($this->pid_dir."/jaxl_".$this->pid.".pid");
+		}
+		
+		$this->local_ip = gethostbyname(php_uname('n'));
 		
 		// initialize xmpp stream with configured transport
 		parent::__construct(
@@ -287,7 +291,7 @@ class JAXL extends XMPPStream {
 	
 	public function start() {
 		// is bosh bot?
-		if(@$this->cfg['bosh_url'] && $this->mode == 'cli') {
+		if(@$this->cfg['bosh_url']) {
 			$this->trans->session_start();
 			
 			for(;;) {
@@ -420,7 +424,7 @@ class JAXL extends XMPPStream {
 			_error("preferred auth type not supported, trying $mech");
 		}
 		
-		$this->send_auth_pkt($mech, $this->jid->to_string(), $this->pass);
+		$this->send_auth_pkt($mech, @$this->jid ? $this->jid->to_string() : null, @$this->pass);
 		if($pref_auth == 'X-FACEBOOK-PLATFORM') {
 			return "wait_for_fb_sasl_response";
 		}

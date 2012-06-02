@@ -47,8 +47,8 @@ class XEP_0206 extends XMPPXep {
 	public $chs = array();
 	private $recv_cb = null;
 	
-	private $rid = null;
-	private $sid = null;
+	public $rid = null;
+	public $sid = null;
 	private $hold = 1;
 	private $wait = 30;
 	
@@ -64,6 +64,8 @@ class XEP_0206 extends XMPPXep {
 	//
 	
 	public function init() {
+		$this->mch = curl_multi_init();
+		
 		return array(
 			
 		);
@@ -84,7 +86,7 @@ class XEP_0206 extends XMPPXep {
 				$body = new JAXLXml('body', NS_HTTP_BIND, array(
 					'sid' => $this->sid,
 					'rid' => ++$this->rid,
-					'to' => $this->jaxl->jid->domain,
+					'to' => @$this->jaxl->jid ? $this->jaxl->jid->domain : $this->jaxl->cfg['domain'],
 					'xmpp:restart' => 'true',
 					'xmlns:xmpp' => NS_BOSH
 				));
@@ -104,7 +106,7 @@ class XEP_0206 extends XMPPXep {
 				$body = $this->wrap($body);
 			}
 		}
-		_debug("send ".$body);
+		_debug("send to ".$this->jaxl->cfg['bosh_url']." body ".$body);
 		
 		$this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
 		curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
@@ -144,7 +146,7 @@ class XEP_0206 extends XMPPXep {
 					list($body, $stanza) = $this->unwrap($data);
 					$body = new SimpleXMLElement($body);
 					$attrs = $body->attributes();
-						
+					
 					if(@$attrs['type'] == 'terminate') {
 						// fool me again
 						if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
@@ -187,17 +189,17 @@ class XEP_0206 extends XMPPXep {
 	}
 	
 	public function session_start() {
-		$this->mch = curl_multi_init();
-		$this->rid = rand(1000, 10000);
+		$this->rid = @$this->jaxl->cfg['bosh_rid'] ? $this->jaxl->cfg['bosh_rid'] : rand(1000, 10000);
+		$this->hold = @$this->jaxl->cfg['bosh_hold'] ? $this->jaxl->cfg['bosh_hold'] : $this->hold;
+		$this->wait = @$this->jaxl->cfg['bosh_wait'] ? $this->jaxl->cfg['bosh_wait'] : $this->wait;
 		
 		// fool xmpp_stream state machine with stream start packet
 		// and make transition to wait_for_stream_features state
 		if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream("bosh.jaxl"));
 		
-		$body = new JAXLXml('body', NS_HTTP_BIND, array(
+		$attrs = array(
 			'content' => 'text/xml; charset=utf-8',
-			'from' => $this->jaxl->cfg['jid'],
-			'to' => $this->jaxl->jid->domain,
+			'to' => @$this->jaxl->jid ? $this->jaxl->jid->domain : $this->jaxl->cfg['domain'],
 			'route' => 'xmpp:'.$this->jaxl->cfg['host'].':'.$this->jaxl->cfg['port'],
 			'secure' => 'true',
 			'xml:lang' => 'en',
@@ -205,9 +207,12 @@ class XEP_0206 extends XMPPXep {
 			'xmlns:xmpp' => NS_BOSH,
 			'hold' => $this->hold,
 			'wait' => $this->wait,
-			'rid' => $this->rid
-		));
+			'rid' => $this->rid,
+			'ver' => '1.10'
+		);
 		
+		if(@$this->jaxl->cfg['jid']) $attrs['from'] = @$this->jaxl->cfg['jid'];
+		$body = new JAXLXml('body', NS_HTTP_BIND, $attrs);
 		$this->send($body);
 	}
 	
