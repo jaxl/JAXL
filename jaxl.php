@@ -141,7 +141,7 @@ class JAXL extends XMPPStream {
 		$this->log_dir = JAXL_CWD."/priv/log";
 		
 		// setup logger
-		JAXLLogger::$path = "/usr/htdocs/error_log"; //$this->log_dir."/jaxl.log";
+		JAXLLogger::$path = $this->log_dir."/jaxl.log";
 		JAXLLogger::$level = $this->log_level;
 		
 		// initialize event api
