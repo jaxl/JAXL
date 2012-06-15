@@ -170,7 +170,8 @@ class JAXL extends XMPPStream {
 		}
 		else {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
-			$transport = new JAXLSocket($host, $port);
+			$stream_context = @$this->cfg['stream_context'];
+			$transport = new JAXLSocket($host, $port,$stream_context);
 		}
 		
 		// touch pid file

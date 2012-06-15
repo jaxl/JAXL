@@ -48,6 +48,7 @@ class JAXLSocket {
 	private $port = 5222;
 	private $transport = "tcp";
 	private $blocking = false;
+	private $stream_context = null;
 	
 	public $fd = null;
 	
@@ -72,9 +73,10 @@ class JAXLSocket {
 	private $clock = 0;
 	private $time = 0;
 	
-	public function __construct($host="localhost", $port=5222) {
+	public function __construct($host="localhost", $port=5222, $stream_context=null) {
 		$this->host = $host;
 		$this->port = $port;
+		$this->stream_context = $stream_context;
 	}
 	
 	public function __destruct() {
@@ -93,7 +95,7 @@ class JAXLSocket {
 		$remote_socket = $this->transport."://".$this->host.":".$this->port;
 		
 		//_debug("trying ".$remote_socket."");
-		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout);
+		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
 		
 		if($this->fd) {
 			//_debug("connected to ".$remote_socket."");
