@@ -77,6 +77,8 @@ class JAXLSocket {
 		$this->host = $host;
 		$this->port = $port;
 		$this->stream_context = $stream_context;
+		if($this->port == 5223)
+			$this->transport = 'ssl';
 	}
 	
 	public function __destruct() {
