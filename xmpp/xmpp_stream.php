@@ -176,6 +176,11 @@ abstract class XMPPStream {
 				break;
 			case 'ANONYMOUS':
 				break;
+			case 'EXTERNAL':
+				// If no password, then we are probably doing certificate auth, so follow RFC 6120 form and pass '='.
+				if(strlen($pass) == 0)
+					$stanza->t('=');
+				break;
 			default:
 				break;
 		}
