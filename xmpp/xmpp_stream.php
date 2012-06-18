@@ -142,8 +142,8 @@ abstract class XMPPStream {
 	// pkt creation utilities
 	//
 	
-	public function get_start_stream($domain) {
-		return '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" to="'.$domain.'" xmlns="'.NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.NS_XML.'">';
+	public function get_start_stream($jid) {
+		return '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" from="'.$jid->bare.'" to="'.$jid->domain.'" xmlns="'.NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.NS_XML.'">';
 	}
 	
 	public function get_end_stream() {
@@ -311,8 +311,8 @@ abstract class XMPPStream {
 	// socket senders
 	//
 	
-	protected function send_start_stream($domain) {
-		$this->send_raw($this->get_start_stream($domain));
+	protected function send_start_stream($jid) {
+		$this->send_raw($this->get_start_stream($jid));
 	}
 	
 	public function send_end_stream() {
@@ -383,7 +383,7 @@ abstract class XMPPStream {
 	public function connected($event, $args) {
 		switch($event) {
 			case "start_stream":
-				$this->send_start_stream($this->jid->domain);
+				$this->send_start_stream($this->jid);
 				return array("wait_for_stream_start", 1);
 				break;
 			// someone else already started the stream before us
@@ -493,7 +493,7 @@ abstract class XMPPStream {
 				if($stanza->name == 'proceed' && $stanza->ns == NS_TLS) {
 					$this->trans->crypt();
 					$this->xml->reset_parser();
-					$this->send_start_stream($this->jid->domain);
+					$this->send_start_stream($this->jid);
 					return "wait_for_stream_start";
 				}
 				else {
@@ -517,7 +517,7 @@ abstract class XMPPStream {
 				if($stanza->name == 'compressed' && $stanza->ns == NS_COMPRESSION_PROTOCOL) {
 					$this->xml->reset_parser();
 					$this->trans->compress();
-					$this->send_start_stream($this->jid->domain);
+					$this->send_start_stream($this->jid);
 					return "wait_for_stream_start";
 				}
 				
@@ -548,7 +548,7 @@ abstract class XMPPStream {
 				}
 				else if($stanza->name == 'success' && $stanza->ns == NS_SASL) {
 					$this->xml->reset_parser();
-					$this->send_start_stream(@$this->jid->domain);
+					$this->send_start_stream(@$this->jid);
 					return "wait_for_stream_start";
 				}
 				else {
