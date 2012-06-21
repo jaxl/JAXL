@@ -20,7 +20,11 @@ class JAXLLogger {
 	public static function log($msg, $verbosity=1) {
 		if($verbosity <= self::$level) {
 			$bt = debug_backtrace(); array_shift($bt); $callee = array_shift($bt);
-			error_log(basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg.PHP_EOL, 3, self::$path);
+			$msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
+			if(isset($path))
+				error_log($msg . PHP_EOL, 3, self::$path);
+			else
+				error_log($msg);
 		}
 	}
 	
