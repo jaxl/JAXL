@@ -141,8 +141,10 @@ class JAXL extends XMPPStream {
 		$this->log_dir = JAXL_CWD."/priv/log";
 		
 		// setup logger
-		JAXLLogger::$path = $this->log_dir."/jaxl.log";
-		JAXLLogger::$level = $this->log_level;
+		if(isset($config['logPath']))
+			JAXLLogger::$path = $config['logPath'];
+		if(isset($config['logLevel']))
+			JAXLLogger::$level = $this->log_level = $config['logLevel'];
 		
 		// initialize event api
 		$this->ev = new JAXLEvent();
@@ -170,7 +172,8 @@ class JAXL extends XMPPStream {
 		}
 		else {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
-			$transport = new JAXLSocket($host, $port);
+			$stream_context = @$this->cfg['stream_context'];
+			$transport = new JAXLSocket($host, $port,$stream_context);
 		}
 		
 		// touch pid file
