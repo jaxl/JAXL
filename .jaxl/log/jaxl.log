@@ -1,0 +1,63 @@
+xmpp_stream:112 - 2012-07-04 16:38:02 - calling setup for event connect
+xmpp_stream:125 - 2012-07-04 16:38:02 - current state connected
+xmpp_stream:112 - 2012-07-04 16:38:02 - calling connected for event start_stream
+xmpp_stream:125 - 2012-07-04 16:38:02 - current state wait_for_stream_start
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 177/177 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" to="localhost" xmlns="jabber:client" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 167/167 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='1141292380' from='localhost' version='1.0' xml:lang='en'>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_stream_start for event start_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_stream_features
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 425/592 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <stream:features><mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>PLAIN</mechanism><mechanism>DIGEST-MD5</mechanism><mechanism>ANONYMOUS</mechanism><mechanism>SCRAM-SHA-1</mechanism></mechanisms><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.process-one.net/en/ejabberd/' ver='yy7di5kE0syuCXOQTXNBTclpNTo='/><register xmlns='http://jabber.org/features/iq-register'/></stream:features>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_stream_features for event stanza_cb
+jaxl:413 - 2012-07-04 16:38:03 - pref_auth PLAIN exists
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_sasl_response
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 108/285 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">AHJvb3RAbG9jYWxob3N0AGxpZmVpc2xpZmU=</auth>
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 51/643 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <success xmlns='urn:ietf:params:xml:ns:xmpp-sasl'/>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_sasl_response for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_stream_start
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 177/462 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <stream:stream xmlns:stream="http://etherx.jabber.org/streams" version="1.0" to="localhost" xmlns="jabber:client" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 167/810 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='1834144294' from='localhost' version='1.0' xml:lang='en'>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_stream_start for event start_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_stream_features
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 334/1144 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <stream:features><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/><c xmlns='http://jabber.org/protocol/caps' hash='sha-1' node='http://www.process-one.net/en/ejabberd/' ver='yy7di5kE0syuCXOQTXNBTclpNTo='/><register xmlns='http://jabber.org/features/iq-register'/></stream:features>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_stream_features for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_bind_response
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 161/623 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <iq xmlns="jabber:client" type="set" id="1"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>jaxl.de230a191bbec403cf3b1277ecd740d9</resource></bind></iq>
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 147/1291 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <iq id='1' type='result'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'><jid>root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9</jid></bind></iq>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_bind_response for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state wait_for_session_response
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 112/735 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <iq xmlns="jabber:client" type="set" id="2"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"></session></iq>
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 106/1397 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <iq type='result' xmlns='jabber:client' id='2'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling wait_for_session_response for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state logged_in
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 408/1143 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <presence xmlns="jabber:client" id="3"><status>available!</status><show>dnd</show><priority>10</priority></presence><iq xmlns="jabber:client" type="get" from="root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9" id="4"><vCard xmlns="vcard-temp"></vCard></iq><iq xmlns="jabber:client" type="get" from="root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9" id="5"><query xmlns="jabber:iq:roster"></query></iq>
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 226/1623 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <presence from='root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9' to='root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9' xml:lang='en' id='3'><status>available!</status><show>dnd</show><priority>10</priority></presence>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling logged_in for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state logged_in
+jaxl_socket:204 - 2012-07-04 16:38:03 - sent 163/1306 of data
+jaxl_socket:205 - 2012-07-04 16:38:03 - <iq xmlns="jabber:client" type="get" from="root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9" to="root@localhost" id="6"><vCard xmlns="vcard-temp"></vCard></iq>
+jaxl_socket:169 - 2012-07-04 16:38:03 - read 355/1978 of data
+jaxl_socket:170 - 2012-07-04 16:38:03 - <iq from='root@localhost' to='root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9' id='5' type='result'><query xmlns='jabber:iq:roster'/></iq><iq from='root@localhost' to='root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9' id='4' type='result'/><iq from='root@localhost' to='root@localhost/jaxl.de230a191bbec403cf3b1277ecd740d9' id='6' type='result'/>
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling logged_in for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state logged_in
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling logged_in for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state logged_in
+xmpp_stream:112 - 2012-07-04 16:38:03 - calling logged_in for event stanza_cb
+xmpp_stream:125 - 2012-07-04 16:38:03 - current state logged_in
+xmpp_stream:112 - 2012-07-04 16:38:41 - calling logged_in for event end_stream
+xmpp_stream:125 - 2012-07-04 16:38:41 - current state logged_out
+jaxl:216 - 2012-07-04 16:38:41 - got sigint
+jaxl_socket:147 - 2012-07-04 16:38:41 - error while selecting stream for read

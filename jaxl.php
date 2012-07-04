@@ -135,10 +135,15 @@ class JAXL extends XMPPStream {
 			pcntl_signal(SIGTERM, array($this, 'signal_handler'));
 		}
 		
-		// TODO: check permissions and existence
-		$this->tmp_dir = JAXL_CWD."/priv/tmp";
-		$this->pid_dir = JAXL_CWD."/priv/run";
-		$this->log_dir = JAXL_CWD."/priv/log";
+		// create .jaxl directory in JAXL_CWD
+		$priv = JAXL_CWD."/.jaxl";
+		if(!is_dir($priv)) mkdir($priv);
+		if(!is_dir($priv."/tmp")) mkdir($priv."/tmp");
+		if(!is_dir($priv."/run")) mkdir($priv."/run");
+		if(!is_dir($priv."/log")) mkdir($priv."/log");
+		$this->tmp_dir = JAXL_CWD."/.jaxl/tmp";
+		$this->pid_dir = JAXL_CWD."/.jaxl/run";
+		$this->log_dir = JAXL_CWD."/.jaxl/log";
 		
 		// setup logger
 		JAXLLogger::$path = $this->log_dir."/jaxl.log";
