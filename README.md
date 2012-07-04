@@ -6,7 +6,7 @@ Several components have been re-written keeping in my mind feedback from
 the developer community over the last 4 years.
 
 Jaxl v3.x is an object oriented, non-blocking, event based modular 
-XMPP client/component library.
+XMPP client/component library. Read [why was v3.x written to replace v2.x](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ)
 
 Structure:
 ----------
