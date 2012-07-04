@@ -105,7 +105,7 @@
         /*
          * Subscriber Use Cases
         */
-        public static function subscribe($jaxl, $to, $from, $node, $subJid=FALSE) {
+        public static function subscribe($jaxl, $to, $from, $node, $subJid=FALSE, $callback=FALSE) {
             if(!$subJid) $subJid = $from;
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'">';
@@ -114,7 +114,7 @@
             return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, $callback);
         }
         
-        public static function unsubscribe($jaxl, $to, $from, $node, $subJid=FALSE) {
+        public static function unsubscribe($jaxl, $to, $from, $node, $subJid=FALSE, $callback=FALSE) {
             if(!$subJid) $subJid = $from;
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'">';
@@ -123,7 +123,7 @@
             return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, $callback); 
         }
         
-        public static function getSubscriptionOption($jaxl, $to, $from, $node, $subJid=FALSE) {
+        public static function getSubscriptionOption($jaxl, $to, $from, $node, $subJid=FALSE, $callback=FALSE) {
             if(!$subJid) $subJid = $from;
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'">';
@@ -147,7 +147,7 @@
         /*
          * Publisher Use Cases
         */
-        public static function publishItem($jaxl, $to, $from, $node, $item, $itemId=FALSE, $callback) {
+        public static function publishItem($jaxl, $to, $from, $node, $item, $itemId=FALSE, $callback=FALSE) {
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'">';
             $payload .= '<publish node="'.$node.'">';
@@ -197,7 +197,7 @@
             return XMPPSend::iq($jaxl, 'set', $payload, $to, $from, $callback); 
         }
         
-        public static function deleteNode($jaxl, $to, $from, $node, $redirectURI=FALSE, $callback) {
+        public static function deleteNode($jaxl, $to, $from, $node, $redirectURI=FALSE, $callback=FALSE) {
             $payload = '';
             $payload .= '<pubsub xmlns="'.self::$ns.'#owner">';
             $payload .= '<delete node="'.$node.'">';
