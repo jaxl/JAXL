@@ -127,6 +127,7 @@ class JAXL extends XMPPStream {
 	
 	public function __construct($config) {
 		$this->mode = PHP_SAPI;
+		$this->cfg = $config;
 		
 		// handle signals
 		if(extension_loaded('pcntl')) {
@@ -145,16 +146,15 @@ class JAXL extends XMPPStream {
 		$this->log_dir = JAXL_CWD."/.jaxl/log";
 		
 		// setup logger
-		if(isset($config['logPath']))
-			JAXLLogger::$path = $config['logPath'];
-		if(isset($config['logLevel']))
-			JAXLLogger::$level = $this->log_level = $config['logLevel'];
+		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
+		else JAXLLogger::$path = $this->log_dir."/jaxl.log";
+		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
+		else JAXLLogger::$level = $this->log_level;
 		
 		// initialize event api
 		$this->ev = new JAXLEvent();
 		
 		// save config
-		$this->cfg = $config;
 		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
 		
 		// include mandatory xmpp xeps
@@ -177,7 +177,7 @@ class JAXL extends XMPPStream {
 		else {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$stream_context = @$this->cfg['stream_context'];
-			$transport = new JAXLSocket($host, $port,$stream_context);
+			$transport = new JAXLSocket($host, $port, $stream_context);
 		}
 		
 		// touch pid file

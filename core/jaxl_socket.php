@@ -77,8 +77,7 @@ class JAXLSocket {
 		$this->host = $host;
 		$this->port = $port;
 		$this->stream_context = $stream_context;
-		if($this->port == 5223)
-			$this->transport = 'ssl';
+		if($this->port == 5223) $this->transport = 'ssl';
 	}
 	
 	public function __destruct() {
@@ -93,14 +92,14 @@ class JAXLSocket {
 	public function connect($host=null, $port=null) {
 		$this->host = $host ? $host : $this->host;
 		$this->port = $port ? $port : $this->port;
-		
 		$remote_socket = $this->transport."://".$this->host.":".$this->port;
 		
-		//_debug("trying ".$remote_socket."");
-		$this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+		_debug("trying ".$remote_socket."");
+		if($this->stream_context) $this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+		else $this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout);
 		
 		if($this->fd) {
-			//_debug("connected to ".$remote_socket."");
+			_debug("connected to ".$remote_socket."");
 			stream_set_blocking($this->fd, $this->blocking);
 			return true;
 		}
