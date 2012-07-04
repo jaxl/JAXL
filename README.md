@@ -1,5 +1,7 @@
 # JAXL (Jabber XMPP Client and Component Library in PHP)
 
+[Jaxl v3.x](https://github.com/abhinavsingh/JAXL/tree/v3.x) is out. It's fast, modular, clean, flexible, oops, event based. [Read More](https://github.com/abhinavsingh/JAXL/tree/v3.x)
+
 Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time applications
 for browsers, desktops and hand held devices. Jaxl 2.x is a robust, flexible and easy to use
 version of Jaxl 1.x series which was hosted at google code.
