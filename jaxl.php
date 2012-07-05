@@ -135,6 +135,7 @@ class JAXL extends XMPPStream {
 			pcntl_signal(SIGINT, array($this, 'signal_handler'));
 			pcntl_signal(SIGTERM, array($this, 'signal_handler'));
 		}
+		
 		// create .jaxl directory in JAXL_CWD
 		$priv = JAXL_CWD."/.jaxl";
 		if(!is_dir($priv)) mkdir($priv);

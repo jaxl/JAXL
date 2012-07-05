@@ -64,6 +64,11 @@ $client = new JAXL(array(
 	
 	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
 	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
+	
+	// send logs to stderr or point this to a file path
+	// if this option is not passed, default log file path will be
+	// JAXL_CWD."/.jaxl/log/jaxl.log"
+	'log_path' => 'php://stderr'
 ));
 
 //
