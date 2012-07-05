@@ -115,8 +115,15 @@ class JAXLXml {
 	}
 	
 	// update text of current rover
-	public function t($text) {
-		$this->rover->text = &$text;
+	public function t($text, $append=FALSE) {
+		if(!$append) {
+			$this->rover->text = $text;
+		}
+		else {
+			if($this->rover->text === null) 
+				$this->rover->text = '';
+			$this->rover->text .= $text;
+		} 
 		return $this;
 	}
 	
