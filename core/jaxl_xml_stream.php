@@ -98,7 +98,7 @@ class JAXLXmlStream {
 	
 	protected function handle_start_tag($parser, $name, $attrs) {
 		$name = $this->explode($name);
-		//_debug("start of tag ".$name[1]." with ns ".$name[0]);
+		//echo "start of tag ".$name[1]." with ns ".$name[0].PHP_EOL;
 		
 		// replace ns with prefix
 		foreach($attrs as $key=>$v) {
@@ -147,7 +147,7 @@ class JAXLXmlStream {
 		$name = explode($this->delimiter, $name);
 		$name = sizeof($name) == 1 ? array('', $name[0]) : $name;
 		
-		//_debug("depth ".$this->depth.", $name[1] tag ended");
+		//echo "depth ".$this->depth.", $name[1] tag ended".PHP_EOL.PHP_EOL;
 		
 		if($this->depth == 1) {
 			if($this->end_cb) {
@@ -170,7 +170,10 @@ class JAXLXmlStream {
 	}
 	
 	protected function handle_character($parser, $data) {
-		if($this->stanza) $this->stanza->t($data);
+		//echo "depth ".$this->depth.", character ".$data." for stanza ".$this->stanza->name.PHP_EOL;
+		if($this->stanza) {
+			$this->stanza->t(htmlentities($data, ENT_COMPAT, "UTF-8"), TRUE);
+		}
 	}
 	
 	private function implode($data) {
