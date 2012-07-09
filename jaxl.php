@@ -148,7 +148,7 @@ class JAXL extends XMPPStream {
 		
 		// setup logger
 		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
-		else JAXLLogger::$path = $this->log_dir."/jaxl.log";
+		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
 		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
 		else JAXLLogger::$level = $this->log_level;
 		
