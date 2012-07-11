@@ -470,6 +470,13 @@ class JAXL extends XMPPStream {
 	public function handle_iq($stanza) {
 		$stanza = new XMPPStanza($stanza);
 		
+		// emit callback registered on stanza id's
+		if($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
+			_debug("on stanza id callbackd");
+			$this->ev->emit('on_stanza_id_'.$stanza->id, array($stanza));
+			return;
+		}
+		
 		// catch roster list
 		if($stanza->type == 'result' && ($query = $stanza->exists('query', 'jabber:iq:roster'))) {
 			foreach($query->childrens as $child) {
@@ -528,6 +535,7 @@ class JAXL extends XMPPStream {
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);
+		_debug("unhandled event '".$event."' catched in handle_other");
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
 	
