@@ -36,71 +36,46 @@
  *
  */
 
-if($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
-	exit;
+require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
+
+define('NS_DIRECT_MUC_INVITATION', 'jabber:x:conference');
+
+class XEP_0249 extends XMPPXep {
+	
+	//
+	// abstract method
+	//
+	
+	public function init() {
+		return array();
+	}
+	
+	//
+	// api methods
+	//
+	
+	public function get_invite_pkt($to_bare_jid, $room_jid, $password=null, $reason=null, $thread=null, $continue=null) {
+		$xattrs = array('jid'=>$room_jid);
+		if($password) $xattrs['password'] = $password;
+		if($reason) $xattrs['reason'] = $reason;
+		if($thread) $xattrs['thread'] = $thread;
+		if($continue) $xattrs['continue'] = $continue;
+		
+		return $this->jaxl->get_msg_pkt(
+			array('from'=>$this->jaxl->full_jid->to_string(), 'to'=>$to_bare_jid),
+			null, null, null,
+			new JAXLXml('x', NS_DIRECT_MUC_INVITATION, $xattrs)
+		);
+	}
+	
+	public function invite($to_bare_jid, $room_jid, $password=null, $reason=null, $thread=null, $continue=null) {
+		$this->jaxl->send($this->get_invite_pkt($to_bare_jid, $room_jid, $password, $reason, $thread, $continue));
+	}
+	
+	//
+	// event callbacks
+	//
+	
 }
-
-//
-// initialize JAXL object with initial config
-//
-require_once 'jaxl.php';
-$client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[1],
-	'pass' => $argv[2],
-
-	// (required)
-	'bosh_url' => 'http://localhost:5280/http-bind',
-
-	// (optional) srv lookup is done if not provided
-	// for bosh client 'host' value is used for 'route' attribute
-	//'host' => 'xmpp.domain.tld',
-
-	// (optional) result from srv lookup used by default
-	// for bosh client 'port' value is used for 'route' attribute
-	//'port' => 5222,
-
-	// (optional)
-	//'resource' => 'resource',
-	
-	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
-));
-
-//
-// add necessary event callbacks here
-//
-
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_debug("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	$client->set_status("available!", "dnd", 10);
-});
-
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_debug("got on_auth_failure cb with reason $reason");
-});
-
-$client->add_cb('on_chat_message', function($stanza) {
-	global $client;
-	
-	// echo back incoming message stanza
-	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
-	$client->send($stanza);
-});
-
-$client->add_cb('on_disconnect', function() {
-	_debug("got on_disconnect cb");
-});
-
-//
-// finally start configured xmpp stream
-//
-$client->start();
-echo "done\n";
 
 ?>

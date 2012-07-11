@@ -102,6 +102,12 @@ class JAXLEvent {
 		unset($this->reg[$ref[0]][$ref[1]]);
 	}
 	
+	public function exists($ev) {
+		$ret = isset($this->reg[$ev]);
+		_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
+		return $ret;
+	}
+	
 }
 
 ?>

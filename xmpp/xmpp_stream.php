@@ -109,20 +109,30 @@ abstract class XMPPStream {
 	
 	public function __call($event, $args) {
 		if($this->state) {
-			_debug("calling ".$this->state." for event ".$event."");
+			_debug("calling state handler '".$this->state."' for incoming event '".$event."'");
 			$r = call_user_func(array(&$this, $this->state), $event, $args);
 			
+			// returned value can either be:
+			// array([0]=>'new_state', [1]=>'return value for current callback')
+			// array([0]=>'new_state')
+			// 'new_state'
 			if(is_array($r) && sizeof($r) == 2) {
 				list($this->state, $ret) = $r;
 			}
 			else if(is_array($r) && sizeof($r) == 1) {
 				$this->state = $r[0];
 			}
-			else {
+			else if(is_string($r)) {
 				$this->state = $r;
 			}
+			else {
+				_debug("got invalid return value from state handler '".$this->state."', sending end stream...");
+				$this->send_end_stream();
+				$this->state = "logged_out";
+				_debug("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
+			}
 			
-			_debug("current state ".$this->state);
+			_debug("current state '".$this->state."'");
 			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {

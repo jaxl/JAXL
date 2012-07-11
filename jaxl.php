@@ -126,8 +126,17 @@ class JAXL extends XMPPStream {
 	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
 	
 	public function __construct($config) {
-		$this->mode = PHP_SAPI;
+		// env
 		$this->cfg = $config;
+		$this->mode = PHP_SAPI;
+		$this->local_ip = gethostbyname(php_uname('n'));
+		$this->pid = getmypid();
+		
+		// initialize event api
+		$this->ev = new JAXLEvent();
+		
+		// jid object
+		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
 		
 		// handle signals
 		if(extension_loaded('pcntl')) {
@@ -137,6 +146,8 @@ class JAXL extends XMPPStream {
 		}
 		
 		// create .jaxl directory in JAXL_CWD
+		// for our /tmp, /run and /log folders
+		// overwrite these using jaxl config array
 		$priv = JAXL_CWD."/.jaxl";
 		if(!is_dir($priv)) mkdir($priv);
 		if(!is_dir($priv."/tmp")) mkdir($priv."/tmp");
@@ -152,20 +163,24 @@ class JAXL extends XMPPStream {
 		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
 		else JAXLLogger::$level = $this->log_level;
 		
-		// initialize event api
-		$this->ev = new JAXLEvent();
-		
-		// save config
-		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
+		// touch pid file
+		if($this->mode == "cli") {
+			touch($this->get_pid_file_path());
+			_debug("created pid file ".$this->get_pid_file_path());
+		}
 		
 		// include mandatory xmpp xeps
 		// service discovery and entity caps
+		// are recommended for every xmpp entity
 		$this->require_xep(array('0030', '0115'));
 		
-		// do dns lookup, update $cfg
-		// if not already specified
+		// do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
 		$host = @$this->cfg['host']; $port = @$this->cfg['port'];
-		if(!$host && !$port && $jid) list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+		if(!$host && !$port && $jid) {
+			// this dns lookup is blocking
+			_debug("dns srv lookup for ".$jid->domain);
+			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+		}
 		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
 		
 		// choose appropriate transport
@@ -181,14 +196,6 @@ class JAXL extends XMPPStream {
 			$transport = new JAXLSocket($host, $port, $stream_context);
 		}
 		
-		// touch pid file
-		if($this->mode == "cli") {
-			$this->pid = getmypid();
-			touch($this->pid_dir."/jaxl_".$this->pid.".pid");
-		}
-		
-		$this->local_ip = gethostbyname(php_uname('n'));
-		
 		// initialize xmpp stream with configured transport
 		parent::__construct(
 			$transport,
@@ -201,9 +208,14 @@ class JAXL extends XMPPStream {
 	
 	public function __destruct() {
 		// delete pid file
+		_debug("cleaning up pid file ".$this->get_pid_file_path());
 		unlink($this->pid_dir."/jaxl_".$this->pid.".pid");
 		
 		parent::__destruct();
+	}
+	
+	public function get_pid_file_path() {
+		return $this->pid_dir."/jaxl_".$this->pid.".pid";
 	}
 	
 	public function signal_handler($sig) {
@@ -458,6 +470,13 @@ class JAXL extends XMPPStream {
 	public function handle_iq($stanza) {
 		$stanza = new XMPPStanza($stanza);
 		
+		// emit callback registered on stanza id's
+		if($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
+			_debug("on stanza id callbackd");
+			$this->ev->emit('on_stanza_id_'.$stanza->id, array($stanza));
+			return;
+		}
+		
 		// catch roster list
 		if($stanza->type == 'result' && ($query = $stanza->exists('query', 'jabber:iq:roster'))) {
 			foreach($query->childrens as $child) {
@@ -516,6 +535,7 @@ class JAXL extends XMPPStream {
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);
+		_debug("unhandled event '".$event."' catched in handle_other");
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
 	

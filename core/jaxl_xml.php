@@ -114,6 +114,20 @@ class JAXLXml {
 		return $this;
 	}
 	
+	// pass a kv pair of attrs
+	// this function return bool if all attribute 
+	// keys passed matches their respective values
+	public function match_attrs($attrs) {
+		$matches = true;
+		foreach($attrs as $k=>$v) {
+			if($this->attrs[$k] !== $v) {
+				$matches = false;
+				break;
+			}
+		}
+		return $matches;
+	}
+	
 	// update text of current rover
 	public function t($text, $append=FALSE) {
 		if(!$append) {
@@ -158,10 +172,17 @@ class JAXLXml {
 	
 	// checks if a child with $name exists
 	// return child XmlStanza if found otherwise false
-	public function exists($name, $ns=null) {
+	// NOTE: if multiple children exists with same name,
+	// this function returns on first child check
+	public function exists($name, $ns=null, $attrs=array()) {
 		foreach($this->childrens as $child) {
-			if(($ns && $child->name == $name && $child->ns == $ns) 
-			|| $child->name == $name) return $child;
+			if($ns) {
+				if($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
+					return $child;
+			}
+			else if($child->name == $name && $child->match_attrs($attrs)) {
+				return $child;
+			}
 		}
 		return false;
 	}
