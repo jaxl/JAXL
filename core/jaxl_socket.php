@@ -170,7 +170,7 @@ class JAXLSocket {
 			
 			$this->ibuffer = "";
 			_debug("read ".$bytes."/".$this->recv_bytes." of data");
-			_debug($raw);
+			if($bytes > 0) _debug($raw);
 			
 			// callback
 			if($this->recv_cb) call_user_func($this->recv_cb, $raw);

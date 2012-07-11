@@ -21,6 +21,8 @@ class JAXLLogger {
 		if($verbosity <= self::$level) {
 			$bt = debug_backtrace(); array_shift($bt); $callee = array_shift($bt);
 			$msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
+			
+			// if no path is set via jaxl config, default log to env stderr
 			if(isset(self::$path)) error_log($msg . PHP_EOL, 3, self::$path);
 			else error_log($msg);
 		}
