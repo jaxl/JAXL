@@ -72,7 +72,7 @@ $client = new JAXL(array(
 
 $client->add_cb('on_auth_success', function() {
 	global $client;
-	echo "got on_auth_success cb, jid ".$client->full_jid->to_string()."\n";
+	_debug("got on_auth_success cb, jid ".$client->full_jid->to_string());
 	
 	// set status
 	$client->set_status("available!", "dnd", 10);
@@ -87,7 +87,7 @@ $client->add_cb('on_auth_success', function() {
 $client->add_cb('on_auth_failure', function($reason) {
 	global $client;
 	$client->send_end_stream();
-	echo "got on_auth_failure cb with reason $reason\n";
+	_debug("got on_auth_failure cb with reason $reason");
 });
 
 $client->add_cb('on_chat_message', function($stanza) {
@@ -106,7 +106,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	
 	$type = ($stanza->type ? $stanza->type : "available");
 	$show = ($stanza->show ? $stanza->show : "???");
-	echo $stanza->from." is now ".$type." ($show)\n";
+	_debug($stanza->from." is now ".$type." ($show)");
 	
 	if($type == "available") {
 		// fetch vcard
@@ -115,7 +115,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 });
 
 $client->add_cb('on_disconnect', function() {
-	echo "got on_disconnect cb\n";
+	_debug("got on_disconnect cb");
 });
 
 //
