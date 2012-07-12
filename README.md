@@ -3,10 +3,13 @@ Jaxl v3.x:
 Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
 carrying a lot of code from v2.x while throwing away the redundant part.
 Several components have been re-written keeping in my mind feedback from
-the developer community over the last 4 years.
+the developer community over the last 4 years
 
-Jaxl v3.x is an object oriented, non-blocking, event based modular 
-XMPP client/component library. Read [why was v3.x written to replace v2.x](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ)
+Jaxl v3.x is an object oriented, non-blocking, event based modular XMPP client/component library
+
+Read [why v3.x will replace v2.x](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ)
+
+Browse [v2.x branch](https://github.com/abhinavsingh/JAXL/tree/master) instead
 
 Structure:
 ----------
