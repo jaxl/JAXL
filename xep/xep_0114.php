@@ -66,6 +66,7 @@ class XEP_0114 extends XMPPXep {
 	
 	public function start_handshake($stanza) {
 		// send handshake
+		_debug("starting component handshake");
 		$id = $stanza->id;
 		$hash = strtolower(sha1($id.$this->jaxl->pass));
 		$stanza = new JAXLXml('handshake', null, $hash);
@@ -73,6 +74,7 @@ class XEP_0114 extends XMPPXep {
 	}
 	
 	public function logged_in($stanza) {
+		_debug("component handshake complete");
 		$this->jaxl->handle_auth_success();
 		return array("logged_in", 1);
 	}

@@ -78,7 +78,7 @@ abstract class XMPPStream {
 	//
 	
 	abstract public function handle_stream_start($stanza);
-	abstract public function handle_auth_mechs($mechs);
+	abstract public function handle_auth_mechs($stanza, $mechs);
 	abstract public function handle_auth_success();
 	abstract public function handle_auth_failure($reason);
 	abstract public function handle_iq($stanza);
@@ -110,7 +110,8 @@ abstract class XMPPStream {
 	public function __call($event, $args) {
 		if($this->state) {
 			_debug("calling state handler '".$this->state."' for incoming event '".$event."'");
-			$r = call_user_func(array(&$this, $this->state), $event, $args);
+			$call = method_exists($this, $this->state) ? array(&$this, $this->state): $this->state;
+			$r = call_user_func($call, $event, $args);
 			
 			// returned value can either be:
 			// array([0]=>'new_state', [1]=>'return value for current callback')
@@ -463,13 +464,10 @@ abstract class XMPPStream {
 					return "wait_for_tls_result";
 				}
 				
-				// get available mechs
-				$mechanisms = array();
+				// handle auth mech
 				$mechs = $stanza->exists('mechanisms', NS_SASL);
-				if($mechs) foreach($mechs->childrens as $mech) $mechanisms[$mech->text] = true;
-				
-				if(sizeof($mechanisms) > 0) {
-					$new_state = $this->handle_auth_mechs($mechanisms);
+				if($mechs) {
+					$new_state = $this->handle_auth_mechs($stanza, $mechs);
 					return $new_state ? $new_state : "wait_for_sasl_response";
 				}
 				
