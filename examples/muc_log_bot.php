@@ -81,15 +81,6 @@ $client->add_cb('on_auth_success', function() {
 	global $client, $room_full_jid;
 	_debug("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
-	// set status
-	//$client->set_status("available!", "dnd", 10);
-	
-	// fetch vcard
-	//$client->get_vcard();
-	
-	// fetch roster list
-	//$client->get_roster();
-	
 	// join muc room
 	$client->xeps['0045']->join_room($room_full_jid);
 });
@@ -100,37 +91,49 @@ $client->add_cb('on_auth_failure', function($reason) {
 	_debug("got on_auth_failure cb with reason $reason");
 });
 
-$client->add_cb('on_chat_message', function($stanza) {
+$client->add_cb('on_groupchat_message', function($stanza) {
 	global $client;
 	
-	if($stanza->type == 'chat') {
-		// echo back incoming chat message stanza
-		$stanza->to = $stanza->from;
-		$stanza->from = $client->full_jid->to_string();
-		$client->send($stanza);
-	}
+	$from = new XMPPJid($stanza->from);
+	$delay = $stanza->exists('delay', 'urn:xmpp:delay');
+	
+	_info("message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")));
 });
 
 $client->add_cb('on_presence_stanza', function($stanza) {
 	global $client, $room_full_jid;
 	
-	if($stanza->from != $room_full_jid->to_string()) {
-		$type = ($stanza->type ? $stanza->type : "available");
-		$show = ($stanza->show ? $stanza->show : "???");
-		_debug($stanza->from." is now ".$type." ($show)");
-		
-		if($type == "available") {
-			// fetch vcard
-			$client->get_vcard($stanza->from);
+	$from = new XMPPJid($stanza->from);
+	
+	// self-stanza received, we now have complete room roster
+	if($from->to_string() == $room_full_jid->to_string()) {
+		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+			if(($status = $x->exists('status', null, array('code'=>'110'))) !== false) {
+				$item = $x->exists('item');
+				_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
+			}
+			else {
+				_debug("xmlns #user have no x child element");
+			}
+		}
+		else {
+			_warning("=======> odd case");
 		}
 	}
-	else if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
-		$status = $x->exists('status', null, array('code'=>'110'));
-		_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code']);
+	// stanza from other users received
+	else if($from->bare == $room_full_jid->bare) {
+		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+			$item = $x->exists('item');
+			_info("presence stanza from ".$from->resource." received, affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
+		}
+		else {
+			_warning("=======> odd case");
+		}
 	}
 	else {
-		_info("presence stanza from room full jid ".$room_full_jid->to_string()." received");
+		_warning("=======> odd case");
 	}
+	
 });
 
 $client->add_cb('on_disconnect', function() {

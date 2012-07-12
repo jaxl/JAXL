@@ -93,12 +93,10 @@ $client->add_cb('on_auth_failure', function($reason) {
 $client->add_cb('on_chat_message', function($stanza) {
 	global $client;
 	
-	if($stanza->type == 'chat') {
-		// echo back incoming chat message stanza
-		$stanza->to = $stanza->from;
-		$stanza->from = $client->full_jid->to_string();
-		$client->send($stanza);
-	}
+	// echo back incoming chat message stanza
+	$stanza->to = $stanza->from;
+	$stanza->from = $client->full_jid->to_string();
+	$client->send($stanza);
 });
 
 $client->add_cb('on_presence_stanza', function($stanza) {
