@@ -450,7 +450,34 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
+	public function handle_domain_info($stanza) {
+		$query = $stanza->exists('query', NS_DISCO_INFO);
+		foreach($query->childrens as $k=>$child) {
+			if($child->name == 'identity') {
+				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
+			}
+			else if($child->name == 'x') {
+				//echo 'x ns:'.$child->ns.PHP_EOL;
+			}
+			else if($child->name == 'feature') {
+				//echo 'feature var:'.$child->attrs['var'].PHP_EOL;
+			}
+		}
+	}
+	
+	public function handle_domain_items($stanza) {
+		$query = $stanza->exists('query', NS_DISCO_ITEMS);
+		foreach($query->childrens as $k=>$child) {
+			if($child->name == 'item') {
+				//echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
+			}
+		}
+	} 
+	
 	public function handle_auth_success() {
+		$this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
+		$this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
+		
 		$this->ev->emit('on_auth_success');
 	}
 	

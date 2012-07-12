@@ -54,10 +54,38 @@ class XEP_0030 extends XMPPXep {
 	}
 	
 	//
-	// event callbacks
+	// api methods
 	//
 	
+	public function get_info_pkt($entity_jid) {
+		return $this->jaxl->get_iq_pkt(
+			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
+			new JAXLXml('iq', NS_DISCO_INFO)	
+		);
+	}
 	
+	public function get_info($entity_jid, $callback=null) {
+		$pkt = $this->get_info_pkt($entity_jid);
+		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+		$this->jaxl->send($pkt);
+	}
+	
+	public function get_items_pkt($entity_jid) {
+		return $this->jaxl->get_iq_pkt(
+			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
+			new JAXLXml('iq', NS_DISCO_ITEMS)
+		);
+	}
+	
+	public function get_items($entity_jid, $callback=null) {
+		$pkt = $this->get_items_pkt($entity_jid);
+		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+		$this->jaxl->send($pkt);
+	}
+	
+	//
+	// event callbacks
+	//
 	
 }
 
