@@ -206,7 +206,7 @@ class JAXLXml {
 		
 		$xml .= '<'.$this->name;
 		if($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach($this->attrs as $k=>$v) if($v) $xml .= ' '.$k.'="'.$v.'"';
+		foreach($this->attrs as $k=>$v) if(!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.$v.'"';
 		$xml .= '>';
 		
 		foreach($this->childrens as $child) $xml .= $child->to_string($this->ns);
