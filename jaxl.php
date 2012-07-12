@@ -421,10 +421,15 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
-	public function handle_auth_mechs($mechs) {
+	public function handle_auth_mechs($stanza, $mechanisms) {
+		if($this->ev->exists('on_stream_features')) {
+			return $this->ev->emit('on_stream_features', array($stanza));
+		}
+		
+		$mechs = array();
+		if($mechanisms) foreach($mechanisms->childrens as $mechanism) $mechs[$mechanism->text] = true;
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
 		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
-		
 		_debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
 		
 		if($pref_auth_exists) {
@@ -450,33 +455,12 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
-	public function handle_domain_info($stanza) {
-		$query = $stanza->exists('query', NS_DISCO_INFO);
-		foreach($query->childrens as $k=>$child) {
-			if($child->name == 'identity') {
-				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
-			}
-			else if($child->name == 'x') {
-				//echo 'x ns:'.$child->ns.PHP_EOL;
-			}
-			else if($child->name == 'feature') {
-				//echo 'feature var:'.$child->attrs['var'].PHP_EOL;
-			}
-		}
-	}
-	
-	public function handle_domain_items($stanza) {
-		$query = $stanza->exists('query', NS_DISCO_ITEMS);
-		foreach($query->childrens as $k=>$child) {
-			if($child->name == 'item') {
-				//echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
-			}
-		}
-	} 
-	
 	public function handle_auth_success() {
-		$this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
-		$this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
+		// if not a component
+		if(!@$this->xeps['0114']) {
+			$this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
+			$this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
+		}
 		
 		$this->ev->emit('on_auth_success');
 	}
@@ -499,7 +483,7 @@ class JAXL extends XMPPStream {
 		
 		// emit callback registered on stanza id's
 		if($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
-			_debug("on stanza id callbackd");
+			//_debug("on stanza id callbackd");
 			$this->ev->emit('on_stanza_id_'.$stanza->id, array($stanza));
 			return;
 		}
@@ -562,8 +546,32 @@ class JAXL extends XMPPStream {
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);
-		_debug("unhandled event '".$event."' catched in handle_other");
+		_debug("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
+	}
+	
+	public function handle_domain_info($stanza) {
+		$query = $stanza->exists('query', NS_DISCO_INFO);
+		foreach($query->childrens as $k=>$child) {
+			if($child->name == 'identity') {
+				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
+			}
+			else if($child->name == 'x') {
+				//echo 'x ns:'.$child->ns.PHP_EOL;
+			}
+			else if($child->name == 'feature') {
+				//echo 'feature var:'.$child->attrs['var'].PHP_EOL;
+			}
+		}
+	}
+	
+	public function handle_domain_items($stanza) {
+		$query = $stanza->exists('query', NS_DISCO_ITEMS);
+		foreach($query->childrens as $k=>$child) {
+			if($child->name == 'item') {
+				//echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
+			}
+		}
 	}
 	
 }
