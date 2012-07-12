@@ -67,7 +67,8 @@ $client = new JAXL(array(
 ));
 
 $client->require_xep(array(
-	'0045'	// MUC
+	'0045',	// MUC
+	'0203'	// Delayed Delivery
 ));
 
 //
@@ -95,7 +96,7 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 	global $client;
 	
 	$from = new XMPPJid($stanza->from);
-	$delay = $stanza->exists('delay', 'urn:xmpp:delay');
+	$delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 	
 	_info("message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")));
 });
