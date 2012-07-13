@@ -36,16 +36,16 @@
 *
 */
 
+require_once JAXL_CWD.'/core/jaxl_xml.php';
+require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
+require_once JAXL_CWD.'/core/jaxl_util.php';
+require_once JAXL_CWD.'/core/jaxl_socket_client.php';
+
 require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
 require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
 require_once JAXL_CWD.'/xmpp/xmpp_msg.php';
 require_once JAXL_CWD.'/xmpp/xmpp_pres.php';
 require_once JAXL_CWD.'/xmpp/xmpp_iq.php';
-
-require_once JAXL_CWD.'/core/jaxl_xml.php';
-require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
-require_once JAXL_CWD.'/core/jaxl_util.php';
-require_once JAXL_CWD.'/core/jaxl_socket.php';
 
 /**
  * 
