@@ -45,10 +45,10 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLSocketTest extends PHPUnit_Framework_TestCase {
+class JAXLSocketClientTest extends PHPUnit_Framework_TestCase {
 	
-	function test_jaxl_socket() {
-		$sock = new JAXLSocket("127.0.0.1", 5222);
+	function test_jaxl_socket_client() {
+		$sock = new JAXLSocketClient("127.0.0.1", 5222);
 		$sock->connect();
 		
 		$sock->send("<stream:stream>");

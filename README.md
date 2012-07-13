@@ -24,17 +24,26 @@ Library src folder contains following sub-folders:
 
 With v3.x, every thing has been mapped into an object:
 
-* `JAXLEvent`       event registry and emitter class
-* `JAXLSocket`      socket level operations
-* `JAXLXmlStream`   streaming XML parser
-* `JAXLXml`         internal XML object implementation
-* `XMPPStream`      base xmpp rfc implementation
-* `XMPPStanza`      wrapper over `JAXLXml` for easy access patterns
-* `XMPPIq`          xmpp iq stanza object (extends `XMPPStanza`)
-* `XMPPMsg`         xmpp msg stanza object (extends `XMPPStanza`)
-* `XMPPPres`        xmpp pres stanza object (extends `XMPPStanza`)
-* `XMPPXep`         abstract xmpp extension (extended by every XEP implementation)
-* `XMPPJid`         xmpp jid object
+Core Classes:
+
+* `JAXLEvent`           event registry and emitter class
+* `JAXLSocketClient`    generic tcp/udp client class
+* `JAXLSocketServer`    generic tcp/udp server class
+* `JAXLXmlStream`       streaming XML parser
+* `JAXLXml`             internal XML object implementation
+* `JAXLLoop`            core select loop
+* `JAXLClock`           timed job/callback dispatcher
+* `JAXLLogger`          generic logger
+
+XMPP Core Classes:
+
+* `XMPPStream`          base xmpp rfc implementation
+* `XMPPStanza`          wrapper over `JAXLXml` for easy access patterns
+* `XMPPIq`              xmpp iq stanza object (extends `XMPPStanza`)
+* `XMPPMsg`             xmpp msg stanza object (extends `XMPPStanza`)
+* `XMPPPres`            xmpp pres stanza object (extends `XMPPStanza`)
+* `XMPPXep`             abstract xmpp extension (extended by every XEP implementation)
+* `XMPPJid`             xmpp jid object
 
 Getting Started:
 ----------------
@@ -64,7 +73,7 @@ $xmpp->add_cb('on_chat_message', function($msg) {
 	$xmpp->send($msg);
 });
 </pre>
-   
+
 3) finally start configured JAXL instance
 
 <pre>

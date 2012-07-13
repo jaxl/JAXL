@@ -3,9 +3,4 @@
   either fix it or port v2.x bosh curl (blocking) 
   implementation to get it going
 - write more and better tests
-- port back major v2.x xep's into v3.x (muc, pubsub)
-- enable cron jobs similar to v2.x here in v3.x
-- replace select with libevent loop if available
-  need a generic jaxlselect which can do all this
-  while jaxlsocket and others can use it
 - some more work on exception handling

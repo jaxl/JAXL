@@ -44,7 +44,7 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
  * @author abhinavsingh
  *
  */
-class JAXLSocket {
+class JAXLSocketClient {
 	
 	private $host = "localhost";
 	private $port = 5222;
