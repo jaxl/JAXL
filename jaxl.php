@@ -457,10 +457,10 @@ class JAXL extends XMPPStream {
 	
 	public function handle_auth_success() {
 		// if not a component
-		if(!@$this->xeps['0114']) {
+		/*if(!@$this->xeps['0114']) {
 			$this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
 			$this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
-		}
+		}*/
 		
 		$this->ev->emit('on_auth_success');
 	}
