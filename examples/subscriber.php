@@ -75,6 +75,16 @@ $client->add_cb('on_auth_failure', function($reason) {
 	_debug("got on_auth_failure cb with reason $reason");
 });
 
+$client->add_cb('on_headline_message', function($stanza) {
+	global $client;
+	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) { 
+		_debug("got pubsub event");
+	}
+	else {
+		_warning("unknown headline message rcvd");
+	}
+});
+
 $client->add_cb('on_disconnect', function() {
 	_debug("got on_disconnect cb");
 });

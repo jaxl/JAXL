@@ -89,7 +89,8 @@ class XEP_0060 extends XMPPXep {
 	//
 	
 	public function get_publish_item_pkt($service, $node, $item) {
-		$child = new JAXLXml('publish', null, array('node'=>$node));
+		$child = new JAXLXml('pubsub', NS_PUBSUB);
+		$child->c('publish', null, array('node'=>$node));
 		$child->cnode($item);
 		return $this->get_iq_pkt($service, $child);
 	}
