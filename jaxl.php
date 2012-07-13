@@ -39,6 +39,7 @@
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
+require_once JAXL_CWD.'/core/jaxl_cli.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
@@ -310,7 +311,16 @@ class JAXL extends XMPPStream {
 		);
 	}
 	
-	public function start() {
+	public function handle_debug_shell($raw) {
+		return eval($raw).PHP_EOL;
+	}
+	
+	protected function debug_shell() {
+		$cli = new JAXLCli(array(&$this, 'handle_debug_shell'));
+		JAXLCli::prompt();
+	}
+	
+	public function start($debug_shell=false) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
 			$this->trans->session_start();
@@ -346,6 +356,8 @@ class JAXL extends XMPPStream {
 			// while we are connected
 			// drain the stream for data
 			//while($this->trans->fd) $this->trans->recv();
+			
+			if($debug_shell) $this->debug_shell();
 			
 			// run main loop
 			JAXLLoop::run();

@@ -121,14 +121,12 @@ class JAXLLoop {
 			// read callback
 			foreach($read as $r) {
 				$fdid = array_search($r, self::$read_fds);
-				_debug("calling read cb");
 				call_user_func(self::$read_cbs[$fdid]);
 			}
 			
 			// write callback
 			foreach($write as $w) {
 				$fdid = array_search($w, self::$write_fds);
-				_debug("calling write cb");
 				call_user_func(self::$write_cbs[$fdid]);
 			}
 			
