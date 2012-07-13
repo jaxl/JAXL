@@ -46,12 +46,10 @@ if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
 	exit;
 }
 
-define('JAXL_SRC_DIR', '/Users/abhinavsingh/git/JAXL');
-
 //
 // initialize JAXL object with initial config
 //
-require_once JAXL_SRC_DIR.'/jaxl.php';
+require_once 'jaxl.php';
 
 $to = $attrs['to'];
 $rid = $attrs['rid'];
