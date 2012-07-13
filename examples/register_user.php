@@ -46,23 +46,7 @@ if($argc < 2) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
 	'jid' => $argv[1]
-
-	// (optional) srv lookup is done if not provided
-	//'host' => 'xmpp.domain.tld',
-
-	// (optional) result from srv lookup used by default
-	//'port' => 5222,
-
-	// (optional) defaults to false
-	//'force_tls' => true,
-
-	// (optional)
-	//'resource' => 'resource',
-
-	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	//'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
 ));
 
 $client->require_xep(array(
@@ -70,7 +54,15 @@ $client->require_xep(array(
 ));
 
 //
-// add necessary event callbacks here
+// below are two states which become part of
+// our client's xmpp_stream lifecycle
+// consider as if these methods are directly
+// inside xmpp_stream state machine
+// 
+// Note: $stanza = $args[0] is an instance of
+// JAXLXml in xmpp_stream state methods, 
+// it is yet not ready for easy access 
+// patterns available on XMPPStanza instances
 //
 
 function wait_for_register_response($event, $args) {
@@ -124,6 +116,10 @@ function wait_for_register_form($event, $args) {
 		return "logged_out";
 	}
 }
+
+//
+// add necessary event callbacks here
+//
 
 $client->add_cb('on_stream_features', function($stanza) {
 	global $client, $argv;
