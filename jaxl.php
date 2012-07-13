@@ -39,7 +39,6 @@
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
-require_once JAXL_CWD.'/core/jaxl_clock.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
@@ -84,9 +83,6 @@ class JAXL extends XMPPStream {
 	
 	// event callback engine for xmpp stream lifecycle
 	protected $ev = null;
-	
-	// time server (cron jobs)
-	protected $clock = null;
 	
 	// reference to various xep instance objects
 	public $xeps = array();
@@ -139,7 +135,6 @@ class JAXL extends XMPPStream {
 		
 		// initialize core modules
 		$this->ev = new JAXLEvent();
-		$this->clock = new JAXLClock();
 		
 		// jid object
 		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
@@ -353,7 +348,6 @@ class JAXL extends XMPPStream {
 			//while($this->trans->fd) $this->trans->recv();
 			
 			// run main loop
-			JAXLLoop::$on_tick = array(&$this->clock, 'tick');
 			JAXLLoop::run();
 			
 			// emit

@@ -36,6 +36,8 @@
  *
  */
 
+require_once JAXL_CWD.'/core/jaxl_clock.php';
+
 /**
  *
  * Enter description here ...
@@ -44,7 +46,7 @@
  */
 class JAXLLoop {
 	
-	public static $on_tick = null;
+	public static $clock = null;
 	
 	private static $is_running = false;
 	private static $active_fds = 0;
@@ -95,6 +97,8 @@ class JAXLLoop {
 	public static function run() {
 		if(!self::$is_running) {
 			self::$is_running = true;
+			self::$clock = new JAXLClock();
+			
 			while(self::$active_fds > 0)
 				self::select();
 		}
@@ -128,11 +132,11 @@ class JAXLLoop {
 				call_user_func(self::$write_cbs[$fdid]);
 			}
 			
-			call_user_func(self::$on_tick, null);
+			self::$clock->tick();
 		}
 		else if($changed === 0) {
 			//_debug("nothing changed while selecting for read");
-			call_user_func(self::$on_tick, self::$secs + self::$usecs/pow(10,6));
+			self::$clock->tick(self::$secs + self::$usecs/pow(10,6));
 		}
 	}
 	

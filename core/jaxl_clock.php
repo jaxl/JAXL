@@ -50,7 +50,7 @@ class JAXLClock {
 		_debug("shutting down clock server...");
 	}
 	
-	// 
+	// update clock and execute jobs
 	public function tick($by=null) {
 		if($by) {
 			$this->tick += $by;
@@ -64,8 +64,8 @@ class JAXLClock {
 		}
 	}
 	
-	// time the execution time of callback
-	public function time($callback, $args) {
+	// calculate execution time of callback
+	public function tc($callback, $args) {
 		
 	}
 	
