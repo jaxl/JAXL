@@ -50,20 +50,10 @@ $client = new JAXL(array(
 	'jid' => $argv[1],
 	'pass' => $argv[2],
 	
-	// (optional) srv lookup is done if not provided
-	//'host' => 'xmpp.domain.tld',
-
-	// (optional) result from srv lookup used by default
-	//'port' => 5222,
-
-	// (optional) defaults to false
-	//'force_tls' => true,
-
-	// (optional)
-	//'resource' => 'resource',
-	
 	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
+	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
+	
+	'log_path' => JAXL_CWD.'/.jaxl/log/jaxl.log'
 ));
 
 $client->require_xep(array(
@@ -98,7 +88,15 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 	$from = new XMPPJid($stanza->from);
 	$delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 	
-	_info("message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")));
+	if($from->resource) {
+		echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+	}
+	else {
+		$subject = $stanza->exists('subject');
+		if($subject) {
+			echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+		}
+	}
 });
 
 $client->add_cb('on_presence_stanza', function($stanza) {
@@ -125,7 +123,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	else if($from->bare == $room_full_jid->bare) {
 		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			$item = $x->exists('item');
-			_info("presence stanza from ".$from->resource." received, affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
+			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
 		}
 		else {
 			_warning("=======> odd case");
