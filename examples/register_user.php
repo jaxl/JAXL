@@ -46,7 +46,8 @@ if($argc < 2) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	'jid' => $argv[1]
+	'jid' => $argv[1],
+	'log_path' => JAXL_CWD.'/.jaxl/log/jaxl.log'
 ));
 
 $client->require_xep(array(
@@ -75,12 +76,15 @@ function wait_for_register_response($event, $args) {
 		$stanza = $args[0];
 		if($stanza->name == 'iq') {
 			if($stanza->attrs['type'] == 'result') {
-				_debug("registration successful");
+				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
 				$client->end_stream();
 				return "logged_out";
 			}
 			else if($stanza->attrs['type'] == 'error') {
-				_error("registration error");
+				$error = $stanza->exists('error');
+				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
+				echo "error text: ".$error->exists('text')->text.PHP_EOL;
+				echo "shutting down...".PHP_EOL;
 				$client->end_stream();
 				return "logged_out";
 			}
@@ -95,8 +99,6 @@ function wait_for_register_form($event, $args) {
 	$query = $stanza->exists('query', NS_INBAND_REGISTER);
 	if($query) {
 		$form = array();
-		echo PHP_EOL.PHP_EOL;
-		
 		$instructions = $query->exists('instructions');
 		if($instructions) {
 			echo $instructions->text.PHP_EOL;
