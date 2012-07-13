@@ -44,6 +44,8 @@
  */
 class JAXLLoop {
 	
+	public static $on_tick = null;
+	
 	private static $is_running = false;
 	private static $active_fds = 0;
 	
@@ -52,10 +54,8 @@ class JAXLLoop {
 	private static $write_fds = array();
 	private static $write_cbs = array();
 	
-	private static $secs = 1;
-	private static $usecs = 0;
-	
-	private static $clock = 0;
+	private static $secs = 0;
+	private static $usecs = 30000;
 	
 	private function __construct() {}
 	private function __clone() {}
@@ -106,17 +106,12 @@ class JAXLLoop {
 		$except = null;
 		
 		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
-		
 		if($changed === false) {
 			_debug("error while selecting stream for read");
 			//print_r(stream_get_meta_data(self::fd));
 			//self::disconnect();
 			//return;
 			exit;
-		}
-		else if($changed === 0) {
-			//_debug("nothing changed while selecting for read");
-			self::$clock = self::$secs + self::$usecs/pow(10,6);
 		}
 		else if($changed > 0) {
 			// read callback
@@ -132,6 +127,12 @@ class JAXLLoop {
 				_debug("calling write cb");
 				call_user_func(self::$write_cbs[$fdid]);
 			}
+			
+			call_user_func(self::$on_tick, null);
+		}
+		else if($changed === 0) {
+			//_debug("nothing changed while selecting for read");
+			call_user_func(self::$on_tick, self::$secs + self::$usecs/pow(10,6));
 		}
 	}
 	
