@@ -1,0 +1,140 @@
+<?php 
+/**
+ * Jaxl (Jabber XMPP Library)
+ *
+ * Copyright (c) 2009-2012, Abhinav Singh <me@abhinavsingh.com>.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
+ *
+ * * Neither the name of Abhinav Singh nor the names of his
+ * contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRIC
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+if($argc < 2) {
+	echo "Usage: $argv[0] domain\n";
+	exit;
+}
+
+//
+// initialize JAXL object with initial config
+//
+require_once 'jaxl.php';
+$client = new JAXL(array(
+	// (required) credentials
+	'jid' => $argv[1]
+
+	// (optional) srv lookup is done if not provided
+	//'host' => 'xmpp.domain.tld',
+
+	// (optional) result from srv lookup used by default
+	//'port' => 5222,
+
+	// (optional) defaults to false
+	//'force_tls' => true,
+
+	// (optional)
+	//'resource' => 'resource',
+
+	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
+	//'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN'
+));
+
+$client->require_xep(array(
+	'0077'	// InBand Registration	
+));
+
+//
+// add necessary event callbacks here
+//
+
+function wait_for_register_response($event, $args) {
+	global $client;
+	
+	if($event == 'end_stream') {
+		exit;
+	}
+	else if($event == 'stanza_cb') {
+		$stanza = $args[0];
+		if($stanza->name == 'iq') {
+			if($stanza->attrs['type'] == 'result') {
+				_debug("registration successful");
+				$client->end_stream();
+				return "logged_out";
+			}
+			else if($stanza->attrs['type'] == 'error') {
+				_error("registration error");
+				$client->end_stream();
+				return "logged_out";
+			}
+		}
+	}
+}
+
+function wait_for_register_form($event, $args) {
+	global $client;
+	
+	$stanza = $args[0];
+	$query = $stanza->exists('query', NS_INBAND_REGISTER);
+	if($query) {
+		$form = array();
+		echo PHP_EOL.PHP_EOL;
+		
+		$instructions = $query->exists('instructions');
+		if($instructions) {
+			echo $instructions->text.PHP_EOL;
+		}
+		
+		foreach($query->childrens as $k=>$child) {
+			if($child->name != 'instructions') {
+				$form[$child->name] = readline($child->name.":");
+			}
+		}
+		
+		$client->xeps['0077']->set_form($stanza->attrs['from'], $form);
+		return "wait_for_register_response";
+	}
+	else {
+		$client->end_stream();
+		return "logged_out";
+	}
+}
+
+$client->add_cb('on_stream_features', function($stanza) {
+	global $client, $argv;
+	$client->xeps['0077']->get_form($argv[1]);
+	return "wait_for_register_form";
+});
+
+//
+// finally start configured xmpp stream
+//
+$client->start();
+echo "done\n";
+
+?>
