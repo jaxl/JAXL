@@ -334,19 +334,23 @@ class JAXL extends XMPPStream {
 		// if on_connect event have no callbacks
 		// set default on_connect callback to $this->start_stream()
 		// i.e. xmpp client mode
-		if(!isset($this->ev->reg['on_connect']))
+		if(!$this->ev->exists('on_connect'))
 			$this->add_cb('on_connect', array($this, 'start_stream'));
 		
-		// start
+		// connect to the destination host/port
 		if($this->connect(@$this->cfg['host'], @$this->cfg['port'])) {
+			// emit
 			$this->ev->emit('on_connect');
 			
-			while($this->trans->fd) {
+			// while we are connected
+			// drain the stream for data
+			while($this->trans->fd) 
 				$this->trans->recv();
-			}
 			
+			// emit
 			$this->ev->emit('on_disconnect');
 		}
+		// if connection to the destination fails
 		else {
 			if($this->trans->errno == 61 
 			|| $this->trans->errno == 110 
@@ -354,10 +358,9 @@ class JAXL extends XMPPStream {
 			) {
 				$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
 				$this->retry_attempt++;
-				
 				_debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr."), will try again in ".$retry_after." seconds");
-				
-				// TODO: use sigalrm instead (if possible)
+				// TODO: use sigalrm instead
+				// they usually doesn't gel well inside select loop
 				sleep($retry_after);
 				$this->start();
 			}

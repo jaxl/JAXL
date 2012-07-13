@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -36,21 +36,53 @@
  *
  */
 
-// backward compatibility example
-// for developers who were using JAXL directly via browsers
-// through ajax calls (probably by using distributed jaxl.js)
-// Yet not working, keep an eye on this example file
+if($argc < 3) {
+	echo "Usage: $argv[0] jid pass\n";
+	exit;
+}
 
 //
 // initialize JAXL object with initial config
 //
 require_once 'jaxl.php';
-$bosh = new JAXL();
+$client = new JAXL(array(
+	'jid' => $argv[1],
+	'pass' => $argv[2]
+));
+
+$client->require_xep(array(
+	'0060'	// Publish-Subscribe
+));
+
+//
+// add necessary event callbacks here
+//
+
+$client->add_cb('on_auth_success', function() {
+	global $client;
+	_debug("got on_auth_success cb, jid ".$client->full_jid->to_string());
+	
+	// create node
+	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
+	
+	// subscribe
+	$client->xeps['0060']->subscribe('pubsub.localhost', 'dummy_node');
+});
+
+$client->add_cb('on_auth_failure', function($reason) {
+	global $client;
+	$client->send_end_stream();
+	_debug("got on_auth_failure cb with reason $reason");
+});
+
+$client->add_cb('on_disconnect', function() {
+	_debug("got on_disconnect cb");
+});
 
 //
 // finally start configured xmpp stream
 //
-//$bosh->start();
+$client->start();
 echo "done\n";
 
 ?>
