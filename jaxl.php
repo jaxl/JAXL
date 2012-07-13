@@ -39,6 +39,7 @@
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
+require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
 require_once JAXL_CWD.'/core/jaxl_logger.php';
@@ -132,7 +133,7 @@ class JAXL extends XMPPStream {
 		$this->local_ip = gethostbyname(php_uname('n'));
 		$this->pid = getmypid();
 		
-		// initialize event api
+		// initialize core modules
 		$this->ev = new JAXLEvent();
 		
 		// jid object
@@ -344,8 +345,10 @@ class JAXL extends XMPPStream {
 			
 			// while we are connected
 			// drain the stream for data
-			while($this->trans->fd) 
-				$this->trans->recv();
+			//while($this->trans->fd) $this->trans->recv();
+			
+			// run main loop
+			JAXLLoop::run();
 			
 			// emit
 			$this->ev->emit('on_disconnect');

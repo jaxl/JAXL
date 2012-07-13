@@ -61,17 +61,10 @@ class JAXLSocket {
 	private $compressed = false;
 	
 	private $recv_bytes = 0;
-	private $recv_cb = null;
-	private $recv_secs = 0;
-	private $recv_usecs = 200000;
-	private $recv_chunk_size = 1024;
-	
 	private $send_bytes = 0;
-	private $send_secs = 0;
-	private $send_usecs = 100000;
 	
-	private $clock = 0;
-	private $time = 0;
+	private $recv_cb = null;
+	private $recv_chunk_size = 1024;
 	
 	public function __construct($host="localhost", $port=5222, $stream_context=null) {
 		$this->host = $host;
@@ -101,6 +94,13 @@ class JAXLSocket {
 		if($this->fd) {
 			_debug("connected to ".$remote_socket."");
 			stream_set_blocking($this->fd, $this->blocking);
+			
+			// watch descriptor for read/write events
+			JAXLLoop::watch($this->fd, array(
+				'read' => array(&$this, 'on_read_ready'),
+				'write' => array(&$this, 'on_write_ready')
+			));
+			
 			return true;
 		}
 		else {
@@ -140,79 +140,59 @@ class JAXLSocket {
 		stream_set_blocking($this->fd, false);
 	}
 	
-	public function recv() {
-		$read = array($this->fd);
-		$write = $except = null;
-		$secs = $this->recv_secs; $usecs = $this->recv_usecs;
-		
-		$changed = @stream_select($read, $write, $except, $secs, $usecs);
-		if($changed === false) {
-			_debug("error while selecting stream for read");
-			//print_r(stream_get_meta_data($this->fd));
-			$this->disconnect();
-			return;
-		}
-		else if($changed === 1) {
-			$raw = @fread($this->fd, $this->recv_chunk_size);
-			$bytes = strlen($raw);
-			
-			if($bytes === 0) {
-				$meta = stream_get_meta_data($this->fd);
-				if($meta['eof'] === TRUE) {
-					_debug("socket has reached eof, closing now");
-					$this->disconnect();
-					return;
-				}
-			}
-			
-			$this->recv_bytes += $bytes;
-			$total = $this->ibuffer.$raw;
-			
-			$this->ibuffer = "";
-			_debug("read ".$bytes."/".$this->recv_bytes." of data");
-			if($bytes > 0) _debug($raw);
-			
-			// callback
-			if($this->recv_cb) call_user_func($this->recv_cb, $raw);
-		}
-		else if($changed === 0) {
-			//_debug("nothing changed while selecting for read");
-			$this->clock = $this->recv_secs + $this->recv_usecs/pow(10,6);
-		}
-		
-		if($this->obuffer != "") $this->flush();
-	}
-	
 	public function send($data) {
 		$this->obuffer .= $data;
+		
+		// add watch for write events
+		JAXLLoop::watch($this->fd, array(
+			'write' => array(&$this, 'on_write_ready')
+		));
 	}
 	
-	protected function flush() {
-		$read = $except = array();
-		$write = array($this->fd);
-		$secs = $this->send_secs; $usecs = $this->send_usecs;
+	public function on_read_ready() {
+		_debug("on read ready called");
+		$raw = @fread($this->fd, $this->recv_chunk_size);
+		$bytes = strlen($raw);
 		
-		$changed = @stream_select($read, $write, $except, $secs, $usecs);
-		if($changed === false) {
-			_debug("error while selecting stream for write");
-			print_r(@stream_get_meta_data($this->fd));
-			$this->disconnect();
-			return;
+		if($bytes === 0) {
+			$meta = stream_get_meta_data($this->fd);
+			if($meta['eof'] === TRUE) {
+				_debug("socket eof, disconnecting");
+				$this->disconnect();
+				return;
+			}
 		}
-		else if($changed === 1) {
-			$total = strlen($this->obuffer);
-			$bytes = @fwrite($this->fd, $this->obuffer);
-			$this->send_bytes += $bytes;
+		
+		$this->recv_bytes += $bytes;
+		$total = $this->ibuffer.$raw;
 			
-			_debug("sent ".$bytes."/".$this->send_bytes." of data");
-			_debug($this->obuffer);
+		$this->ibuffer = "";
+		_debug("read ".$bytes."/".$this->recv_bytes." of data");
+		if($bytes > 0) _debug($raw);
 			
-			$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
-			//_debug("current obuffer size: ".strlen($this->obuffer)."");
+		// callback
+		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
+	}
+	
+	public function on_write_ready() {
+		_debug("on write ready called");
+		$total = strlen($this->obuffer);
+		$bytes = @fwrite($this->fd, $this->obuffer);
+		$this->send_bytes += $bytes;
+		
+		_debug("sent ".$bytes."/".$this->send_bytes." of data");
+		_debug($this->obuffer);
+		
+		$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
+		
+		// unwatch for write if obuffer is empty
+		if(strlen($this->obuffer) === 0) {
+			JAXLLoop::unwatch($this->fd, array(
+				'write' => true
+			));
 		}
-		else if($changed === 0) {
-			_debug("nothing changed while selecting for write");
-		}
+		
+		//_debug("current obuffer size: ".strlen($this->obuffer)."");
 	}
 	
 }
