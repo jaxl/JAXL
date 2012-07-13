@@ -104,6 +104,8 @@ class JAXL extends XMPPStream {
 	public $tmp_dir;
 	public $log_dir;
 	public $pid_dir;
+	public $sock_dir;
+	private $sock;
 	
 	// env
 	public $local_ip;
@@ -155,9 +157,12 @@ class JAXL extends XMPPStream {
 		if(!is_dir($priv."/tmp")) mkdir($priv."/tmp");
 		if(!is_dir($priv."/run")) mkdir($priv."/run");
 		if(!is_dir($priv."/log")) mkdir($priv."/log");
+		if(!is_dir($priv."/sock")) mkdir($priv."/sock");
+		
 		$this->tmp_dir = JAXL_CWD."/.jaxl/tmp";
 		$this->pid_dir = JAXL_CWD."/.jaxl/run";
 		$this->log_dir = JAXL_CWD."/.jaxl/log";
+		$this->sock_dir = JAXL_CWD."/.jaxl/sock";
 		
 		// setup logger
 		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
@@ -169,6 +174,12 @@ class JAXL extends XMPPStream {
 		if($this->mode == "cli") {
 			touch($this->get_pid_file_path());
 			_debug("created pid file ".$this->get_pid_file_path());
+		
+			// create AF_UNIX socket
+			$sock_path = $this->get_sock_file_path();
+			$this->sock = socket_create(AF_UNIX, SOCK_STREAM, SOL_TCP);
+			socket_bind($this->sock, $sock_path);
+			socket_listen($this->sock);
 		}
 		
 		// include mandatory xmpp xeps
@@ -195,7 +206,7 @@ class JAXL extends XMPPStream {
 		else {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$stream_context = @$this->cfg['stream_context'];
-			$transport = new JAXLSocket($host, $port, $stream_context);
+			$transport = new JAXLSocketClient($host, $port, $stream_context);
 		}
 		
 		// initialize xmpp stream with configured transport
@@ -218,6 +229,10 @@ class JAXL extends XMPPStream {
 	
 	public function get_pid_file_path() {
 		return $this->pid_dir."/jaxl_".$this->pid.".pid";
+	}
+	
+	public function get_sock_file_path() {
+		return $this->sock_dir."/jaxl_".$this->pid.".sock";
 	}
 	
 	public function signal_handler($sig) {
@@ -312,7 +327,7 @@ class JAXL extends XMPPStream {
 	}
 	
 	public function handle_debug_shell($raw) {
-		return eval($raw).PHP_EOL;
+		echo eval($raw).PHP_EOL;
 	}
 	
 	protected function debug_shell() {
