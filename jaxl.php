@@ -334,6 +334,7 @@ class JAXL extends XMPPStream {
 	public function handle_unix_sock($_c, $addr, $_raw) {
 		_debug("evaling raw string rcvd over unix sock: ".$_raw);
 		$this->sock->send($_c, serialize(eval($_raw)));
+		$this->sock->read($_c);
 	}
 	
 	public function enable_unix_sock() {
