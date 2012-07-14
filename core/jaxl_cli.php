@@ -57,7 +57,7 @@ class JAXLCli {
 	}
 	
 	public function __destruct() {
-		fclose($this->in);
+		@fclose($this->in);
 	}
 	
 	public function stop() {
@@ -68,11 +68,23 @@ class JAXLCli {
 	
 	public function on_read_ready($in) {
 		$raw = @fread($in, $this->recv_chunk_size);
+		
+		if(ord($raw) == 10) {
+			// enter key
+			JAXLCli::prompt(false);
+			return;
+		}
+		else if(trim($raw) == 'quit') {
+			$this->stop();
+			$this->in = null;
+			return;
+		}
+		
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 	
-	public static function prompt() {
-		++self::$counter;
+	public static function prompt($inc=true) {
+		if($inc) ++self::$counter;
 		echo "jaxl ".self::$counter."> ";
 	}
 	
