@@ -43,7 +43,7 @@ if($argc < 2) {
 }
 
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_DEBUG;
+JAXLLogger::$level = JAXL_INFO;
 
 class JAXLCtl {
 	

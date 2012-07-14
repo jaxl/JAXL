@@ -15,14 +15,14 @@ Structure:
 ----------
 Library src folder contains following sub-folders:
 
-* `/examples`   a bunch of working examples
-* `/xmpp`       contains generic xmpp rfc implementation
-* `/xep`        contains various xmpp xep implementation
-* `/core`       contains generic networking and event components
-* `/tests`      test suite
-* `/jaxl.php`   main file
+* `/examples`       a bunch of working examples
+* `/xmpp`           contains generic xmpp rfc implementation
+* `/xep`            contains various xmpp xep implementation
+* `/core`           contains generic networking and event components
+* `/tests`          test suite
+* `/jaxl.php`       main file
 
-With v3.x, every thing has been mapped into an object:
+In v3.x, everything that you will interact with will be an object:
 
 Core Classes:
 
@@ -35,7 +35,7 @@ Core Classes:
 * `JAXLClock`           timed job/callback dispatcher
 * `JAXLLogger`          generic logger
 
-XMPP Core Classes:
+XMPP Classes:
 
 * `XMPPStream`          base xmpp rfc implementation
 * `XMPPStanza`          wrapper over `JAXLXml` for easy access patterns

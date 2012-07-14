@@ -69,7 +69,6 @@ class JAXLCli {
 	public function on_read_ready($in) {
 		$raw = @fread($in, $this->recv_chunk_size);
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
-		JAXLCli::prompt();
 	}
 	
 	public static function prompt() {
