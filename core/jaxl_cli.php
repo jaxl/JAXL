@@ -42,40 +42,34 @@ class JAXLCli {
 	
 	public static $counter = 0;
 	private $in = null;
-	//private $out = null;
 	
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
 	
 	public function __construct($recv_cb=null) {
-		// enable -icanon mode to read char by char
-		// dont forget to call system("stty sane"); 
-		// to reset back tty
-		// system("stty -icanon");
-		
 		$this->recv_cb = $recv_cb;
 		$this->in = fopen('php://stdin', 'r');
-		//$this->out = fopen('php://stdout', 'w');
 		
 		// catch read event on stdin
 		JAXLLoop::watch($this->in, array(
 			'read' => array(&$this, 'on_read_ready')
 		));
-		
-		// catch write event on stdout
-		//JAXLLoop::watch($this->in, array(
-			//'write' => array(&$this, 'on_write_ready')
-		//));
+	}
+	
+	public function __destruct() {
+		fclose($this->in);
+	}
+	
+	public function stop() {
+		JAXLLoop::unwatch($this->in, array(
+			'read' => true
+		));
 	}
 	
 	public function on_read_ready($in) {
 		$raw = @fread($in, $this->recv_chunk_size);
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 		JAXLCli::prompt();
-	}
-	
-	public function on_write_ready($out) {
-		
 	}
 	
 	public static function prompt() {
