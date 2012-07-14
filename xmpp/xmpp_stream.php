@@ -36,6 +36,7 @@
 *
 */
 
+require_once JAXL_CWD.'/core/jaxl_fsm.php';
 require_once JAXL_CWD.'/core/jaxl_xml.php';
 require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
 require_once JAXL_CWD.'/core/jaxl_util.php';
@@ -53,9 +54,7 @@ require_once JAXL_CWD.'/xmpp/xmpp_iq.php';
  * @author abhinavsingh
  *
  */
-abstract class XMPPStream {
-	
-	private $state = "setup";
+abstract class XMPPStream extends JAXLFsm {
 	
 	// jid with binding resource value
 	public $full_jid = null;
@@ -101,44 +100,19 @@ abstract class XMPPStream {
 		
 		$this->trans->set_callback(array(&$this->xml, "parse"));
 		$this->xml->set_callback(array(&$this, "start_cb"), array(&$this, "end_cb"), array(&$this, "stanza_cb"));
+		
+		parent::__construct("setup");
 	}
 	
 	public function __destruct() {
 		//_debug("cleaning up xmpp stream...");
 	}
 	
-	public function __call($event, $args) {
-		if($this->state) {
-			_debug("calling state handler '".$this->state."' for incoming event '".$event."'");
-			$call = method_exists($this, $this->state) ? array(&$this, $this->state): $this->state;
-			$r = call_user_func($call, $event, $args);
-			
-			// returned value can either be:
-			// array([0]=>'new_state', [1]=>'return value for current callback')
-			// array([0]=>'new_state')
-			// 'new_state'
-			if(is_array($r) && sizeof($r) == 2) {
-				list($this->state, $ret) = $r;
-			}
-			else if(is_array($r) && sizeof($r) == 1) {
-				$this->state = $r[0];
-			}
-			else if(is_string($r)) {
-				$this->state = $r;
-			}
-			else {
-				_error("got invalid return value from state handler '".$this->state."', sending end stream...");
-				$this->send_end_stream();
-				$this->state = "logged_out";
-				_notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
-			}
-			
-			_info("current state '".$this->state."'");
-			if(is_array($r) && sizeof($r) == 2) return $ret;
-		}
-		else {
-			_debug("invalid state found, nothing called for event ".$event."");
-		}
+	public function handle_invalid_state($r) {
+		_error("got invalid return value from state handler '".$this->state."', sending end stream...");
+		$this->send_end_stream();
+		$this->state = "logged_out";
+		_notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
 	}
 	
 	public function send($stanza) {
@@ -386,10 +360,10 @@ abstract class XMPPStream {
 				return $this->handle_stream_start($stanza);
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				//print_r($args);
 				return $this->handle_other($event, $args);
-				return array("setup", 0);
+				//return array("setup", 0);
 				break;
 		}
 	}
@@ -408,9 +382,9 @@ abstract class XMPPStream {
 				return $this->handle_stream_start($stanza);
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("connected", 0);
+				//return array("connected", 0);
 				break;
 		}
 	}
@@ -425,9 +399,9 @@ abstract class XMPPStream {
 				return "logged_out";
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("disconnected", 0);
+				//return array("disconnected", 0);
 				break;
 		}
 	}
@@ -440,9 +414,9 @@ abstract class XMPPStream {
 				return "wait_for_stream_features";
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_stream_start", 0);
+				//return array("wait_for_stream_start", 0);
 				break;
 		}
 	}
@@ -489,9 +463,9 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_stream_features", 0);
+				//return array("wait_for_stream_features", 0);
 				break;
 		}
 	}
@@ -513,9 +487,9 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_tls_result", 0);
+				//return array("wait_for_tls_result", 0);
 				break;
 		}
 	}
@@ -534,9 +508,9 @@ abstract class XMPPStream {
 				
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_compression_result", 0);
+				//return array("wait_for_compression_result", 0);
 				break;
 		}
 	}
@@ -569,7 +543,7 @@ abstract class XMPPStream {
 				return "wait_for_sasl_response";
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
 				//return array("wait_for_sasl_response", 0);
 				break;
@@ -593,9 +567,9 @@ abstract class XMPPStream {
 				}
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_bind_response", 0);
+				//return array("wait_for_bind_response", 0);
 				break;
 		}
 	}
@@ -607,9 +581,9 @@ abstract class XMPPStream {
 				return "logged_in";
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("wait_for_session_response", 0);
+				//return array("wait_for_session_response", 0);
 				break;
 		}
 	}
@@ -649,9 +623,9 @@ abstract class XMPPStream {
 				return "disconnected";
 				break;
 			default:
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("logged_in", 0);
+				//return array("logged_in", 0);
 				break;
 		}
 	}
@@ -671,9 +645,9 @@ abstract class XMPPStream {
 				break;
 			default:
 				// exit for any other event in logged_out state
-				//_debug("not catched $event");
+				_debug("uncatched $event");
 				return $this->handle_other($event, $args);
-				return array("logged_out", 0);
+				//return array("logged_out", 0);
 				break;
 		}
 	}

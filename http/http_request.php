@@ -36,7 +36,9 @@
  *
  */
 
-class HTTPRequest {
+require_once JAXL_CWD.'/core/jaxl_fsm.php';
+
+class HTTPRequest extends JAXLFsm {
 	
 	public $sock = null;
 	public $ip = null;
@@ -49,6 +51,7 @@ class HTTPRequest {
 	public $query = array();
 	
 	public $headers = array();
+	public $body = null;
 	
 	public function __construct($sock, $addr) {
 		$this->sock = $sock;
@@ -58,9 +61,90 @@ class HTTPRequest {
 		if(sizeof($addr) == 2) {
 			$this->port = $addr[1];
 		}
+		
+		parent::__construct("wait_for_request_line");
 	}
 	
-	public function line($method, $resource, $version) {
+	public function __destruct() {
+		_debug("http request going down in ".$this->state." state");
+	}
+	
+	public function state() {
+		return $this->state;
+	}
+	
+	//
+	// abstract method implementation
+	public function handle_invalid_state($r) {
+		_debug("handle invalid state called with");
+		print_r($r);
+	}
+	
+	//
+	// fsm States
+	//
+	
+	public function wait_for_request_line($event, $args) {
+		switch($event) {
+			case 'line':
+				$this->_line($args[0], $args[1], $args[2]);
+				return 'wait_for_headers';
+				break;
+			default:
+				_debug("uncatched $event");
+				return 'wait_for_request_line';
+		}
+	}
+	
+	public function wait_for_headers($event, $args) {
+		switch($event) {
+			case 'set_header':
+				$this->headers[$args[0]] = $args[1];
+				return 'wait_for_headers';
+				break;
+			case 'empty_line':
+				return 'maybe_headers_received';
+			default:
+				_debug("uncatched $event");
+				return 'wait_for_headers';
+		}
+	}
+	
+	public function maybe_headers_received($event, $args) {
+		switch($event) {
+			case 'set_header':
+				$this->headers[$args[0]] = $args[1];
+				return 'wait_for_headers';
+				break;
+			case 'empty_line':
+				return 'request_received';
+				break;
+			case 'body':
+				$this->body = $args[0];
+				return 'request_received';
+				break;
+			default:
+				_debug("uncatched $event");
+				return 'maybe_headers_received';
+		}
+	}
+	
+	public function request_received($event, $args) {
+		switch($event) {
+			case 'empty_line':
+				return 'request_received';
+				break;
+			default:
+				_debug("uncatched $event");
+				return 'request_received';
+		}
+	}
+	
+	//
+	// internal methods
+	//
+	
+	protected function _line($method, $resource, $version) {
 		$this->method = $method;
 		$this->resource = $resource;
 		
