@@ -70,7 +70,7 @@ $client = new JAXL(array(
 `JAXL` constructor accepts an array of kv options. A detailed 
 list of available options can be found inside [echo_bot.php](https://github.com/abhinavsingh/JAXL/blob/v3.x/examples/echo_bot.php)
 
-2) register callbacks on events we will require in our application:
+2) register callbacks on events that we will require in our application:
 
 <pre>
 $client->add_cb('on_auth_success', function() {
@@ -116,6 +116,7 @@ jaxl_fsm:73 - 2012-07-15 01:05:51 - current state 'logged_in'
 </pre>
 
 Default `log_level` is `JAXL_INFO` and you should see some info as shown above.
+
 Now lets debug our xmpp client while it's running.
 
 4) open another terminal and attach a live interactive console into our running xmpp client:
@@ -123,8 +124,8 @@ Now lets debug our xmpp client while it's running.
 <pre>
 $ ./jaxlctl.php .jaxl/sock/jaxl_18901.sock 
 
-jaxl_socket_client:90 - 2012-07-15 01:19:56 - trying unix://.jaxl/sock/jaxl_18901.sock
 jaxl 1> global $client; return $client->cfg;
+
 Array
 (
     [jid] => user@domain.tld
@@ -133,18 +134,15 @@ Array
     [host] => domain.tld
     [port] => 5222
 )
-
-jaxl 2>
 </pre>
 
 As we can see above, our running xmpp client perform `[auth_type] => PLAIN`.
+
 We can even send a chat message, group chat message, change status etc using this
 live interactive console. Try it:
 
 <pre>
 jaxl 2> global $client; $client->send_chat_msg("someone@somewhere.com", "hello buddy");
-
-jaxl 3>
 </pre>
 
 Finally, come of out live console:
