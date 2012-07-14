@@ -46,11 +46,11 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
  */
 class JAXLSocketClient {
 	
-	private $host = "localhost";
-	private $port = 5222;
-	private $transport = "tcp";
-	private $blocking = false;
+	private $host = null;
+	private $port = null;
+	private $transport = null;
 	private $stream_context = null;
+	private $blocking = false;
 	
 	public $fd = null;
 	
@@ -68,11 +68,8 @@ class JAXLSocketClient {
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
 	
-	public function __construct($host="localhost", $port=5222, $stream_context=null) {
-		$this->host = $host;
-		$this->port = $port;
+	public function __construct($stream_context=null) {
 		$this->stream_context = $stream_context;
-		if($this->port == 5223) $this->transport = 'ssl';
 	}
 	
 	public function __destruct() {
@@ -84,29 +81,29 @@ class JAXLSocketClient {
 		$this->recv_cb = $recv_cb;
 	}
 	
-	public function connect($host=null, $port=null) {
-		$this->host = $host ? $host : $this->host;
-		$this->port = $port ? $port : $this->port;
-		$remote_socket = $this->transport."://".$this->host.":".$this->port;
+	public function connect($socket_path) {
+		$path_parts = explode(":", $socket_path);
+		$this->transport = 	$path_parts[0];
+		$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
+		if(sizeof($path_parts) == 3) $this->port = $path_parts[2];
 		
-		_debug("trying ".$remote_socket."");
-		if($this->stream_context) $this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
-		else $this->fd = @stream_socket_client($remote_socket, $this->errno, $this->errstr, $this->timeout);
+		_debug("trying ".$socket_path);
+		if($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+		else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
 		
 		if($this->fd) {
-			_debug("connected to ".$remote_socket."");
+			_debug("connected to ".$socket_path."");
 			stream_set_blocking($this->fd, $this->blocking);
 			
 			// watch descriptor for read/write events
 			JAXLLoop::watch($this->fd, array(
-				'read' => array(&$this, 'on_read_ready'),
-				'write' => array(&$this, 'on_write_ready')
+				'read' => array(&$this, 'on_read_ready')
 			));
 			
 			return true;
 		}
 		else {
-			_debug("unable to connect ".$remote_socket." with error no: ".$this->errno.", error str: ".$this->errstr."");
+			_debug("unable to connect ".$socket_path." with error no: ".$this->errno.", error str: ".$this->errstr."");
 			$this->disconnect();
 			return false;
 		}
@@ -160,6 +157,9 @@ class JAXLSocketClient {
 			$meta = stream_get_meta_data($fd);
 			if($meta['eof'] === TRUE) {
 				_debug("socket eof, disconnecting");
+				JAXLLoop::unwatch($fd, array(
+					'read' => true
+				));
 				$this->disconnect();
 				return;
 			}

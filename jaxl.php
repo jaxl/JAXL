@@ -200,7 +200,7 @@ class JAXL extends XMPPStream {
 		else {
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$stream_context = @$this->cfg['stream_context'];
-			$transport = new JAXLSocketClient($host, $port, $stream_context);
+			$transport = new JAXLSocketClient($stream_context);
 		}
 		
 		// initialize xmpp stream with configured transport
@@ -358,7 +358,7 @@ class JAXL extends XMPPStream {
 			$this->add_cb('on_connect', array($this, 'start_stream'));
 		
 		// connect to the destination host/port
-		if($this->connect(@$this->cfg['host'], @$this->cfg['port'])) {
+		if($this->connect(($this->cfg['port'] == 5223 ? "ssl" : "tcp")."://".$this->cfg['host'].":".$this->cfg['port'])) {
 			// emit
 			$this->ev->emit('on_connect');
 			

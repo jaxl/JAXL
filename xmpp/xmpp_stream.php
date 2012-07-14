@@ -360,10 +360,8 @@ abstract class XMPPStream {
 	}
 	
 	private function do_connect($args) {
-		$host = isset($args[0]) ? $args[0] : null;
-		$port = isset($args[1]) ? $args[1] : null;
-		
-		if($this->trans->connect($host, $port)) {
+		$socket_path = @$args[0];
+		if($this->trans->connect($socket_path)) {
 			return array("connected", 1);
 		}
 		else {

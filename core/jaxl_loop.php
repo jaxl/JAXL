@@ -115,13 +115,10 @@ class JAXLLoop {
 		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
 		if($changed === false) {
 			_debug("error in the event loop, shutting down...");
-			foreach(self::$read_fds as $fd) {
+			/*foreach(self::$read_fds as $fd) {
 				if(is_resource($fd)) 
 					print_r(stream_get_meta_data($fd));
-			}
-			//print_r(stream_get_meta_data(self::fd));
-			//self::disconnect();
-			//return;
+			}*/
 			exit;
 		}
 		else if($changed > 0) {
