@@ -46,9 +46,20 @@ JAXLLogger::$level = JAXL_DEBUG;
 $http = new HTTPServer($port);
 $http->start(function($request) {
 	global $http;
+	//print_r($request);
 	_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
-	$http->ok($request, 'hello world!');
-	$http->close($request);
+	
+	if($request->method == "GET") {
+		$http->ok($request, 'hello world!');
+		$http->close($request);
+	}
+	else if($request->method == "POST") {
+		$http->ok($request, $request->body);
+		$http->close($request);
+	}
+	else {
+		$http->close($request);
+	}
 });
 
 ?>
