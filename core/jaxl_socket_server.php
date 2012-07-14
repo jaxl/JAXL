@@ -68,10 +68,16 @@ class JAXLSocketServer {
 		_info("shutting down socket server");
 	}
 	
-	public function send($client, $data) {
-		$client_id = (int) $client;
+	public function send($client_id, $data) {
 		$this->clients[$client_id]['obuffer'] .= $data;
-		JAXLLoop::watch($client, array(
+		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
+			'write' => array(&$this, 'on_client_write_ready')
+		));
+	}
+	
+	public function close($client_id) {
+		$this->clients[$client_id]['close'] = true;
+		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
 			'write' => array(&$this, 'on_client_write_ready')
 		));
 	}
@@ -89,7 +95,10 @@ class JAXLSocketServer {
 			$this->clients[$client_id] = array(
 				'fd' => $client,
 				'ibuffer' => '',
-				'obuffer' => ''
+				'obuffer' => '',
+				'addr' => trim($addr),
+				'close' => false,
+				'closed' => false
 			);
 			
 			// listen for read events on this client
@@ -105,10 +114,12 @@ class JAXLSocketServer {
 	}
 	
 	public function on_client_read_ready($client) {
-		//_debug("got client read ready");
 		$client_id = (int) $client;
+		_debug("client#$client_id is read ready");
+		
 		$raw = fread($client, $this->recv_chunk_size);
 		$bytes = strlen($raw);
+		_debug("recv $bytes bytes from client#$client_id");
 		
 		if($bytes === 0) {
 			$meta = stream_get_meta_data($client);
@@ -117,28 +128,40 @@ class JAXLSocketServer {
 				JAXLLoop::unwatch($client, array(
 					'read' => true
 				));
-				fclose($client);
+				@fclose($client);
+				unset($this->clients[$client_id]);
 				return;
 			}
 		}
 		
 		$total = $this->clients[$client_id]['ibuffer'] . $raw;
-		if($this->req_cb) call_user_func($this->req_cb, $client, $total);
+		if($this->req_cb) call_user_func($this->req_cb, $client_id, $this->clients[$client_id]['addr'], $total);
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 	
 	public function on_client_write_ready($client) {
-		//_debug("got client write ready");
 		$client_id = (int) $client;
-		$total = $this->clients[$client_id]['obuffer'];
+		_debug("client#$client_id is write ready");
 		
-		$bytes = fwrite($client, $total);
-		$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
+		if(strlen($this->clients[$client_id]['obuffer']) > 0) {
+			$total = $this->clients[$client_id]['obuffer'];
+			
+			$bytes = fwrite($client, $total);
+			$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
+			_debug("sent $bytes bytes to client#".$client_id);
+		}
 		
 		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
 			JAXLLoop::unwatch($client, array(
 				'write' => true
 			));
+		}
+		
+		if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+			@fclose($client);
+			$this->clients[$client_id]['closed'] = true;
+			_debug("closed client#".$client_id);
+			unset($this->clients[$client_id]);
 		}
 	}
 	
