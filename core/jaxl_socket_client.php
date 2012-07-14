@@ -87,7 +87,7 @@ class JAXLSocketClient {
 		$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
 		if(sizeof($path_parts) == 3) $this->port = $path_parts[2];
 		
-		_debug("trying ".$socket_path);
+		_info("trying ".$socket_path);
 		if($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
 		else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
 		
@@ -103,7 +103,7 @@ class JAXLSocketClient {
 			return true;
 		}
 		else {
-			_debug("unable to connect ".$socket_path." with error no: ".$this->errno.", error str: ".$this->errstr."");
+			_error("unable to connect ".$socket_path." with error no: ".$this->errno.", error str: ".$this->errstr."");
 			$this->disconnect();
 			return false;
 		}
@@ -149,14 +149,14 @@ class JAXLSocketClient {
 	}
 	
 	public function on_read_ready($fd) {
-		_debug("on read ready called");
+		//_debug("on read ready called");
 		$raw = @fread($fd, $this->recv_chunk_size);
 		$bytes = strlen($raw);
 		
 		if($bytes === 0) {
 			$meta = stream_get_meta_data($fd);
 			if($meta['eof'] === TRUE) {
-				_debug("socket eof, disconnecting");
+				_warning("socket eof, disconnecting");
 				JAXLLoop::unwatch($fd, array(
 					'read' => true
 				));
@@ -167,17 +167,17 @@ class JAXLSocketClient {
 		
 		$this->recv_bytes += $bytes;
 		$total = $this->ibuffer.$raw;
-			
+		
 		$this->ibuffer = "";
 		_debug("read ".$bytes."/".$this->recv_bytes." of data");
 		if($bytes > 0) _debug($raw);
-			
+		
 		// callback
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 	
 	public function on_write_ready($fd) {
-		_debug("on write ready called");
+		//_debug("on write ready called");
 		$total = strlen($this->obuffer);
 		$bytes = @fwrite($fd, $this->obuffer);
 		$this->send_bytes += $bytes;

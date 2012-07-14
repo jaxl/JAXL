@@ -77,6 +77,8 @@ class JAXLLoop {
 			self::$write_cbs[$fdid] = $opts['write'];
 			++self::$active_fds;
 		}
+		
+		//_debug("active fds: ".self::$active_fds);
 	}
 	
 	public static function unwatch($fd, $opts) {
@@ -93,6 +95,8 @@ class JAXLLoop {
 			unset(self::$write_cbs[$fdid]);
 			--self::$active_fds;
 		}
+		
+		//_debug("active fds: ".self::$active_fds);
 	}
 	
 	public static function run() {
@@ -114,7 +118,7 @@ class JAXLLoop {
 		
 		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
 		if($changed === false) {
-			_debug("error in the event loop, shutting down...");
+			_error("error in the event loop, shutting down...");
 			/*foreach(self::$read_fds as $fd) {
 				if(is_resource($fd)) 
 					print_r(stream_get_meta_data($fd));

@@ -127,13 +127,13 @@ abstract class XMPPStream {
 				$this->state = $r;
 			}
 			else {
-				_debug("got invalid return value from state handler '".$this->state."', sending end stream...");
+				_error("got invalid return value from state handler '".$this->state."', sending end stream...");
 				$this->send_end_stream();
 				$this->state = "logged_out";
-				_debug("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
+				_notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
 			}
 			
-			_debug("current state '".$this->state."'");
+			_info("current state '".$this->state."'");
 			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {
@@ -644,6 +644,10 @@ abstract class XMPPStream {
 				$this->send_end_stream();
 				return "logged_out";
 				break;
+			case "disconnect":
+				$this->trans->disconnect();
+				return "disconnected";
+				break;
 			default:
 				//_debug("not catched $event");
 				return $this->handle_other($event, $args);
@@ -655,6 +659,13 @@ abstract class XMPPStream {
 	public function logged_out($event, $args) {
 		switch($event) {
 			case "end_cb":
+				$this->trans->disconnect();
+				return "disconnected";
+				break;
+			case "end_stream":
+				return "disconnected";
+				break;
+			case "disconnect":
 				$this->trans->disconnect();
 				return "disconnected";
 				break;

@@ -53,19 +53,19 @@ class JAXLSocketServer {
 				JAXLLoop::watch($this->fd, array(
 					'read' => array(&$this, 'on_server_accept_ready')
 				));
-				_debug("socket ready to accept on path ".$path);
+				_info("socket ready to accept on path ".$path);
 			}
 			else {
-				_debug("unable to set non block flag");
+				_error("unable to set non block flag");
 			}
 		}
 		else {
-			_debug("unable to establish socket server, errno: ".$errno.", errstr: ".$errstr);
+			_error("unable to establish socket server, errno: ".$errno.", errstr: ".$errstr);
 		}
 	}
 	
 	public function __destruct() {
-		_debug("shutting down socket server");
+		_info("shutting down socket server");
 	}
 	
 	public function send($client, $data) {
@@ -77,10 +77,10 @@ class JAXLSocketServer {
 	}
 	
 	public function on_server_accept_ready($server) {
-		_debug("got server accept");
+		//_debug("got server accept");
 		$client = @stream_socket_accept($server, 0, $addr);
 		if(!$client) {
-			_debug("unable to accept conn");
+			_error("unable to accept new client conn");
 			return;
 		}
 		
@@ -100,12 +100,12 @@ class JAXLSocketServer {
 			_debug("accepted connection from client#".$client_id.", addr:".$addr);
 		}
 		else {
-			_debug("unable to set non block flag");
+			_error("unable to set non block flag");
 		}
 	}
 	
 	public function on_client_read_ready($client) {
-		_debug("got client read ready");
+		//_debug("got client read ready");
 		$client_id = (int) $client;
 		$raw = fread($client, $this->recv_chunk_size);
 		$bytes = strlen($raw);
@@ -128,7 +128,7 @@ class JAXLSocketServer {
 	}
 	
 	public function on_client_write_ready($client) {
-		_debug("got client write ready");
+		//_debug("got client write ready");
 		$client_id = (int) $client;
 		$total = $this->clients[$client_id]['obuffer'];
 		
