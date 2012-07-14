@@ -105,7 +105,7 @@ class JAXL extends XMPPStream {
 	public $log_dir;
 	public $pid_dir;
 	public $sock_dir;
-	private $sock;
+	//private $sock;
 	
 	// env
 	public $local_ip;
@@ -174,12 +174,6 @@ class JAXL extends XMPPStream {
 		if($this->mode == "cli") {
 			touch($this->get_pid_file_path());
 			_debug("created pid file ".$this->get_pid_file_path());
-		
-			// create AF_UNIX socket
-			$sock_path = $this->get_sock_file_path();
-			$this->sock = socket_create(AF_UNIX, SOCK_STREAM, SOL_TCP);
-			socket_bind($this->sock, $sock_path);
-			socket_listen($this->sock);
 		}
 		
 		// include mandatory xmpp xeps
@@ -368,11 +362,9 @@ class JAXL extends XMPPStream {
 			// emit
 			$this->ev->emit('on_connect');
 			
-			// while we are connected
-			// drain the stream for data
-			//while($this->trans->fd) $this->trans->recv();
-			
-			if($debug_shell) $this->debug_shell();
+			// enable shell
+			if($debug_shell) 
+				$this->debug_shell();
 			
 			// run main loop
 			JAXLLoop::run();
