@@ -120,7 +120,10 @@ $client->add_cb('on_disconnect', function() {
 // finally start configured xmpp stream
 //
 
-$client->start();
+$client->start(array(
+	'--with-debug-shell' => true,
+	'--with-unix-sock' => true
+));
 echo "done\n";
 
 ?>
