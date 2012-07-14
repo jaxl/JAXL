@@ -44,6 +44,7 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
 require_once JAXL_CWD.'/core/jaxl_logger.php';
+require_once JAXL_CWD.'/core/jaxl_socket_server.php';
 
 class RosterItem {
 	
@@ -105,7 +106,10 @@ class JAXL extends XMPPStream {
 	public $log_dir;
 	public $pid_dir;
 	public $sock_dir;
-	//private $sock;
+	
+	// ipc utils
+	private $sock;
+	private $cli;
 	
 	// env
 	public $local_ip;
@@ -173,7 +177,7 @@ class JAXL extends XMPPStream {
 		// touch pid file
 		if($this->mode == "cli") {
 			touch($this->get_pid_file_path());
-			_debug("created pid file ".$this->get_pid_file_path());
+			_info("created pid file ".$this->get_pid_file_path());
 		}
 		
 		// include mandatory xmpp xeps
@@ -185,7 +189,7 @@ class JAXL extends XMPPStream {
 		$host = @$this->cfg['host']; $port = @$this->cfg['port'];
 		if(!$host && !$port && $jid) {
 			// this dns lookup is blocking
-			_debug("dns srv lookup for ".$jid->domain);
+			_info("dns srv lookup for ".$jid->domain);
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 		}
 		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
@@ -215,8 +219,9 @@ class JAXL extends XMPPStream {
 	
 	public function __destruct() {
 		// delete pid file
-		_debug("cleaning up pid file ".$this->get_pid_file_path());
-		unlink($this->pid_dir."/jaxl_".$this->pid.".pid");
+		_info("cleaning up pid and unix sock files");
+		@unlink($this->get_pid_file_path());
+		@unlink($this->get_sock_file_path());
 		
 		parent::__destruct();
 	}
@@ -231,21 +236,25 @@ class JAXL extends XMPPStream {
 	
 	public function signal_handler($sig) {
 		$this->end_stream();
+		$this->disconnect();
+		$this->ev->emit('on_disconnect');
 		
 		switch($sig) {
 			// terminal line hangup
 			case SIGHUP:
 				_debug("got sighup");
 				break;
-				// interrupt program
+			// interrupt program
 			case SIGINT:
 				_debug("got sigint");
 				break;
-				// software termination signal
+			// software termination signal
 			case SIGTERM:
 				_debug("got sigterm");
 				break;
 		}
+		
+		exit;
 	}
 	
 	public function require_xep($xeps) {
@@ -320,16 +329,36 @@ class JAXL extends XMPPStream {
 		);
 	}
 	
-	public function handle_debug_shell($raw) {
-		echo eval($raw).PHP_EOL;
+	// this currently simply evals the incoming raw string
+	// know what you are doing while in production
+	public function handle_unix_sock($_c, $_raw) {
+		_debug("evaling raw string rcvd over unix sock: ".$_raw);
+		$this->sock->send($_c, serialize(eval($_raw)));
 	}
 	
-	protected function debug_shell() {
-		$cli = new JAXLCli(array(&$this, 'handle_debug_shell'));
+	public function enable_unix_sock() {
+		$this->sock = new JAXLSocketServer('unix://'.$this->get_sock_file_path(), array(&$this, 'handle_unix_sock'));
+	}
+	
+	// this simply eval the incoming raw data
+	// inside current jaxl environment
+	// security is all upto you, no checks made here
+	public function handle_debug_shell($_raw) {
+		if(trim($_raw) == 'quit') {
+			$this->cli->stop();
+			$this->cli = null;
+			return;
+		}
+		
+		print_r(eval($_raw));
+	}
+	
+	protected function enable_debug_shell() {
+		$this->cli = new JAXLCli(array(&$this, 'handle_debug_shell'));
 		JAXLCli::prompt();
 	}
 	
-	public function start($debug_shell=false) {
+	public function start($opts=array()) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
 			$this->trans->session_start();
@@ -362,9 +391,9 @@ class JAXL extends XMPPStream {
 			// emit
 			$this->ev->emit('on_connect');
 			
-			// enable shell
-			if($debug_shell) 
-				$this->debug_shell();
+			// parse opts
+			if(@$opts['--with-debug-shell']) $this->enable_debug_shell();
+			if(@$opts['--with-unix-sock']) $this->enable_unix_sock();
 			
 			// run main loop
 			JAXLLoop::run();
@@ -571,7 +600,7 @@ class JAXL extends XMPPStream {
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);
-		_debug("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
+		_warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
 		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
 	}
 	
