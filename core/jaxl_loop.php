@@ -50,7 +50,8 @@ class JAXLLoop {
 	public static $clock = null;
 	
 	private static $is_running = false;
-	private static $active_fds = 0;
+	private static $active_read_fds = 0;
+	private static $active_write_fds = 0;
 	
 	private static $read_fds = array();
 	private static $read_cbs = array();
@@ -68,17 +69,17 @@ class JAXLLoop {
 			$fdid = (int) $fd;
 			self::$read_fds[$fdid] = $fd;
 			self::$read_cbs[$fdid] = $opts['read'];
-			++self::$active_fds;
+			++self::$active_read_fds;
 		}
 		
 		if(isset($opts['write'])) {
 			$fdid = (int) $fd;
 			self::$write_fds[$fdid] = $fd;
 			self::$write_cbs[$fdid] = $opts['write'];
-			++self::$active_fds;
+			++self::$active_write_fds;
 		}
 		
-		//_debug("active fds: ".self::$active_fds);
+		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
 	}
 	
 	public static function unwatch($fd, $opts) {
@@ -86,17 +87,17 @@ class JAXLLoop {
 			$fdid = (int) $fd;
 			unset(self::$read_fds[$fdid]);
 			unset(self::$read_cbs[$fdid]);
-			--self::$active_fds;
+			--self::$active_read_fds;
 		}
 		
 		if(isset($opts['write'])) {
 			$fdid = (int) $fd;
 			unset(self::$write_fds[$fdid]);
 			unset(self::$write_cbs[$fdid]);
-			--self::$active_fds;
+			--self::$active_write_fds;
 		}
 		
-		//_debug("active fds: ".self::$active_fds);
+		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
 	}
 	
 	public static function run() {
@@ -104,7 +105,7 @@ class JAXLLoop {
 			self::$is_running = true;
 			self::$clock = new JAXLClock();
 			
-			while(self::$active_fds > 0)
+			while((self::$active_read_fds + self::$active_write_fds) > 0)
 				self::select();
 			
 			_debug("no more active fd's to select");

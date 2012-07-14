@@ -43,11 +43,14 @@ class JAXLSocketServer {
 	public $fd = null;
 	private $clients = array();
 	private $recv_chunk_size = 1024;
-	private $req_cb = null;
+	private $accept_cb = null;
+	private $request_cb = null;
 	private $blocking = false;
 	
-	public function __construct($path, $req_cb) {
-		$this->req_cb = $req_cb;
+	public function __construct($path, $request_cb, $accept_cb=null) {
+		$this->request_cb = $request_cb;
+		$this->accept_cb = $accept_cb;
+		
 		if(($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN)) !== false) {
 			if(@stream_set_blocking($this->fd, $this->blocking)) {
 				JAXLLoop::watch($this->fd, array(
@@ -66,6 +69,13 @@ class JAXLSocketServer {
 	
 	public function __destruct() {
 		_info("shutting down socket server");
+	}
+	
+	public function read($client_id) {
+		_debug("reactivating read on client sock");
+		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
+			'read' => array(&$this, 'on_client_read_ready')
+		));
 	}
 	
 	public function send($client_id, $data) {
@@ -107,6 +117,8 @@ class JAXLSocketServer {
 			));
 			
 			_debug("accepted connection from client#".$client_id.", addr:".$addr);
+			if($this->accept_cb) 
+				call_user_func($this->accept_cb, $client_id, $this->clients[$client_id]['addr']);
 		}
 		else {
 			_error("unable to set non block flag");
@@ -114,12 +126,20 @@ class JAXLSocketServer {
 	}
 	
 	public function on_client_read_ready($client) {
+		// deactive socket for read
+		_debug("deactivating read on client sock");
+		JAXLLoop::unwatch($client, array(
+			'read' => true
+		));
+		
 		$client_id = (int) $client;
 		_debug("client#$client_id is read ready");
 		
 		$raw = fread($client, $this->recv_chunk_size);
 		$bytes = strlen($raw);
-		_debug("recv $bytes bytes from client#$client_id");
+		
+		_info("recv $bytes bytes from client#$client_id");
+		_debug($raw);
 		
 		if($bytes === 0) {
 			$meta = stream_get_meta_data($client);
@@ -128,6 +148,7 @@ class JAXLSocketServer {
 				JAXLLoop::unwatch($client, array(
 					'read' => true
 				));
+				
 				@fclose($client);
 				unset($this->clients[$client_id]);
 				return;
@@ -135,7 +156,8 @@ class JAXLSocketServer {
 		}
 		
 		$total = $this->clients[$client_id]['ibuffer'] . $raw;
-		if($this->req_cb) call_user_func($this->req_cb, $client_id, $this->clients[$client_id]['addr'], $total);
+		if($this->request_cb) 
+			call_user_func($this->request_cb, $client_id, $this->clients[$client_id]['addr'], $total);
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 	
@@ -143,20 +165,19 @@ class JAXLSocketServer {
 		$client_id = (int) $client;
 		_debug("client#$client_id is write ready");
 		
-		if(strlen($this->clients[$client_id]['obuffer']) > 0) {
-			$total = $this->clients[$client_id]['obuffer'];
-			
-			$bytes = fwrite($client, $total);
-			$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
-			_debug("sent $bytes bytes to client#".$client_id);
-		}
+		$total = $this->clients[$client_id]['obuffer'];
+		$bytes = fwrite($client, $total);
+		$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
+		_debug("sent $bytes bytes to client#".$client_id);
 		
+		// if no more stuff to write, remove write handler
 		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
 			JAXLLoop::unwatch($client, array(
 				'write' => true
 			));
 		}
 		
+		// if scheduled for close and not closed do it and clean up
 		if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
 			@fclose($client);
 			$this->clients[$client_id]['closed'] = true;
