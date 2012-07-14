@@ -43,9 +43,11 @@ class HTTPServer {
 	private $server = null;
 	private $cb = null;
 	
+	private $requests = array();
+	
 	public function __construct($port=9699, $address="127.0.0.1") {
 		$path = 'tcp://'.$address.':'.$port;
-		$this->server = new JAXLSocketServer($path, array(&$this, 'on_request'));
+		$this->server = new JAXLSocketServer($path, array(&$this, 'on_request'), array(&$this, 'on_accept'));
 	}
 	
 	public function __destruct() {
@@ -57,14 +59,24 @@ class HTTPServer {
 		JAXLLoop::run();
 	}
 	
-	public function on_request($sock, $addr, $raw) {
-		$lines = explode(PHP_EOL, $raw);
-		list($method, $resource, $version) = explode(" ", $lines[0]);
-		unset($lines[0]);
-		
+	public function on_accept($sock, $addr) {
 		$request = new HTTPRequest($sock, $addr);
-		$request->line($method, $resource, $version);
+		$this->requests[$sock] = &$request;
+	}
+	
+	public function on_request($sock, $addr, $raw) {
+		$request = $this->requests[$sock];
+		$lines = explode(PHP_EOL, $raw);
 		
+		if($request->state() == 'wait_for_request_line') {
+			// request line
+			list($method, $resource, $version) = explode(" ", $lines[0]);
+			unset($lines[0]);
+			$request->line($method, $resource, $version);
+		}
+		
+		// headers
+		//print_r($lines);
 		foreach($lines as $line) {
 			$line_parts = explode(":", $line);
 			if(sizeof($line_parts) > 1) {
@@ -72,16 +84,37 @@ class HTTPServer {
 					$k = $line_parts[0];
 					unset($line_parts[0]);
 					$v = implode(":", $line_parts);
-					$request->headers[trim($k)] = trim($v);
+					$request->set_header($k, $v);
 				}
+			}
+			else if(strlen(trim($line_parts[0])) == 0) {
+				$request->empty_line();
+			}
+			else {
+				$request->body($line);
 			}
 		}
 		
-		if($this->cb) call_user_func($this->cb, $request);
+		if($request->state() == 'request_received') {
+			if($this->cb) 
+				call_user_func($this->cb, $request);
+		}
+		else {
+			// reactivate read
+			$this->server->read($sock);
+		}
+	}
+	
+	public function read($request) {
+		$this->server->read($request->sock);
+	}
+	
+	public function send($request, $code, $body='', $headers=array()) {
+		
 	}
 	
 	public function ok($request, $body='') {
-		$this->server->send($request->sock, $body);
+		$this->send($request, 200, $body);
 	}
 	
 	public function close($request) {
