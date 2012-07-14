@@ -151,13 +151,13 @@ class JAXLSocketClient {
 		));
 	}
 	
-	public function on_read_ready() {
+	public function on_read_ready($fd) {
 		_debug("on read ready called");
-		$raw = @fread($this->fd, $this->recv_chunk_size);
+		$raw = @fread($fd, $this->recv_chunk_size);
 		$bytes = strlen($raw);
 		
 		if($bytes === 0) {
-			$meta = stream_get_meta_data($this->fd);
+			$meta = stream_get_meta_data($fd);
 			if($meta['eof'] === TRUE) {
 				_debug("socket eof, disconnecting");
 				$this->disconnect();
@@ -176,10 +176,10 @@ class JAXLSocketClient {
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 	
-	public function on_write_ready() {
+	public function on_write_ready($fd) {
 		_debug("on write ready called");
 		$total = strlen($this->obuffer);
-		$bytes = @fwrite($this->fd, $this->obuffer);
+		$bytes = @fwrite($fd, $this->obuffer);
 		$this->send_bytes += $bytes;
 		
 		_debug("sent ".$bytes."/".$this->send_bytes." of data");
@@ -189,7 +189,7 @@ class JAXLSocketClient {
 		
 		// unwatch for write if obuffer is empty
 		if(strlen($this->obuffer) === 0) {
-			JAXLLoop::unwatch($this->fd, array(
+			JAXLLoop::unwatch($fd, array(
 				'write' => true
 			));
 		}

@@ -36,6 +36,7 @@
  *
  */
 
+require_once JAXL_CWD.'/core/jaxl_logger.php';
 require_once JAXL_CWD.'/core/jaxl_clock.php';
 
 /**
@@ -101,6 +102,8 @@ class JAXLLoop {
 			
 			while(self::$active_fds > 0)
 				self::select();
+			
+			_debug("no more active fd's to select");
 		}
 	}
 	
@@ -111,7 +114,11 @@ class JAXLLoop {
 		
 		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
 		if($changed === false) {
-			_debug("error while selecting stream for read");
+			_debug("error in the event loop, shutting down...");
+			foreach(self::$read_fds as $fd) {
+				if(is_resource($fd)) 
+					print_r(stream_get_meta_data($fd));
+			}
 			//print_r(stream_get_meta_data(self::fd));
 			//self::disconnect();
 			//return;
@@ -121,13 +128,13 @@ class JAXLLoop {
 			// read callback
 			foreach($read as $r) {
 				$fdid = array_search($r, self::$read_fds);
-				call_user_func(self::$read_cbs[$fdid]);
+				call_user_func(self::$read_cbs[$fdid], self::$read_fds[$fdid]);
 			}
 			
 			// write callback
 			foreach($write as $w) {
 				$fdid = array_search($w, self::$write_fds);
-				call_user_func(self::$write_cbs[$fdid]);
+				call_user_func(self::$write_cbs[$fdid], self::$write_fds[$fdid]);
 			}
 			
 			self::$clock->tick();

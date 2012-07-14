@@ -68,13 +68,13 @@ class JAXLCli {
 		//));
 	}
 	
-	public function on_read_ready() {
-		$raw = @fread($this->in, $this->recv_chunk_size);
+	public function on_read_ready($in) {
+		$raw = @fread($in, $this->recv_chunk_size);
 		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
 		JAXLCli::prompt();
 	}
 	
-	public function on_write_ready() {
+	public function on_write_ready($out) {
 		
 	}
 	
