@@ -47,7 +47,7 @@ class JAXLClock {
 	}
 	
 	public function __destruct() {
-		_debug("shutting down clock server...");
+		_info("shutting down clock server...");
 	}
 	
 	// update clock and execute jobs
