@@ -331,7 +331,7 @@ class JAXL extends XMPPStream {
 	
 	// this currently simply evals the incoming raw string
 	// know what you are doing while in production
-	public function handle_unix_sock($_c, $_raw) {
+	public function handle_unix_sock($_c, $addr, $_raw) {
 		_debug("evaling raw string rcvd over unix sock: ".$_raw);
 		$this->sock->send($_c, serialize(eval($_raw)));
 	}
@@ -344,13 +344,9 @@ class JAXL extends XMPPStream {
 	// inside current jaxl environment
 	// security is all upto you, no checks made here
 	public function handle_debug_shell($_raw) {
-		if(trim($_raw) == 'quit') {
-			$this->cli->stop();
-			$this->cli = null;
-			return;
-		}
-		
 		print_r(eval($_raw));
+		echo PHP_EOL;
+		JAXLCli::prompt();
 	}
 	
 	protected function enable_debug_shell() {

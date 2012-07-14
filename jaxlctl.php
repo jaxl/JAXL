@@ -66,23 +66,13 @@ class JAXLCtl {
 	}
 	
 	public function on_shell_input($raw) {
-		if(ord($raw) == 10) {
-			// enter key
-			return;
-		}
-		else if(trim($raw) == 'quit') {
-			$this->cli->stop();
-			$this->cli = null;
-			exit;
-			return;
-		}
-		
 		$this->client->send($raw);
 	}
 	
 	public function on_response($raw) {
 		$ret = unserialize($raw);
 		print_r($ret);
+		echo PHP_EOL;
 		JAXLCli::prompt();
 	}
 
