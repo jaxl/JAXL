@@ -169,7 +169,7 @@ class JAXLSocketClient {
 		$total = $this->ibuffer.$raw;
 		
 		$this->ibuffer = "";
-		_info("read ".$bytes."/".$this->recv_bytes." of data");
+		_debug("read ".$bytes."/".$this->recv_bytes." of data");
 		if($bytes > 0) _debug($raw);
 		
 		// callback
@@ -182,7 +182,7 @@ class JAXLSocketClient {
 		$bytes = @fwrite($fd, $this->obuffer);
 		$this->send_bytes += $bytes;
 		
-		_info("sent ".$bytes."/".$this->send_bytes." of data");
+		_debug("sent ".$bytes."/".$this->send_bytes." of data");
 		_debug($this->obuffer);
 		
 		$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);

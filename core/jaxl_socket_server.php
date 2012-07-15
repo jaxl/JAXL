@@ -41,17 +41,20 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
 class JAXLSocketServer {
 	
 	public $fd = null;
+	
 	private $clients = array();
 	private $recv_chunk_size = 1024;
 	private $accept_cb = null;
 	private $request_cb = null;
 	private $blocking = false;
+	private $backlog = 128;
 	
-	public function __construct($path, $request_cb, $accept_cb=null) {
-		$this->request_cb = $request_cb;
+	public function __construct($path, $accept_cb, $request_cb) {
 		$this->accept_cb = $accept_cb;
+		$this->request_cb = $request_cb;
 		
-		if(($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN)) !== false) {
+		$ctx = stream_context_create(array('socket'=>array('backlog'=>$this->backlog)));
+		if(($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $ctx)) !== false) {
 			if(@stream_set_blocking($this->fd, $this->blocking)) {
 				JAXLLoop::watch($this->fd, array(
 					'read' => array(&$this, 'on_server_accept_ready')
@@ -73,23 +76,17 @@ class JAXLSocketServer {
 	
 	public function read($client_id) {
 		_debug("reactivating read on client sock");
-		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
-			'read' => array(&$this, 'on_client_read_ready')
-		));
+		$this->add_read_cb($client_id);
 	}
 	
 	public function send($client_id, $data) {
 		$this->clients[$client_id]['obuffer'] .= $data;
-		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
-			'write' => array(&$this, 'on_client_write_ready')
-		));
+		$this->add_write_cb($client_id);
 	}
 	
 	public function close($client_id) {
 		$this->clients[$client_id]['close'] = true;
-		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
-			'write' => array(&$this, 'on_client_write_ready')
-		));
+		$this->add_write_cb($client_id);
 	}
 	
 	public function on_server_accept_ready($server) {
@@ -108,17 +105,25 @@ class JAXLSocketServer {
 				'obuffer' => '',
 				'addr' => trim($addr),
 				'close' => false,
-				'closed' => false
+				'closed' => false,
+				'reading' => false,
+				'writing' => false
 			);
 			
-			// listen for read events on this client
-			JAXLLoop::watch($client, array(
-				'read' => array(&$this, 'on_client_read_ready')
-			));
-			
 			_debug("accepted connection from client#".$client_id.", addr:".$addr);
-			if($this->accept_cb) 
+			
+			// if accept callback is registered
+			// callback and let user land take further control of what to do
+			if($this->accept_cb) {
 				call_user_func($this->accept_cb, $client_id, $this->clients[$client_id]['addr']);
+			}
+			// if no accept callback is registered
+			// close the accepted connection
+			else {
+				@fclose($client);
+				$this->clients[$client_id]['closed'] = true;
+				unset($this->clients[$client_id]);
+			}
 		}
 		else {
 			_error("unable to set non block flag");
@@ -127,27 +132,21 @@ class JAXLSocketServer {
 	
 	public function on_client_read_ready($client) {
 		// deactive socket for read
-		_debug("deactivating read on client sock");
-		JAXLLoop::unwatch($client, array(
-			'read' => true
-		));
-		
 		$client_id = (int) $client;
 		_debug("client#$client_id is read ready");
+		$this->del_read_cb($client_id);
 		
 		$raw = fread($client, $this->recv_chunk_size);
 		$bytes = strlen($raw);
 		
-		_info("recv $bytes bytes from client#$client_id");
-		_debug($raw);
+		_debug("recv $bytes bytes from client#$client_id");
+		//_debug($raw);
 		
 		if($bytes === 0) {
 			$meta = stream_get_meta_data($client);
 			if($meta['eof'] === TRUE) {
 				_debug("socket eof client#".$client_id.", closing");
-				JAXLLoop::unwatch($client, array(
-					'read' => true
-				));
+				$this->del_read_cb($client_id);
 				
 				@fclose($client);
 				unset($this->clients[$client_id]);
@@ -157,7 +156,7 @@ class JAXLSocketServer {
 		
 		$total = $this->clients[$client_id]['ibuffer'] . $raw;
 		if($this->request_cb) 
-			call_user_func($this->request_cb, $client_id, $this->clients[$client_id]['addr'], $total);
+			call_user_func($this->request_cb, $client_id, $total);
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 	
@@ -169,21 +168,72 @@ class JAXLSocketServer {
 		$bytes = fwrite($client, $total);
 		$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
 		_debug("sent $bytes bytes to client#".$client_id);
+		//_debug($total);
 		
 		// if no more stuff to write, remove write handler
 		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
-			JAXLLoop::unwatch($client, array(
-				'write' => true
-			));
+			$this->del_write_cb($client_id);
 		}
 		
+		// no matter if we have any output buffer
 		// if scheduled for close and not closed do it and clean up
 		if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+			$this->del_write_cb($client_id);
+			
 			@fclose($client);
 			$this->clients[$client_id]['closed'] = true;
-			_debug("closed client#".$client_id);
 			unset($this->clients[$client_id]);
+			
+			_debug("closed client#".$client_id);
 		}
+	}
+	
+	//
+	// client sock event register utils
+	//
+	
+	protected function add_read_cb($client_id) {
+		if($this->clients[$client_id]['reading'])
+			return;
+		
+		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
+			'read' => array(&$this, 'on_client_read_ready')
+		));
+		
+		$this->clients[$client_id]['reading'] = true;
+	}
+	
+	protected function add_write_cb($client_id) {
+		if($this->clients[$client_id]['writing'])
+			return;
+		
+		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
+			'write' => array(&$this, 'on_client_write_ready')
+		));
+		
+		$this->clients[$client_id]['writing'] = true;
+	}
+	
+	protected function del_read_cb($client_id) {
+		if(!$this->clients[$client_id]['reading'])
+			return;
+		
+		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(
+			'read' => true
+		));
+		
+		$this->clients[$client_id]['reading'] = false;
+	}
+	
+	protected function del_write_cb($client_id) {
+		if(!$this->clients[$client_id]['writing'])
+			return;
+		
+		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(
+			'write' => true
+		));
+		
+		$this->clients[$client_id]['writing'] = false;
 	}
 	
 }

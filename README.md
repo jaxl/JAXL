@@ -117,9 +117,33 @@ jaxl_fsm:73 - 2012-07-15 01:05:51 - current state 'logged_in'
 
 Default `log_level` is `JAXL_INFO` and you should see some info as shown above.
 
-Now lets debug our xmpp client while it's running.
+Now lets see how can we debug our xmpp client application 
+while it is running in the background.
 
-4) open another terminal and attach a live interactive console into our running xmpp client:
+Debugging JAXL daemons:
+------------------------
+
+You can start configured `JAXL` instance with additional parameters:
+
+<pre>
+$client->start(array(
+    '--with-debug-shell' => true,
+    '--with-unix-sock' => true
+));
+</pre>
+
+`--with-debug-shell` Jaxl will start the configured instance
+and straightaway take you into a live interactive console
+
+`--with-unix-sock` Jaxl will enable a unix socket domain 
+for accepting commands from a remotely attached 
+live interative console
+
+Remote Debugging:
+------------------
+
+1) open a new terminal and attach a live interactive console
+   into any daemon started using `JAXL` instance start() method:
 
 <pre>
 $ ./jaxlctl.php .jaxl/sock/jaxl_18901.sock 
@@ -136,10 +160,13 @@ Array
 )
 </pre>
 
-As we can see above, our running xmpp client perform `[auth_type] => PLAIN`.
+As we can see above, our xmpp client performed `[auth_type] => PLAIN`.
 
-We can even send a chat message, group chat message, change status etc using this
-live interactive console. Try it:
+We can even send a chat message, group chat message, change status, 
+monitor daemons remotely etc using this live interactive console and 
+the methodology behind it.
+
+Try to send a chat message:
 
 <pre>
 jaxl 2> global $client; $client->send_chat_msg("someone@somewhere.com", "hello buddy");
@@ -153,10 +180,7 @@ jaxl 3> quit
 $ 
 </pre>
 
-Archives:
----------
-Following branches are deprecated. Browse them for fun/study:
-
-[v2.x branch](https://github.com/abhinavsingh/JAXL/tree/master)
-
-[v1.x branch](http://code.google.com/p/jaxl/source/browse/#svn%2Ftrunk)
+Note: Live interactive console development is still in alpha stage.
+      It blindly `eval` sent string from jaxl console.
+      Know what you are doing while using it in production.
+      

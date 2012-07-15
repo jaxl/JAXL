@@ -70,7 +70,7 @@ abstract class JAXLFsm {
 				$this->handle_invalid_state($r);
 			}
 			
-			_info("current state '".$this->state."'");
+			_debug("current state '".$this->state."'");
 			if(is_array($r) && sizeof($r) == 2) return $ret;
 		}
 		else {
