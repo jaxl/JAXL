@@ -36,6 +36,8 @@
  *
  */
 
+require_once JAXL_CWD.'/core/jaxl_logger.php';
+require_once JAXL_CWD.'/http/http_dispatcher.php';
 require_once JAXL_CWD.'/http/http_request.php';
 
 // carriage return and line feed
@@ -68,19 +70,29 @@ class HTTPServer {
 	private $server = null;
 	private $cb = null;
 	
+	private $dispatcher = null;
 	private $requests = array();
 	
 	public function __construct($port=9699, $address="127.0.0.1") {
 		$path = 'tcp://'.$address.':'.$port;
+		
 		$this->server = new JAXLSocketServer(
 			$path, 
 			array(&$this, 'on_accept'),
 			array(&$this, 'on_request')
 		);
+		
+		$this->dispatcher = new HTTPDispatcher();
 	}
 	
 	public function __destruct() {
 		$this->server = null;
+	}
+	
+	public function dispatch($rules) {
+		foreach($rules as $rule) {
+			$this->dispatcher->add_rule($rule);
+		}
 	}
 	
 	public function start($cb) {
@@ -146,7 +158,8 @@ class HTTPServer {
 					$request->empty_line();
 				}
 				// if exploded line array size is 1
-				// and exploded 
+				// and thr is something in $line_parts[0]
+				// must be request body
 				else {
 					$request->body($line);
 				}
@@ -155,13 +168,20 @@ class HTTPServer {
 		
 		// if request has reached 'headers_received' state?
 		if($request->state() == 'headers_received') {
-			if($this->cb) {
+			// dispatch to any matching rule found
+			_debug("delegating to dispatcher for further routing");
+			$dispatched = $this->dispatcher->dispatch($request);
+			
+			// if no dispatch rule matched call generic callback
+			if(!$dispatched && $this->cb) {	
+				_debug("no dispatch rule matched, sending to generic callback");
 				call_user_func($this->cb, $request);
 			}
-			else {
+			// else if not dispatched and not generic callbacked
+			// send 404 not_found
+			else if(!$dispatched) {
 				// TODO: send 404 if no callback is registered for this request
-				_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
-				_debug("dropping request since it have no callback");
+				_debug("dropping request since no matching dispatch rule or generic callback was specified");
 				$this->close($request);
 			}
 		}

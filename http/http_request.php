@@ -234,7 +234,7 @@ class HTTPRequest extends JAXLFsm {
 					return $this->handle_shortcut($event, $args);
 				}
 				else {
-					_debug("uncatched $event");
+					_debug("uncatched $event ".$args[0]);
 					return 'headers_received';
 				}
 		}
