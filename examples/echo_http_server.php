@@ -44,22 +44,23 @@ require_once JAXL_CWD.'/http/http_server.php';
 JAXLLogger::$level = JAXL_DEBUG;
 
 $http = new HTTPServer($port);
-$http->start(function($request) {
-	global $http;
-	//print_r($request);
-	_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
-	
-	if($request->method == "GET") {
-		$http->ok($request, 'hello world!');
-		$http->close($request);
+
+function on_request($request) {
+	if($request->method == 'GET') {
+		$request->send_response(200, array('Content-Type'=>'text/plain'), 'hello world!');
+		$request->close();
 	}
-	else if($request->method == "POST") {
-		$http->ok($request, $request->body);
-		$http->close($request);
+	else if($request->method == 'POST') {
+		if($request->body === null && $request->expect) {
+			$request->recv_body();
+		}
+		else {
+			$request->send_response(200, array('Content-Type'=>$request->headers['Content-Type']), $request->body);
+			$request->close();
+		}
 	}
-	else {
-		$http->close($request);
-	}
-});
+}
+
+$http->start('on_request');
 
 ?>
