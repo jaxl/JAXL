@@ -329,16 +329,24 @@ class JAXL extends XMPPStream {
 		);
 	}
 	
+	public function on_unix_sock_accept($_c, $addr) {
+		$this->sock->read($_c);
+	}
+	
 	// this currently simply evals the incoming raw string
 	// know what you are doing while in production
-	public function handle_unix_sock($_c, $addr, $_raw) {
+	public function on_unix_sock_request($_c, $_raw) {
 		_debug("evaling raw string rcvd over unix sock: ".$_raw);
 		$this->sock->send($_c, serialize(eval($_raw)));
 		$this->sock->read($_c);
 	}
 	
 	public function enable_unix_sock() {
-		$this->sock = new JAXLSocketServer('unix://'.$this->get_sock_file_path(), array(&$this, 'handle_unix_sock'));
+		$this->sock = new JAXLSocketServer(
+			'unix://'.$this->get_sock_file_path(),
+			array(&$this, 'on_unix_sock_accept'),
+			array(&$this, 'on_unix_sock_request')
+		);
 	}
 	
 	// this simply eval the incoming raw data
