@@ -36,31 +36,60 @@
  *
  */
 
+// parse addr/port parameters
+// include http server lib
 echo "Usage: $argv[0] port (default: 9699)\n";
 $port = ($argc == 2 ? $argv[1] : 9699);
-
 require_once 'jaxl.php';
 require_once JAXL_CWD.'/http/http_server.php';
 JAXLLogger::$level = JAXL_DEBUG;
 
+// initialize http server
 $http = new HTTPServer($port);
 
-function on_request($request) {
+// callback method for dispatch rule (see below)
+function index($request) {
+	$request->send_response(
+		200, array('Content-Type'=>'text/html'), 
+		'<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
+	);
+	$request->close();
+}
+
+// callback method for dispatch rule (see below)
+function upload($request) {
 	if($request->method == 'GET') {
-		$request->send_response(200, array('Content-Type'=>'text/plain'), 'hello world!');
-		$request->close();
+		$request->send_response(
+			200, array('Content-Type'=>'text/html'),
+			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action=""><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
+		);
 	}
 	else if($request->method == 'POST') {
 		if($request->body === null && $request->expect) {
 			$request->recv_body();
 		}
 		else {
-			$request->send_response(200, array('Content-Type'=>$request->headers['Content-Type']), $request->body);
+			// got upload body, save it
+			_debug("file upload complete, got ".strlen($request->body)." bytes of data");
 			$request->close();
 		}
 	}
 }
 
+// optionally add dispatch rules
+$rule1 = array('index', '^/$');
+$rule2 = array('upload', '^/upload', array('GET', 'POST'));
+$rules = array($rule1, $rule2);
+$http->dispatch($rules);
+
+// catch requests not catched by the dispatch rules above
+function on_request($request) {
+	_debug("got generic request callback for path ".$request->path);
+	//print_r($request);
+	$request->close();
+}
+
+// start http server
 $http->start('on_request');
 
 ?>
