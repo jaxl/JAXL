@@ -38,6 +38,31 @@
 
 require_once JAXL_CWD.'/http/http_request.php';
 
+// carriage return and line feed
+define('HTTP_CRLF', "\r\n");
+
+// 1xx informational
+define('HTTP_100', "Continue");
+define('HTTP_101', "Switching Protocols");
+
+// 2xx success
+define('HTTP_200', "OK");
+
+// 3xx redirection
+define('HTTP_301', 'Moved Permanently');
+define('HTTP_304', 'Not Modified');
+
+// 4xx client error
+define('HTTP_400', 'Bad Request');
+define('HTTP_403', 'Forbidden');
+define('HTTP_404', 'Not Found');
+define('HTTP_405', 'Method Not Allowed');
+define('HTTP_499', 'Client Closed Request'); // Nginx
+
+// 5xx server error
+define('HTTP_500', 'Internal Server Error');
+define('HTTP_503', 'Service Unavailable');
+
 class HTTPServer {
 	
 	private $server = null;
@@ -47,7 +72,11 @@ class HTTPServer {
 	
 	public function __construct($port=9699, $address="127.0.0.1") {
 		$path = 'tcp://'.$address.':'.$port;
-		$this->server = new JAXLSocketServer($path, array(&$this, 'on_request'), array(&$this, 'on_accept'));
+		$this->server = new JAXLSocketServer(
+			$path, 
+			array(&$this, 'on_accept'),
+			array(&$this, 'on_request')
+		);
 	}
 	
 	public function __destruct() {
@@ -60,65 +89,87 @@ class HTTPServer {
 	}
 	
 	public function on_accept($sock, $addr) {
+		_debug("on_accept for client#$sock, addr:$addr");
+		
+		// initialize new request obj
 		$request = new HTTPRequest($sock, $addr);
+		
+		// setup sock cb
+		$request->set_sock_cb(
+			array(&$this->server, 'send'),
+			array(&$this->server, 'read'),
+			array(&$this->server, 'close')
+		);
+		
+		// cache request object
 		$this->requests[$sock] = &$request;
+		
+		// reactive client for further read
+		$this->server->read($sock);
 	}
 	
-	public function on_request($sock, $addr, $raw) {
+	public function on_request($sock, $raw) {
+		_debug("on_request for client#$sock");
 		$request = $this->requests[$sock];
-		$lines = explode(PHP_EOL, $raw);
 		
-		if($request->state() == 'wait_for_request_line') {
-			// request line
-			list($method, $resource, $version) = explode(" ", $lines[0]);
-			unset($lines[0]);
-			$request->line($method, $resource, $version);
-		}
-		
-		// headers
-		//print_r($lines);
-		foreach($lines as $line) {
-			$line_parts = explode(":", $line);
-			if(sizeof($line_parts) > 1) {
-				if(strlen($line_parts[0]) > 0) {
-					$k = $line_parts[0];
-					unset($line_parts[0]);
-					$v = implode(":", $line_parts);
-					$request->set_header($k, $v);
-				}
-			}
-			else if(strlen(trim($line_parts[0])) == 0) {
-				$request->empty_line();
-			}
-			else {
-				$request->body($line);
-			}
-		}
-		
-		if($request->state() == 'request_received') {
-			if($this->cb) 
-				call_user_func($this->cb, $request);
+		// 'wait_for_body' state is reached when ever
+		// application calls recv_body() method
+		// on received $request object
+		if($request->state() == 'wait_for_body') {
+			$request->body($raw);
 		}
 		else {
-			// reactivate read
+			// break on crlf
+			$lines = explode(HTTP_CRLF, $raw);
+			
+			// parse request line
+			if($request->state() == 'wait_for_request_line') {
+				list($method, $resource, $version) = explode(" ", $lines[0]);
+				$request->line($method, $resource, $version);
+				unset($lines[0]);
+				_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
+			}
+			
+			// parse headers
+			foreach($lines as $line) {
+				$line_parts = explode(":", $line);
+				
+				if(sizeof($line_parts) > 1) {
+					if(strlen($line_parts[0]) > 0) {
+						$k = $line_parts[0];
+						unset($line_parts[0]);
+						$v = implode(":", $line_parts);
+						$request->set_header($k, $v);
+					}
+				}
+				else if(strlen(trim($line_parts[0])) == 0) {
+					$request->empty_line();
+				}
+				// if exploded line array size is 1
+				// and exploded 
+				else {
+					$request->body($line);
+				}
+			}
+		}
+		
+		// if request has reached 'headers_received' state?
+		if($request->state() == 'headers_received') {
+			if($this->cb) {
+				call_user_func($this->cb, $request);
+			}
+			else {
+				// TODO: send 404 if no callback is registered for this request
+				_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
+				_debug("dropping request since it have no callback");
+				$this->close($request);
+			}
+		}
+		// if state is not 'headers_received'
+		// reactivate client socket for read event
+		else {
 			$this->server->read($sock);
 		}
-	}
-	
-	public function read($request) {
-		$this->server->read($request->sock);
-	}
-	
-	public function send($request, $code, $body='', $headers=array()) {
-		
-	}
-	
-	public function ok($request, $body='') {
-		$this->send($request, 200, $body);
-	}
-	
-	public function close($request) {
-		$this->server->close($request->sock);
 	}
 	
 }
