@@ -36,24 +36,32 @@
  *
  */
 
+// log level
 define('JAXL_ERROR', 1);
 define('JAXL_WARNING', 2);
 define('JAXL_NOTICE', 3);
 define('JAXL_INFO', 4);
 define('JAXL_DEBUG', 5);
 
+// generic global logging shortcuts for different level of verbosity
 function _error($msg) { JAXLLogger::log($msg, JAXL_ERROR); }
 function _warning($msg) { JAXLLogger::log($msg, JAXL_WARNING); }
 function _notice($msg) { JAXLLogger::log($msg, JAXL_NOTICE); }
 function _info($msg) { JAXLLogger::log($msg, JAXL_INFO); }
 function _debug($msg) { JAXLLogger::log($msg, JAXL_DEBUG); }
 
+// generic global terminal output colorize method
+// finally sends colorized message to terminal using error_log/1
+// this method is mainly to escape $msg from file:line and time
+// prefix done by _debug, _error, ... methods
+function _colorize($msg, $verbosity) { error_log(JAXLLogger::colorize($msg, $verbosity)); }
+
 class JAXLLogger {
 	
-	public static $level = JAXL_ERROR;
+	public static $level = JAXL_DEBUG;
 	public static $path = null;
 	
-	public static $color = array(
+	protected static $colors = array(
 		1 => 31,	// error: red
 		2 => 34,	// warning: blue
 		3 => 33,	// notice: yellow
@@ -77,7 +85,7 @@ class JAXLLogger {
 	}
 	
 	public static function colorize($msg, $verbosity) {
-		return "\033[".self::$color[$verbosity]."m".$msg."\033[0m";
+		return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
 	}
 	
 }
