@@ -6,7 +6,7 @@ A lot of components have been re-written keeping in my mind feedback from
 the developer community over the last 4 years.
 
 Jaxl v3.x is an event-driven, non-blocking i/o based daemon writing library 
-for custom TCP/IP client and servers implementation in PHP. 
+for custom TCP/IP client and server implementation in PHP. 
 It also bundles full blown HTTP and XMPP protocol stacks.
 
 Read [why v3.x was written](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ) 

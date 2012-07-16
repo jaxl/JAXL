@@ -4,3 +4,6 @@
   implementation to get it going
 - write more and better tests
 - some more work on exception handling
+- move http pkt parsing logic to http_server from http_request
+  this should do a better fix for multi-part form parsing,
+  websocket upgrades in future etc etc
