@@ -37,27 +37,48 @@
  *
  */
 
-if($argc < 2) {
-	echo "Usage: $argv[0] /path/to/JAXL/.jaxl/sock/jaxl_XXXXX.sock\n";
-	exit;
-}
+$params = $argv;
+$exe = array_shift($params);
+$command = array_shift($params);
 
 require_once 'jaxl.php';
 JAXLLogger::$level = JAXL_INFO;
 
+// TODO: an abstract JAXLCtlCommand class
+// with seperate class per command
+// a mechanism to register new commands
 class JAXLCtl {
 	
-	protected $client = null;
-	protected $cli = null;
+	protected $ipc = null;
 	
-	public function __construct() {
-		global $argv;
+	protected $buffer = '';
+	protected $buffer_cb = null;
+	protected $cli = null;
+	public $dots = "....... ";
+	
+	protected $symbols = array();
+	
+	public function __construct($command, $params) {
+		global $exe;
 		
-		$this->client = new JAXLSocketClient();
-		$this->client->set_callback(array(&$this, 'on_response'));
-		$this->client->connect('unix://'.$argv[1]);
-		
-		$this->cli = new JAXLCli(array(&$this, 'on_shell_input'));
+		if(method_exists(&$this, $command)) {
+			$r = call_user_func_array(array(&$this, $command), $params);
+			if(sizeof($r) == 2) {
+				list($buffer_cb, $quit_cb) = $r;
+				$this->buffer_cb = $buffer_cb;
+				$this->cli = new JAXLCli(array(&$this, 'on_terminal_input'), $quit_cb);
+				$this->run();
+			}
+			else {
+				_colorize("oops! internal command error", JAXL_ERROR);
+				exit;
+			}
+		}
+		else {
+			_colorize("error: invalid command '$command' received", JAXL_ERROR);
+			_colorize("type '$exe help' for list of available commands", JAXL_NOTICE);
+			exit;
+		}
 	}
 	
 	public function run() {
@@ -65,21 +86,105 @@ class JAXLCtl {
 		JAXLLoop::run();
 	}
 	
-	public function on_shell_input($raw) {
-		$this->client->send($raw);
+	public function on_terminal_input($raw) {
+		$raw = trim($raw);
+		$last = substr($raw, -1, 1);
+		
+		if($last == ";") {
+			// dispatch to buffer callback
+			call_user_func($this->buffer_cb, $this->buffer.$raw);
+			$this->buffer = '';
+		}
+		else if($last == '\\') {
+			$this->buffer .= substr($raw, 0, -1);
+			echo $this->dots;
+		}
+		else {
+			// buffer command
+			$this->buffer .= $raw."; ";
+			echo $this->dots;
+		}
 	}
 	
-	public function on_response($raw) {
-		$ret = unserialize($raw);
-		print_r($ret);
-		echo PHP_EOL;
+	public static function print_help() {
+		global $exe;
+		_colorize("Usage: $exe command [options...]\n", JAXL_INFO);
+		_colorize("Commands:", JAXL_NOTICE);
+		_colorize("    help      This help text", JAXL_DEBUG);
+		_colorize("    debug     Attach a debug console to a running JAXL daemon", JAXL_DEBUG);
+		_colorize("    shell     Open up Jaxl shell emulator", JAXL_DEBUG);
+		echo "\n";
+	}
+	
+	protected function help() {
+		JAXLCtl::print_help();
+		exit;
+	}
+	
+	//
+	// shell command
+	//
+	
+	protected function shell() {
+		return array(array(&$this, 'on_shell_input'), array(&$this, 'on_shell_quit'));
+	}
+	
+	private function _eval($raw, $symbols) {
+		extract($symbols);
+		
+		eval($raw);
+		$g = get_defined_vars();
+		
+		unset($g['raw']);
+		unset($g['symbols']);
+		return $g;
+	}
+	
+	public function on_shell_input($raw) {
+		$this->symbols = $this->_eval($raw, $this->symbols);
 		JAXLCli::prompt();
 	}
-
+	
+	public function on_shell_quit() {
+		exit;
+	}
+	
+	//
+	// debug command
+	//
+	
+	protected function debug($sock_path) {
+		$this->ipc = new JAXLSocketClient();
+		$this->ipc->set_callback(array(&$this, 'on_debug_response'));
+		$this->ipc->connect('unix://'.$sock_path);
+		return array(array(&$this, 'on_debug_input'), array(&$this, 'on_debug_quit'));
+	}
+	
+	public function on_debug_response($raw) {
+		$ret = unserialize($raw);
+		print_r($ret);
+		echo "\n";
+		JAXLCli::prompt();
+	}
+	
+	public function on_debug_input($raw) {
+		$this->ipc->send($this->buffer.$raw);
+	}
+	
+	public function on_debug_quit() {
+		$this->ipc->disconnect();
+		exit;
+	}
+	
 }
 
-$ctl = new JAXLCtl();
-$ctl->run();
+// we atleast need a command argument
+if($argc < 2) {
+	JAXLCtl::print_help();
+	exit;
+}
+
+$ctl = new JAXLCtl($command, $params);
 echo "done\n";
 
 ?>
