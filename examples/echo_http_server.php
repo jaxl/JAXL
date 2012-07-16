@@ -42,7 +42,7 @@ echo "Usage: $argv[0] port (default: 9699)\n";
 $port = ($argc == 2 ? $argv[1] : 9699);
 require_once 'jaxl.php';
 require_once JAXL_CWD.'/http/http_server.php';
-JAXLLogger::$level = JAXL_DEBUG;
+JAXLLogger::$level = JAXL_INFO;
 
 // initialize http server
 $http = new HTTPServer($port);
