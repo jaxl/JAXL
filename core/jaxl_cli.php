@@ -43,14 +43,16 @@ class JAXLCli {
 	public static $counter = 0;
 	private $in = null;
 	
+	private $quit_cb = null;
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
 	
-	public function __construct($recv_cb=null) {
+	public function __construct($recv_cb=null, $quit_cb=null) {
 		$this->recv_cb = $recv_cb;
-		$this->in = fopen('php://stdin', 'r');
+		$this->quit_cb = $quit_cb;
 		
 		// catch read event on stdin
+		$this->in = fopen('php://stdin', 'r');
 		JAXLLoop::watch($this->in, array(
 			'read' => array(&$this, 'on_read_ready')
 		));
@@ -77,6 +79,7 @@ class JAXLCli {
 		else if(trim($raw) == 'quit') {
 			$this->stop();
 			$this->in = null;
+			if($this->quit_cb) call_user_func($this->quit_cb);
 			return;
 		}
 		

@@ -1,13 +1,16 @@
 Jaxl v3.x:
 -----------
 Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
-carrying a lot of code from v2.x while throwing away the redundant part.
-A lot of components have been re-written keeping in my mind feedback from
-the developer community over the last 4 years.
+carrying a lot of code from v2.x while throwing away the ugly parts.
+A lot of components have been re-written keeping in mind the feedback from
+the developer community over the last 4 years. Also Jaxl shares a few
+philosophies from my experience with erlang and python languages.
 
-Jaxl v3.x is an event-driven, non-blocking i/o based daemon writing library 
-for custom TCP/IP client and server implementation in PHP. 
-It also bundles full blown HTTP and XMPP protocol stacks.
+Jaxl is an asynchronous, non-blocking I/O, event based PHP library 
+for writing custom TCP/IP client and server implementations. 
+From it's previous versions, library inherits a full blown stable support 
+for XMPP protocol stack. In v3.0, support for HTTP protocol stack was 
+also added.
 
 Read [why v3.x was written](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ) 
 and what traffic it has served in the past.
@@ -51,10 +54,10 @@ XMPP Stack:
 
 HTTP Stack:
 
-* `HTTPServer`          http server implementation
-* `HTTPClient`          http client implementation
-* `HTTPRequest`         http request object
-* `HTTPResponse`        http response object
+* `HTTPServer`          base http server implementation
+* `HTTPClient`          base http client implementation
+* `HTTPRequest`         a http request object
+* `HTTPResponse`        a http response object
 
 Writing an XMPP Client:
 ------------------------
