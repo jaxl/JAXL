@@ -48,20 +48,40 @@ $port = ($argc == 2 ? $argv[1] : 9699);
 require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
-// catch all incoming requests here
-function on_request($request) {
-    if($request->method == 'GET') {
-        $body = json_encode($request);
-        $request->ok($body, array('Content-Type'=>'application/json'));
-        $request->close();
-    }
-    else {
-        $request->not_found();
-        $request->close();
-    }
+// callback method for dispatch rule (see below)
+function index($request) {
+	$request->send_response(
+		200, array('Content-Type'=>'text/html'), 
+		'<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
+	);
+	$request->close();
 }
 
-// start http server
-$http->start('on_request');
+// callback method for dispatch rule (see below)
+function upload($request) {
+	if($request->method == 'GET') {
+		$request->send_response(
+			200, array('Content-Type'=>'text/html'),
+			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action=""><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
+		);
+	}
+	else if($request->method == 'POST') {
+		if($request->body === null && $request->expect) {
+			$request->recv_body();
+		}
+		else {
+			// got upload body, save it
+			_debug("file upload complete, got ".strlen($request->body)." bytes of data");
+			$request->close();
+		}
+	}
+}
 
-?>
+// add dispatch rules with callback method as first argument
+$index = array('index', '^/$');
+$upload = array('upload', '^/upload', array('GET', 'POST'));
+$rules = array($index, $upload);
+$http->dispatch($rules);
+
+// start http server
+$http->start();
