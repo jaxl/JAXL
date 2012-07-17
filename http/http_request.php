@@ -45,11 +45,11 @@ require_once JAXL_CWD.'/core/jaxl_fsm.php';
 // following shortcuts are available
 // on received $request object:
 //
+//	   $request->{status_code_name}($headers, $body)
 //     $request->{status_code_name}($body, $headers)
-//     $request->{status_code_name}($headers)
 //
-//     see $request->shortcuts for list of available methods
-//     more shortcuts can be added in future.
+//     $request->{status_code_name}($headers)
+//     $request->{status_code_name}($body)
 //
 // following specific methods are also available:
 //
@@ -61,6 +61,10 @@ require_once JAXL_CWD.'/core/jaxl_fsm.php';
 // all the above methods can also be directly performed using:
 //
 //     $request->send_response($code, $headers=array(), $body=null)
+//
+// Note: All the send_* methods do not manage connection close/keep-alive logic,
+// it is upto you to do that, by default connection will usually be dropped
+// on client disconnect if not handled by you.
 //
 class HTTPRequest extends JAXLFsm {
 	
@@ -91,11 +95,11 @@ class HTTPRequest extends JAXLFsm {
 	private $_close_cb = null;
 	
 	private $shortcuts = array(
-		'ok', // 2xx
-		'redirect', 'not_modified', // 3xx
-		'not_found', 'bad_request', // 4xx
-		'internal_error', // 5xx
-		'recv_body', 'close' // others
+		'ok' => 200, // 2xx
+		'redirect' => 302, 'not_modified' => 304, // 3xx
+		'not_found' => 404, 'bad_request' => 400, // 4xx
+		'internal_error' => 500, // 5xx
+		'recv_body' => true, 'close' => true // others
 	);
 	
 	public function __construct($sock, $addr) {
@@ -230,7 +234,7 @@ class HTTPRequest extends JAXLFsm {
 						return 'headers_received';
 					}
 				}
-				else if(in_array($event, $this->shortcuts)) {
+				else if(@isset($this->shortcuts[$event])) {
 					return $this->handle_shortcut($event, $args);
 				}
 				else {
@@ -258,21 +262,16 @@ class HTTPRequest extends JAXLFsm {
 	protected function handle_shortcut($event, $args) {
 		_debug("executing shortcut '$event'");
 		switch($event) {
-			// 2xx
+			// http status code shortcuts
 			case 'ok':
-				break;
-			// 3xx
 			case 'redirect':
-				break;
 			case 'not_modified':
-				break;
-			// 4xx
 			case 'bad_request':
-				break;
 			case 'not_found':
-				break;
-			// 5xx
 			case 'internal_error':
+				list($headers, $body) = $this->parse_shortcut_args($args);
+				$code = $this->shortcuts[$event];
+				$this->send_response($code, $headers, $body);
 				break;
 			// others
 			case 'recv_body':
@@ -288,6 +287,37 @@ class HTTPRequest extends JAXLFsm {
 				return 'closed';
 				break;
 		}
+	}
+	
+	private function parse_shortcut_args($args) {
+		if(sizeof($args) == 1) {
+			// http headers or body only received
+			if(is_array($args[0])) {
+				// http headers only
+				$headers = $args[0];
+				$body = null;
+			}
+			else {
+				// body only
+				$body = $args[0];
+				$headers = array();
+			}
+		}
+		else if(sizeof($args) == 2) {
+			// body and http headers both received
+			if(is_array($args[0])) {
+				// header first
+				$body = $args[1];
+				$headers = $args[0];
+			}
+			else {
+				// body first
+				$body = $args[0];
+				$headers = $args[1];
+			}
+		}
+		
+		return array($headers, $body);
 	}
 	
 	// 
