@@ -95,7 +95,7 @@ class HTTPServer {
 		}
 	}
 	
-	public function start($cb) {
+	public function start($cb=null) {
 		$this->cb = $cb;
 		JAXLLoop::run();
 	}
@@ -182,7 +182,7 @@ class HTTPServer {
 			else if(!$dispatched) {
 				// TODO: send 404 if no callback is registered for this request
 				_debug("dropping request since no matching dispatch rule or generic callback was specified");
-				$this->close($request);
+				$request->not_found('404 Not Found');
 			}
 		}
 		// if state is not 'headers_received'
