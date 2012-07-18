@@ -37,6 +37,7 @@
  */
 
 require_once JAXL_CWD.'/core/jaxl_fsm.php';
+require_once JAXL_CWD.'/http/http_multipart.php';
 
 //
 // These methods are available only once
@@ -89,6 +90,10 @@ class HTTPRequest extends JAXLFsm {
 	// request header has been seen
 	public $expect = false;
 	
+	// set if there is Content-Type: multipart/form-data; boundary=...
+	// header already seen
+	public $multipart = null;
+	
 	// callback for send/read/close actions on accepted sock
 	private $_send_cb = null;
 	private $_read_cb = null;
@@ -126,7 +131,7 @@ class HTTPRequest extends JAXLFsm {
 	// abstract method implementation
 	public function handle_invalid_state($r) {
 		_debug("handle invalid state called with");
-		print_r($r);
+		var_dump($r);
 	}
 	
 	//
@@ -142,7 +147,7 @@ class HTTPRequest extends JAXLFsm {
 				return 'wait_for_request_line';
 				break;
 			default:
-				_debug("uncatched $event");
+				_warning("uncatched $event");
 				return 'setup';
 		}
 	}
@@ -154,7 +159,7 @@ class HTTPRequest extends JAXLFsm {
 				return 'wait_for_headers';
 				break;
 			default:
-				_debug("uncatched $event");
+				_warning("uncatched $event");
 				return 'wait_for_request_line';
 		}
 	}
@@ -168,7 +173,7 @@ class HTTPRequest extends JAXLFsm {
 			case 'empty_line':
 				return 'maybe_headers_received';
 			default:
-				_debug("uncatched $event");
+				_warning("uncatched $event");
 				return 'wait_for_headers';
 		}
 	}
@@ -183,11 +188,10 @@ class HTTPRequest extends JAXLFsm {
 				return 'headers_received';
 				break;
 			case 'body':
-				$this->body = $args[0];
-				return 'headers_received';
+				return $this->wait_for_body($event, $args);
 				break;
 			default:
-				_debug("uncatched $event");
+				_warning("uncatched $event");
 				return 'maybe_headers_received';
 		}
 	}
@@ -203,15 +207,70 @@ class HTTPRequest extends JAXLFsm {
 				if($this->body === null) $this->body = $rcvd;
 				else $this->body .= $rcvd;
 				
-				if($this->recvd_body_len < $content_length) {
+				if($this->multipart) {
+					// boundary start, content_disposition, form data, boundary start, ....., boundary end
+					// these define various states of a multipart/form-data
+					$form_data = explode("\r\n", $rcvd);
+					foreach($form_data as $data) {
+						//_debug("passing $data to multipart fsm");
+						if(!$this->multipart->process($data)) {
+							_debug("multipart fsm returned false");
+							$this->_close();
+							return array('closed', false);
+						}
+					}
+				}
+				
+				if($this->recvd_body_len < $content_length && $this->multipart->state() != 'done') {
+					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
 				}
 				else {
+					_debug("all data received, switching state for dispatch");
+					return 'headers_received';
+				}
+				break;
+			case 'set_header':
+				$content_length = $this->headers['Content-Length'];
+				$body = implode(":", $args);
+				$rcvd_len = strlen($body);
+				$this->recvd_body_len += $rcvd_len;
+				
+				if(!$this->multipart->process($body)) {
+					_debug("multipart fsm returned false");
+					$this->_close();
+					return array('closed', false);
+				}
+				
+				if($this->recvd_body_len < $content_length) {
+					_debug("rcvd body len: $this->recvd_body_len/$content_length");
+					return 'wait_for_body';
+				}
+				else {
+					_debug("all data received, switching state for dispatch");
+					return 'headers_received';
+				}
+				break;
+			case 'empty_line':
+				$content_length = $this->headers['Content-Length'];
+				
+				if(!$this->multipart->process('')) {
+					_debug("multipart fsm returned false");
+					$this->_close();
+					return array('closed', false);
+				}
+				
+				if($this->recvd_body_len < $content_length) {
+					_debug("rcvd body len: $this->recvd_body_len/$content_length");
+					return 'wait_for_body';
+				}
+				else {
+					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
 				break;
 			default:
-				_debug("uncatched $event");
+				_warning("uncatched $event");
 				return 'wait_for_body';
 		}
 	}
@@ -238,24 +297,39 @@ class HTTPRequest extends JAXLFsm {
 					return $this->handle_shortcut($event, $args);
 				}
 				else {
-					_debug("uncatched $event ".$args[0]);
+					_warning("uncatched $event ".$args[0]);
 					return 'headers_received';
 				}
 		}
 	}
 	
 	public function closed($event, $args) {
-		_debug("uncatched $event");
+		_warning("uncatched $event");
 	}
 	
 	// sets input headers
 	// called internally for every header received
 	protected function set_header($k, $v) {
-		if(strtolower($k) == 'expect' && strtolower(trim($v)) == '100-continue') {
+		$k = trim($k); $v = ltrim($v);
+		
+		// is expect header?
+		if(strtolower($k) == 'expect' && strtolower($v) == '100-continue') {
 			$this->expect = true;
 		}
 		
-		$this->headers[$k] = $v;
+		// is multipart form data?
+		if(strtolower($k) == 'content-type') {
+			$ctype = explode(';', $v);
+			if(sizeof($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
+				$boundary = explode('=', trim($ctype[1]));
+				if(strtolower(trim($boundary[0])) == 'boundary') {
+					_debug("multipart with boundary $boundary[1] detected");
+					$this->multipart = new HTTPMultiPart(ltrim($boundary[1]));
+				}
+			}
+		}
+		
+		$this->headers[trim($k)] = trim($v);
 	}
 	
 	// shortcut handler
@@ -270,16 +344,24 @@ class HTTPRequest extends JAXLFsm {
 			case 'not_found':
 			case 'internal_error':
 				list($headers, $body) = $this->parse_shortcut_args($args);
+				
 				$code = $this->shortcuts[$event];
-				$this->send_response($code, $headers, $body);
+				$this->_send_response($code, $headers, $body);
+				
+				$this->_close();
+				return 'closed';
 				break;
 			// others
 			case 'recv_body':
+				// send expect header if required
 				if($this->expect) {
 					$this->expect = false;
 					$this->_send_line(100);
 				}
+				
+				// read data
 				$this->_read();
+				
 				return 'wait_for_body';
 				break;
 			case 'close':
@@ -290,6 +372,10 @@ class HTTPRequest extends JAXLFsm {
 	}
 	
 	private function parse_shortcut_args($args) {
+		if(sizeof($args) == 0) {
+			$body = null;
+			$headers = array();
+		}
 		if(sizeof($args) == 1) {
 			// http headers or body only received
 			if(is_array($args[0])) {
