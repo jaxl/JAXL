@@ -44,6 +44,7 @@ class JAXLSocketServer {
 	
 	private $clients = array();
 	private $recv_chunk_size = 1024;
+	private $send_chunk_size = 1024;
 	private $accept_cb = null;
 	private $request_cb = null;
 	private $blocking = false;
@@ -139,7 +140,7 @@ class JAXLSocketServer {
 		$raw = fread($client, $this->recv_chunk_size);
 		$bytes = strlen($raw);
 		
-		//_debug("recv $bytes bytes from client#$client_id");
+		_debug("recv $bytes bytes from client#$client_id");
 		//_debug($raw);
 		
 		if($bytes === 0) {
@@ -162,44 +163,39 @@ class JAXLSocketServer {
 	
 	public function on_client_write_ready($client) {
 		$client_id = (int) $client;
-		//_debug("client#$client_id is write ready");
+		_debug("client#$client_id is write ready");
 		
-		$total = $this->clients[$client_id]['obuffer'];
-		$bytes = fwrite($client, $total);
-		$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
-		
-		//_debug("sent $bytes bytes to client#".$client_id);
-		//_debug($total);
-		
-		// if no more stuff to write, remove write handler
-		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
-			$this->del_write_cb($client_id);
-		}
-		
-		// 
-		// FIXME: possibly we might end up in a situation
-		// where application has queued huge chunk of data
-		// which is pending event after the above write loop
-		// also in the meantime if application has also issued a close call
-		// this situation will lead to loss of response to the client
-		// which application expected was already delivered b4 calling close
-		//
-		// TODO: may be accept a $flush parameter with close call
-		// which can tell us exactly what should we do. If $flush is
-		// set to false, the below close check can even be moved on top of
-		// the write loop above here
-		//
-		
-		// no matter if we have any output buffer
-		// if scheduled for close and not closed do it and clean up
-		if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
-			$this->del_write_cb($client_id);
+		// send in chunks
+		try {
+			$total = $this->clients[$client_id]['obuffer'];
+			$bytes = fwrite($client, $total);
+			$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
+			$remaining = strlen($this->clients[$client_id]['obuffer']);
 			
+			_debug("sent $bytes/$remaining bytes to client#".$client_id);
+			//_debug($total);
+			
+			// if no more stuff to write, remove write handler
+			if(strlen($this->clients[$client_id]['obuffer']) === 0) {
+				$this->del_write_cb($client_id);
+					
+				// if scheduled for close and not closed do it and clean up
+				if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+					@fclose($client);
+					$this->clients[$client_id]['closed'] = true;
+					unset($this->clients[$client_id]);
+			
+					_debug("closed client#".$client_id);
+				}
+			}
+		}
+		catch(JAXLException $e) {
+			_debug("unable to fwrite to client#$client_id");
+			$this->del_write_cb($client_id);
 			@fclose($client);
 			$this->clients[$client_id]['closed'] = true;
 			unset($this->clients[$client_id]);
-			
-			//_debug("closed client#".$client_id);
+			_debug("closed client#".$client_id);
 		}
 	}
 	

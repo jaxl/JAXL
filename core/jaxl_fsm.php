@@ -71,7 +71,8 @@ abstract class JAXLFsm {
 			}
 			
 			_debug("current state '".$this->state."'");
-			if(is_array($r) && sizeof($r) == 2) return $ret;
+			if(is_array($r) && sizeof($r) == 2) 
+				return $ret;
 		}
 		else {
 			_debug("invalid state found, nothing called for event ".$event."");
