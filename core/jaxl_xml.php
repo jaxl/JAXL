@@ -150,7 +150,7 @@ class JAXLXml {
 		return $this;
 	}
 	
-	// append a XmlStanza at current rover
+	// append a JAXLXml object at current rover
 	public function cnode($node) {
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;

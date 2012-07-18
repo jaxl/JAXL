@@ -72,7 +72,7 @@ class XMPPStanza {
 			case 'childrens':
 				return $this->xml->$prop;
 				break;
-				
+			
 			// access to common xml attributes
 			case 'to':
 			case 'from':

@@ -52,7 +52,9 @@ $comp = new JAXL(array(
 	
 	// (required)
 	'host' => @$argv[3],
-	'port' => $argv[4]
+	'port' => $argv[4],
+	
+	'log_level' => JAXL_INFO
 ));
 
 //

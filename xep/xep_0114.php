@@ -65,7 +65,6 @@ class XEP_0114 extends XMPPXep {
 	}
 	
 	public function start_handshake($stanza) {
-		// send handshake
 		_debug("starting component handshake");
 		$id = $stanza->id;
 		$hash = strtolower(sha1($id.$this->jaxl->pass));
