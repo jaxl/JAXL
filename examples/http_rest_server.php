@@ -60,9 +60,9 @@ function index($request) {
 // callback method for dispatch rule (see below)
 function upload($request) {
 	if($request->method == 'GET') {
-		$request->send_response(
-			200, array('Content-Type'=>'text/html'),
-			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action=""><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
+		$request->ok(array(
+			'Content-Type'=>'text/html'),
+			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action="http://127.0.0.1:9699/upload/"><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
 		);
 	}
 	else if($request->method == 'POST') {
@@ -72,7 +72,8 @@ function upload($request) {
 		else {
 			// got upload body, save it
 			_debug("file upload complete, got ".strlen($request->body)." bytes of data");
-			$request->close();
+			$upload_data = $request->multipart->form_data[0]['body'];
+			$request->ok($upload_data, array('Content-Type'=>$request->multipart->form_data[0]['headers']['Content-Type']));
 		}
 	}
 }

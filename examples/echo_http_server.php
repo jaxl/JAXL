@@ -50,15 +50,8 @@ $http = new HTTPServer($port);
 
 // catch all incoming requests here
 function on_request($request) {
-    if($request->method == 'GET') {
-        $body = json_encode($request);
-        $request->ok($body, array('Content-Type'=>'application/json'));
-        $request->close();
-    }
-    else {
-        $request->not_found();
-        $request->close();
-    }
+    $body = json_encode($request);
+    $request->ok($body, array('Content-Type'=>'application/json'));
 }
 
 // start http server
