@@ -40,7 +40,7 @@ date_default_timezone_set("UTC");
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
-require_once JAXL_CWD.'/core/jaxl_exception.php';
+//require_once JAXL_CWD.'/core/jaxl_exception.php';
 require_once JAXL_CWD.'/core/jaxl_cli.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
@@ -611,8 +611,13 @@ class JAXL extends XMPPStream {
 	public function handle_other($event, $args) {
 		$stanza = $args[0];
 		$stanza = new XMPPStanza($stanza);
-		_warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
-		return $this->ev->emit('on_'.$stanza->name.'_stanza', array($stanza));
+		$ev = 'on_'.$stanza->name.'_stanza';
+		if($this->ev->exists($ev)) {
+			return $this->ev->emit($ev, array($stanza));
+		}
+		else {
+			_warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
+		}
 	}
 	
 	public function handle_domain_info($stanza) {
