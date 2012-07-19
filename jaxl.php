@@ -304,7 +304,7 @@ class JAXL extends XMPPStream {
 		$this->send($msg);
 	}
 	
-	public function get_vcard($jid=null) {
+	public function get_vcard($jid=null, $cb=null) {
 		$attrs = array(
 			'type'=>'get',
 			'from'=>$this->full_jid->to_string()
@@ -315,12 +315,12 @@ class JAXL extends XMPPStream {
 			$attrs['to'] = $jid->node."@".$jid->domain;
 		}
 		
-		$this->send(
-			$this->get_iq_pkt(
-				$attrs,
-				new JAXLXml('vCard', 'vcard-temp')
-			)
+		$pkt = $this->get_iq_pkt(
+			$attrs,
+			new JAXLXml('vCard', 'vcard-temp')
 		);
+		if($cb) $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		$this->send($pkt);
 	}
 	
 	public function get_roster($cb) {
@@ -547,10 +547,11 @@ class JAXL extends XMPPStream {
 		$stanza = new XMPPStanza($stanza);
 		
 		// emit callback registered on stanza id's
+		$emited = false;
 		if($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
 			//_debug("on stanza id callbackd");
+			$emited = true;
 			$this->ev->emit('on_stanza_id_'.$stanza->id, array($stanza));
-			return;
 		}
 		
 		// catch roster list
@@ -571,7 +572,9 @@ class JAXL extends XMPPStream {
 				}
 			}
 			
-			$this->ev->emit('on_roster_update');
+			// emit this event if not emited above
+			if($emited)
+				$this->ev->emit('on_roster_update');
 		}
 		
 		// if managing roster
@@ -580,7 +583,10 @@ class JAXL extends XMPPStream {
 			$this->roster[$stanza->from]->vcard = $query;
 		}
 		
-		$this->ev->emit('on_'.$stanza->type.'_iq', array($stanza));
+		// on_get_iq, on_result_iq, and other events are only
+		// emitted if on_stanza_id_{id} wasn't emitted above
+		if(!$emited)
+			$this->ev->emit('on_'.$stanza->type.'_iq', array($stanza));
 	}
 	
 	public function handle_presence($stanza) {
