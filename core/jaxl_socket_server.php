@@ -44,6 +44,7 @@ class JAXLSocketServer {
 	
 	private $clients = array();
 	private $recv_chunk_size = 1024;
+	private $send_chunk_size = 8092;
 	private $accept_cb = null;
 	private $request_cb = null;
 	private $blocking = false;
@@ -160,42 +161,47 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 	
-	private function fwrite_stream($client, $total) {
-		try {
-			for($written=0; $written < strlen($total); $written += $fwrite) {
-				$fwrite = @fwrite($client, substr($total, $written));
-				if($fwrite === false) {
-					return $written;
-				}
-			}
-			return $written;
-		}
-		catch(JAXLException $e) {
-			return 0;
-		}
-	}
-	
 	public function on_client_write_ready($client) {
 		$client_id = (int) $client;
 		_debug("client#$client_id is write ready");
 		
-		// send in chunks
-		$total = $this->clients[$client_id]['obuffer'];
-		$written = $this->fwrite_stream($client, $total);
-		$this->clients[$client_id]['obuffer'] = substr($total, $written);
-		
-		// if no more stuff to write, remove write handler
-		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
-			$this->del_write_cb($client_id);
+		try {
+			// send in chunks
+			$total = $this->clients[$client_id]['obuffer'];
+			$written = @fwrite($client, substr($total, 0, $this->send_chunk_size));
 			
-			// if scheduled for close and not closed do it and clean up
-			if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
-				@fclose($client);
-				$this->clients[$client_id]['closed'] = true;
-				unset($this->clients[$client_id]);
-				
-				_debug("closed client#".$client_id);
+			if($written === false) {
+				// fwrite failed
+				_warning("====> fwrite failed");
+				$this->clients[$client_id]['obuffer'] = $total;
 			}
+			else if($written == strlen($total) || $written == $this->send_chunk_size) {
+				// full chunk written
+				//_debug("full chunk written");
+				$this->clients[$client_id]['obuffer'] = substr($total, $this->send_chunk_size);
+			}
+			else {
+				// partial chunk written
+				//_debug("partial chunk $written written");
+				$this->clients[$client_id]['obuffer'] = substr($total, $written);
+			}
+			
+			// if no more stuff to write, remove write handler
+			if(strlen($this->clients[$client_id]['obuffer']) === 0) {
+				$this->del_write_cb($client_id);
+				
+				// if scheduled for close and not closed do it and clean up
+				if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+					@fclose($client);
+					$this->clients[$client_id]['closed'] = true;
+					unset($this->clients[$client_id]);
+					
+					_debug("closed client#".$client_id);
+				}
+			}
+		}
+		catch(JAXLException $e) {
+			_debug("====> got fwrite exception");
 		}
 	}
 	
