@@ -323,16 +323,16 @@ class JAXL extends XMPPStream {
 		);
 	}
 	
-	public function get_roster() {
-		$this->send(
-			$this->get_iq_pkt(
-				array(
-					'type'=>'get',
-					'from'=>$this->full_jid->to_string()
-				),
-				new JAXLXml('query', 'jabber:iq:roster')
-			)
+	public function get_roster($cb) {
+		$pkt = $this->get_iq_pkt(
+			array(
+				'type'=>'get',
+				'from'=>$this->full_jid->to_string()
+			),
+			new JAXLXml('query', 'jabber:iq:roster')
 		);
+		if($cb) $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		$this->send($pkt);
 	}
 	
 	public function on_unix_sock_accept($_c, $addr) {
@@ -570,6 +570,8 @@ class JAXL extends XMPPStream {
 					$this->roster[$jid] = new RosterItem($jid, $subscription, $groups);
 				}
 			}
+			
+			$this->ev->emit('on_roster_update');
 		}
 		
 		// if managing roster
