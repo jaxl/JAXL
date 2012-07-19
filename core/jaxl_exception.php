@@ -63,7 +63,7 @@ class JAXLException extends Exception {
 	}
 	
 	public static function error_handler($errno, $error, $file, $line, $vars) {
-		_debug("error handler called with $errno, $error, $file, $line");
+		//_debug("error handler called with $errno, $error, $file, $line");
 		if($errno === 0 || ($errno & error_reporting()) === 0) {
 			return;
 		}
@@ -72,7 +72,7 @@ class JAXLException extends Exception {
 	}
 	
 	public static function exception_handler($e) {
-		debug("exception handler catched ".json_encode($e));
+		_debug("exception handler catched ".json_encode($e));
 	}
 	
 	public static function shutdown_handler() {
@@ -82,7 +82,7 @@ class JAXLException extends Exception {
 			}
 		}
 		catch(Exception $e) {
-			debug("shutdown handler catched with exception ".json_encode($e));
+			_debug("shutdown handler catched with exception ".json_encode($e));
 		}
 	}
 }

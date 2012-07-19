@@ -40,7 +40,7 @@ date_default_timezone_set("UTC");
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
-//require_once JAXL_CWD.'/core/jaxl_exception.php';
+require_once JAXL_CWD.'/core/jaxl_exception.php';
 require_once JAXL_CWD.'/core/jaxl_cli.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';

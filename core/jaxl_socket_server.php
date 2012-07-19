@@ -44,7 +44,6 @@ class JAXLSocketServer {
 	
 	private $clients = array();
 	private $recv_chunk_size = 1024;
-	private $send_chunk_size = 1024;
 	private $accept_cb = null;
 	private $request_cb = null;
 	private $blocking = false;
@@ -161,41 +160,42 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 	
+	private function fwrite_stream($client, $total) {
+		try {
+			for($written=0; $written < strlen($total); $written += $fwrite) {
+				$fwrite = @fwrite($client, substr($total, $written));
+				if($fwrite === false) {
+					return $written;
+				}
+			}
+			return $written;
+		}
+		catch(JAXLException $e) {
+			return 0;
+		}
+	}
+	
 	public function on_client_write_ready($client) {
 		$client_id = (int) $client;
 		_debug("client#$client_id is write ready");
 		
 		// send in chunks
-		try {
-			$total = $this->clients[$client_id]['obuffer'];
-			$bytes = fwrite($client, $total);
-			$this->clients[$client_id]['obuffer'] = substr($this->clients[$client_id]['obuffer'], $bytes, $total-$bytes);
-			$remaining = strlen($this->clients[$client_id]['obuffer']);
-			
-			_debug("sent $bytes/$remaining bytes to client#".$client_id);
-			//_debug($total);
-			
-			// if no more stuff to write, remove write handler
-			if(strlen($this->clients[$client_id]['obuffer']) === 0) {
-				$this->del_write_cb($client_id);
-					
-				// if scheduled for close and not closed do it and clean up
-				if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
-					@fclose($client);
-					$this->clients[$client_id]['closed'] = true;
-					unset($this->clients[$client_id]);
-			
-					_debug("closed client#".$client_id);
-				}
-			}
-		}
-		catch(JAXLException $e) {
-			_debug("unable to fwrite to client#$client_id");
+		$total = $this->clients[$client_id]['obuffer'];
+		$written = $this->fwrite_stream($client, $total);
+		$this->clients[$client_id]['obuffer'] = substr($total, $written);
+		
+		// if no more stuff to write, remove write handler
+		if(strlen($this->clients[$client_id]['obuffer']) === 0) {
 			$this->del_write_cb($client_id);
-			@fclose($client);
-			$this->clients[$client_id]['closed'] = true;
-			unset($this->clients[$client_id]);
-			_debug("closed client#".$client_id);
+			
+			// if scheduled for close and not closed do it and clean up
+			if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+				@fclose($client);
+				$this->clients[$client_id]['closed'] = true;
+				unset($this->clients[$client_id]);
+				
+				_debug("closed client#".$client_id);
+			}
 		}
 	}
 	
