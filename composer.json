@@ -16,7 +16,7 @@
     "require": {
         "php": ">=5.2.4"
     },
-
+    "minimum-stability": "dev",
     "autoload": {
         "files": ["jaxl.php"]
     }
