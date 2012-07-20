@@ -49,7 +49,7 @@ $server = null;
 function on_request($client, $raw) {
 	global $server;
 	$server->send($client, $raw);
-	_debug("got client callback ".$raw);
+	_info("got client callback ".$raw);
 }
 
 @unlink($argv[1]);

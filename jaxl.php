@@ -457,7 +457,7 @@ class JAXL extends XMPPStream {
 			'access_token' => $this->cfg['fb_access_token'],
 			'api_key' => $this->cfg['fb_app_key'],
 			'call_id' => 0,
-			'v' => '1.0',
+			'v' => '1.0'
 		));
 		
 		$stanza->t(base64_encode($response));

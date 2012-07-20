@@ -71,9 +71,9 @@ $client = new JAXL(array(
 
 $client->add_cb('on_auth_success', function() {
 	global $client;
-	_debug($client->full_jid->to_string());
-	_debug($client->xeps['0206']->sid);
-	_debug($client->xeps['0206']->rid);
+	_info($client->full_jid->to_string());
+	_info($client->xeps['0206']->sid);
+	_info($client->xeps['0206']->rid);
 	exit;
 });
 

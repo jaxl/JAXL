@@ -71,7 +71,7 @@ function upload($request) {
 		}
 		else {
 			// got upload body, save it
-			_debug("file upload complete, got ".strlen($request->body)." bytes of data");
+			_info("file upload complete, got ".strlen($request->body)." bytes of data");
 			$upload_data = $request->multipart->form_data[0]['body'];
 			$request->ok($upload_data, array('Content-Type'=>$request->multipart->form_data[0]['headers']['Content-Type']));
 		}

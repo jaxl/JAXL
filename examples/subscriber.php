@@ -60,7 +60,7 @@ $client->require_xep(array(
 
 $client->add_cb('on_auth_success', function() {
 	global $client;
-	_debug("got on_auth_success cb, jid ".$client->full_jid->to_string());
+	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 	
 	// create node
 	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
@@ -72,13 +72,13 @@ $client->add_cb('on_auth_success', function() {
 $client->add_cb('on_auth_failure', function($reason) {
 	global $client;
 	$client->send_end_stream();
-	_debug("got on_auth_failure cb with reason $reason");
+	_info("got on_auth_failure cb with reason $reason");
 });
 
 $client->add_cb('on_headline_message', function($stanza) {
 	global $client;
 	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) { 
-		_debug("got pubsub event");
+		_info("got pubsub event");
 	}
 	else {
 		_warning("unknown headline message rcvd");
@@ -86,7 +86,7 @@ $client->add_cb('on_headline_message', function($stanza) {
 });
 
 $client->add_cb('on_disconnect', function() {
-	_debug("got on_disconnect cb");
+	_info("got on_disconnect cb");
 });
 
 //
