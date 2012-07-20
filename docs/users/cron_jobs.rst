@@ -11,13 +11,13 @@ Lets try some cron job scheduling using Jaxl interactive shell:
     .......     echo "cron job called";
     ....... }
     jaxl 2>
-    jaxl 2> $ref = JAXLLoop::clock->call_fun_after(
+    jaxl 2> $ref = JAXLLoop::$clock->call_fun_after(
     .......     4000, 
     .......     'do_job', 
     .......     'some_parameters'
     ....... );
     jaxl 3> echo $ref;
-    d47989558ec611e6143731ecf3101e98
+    1
     jaxl 4>
     cron job called
     jaxl 5> quit
