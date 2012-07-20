@@ -143,7 +143,7 @@ class JAXLLoop {
 		}
 		else if($changed === 0) {
 			//_debug("nothing changed while selecting for read");
-			self::$clock->tick(self::$secs + self::$usecs/pow(10,6));
+			self::$clock->tick((self::$secs * pow(10,6)) + self::$usecs);
 		}
 	}
 	

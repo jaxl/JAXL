@@ -323,7 +323,7 @@ class JAXL extends XMPPStream {
 		$this->send($pkt);
 	}
 	
-	public function get_roster($cb) {
+	public function get_roster($cb=null) {
 		$pkt = $this->get_iq_pkt(
 			array(
 				'type'=>'get',
