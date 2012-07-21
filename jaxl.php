@@ -573,7 +573,7 @@ class JAXL extends XMPPStream {
 			}
 			
 			// emit this event if not emited above
-			if($emited)
+			if(!$emited)
 				$this->ev->emit('on_roster_update');
 		}
 		
