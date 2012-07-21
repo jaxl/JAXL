@@ -602,7 +602,8 @@ class JAXL extends XMPPStream {
 				$this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
 			}
 			else if($type == 'unavailable') {
-				unset($this->roster[$jid->bare]->resources[$jid->resource]);
+				if(@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource])
+					unset($this->roster[$jid->bare]->resources[$jid->resource]);
 			}
 		}
 		
