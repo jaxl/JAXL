@@ -67,6 +67,7 @@ class JAXLSocketClient {
 	
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
+	private $writing = false;
 	
 	public function __construct($stream_context=null) {
 		$this->stream_context = $stream_context;
@@ -143,9 +144,11 @@ class JAXLSocketClient {
 		$this->obuffer .= $data;
 		
 		// add watch for write events
+		if($this->writing) return;
 		JAXLLoop::watch($this->fd, array(
 			'write' => array(&$this, 'on_write_ready')
 		));
+		$this->writing = true;
 	}
 	
 	public function on_read_ready($fd) {
@@ -192,6 +195,7 @@ class JAXLSocketClient {
 			JAXLLoop::unwatch($fd, array(
 				'write' => true
 			));
+			$this->writing = false;
 		}
 		
 		//_debug("current obuffer size: ".strlen($this->obuffer)."");
