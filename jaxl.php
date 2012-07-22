@@ -299,8 +299,17 @@ class JAXL extends XMPPStream {
 		));
 	}
 	
-	public function send_chat_msg($to, $body) {
-		$msg = new XMPPMsg(array('type'=>'chat', 'to'=>$to, 'from'=>$this->full_jid->to_string()), $body);
+	public function send_chat_msg($to, $body, $thread=null, $subject=null) {
+		$msg = new XMPPMsg(
+			array(
+				'type'=>'chat', 
+				'to'=>$to, 
+				'from'=>$this->full_jid->to_string()
+			), 
+			$body,
+			$thread,
+			$subject
+		);
 		$this->send($msg);
 	}
 	
