@@ -146,6 +146,7 @@ abstract class XMPPStream extends JAXLFsm {
 		return $stanza;
 	}
 	
+	// someday this all needs to go inside jaxl_sasl_auth
 	public function get_auth_pkt($mechanism, $user, $pass) {
 		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism'=>$mechanism));
 		

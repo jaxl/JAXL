@@ -495,6 +495,31 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
+	// someday this needs to go inside xmpp stream
+	public function wait_for_cram_md5_response($event, $args) {
+		switch($event) {
+			case "stanza_cb":
+				$stanza = $args[0];
+		
+				if($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+					$challenge = base64_decode($stanza->text);
+					$resp = new JAXLXml('response', NS_SASL);
+					$resp->t(base64_encode($this->jid->to_string().' '.hash_hmac('md5', $challenge, $this->pass)));
+					$this->send($resp);
+					return "wait_for_sasl_response";
+				}
+				else {
+					_debug("got unhandled sasl response, should never happen here");
+					exit;
+				}
+				break;
+			default:
+				_debug("not catched $event, should never happen here");
+				exit;
+				break;
+		}
+	}
+	
 	public function handle_auth_mechs($stanza, $mechanisms) {
 		if($this->ev->exists('on_stream_features')) {
 			return $this->ev->emit('on_stream_features', array($stanza));
@@ -507,9 +532,11 @@ class JAXL extends XMPPStream {
 		_debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
 		
 		if($pref_auth_exists) {
+			// try prefered auth
 			$mech = $pref_auth;
 		}
 		else {
+			// choose one from available mechanisms
 			foreach($mechs as $mech=>$any) {
 				if($mech == 'X-FACEBOOK-PLATFORM') {
 					if(@$this->cfg['fb_access_token']) {
@@ -524,8 +551,12 @@ class JAXL extends XMPPStream {
 		}
 		
 		$this->send_auth_pkt($mech, @$this->jid ? $this->jid->to_string() : null, @$this->pass);
+		
 		if($pref_auth == 'X-FACEBOOK-PLATFORM') {
 			return "wait_for_fb_sasl_response";
+		}
+		else if($pref_auth == 'CRAM-MD5') {
+			return "wait_for_cram_md5_response";
 		}
 	}
 	
