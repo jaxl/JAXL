@@ -46,6 +46,8 @@ abstract class XMPPXep {
 	// init() method defines various callbacks
 	// required by this xep extension
 	abstract public function init();
+	//abstract public $description;
+	//abstract public $dependencies;
 	
 	// reference to jaxl instance
 	// which required me

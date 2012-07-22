@@ -2,8 +2,6 @@
   which causes problems when running in cgi environment
   either fix it or port v2.x bosh curl (blocking) 
   implementation to get it going
-  
-- write more and better tests
 
 - some more work on exception handling
 
@@ -14,4 +12,7 @@
 - add pk regexp support in http dispatcher
 
 - create separate repo for /core, /xmpp + /xep, /http
-  add composer and pear install support
+
+- add composer and pear install support <<-- already done by a fork, merge it
+
+- more tests, full test suits, ci and built reports on github
