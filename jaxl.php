@@ -520,6 +520,59 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
+	public function get_scram_sha1_response($pass, $challenge) {
+		// it contains users iteration count i and the user salt
+		// also server will append it's own nonce to the one we specified
+		$decoded = $this->explode_data(base64_decode($challenge));
+		
+		// r=,s=,i=
+		$nonce = $decoded['r'];
+		$salt = base64_decode($decoded['s']);
+		$iteration = intval($decoded['i']);
+		
+		// SaltedPassword  := Hi(Normalize(password), salt, i)
+		$salted = JAXLUtil::pbkdf2($this->pass, $salt, $iteration);
+		// ClientKey       := HMAC(SaltedPassword, "Client Key")
+		$client_key = hash_hmac('sha1', $salted, "Client Key", true);
+		// StoredKey       := H(ClientKey)
+		$stored_key = hash('sha1', $client_key, true);
+		// AuthMessage     := client-first-message-bare + "," + server-first-message + "," + client-final-message-without-proof
+		$auth_message = '';
+		// ClientSignature := HMAC(StoredKey, AuthMessage)
+		$signature = hash_hmac('sha1', $stored_key, $auth_message, true);
+		// ClientProof     := ClientKey XOR ClientSignature
+		$client_proof = $client_key ^ $signature;
+		
+		$proof = 'c=biws,r='.$nonce.',p='.base64_encode($client_proof);
+		return base64_encode($proof);
+	}
+	
+	public function wait_for_scram_sha1_response($event, $args) {
+		switch($event) {
+			case "stanza_cb":
+				$stanza = $args[0];
+				
+				if($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+					$challenge = $stanza->text;
+					
+					$resp = new JAXLXml('response', NS_SASL);
+					$resp->t($this->get_scram_sha1_response($this->pass, $challenge));
+					$this->send($resp);
+					
+					return "wait_for_sasl_response";
+				}
+				else {
+					_debug("got unhandled sasl response, should never happen here");
+					exit;
+				}
+				break;
+			default:
+				_debug("not catched $event, should never happen here");
+				exit;
+				break;
+		}
+	}
+	
 	public function handle_auth_mechs($stanza, $mechanisms) {
 		if($this->ev->exists('on_stream_features')) {
 			return $this->ev->emit('on_stream_features', array($stanza));
@@ -557,6 +610,9 @@ class JAXL extends XMPPStream {
 		}
 		else if($pref_auth == 'CRAM-MD5') {
 			return "wait_for_cram_md5_response";
+		}
+		else if($pref_auth == 'SCRAM-SHA-1') {
+			return "wait_for_scram_sha1_response";
 		}
 	}
 	

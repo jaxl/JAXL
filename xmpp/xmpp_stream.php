@@ -159,6 +159,8 @@ abstract class XMPPStream extends JAXLFsm {
 			case 'CRAM-MD5':
 				break;
 			case 'SCRAM-SHA-1':
+				// client first message always starts with n, y or p for GS2 extensibility
+				$stanza->t(base64_encode("n,,n=".$user.",r=".JAXLUtil::get_nonce(false)));
 				break;
 			case 'ANONYMOUS':
 				break;
