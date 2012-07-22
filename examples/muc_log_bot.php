@@ -50,10 +50,7 @@ $client = new JAXL(array(
 	'jid' => $argv[1],
 	'pass' => $argv[2],
 	
-	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
-	
-	'log_path' => JAXL_CWD.'/.jaxl/log/jaxl.log'
+	'log_level' => JAXL_INFO
 ));
 
 $client->require_xep(array(
