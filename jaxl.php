@@ -520,6 +520,7 @@ class JAXL extends XMPPStream {
 		}
 	}
 	
+	// http://tools.ietf.org/html/rfc5802#section-5
 	public function get_scram_sha1_response($pass, $challenge) {
 		// it contains users iteration count i and the user salt
 		// also server will append it's own nonce to the one we specified
@@ -676,7 +677,8 @@ class JAXL extends XMPPStream {
 		// if managing roster
 		// catch contact vcard results
 		if($this->manage_roster && $stanza->type == 'result' && ($query = $stanza->exists('vCard', 'vcard-temp'))) {
-			$this->roster[$stanza->from]->vcard = $query;
+			if(@$this->roster[$stanza->from])
+				$this->roster[$stanza->from]->vcard = $query;
 		}
 		
 		// on_get_iq, on_result_iq, and other events are only
