@@ -108,6 +108,7 @@ class JAXL extends XMPPStream {
 	
 	// path variables
 	public $log_level = JAXL_INFO;
+	public $priv_dir;
 	public $tmp_dir;
 	public $log_dir;
 	public $pid_dir;
@@ -162,17 +163,16 @@ class JAXL extends XMPPStream {
 		// create .jaxl directory in JAXL_CWD
 		// for our /tmp, /run and /log folders
 		// overwrite these using jaxl config array
-		$priv = JAXL_CWD."/.jaxl";
-		if(!is_dir($priv)) mkdir($priv);
-		if(!is_dir($priv."/tmp")) mkdir($priv."/tmp");
-		if(!is_dir($priv."/run")) mkdir($priv."/run");
-		if(!is_dir($priv."/log")) mkdir($priv."/log");
-		if(!is_dir($priv."/sock")) mkdir($priv."/sock");
-		
-		$this->tmp_dir = JAXL_CWD."/.jaxl/tmp";
-		$this->pid_dir = JAXL_CWD."/.jaxl/run";
-		$this->log_dir = JAXL_CWD."/.jaxl/log";
-		$this->sock_dir = JAXL_CWD."/.jaxl/sock";
+		$this->priv_dir = @$this->cfg['priv_dir'] ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
+		$this->tmp_dir = $this->priv_dir."/tmp";
+		$this->pid_dir = $this->priv_dir."/run";
+		$this->log_dir = $this->priv_dir."/log";
+		$this->sock_dir = $this->priv_dir."/sock";
+		if(!is_dir($this->priv_dir)) mkdir($this->priv_dir);
+		if(!is_dir($this->tmp_dir)) mkdir($this->tmp_dir);
+		if(!is_dir($this->pid_dir)) mkdir($this->pid_dir);
+		if(!is_dir($this->log_dir)) mkdir($this->log_dir);
+		if(!is_dir($this->sock_dir)) mkdir($this->sock_dir);
 		
 		// setup logger
 		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
