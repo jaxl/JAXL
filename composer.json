@@ -1,0 +1,23 @@
+{
+    "name":        "abhinavsingh/jaxl",
+    "type":        "library",
+    "description": "jaxl - Jabber XMPP Client Library in PHP.",
+    "keywords":    ["xmpp", "jabber", "jaxl", "abhinavsingh"],
+    "homepage":    "http://jaxl.readthedocs.org/en/latest/index.html",
+    "license":     "MIT",
+
+    "authors": [
+        {
+            "name": "Abhinavsingh",
+            "homepage": "https://github.com/abhinavsingh"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.2.4"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "files": ["jaxl.php"]
+    }
+}
