@@ -126,7 +126,7 @@ class XEP_0206 extends XMPPXep {
 			
 			// fool xmpp_stream state machine with stream start packet
 			// and make transition to wait_for_stream_features state
-			if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream("bosh.jaxl"));
+			if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
 		}
 		
 		_debug("recving for $this->rid");
@@ -196,7 +196,8 @@ class XEP_0206 extends XMPPXep {
 		
 		// fool xmpp_stream state machine with stream start packet
 		// and make transition to wait_for_stream_features state
-		if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream("bosh.jaxl"));
+		if($this->recv_cb) 
+			call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
 		
 		$attrs = array(
 			'content' => 'text/xml; charset=utf-8',
@@ -220,6 +221,10 @@ class XEP_0206 extends XMPPXep {
 	public function ping() {
 		$body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
 		$this->send($body);
+	}
+	
+	public function disconnect() {
+		
 	}
 	
 }
