@@ -240,29 +240,6 @@ class JAXL extends XMPPStream {
 		return $this->sock_dir."/jaxl_".$this->pid.".sock";
 	}
 	
-	public function signal_handler($sig) {
-		$this->end_stream();
-		$this->disconnect();
-		$this->ev->emit('on_disconnect');
-		
-		switch($sig) {
-			// terminal line hangup
-			case SIGHUP:
-				_debug("got sighup");
-				break;
-			// interrupt program
-			case SIGINT:
-				_debug("got sigint");
-				break;
-			// software termination signal
-			case SIGTERM:
-				_debug("got sigterm");
-				break;
-		}
-		
-		exit;
-	}
-	
 	public function require_xep($xeps) {
 		if(!is_array($xeps)) 
 			$xeps = array($xeps);
@@ -344,40 +321,6 @@ class JAXL extends XMPPStream {
 		$this->send($pkt);
 	}
 	
-	public function on_unix_sock_accept($_c, $addr) {
-		$this->sock->read($_c);
-	}
-	
-	// this currently simply evals the incoming raw string
-	// know what you are doing while in production
-	public function on_unix_sock_request($_c, $_raw) {
-		_debug("evaling raw string rcvd over unix sock: ".$_raw);
-		$this->sock->send($_c, serialize(eval($_raw)));
-		$this->sock->read($_c);
-	}
-	
-	public function enable_unix_sock() {
-		$this->sock = new JAXLSocketServer(
-			'unix://'.$this->get_sock_file_path(),
-			array(&$this, 'on_unix_sock_accept'),
-			array(&$this, 'on_unix_sock_request')
-		);
-	}
-	
-	// this simply eval the incoming raw data
-	// inside current jaxl environment
-	// security is all upto you, no checks made here
-	public function handle_debug_shell($_raw) {
-		print_r(eval($_raw));
-		echo PHP_EOL;
-		JAXLCli::prompt();
-	}
-	
-	protected function enable_debug_shell() {
-		$this->cli = new JAXLCli(array(&$this, 'handle_debug_shell'));
-		JAXLCli::prompt();
-	}
-	
 	public function start($opts=array()) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
@@ -442,6 +385,71 @@ class JAXL extends XMPPStream {
 				));
 			}
 		}
+	}
+	
+	//
+	// callback methods
+	//
+	
+	// signals callback handler
+	// not for public api consumption
+	public function signal_handler($sig) {
+		$this->end_stream();
+		$this->disconnect();
+		$this->ev->emit('on_disconnect');
+	
+		switch($sig) {
+			// terminal line hangup
+			case SIGHUP:
+				_debug("got sighup");
+				break;
+				// interrupt program
+			case SIGINT:
+				_debug("got sigint");
+				break;
+				// software termination signal
+			case SIGTERM:
+				_debug("got sigterm");
+				break;
+		}
+	
+		exit;
+	}
+	
+	// called internally for ipc
+	// not for public consumption
+	public function on_unix_sock_accept($_c, $addr) {
+		$this->sock->read($_c);
+	}
+	
+	// this currently simply evals the incoming raw string
+	// know what you are doing while in production
+	public function on_unix_sock_request($_c, $_raw) {
+		_debug("evaling raw string rcvd over unix sock: ".$_raw);
+		$this->sock->send($_c, serialize(eval($_raw)));
+		$this->sock->read($_c);
+	}
+	
+	public function enable_unix_sock() {
+		$this->sock = new JAXLSocketServer(
+				'unix://'.$this->get_sock_file_path(),
+				array(&$this, 'on_unix_sock_accept'),
+				array(&$this, 'on_unix_sock_request')
+		);
+	}
+	
+	// this simply eval the incoming raw data
+	// inside current jaxl environment
+	// security is all upto you, no checks made here
+	public function handle_debug_shell($_raw) {
+		print_r(eval($_raw));
+		echo PHP_EOL;
+		JAXLCli::prompt();
+	}
+	
+	protected function enable_debug_shell() {
+		$this->cli = new JAXLCli(array(&$this, 'handle_debug_shell'));
+		JAXLCli::prompt();
 	}
 	
 	//
