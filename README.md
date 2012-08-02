@@ -23,6 +23,3 @@ about the standard (inbuilt) PHP socket and stream methods.
 [Group and Mailing List](https://groups.google.com/forum/#!forum/jaxl)
 
 [Create a bug/issue](https://github.com/abhinavsingh/JAXL/issues/new)
-
-Read [why v3.x was written](https://groups.google.com/d/msg/jaxl/hjARH6oQEQo/vQ3RP5O5dLUJ) 
-and what traffic it has served in the past.
