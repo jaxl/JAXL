@@ -73,6 +73,9 @@ class JAXLException extends Exception {
 	
 	public static function exception_handler($e) {
 		_debug("exception handler catched ".json_encode($e));
+		
+		// TODO: Pretty print backtrace
+		//print_r(debug_backtrace());
 	}
 	
 	public static function shutdown_handler() {

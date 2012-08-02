@@ -81,7 +81,36 @@ function upload($request) {
 // add dispatch rules with callback method as first argument
 $index = array('index', '^/$');
 $upload = array('upload', '^/upload', array('GET', 'POST'));
-$rules = array($index, $upload);
+
+// some REST CRUD style callback methods
+// Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
+function create_event($request) {
+	_debug("got event create request");
+	$request->close();
+}
+
+function read_event($request, $pk) {
+	_debug("got event read request for $pk");
+	$request->close();
+}
+
+function update_event($request, $pk) {
+	_debug("got event update request for $pk");
+	$request->close();
+}
+
+function delete_event($request, $pk) {
+	_debug("got event delete request for $pk");
+	$request->close();
+}
+
+$event_create = array('create_event', '^/event/create/$', array('PUT'));
+$event_read = array('read_event', '^/event/(?P<pk>\d+)/$', array('GET', 'HEAD'));
+$event_update = array('update_event', '^/event/(?P<pk>\d+)/$', array('POST'));
+$event_delete = array('delete_event', '^/event/(?P<pk>\d+)/$', array('DELETE'));
+
+// prepare rule set
+$rules = array($index, $upload, $event_create, $event_read, $event_update, $event_delete);
 $http->dispatch($rules);
 
 // start http server

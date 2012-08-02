@@ -71,9 +71,9 @@ class HTTPDispatchRule {
 	}
 	
 	public function match($path, $method) {
-		if(preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path)) {
+		if(preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path, $matches)) {
 			if(in_array($method, $this->methods)) {
-				return true;
+				return $matches;
 			}
 		}
 		return false;
@@ -103,9 +103,13 @@ class HTTPDispatcher {
 	
 	public function dispatch($request) {
 		foreach($this->rules as $rule) {
-			if($rule->match($request->path, $request->method)) {
+			//_debug("matching $request->path with pattern $rule->pattern");
+			if(($matches = $rule->match($request->path, $request->method)) !== false) {
 				_debug("matching rule found, dispatching");
-				call_user_func($rule->cb, $request);
+				$params = array($request);
+				// TODO: a bad way to restrict on 'pk', fix me for generalization
+				if(@isset($matches['pk'])) $params[] = $matches['pk'];
+				call_user_func_array($rule->cb, $params);
 				return true;
 			}
 		}

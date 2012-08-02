@@ -36,10 +36,10 @@ Some REST CRUD dispatch rules:
 
 .. code-block:: ruby
 
-    $event_create = array('create_event', '^event/create/$', array('PUT'));
-    $event_read = array('read_event', '^event/(?P<pk>\d+)/$', array('GET', 'HEAD'));
-    $event_update = array('update_event', '^event/(?P<pk>\d+)/$', array('POST'));
-    $event_delete = array('delete_event', '^event/(?P<pk>\d+)/$', array('DELETE'));
+    $event_create = array('create_event', '^/event/create/$', array('PUT'));
+    $event_read = array('read_event', '^/event/(?P<pk>\d+)/$', array('GET', 'HEAD'));
+    $event_update = array('update_event', '^/event/(?P<pk>\d+)/$', array('POST'));
+    $event_delete = array('delete_event', '^/event/(?P<pk>\d+)/$', array('DELETE'));
 
 Finally don't forget to active these dispatch rules by doing:
 
