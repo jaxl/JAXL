@@ -83,7 +83,7 @@ Following ``$ev`` are available on ``JAXL`` lifecycle for registering callbacks:
     
     #. ``on_{$type}_message``
     
-        ``JAXL`` instance has received a message stanza. ``$type`` can be ``chat``, ``groupchat``, ``headline``, ``normal``
+        ``JAXL`` instance has received a message stanza. ``$type`` can be ``chat``, ``groupchat``, ``headline``, ``normal``, ``error``
     
     #. ``on_stanza_id_{$id}``
     
