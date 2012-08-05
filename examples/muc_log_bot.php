@@ -50,7 +50,7 @@ $client = new JAXL(array(
 	'jid' => $argv[1],
 	'pass' => $argv[2],
 	
-	'log_level' => JAXL_INFO
+	'log_level' => JAXL_DEBUG
 ));
 
 $client->require_xep(array(
@@ -102,7 +102,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	$from = new XMPPJid($stanza->from);
 	
 	// self-stanza received, we now have complete room roster
-	if($from->to_string() == $room_full_jid->to_string()) {
+	if(strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
 		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			if(($status = $x->exists('status', null, array('code'=>'110'))) !== false) {
 				$item = $x->exists('item');
@@ -113,21 +113,21 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 			}
 		}
 		else {
-			_warning("=======> odd case");
+			_warning("=======> odd case 1");
 		}
 	}
 	// stanza from other users received
-	else if($from->bare == $room_full_jid->bare) {
+	else if(strtolower($from->bare) == strtolower($room_full_jid->bare)) {
 		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			$item = $x->exists('item');
 			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
 		}
 		else {
-			_warning("=======> odd case");
+			_warning("=======> odd case 2");
 		}
 	}
 	else {
-		_warning("=======> odd case");
+		_warning("=======> odd case 3");
 	}
 	
 });

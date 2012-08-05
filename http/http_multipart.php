@@ -62,9 +62,9 @@ class HTTPMultiPart extends JAXLFsm {
 			if($data[0] == '--'.$this->boundary) {
 				$this->index += 1;
 				$this->form_data[$this->index] = array(
-						'meta' => array(),
-						'headers' => array(),
-						'body' => ''
+					'meta' => array(),
+					'headers' => array(),
+					'body' => ''
 				);
 				return array('wait_for_content_disposition', true);
 			}
