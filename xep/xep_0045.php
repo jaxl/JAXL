@@ -70,12 +70,13 @@ class XEP_0045 extends XMPPXep {
 	
 	// room_full_jid simply means room jid with nick name as resource
 	public function get_join_room_pkt($room_full_jid) {
-		return $this->jaxl->get_pres_pkt(
+		$pkt = $this->jaxl->get_pres_pkt(
 			array(
 				'from'=>$this->jaxl->full_jid->to_string(), 
 				'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
 			)
 		);
+		return $pkt->c('x', NS_MUC);
 	}
 	
 	public function join_room($room_full_jid) {
