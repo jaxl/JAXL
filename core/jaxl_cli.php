@@ -53,6 +53,7 @@ class JAXLCli {
 		
 		// catch read event on stdin
 		$this->in = fopen('php://stdin', 'r');
+		stream_set_blocking($this->in, false);
 		JAXLLoop::watch($this->in, array(
 			'read' => array(&$this, 'on_read_ready')
 		));
