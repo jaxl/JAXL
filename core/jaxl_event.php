@@ -88,7 +88,7 @@ class JAXLEvent {
 		
 		foreach($cbs as $pri => $cb) {
 			foreach($cb as $c) {
-				$data = call_user_func_array($c, $data);
+				call_user_func_array($c, $data);
 			}
 		}
 		
