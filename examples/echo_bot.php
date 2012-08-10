@@ -69,6 +69,13 @@ $client = new JAXL(array(
 ));
 
 //
+// required XEP's
+//
+$client->require_xep(array(
+	'0199'	// XMPP Ping
+));
+
+//
 // add necessary event callbacks here
 //
 
