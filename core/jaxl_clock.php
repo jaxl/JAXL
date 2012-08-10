@@ -71,7 +71,7 @@ class JAXLClock {
 		// run scheduled jobs
 		foreach($this->jobs as $ref=>$job) {
 			if($this->tick >= $job['scheduled_on'] + $job['after']) {
-				_debug("running job#($ref+1)");
+				//_debug("running job#".($ref+1)." at tick ".$this->tick.", scheduled on ".$job['scheduled_on']." after ".$job['after'].", periodic ".$job['is_periodic']);
 				call_user_func($job['cb'], $job['args']);
 				if(!$job['is_periodic']) {
 					unset($this->jobs[$ref]);
@@ -86,12 +86,12 @@ class JAXLClock {
 	}
 	
 	// calculate execution time of callback
-	public function tc($callback, $args) {
+	public function tc($callback, $args=null) {
 		
 	}
 	
 	// callback after $time seconds
-	public function call_fun_after($time, $callback, $args) {
+	public function call_fun_after($time, $callback, $args=null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -104,7 +104,7 @@ class JAXLClock {
 	}
 	
 	// callback periodically after $time seconds
-	public function call_fun_periodic($time, $callback, $args) {
+	public function call_fun_periodic($time, $callback, $args=null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
