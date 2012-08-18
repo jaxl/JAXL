@@ -669,7 +669,7 @@ class JAXL extends XMPPStream {
 					$groups = array();
 					foreach($child->childrens as $group) {
 						if($group->name == 'group') {
-							$groups[] = $group->name;
+							$groups[] = $group->text;
 						}
 					}
 					
