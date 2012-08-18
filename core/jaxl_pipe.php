@@ -40,7 +40,14 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
 
 /**
  * bidirectional communication pipes for processes
+ *
+ * This is how this will be (when complete): 
+ * $pipe = new JAXLPipe() will return an array of size 2
+ * $pipe[0] represents the read end of the pipe
+ * $pipe[1] represents the write end of the pipe
  * 
+ * Proposed functionality might even change (currently consider this as experimental)
+ *
  * @author abhinavsingh
  *
  */
