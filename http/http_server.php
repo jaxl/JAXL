@@ -68,7 +68,7 @@ define('HTTP_503', 'Service Unavailable');
 class HTTPServer {
 	
 	private $server = null;
-	private $cb = null;
+	public $cb = null;
 	
 	private $dispatcher = null;
 	private $requests = array();
