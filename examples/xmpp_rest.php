@@ -36,6 +36,8 @@
  *
  */
 
+// View explanation for this example here:
+// https://groups.google.com/d/msg/jaxl/QaGjZP4A2gY/n6SYutrBVxsJ
 if($argc < 3) {
 	echo "Usage: $argv[0] jid pass\n";
 	exit;
