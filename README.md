@@ -18,6 +18,8 @@ Both XMPP and HTTP protocol stacks are written on top of the Core stack.
 Infact the source code of protocol implementations knows nothing 
 about the standard (inbuilt) PHP socket and stream methods.
 
+[Examples](https://github.com/abhinavsingh/JAXL/tree/v3.x/examples/)
+
 [Documentation](http://jaxl.readthedocs.org/)
 
 [Group and Mailing List](https://groups.google.com/forum/#!forum/jaxl)
