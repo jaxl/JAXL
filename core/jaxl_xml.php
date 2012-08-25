@@ -206,12 +206,12 @@ class JAXLXml {
 		
 		$xml .= '<'.$this->name;
 		if($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach($this->attrs as $k=>$v) if(!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.$v.'"';
+		foreach($this->attrs as $k=>$v) if(!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
 		$xml .= '>';
 		
 		foreach($this->childrens as $child) $xml .= $child->to_string($this->ns);
 		
-		if($this->text) $xml .= $this->text;
+		if($this->text) $xml .= htmlspecialchars($this->text);
 		$xml .= '</'.$this->name.'>';
 		return $xml;
 	}
