@@ -267,7 +267,7 @@ class JAXL extends XMPPStream {
 		$this->ev->del($ref);
 	}
 	
-	public function set_status($status, $show, $priority) {
+	public function set_status($status, $show='chat', $priority=10) {
 		$this->send($this->get_pres_pkt(
 			array(),
 			$status,
