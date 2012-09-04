@@ -60,7 +60,7 @@ class XEP_0030 extends XMPPXep {
 	public function get_info_pkt($entity_jid) {
 		return $this->jaxl->get_iq_pkt(
 			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
-			new JAXLXml('iq', NS_DISCO_INFO)	
+			new JAXLXml('query', NS_DISCO_INFO)	
 		);
 	}
 	
@@ -73,7 +73,7 @@ class XEP_0030 extends XMPPXep {
 	public function get_items_pkt($entity_jid) {
 		return $this->jaxl->get_iq_pkt(
 			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
-			new JAXLXml('iq', NS_DISCO_ITEMS)
+			new JAXLXml('query', NS_DISCO_ITEMS)
 		);
 	}
 	
