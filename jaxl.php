@@ -321,6 +321,30 @@ class JAXL extends XMPPStream {
 		$this->send($pkt);
 	}
 	
+	public function subscribe($to) {
+		$this->send($this->get_pres_pkt(
+			array('to'=>$to, 'type'=>'subscribe')
+		));
+	}
+	
+	public function subscribed($to) {
+		$this->send($this->get_pres_pkt(
+			array('to'=>$to, 'type'=>'subscribed')
+		));
+	}
+	
+	public function unsubscribe($to) {
+		$this->send($this->get_pres_pkt(
+			array('to'=>$to, 'type'=>'unsubscribe')
+		));
+	}
+	
+	public function unsubscribed($to) {
+		$this->send($this->get_pres_pkt(
+			array('to'=>$to, 'type'=>'unsubscribed')
+		));
+	}
+	
 	public function start($opts=array()) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
@@ -432,9 +456,9 @@ class JAXL extends XMPPStream {
 	
 	public function enable_unix_sock() {
 		$this->sock = new JAXLSocketServer(
-				'unix://'.$this->get_sock_file_path(),
-				array(&$this, 'on_unix_sock_accept'),
-				array(&$this, 'on_unix_sock_request')
+			'unix://'.$this->get_sock_file_path(),
+			array(&$this, 'on_unix_sock_accept'),
+			array(&$this, 'on_unix_sock_request')
 		);
 	}
 	
