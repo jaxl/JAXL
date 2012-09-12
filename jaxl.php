@@ -103,8 +103,8 @@ class JAXL extends XMPPStream {
 	public $manage_roster = true;
 	
 	// what to do with presence sub requests
-	// "none" | "accept" | "accept_and_add"
-	public $subscription = "none";
+	// "none" | "accept" | "mutual"
+	public $manage_subscribe = "none";
 	
 	// path variables
 	public $log_level = JAXL_INFO;
@@ -735,6 +735,14 @@ class JAXL extends XMPPStream {
 				if(@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource])
 					unset($this->roster[$jid->bare]->resources[$jid->resource]);
 			}
+		}
+		
+		// if managing subscription requests
+		// we need to automate stuff here
+		if($stanza->type == "subscribe" && $this->manage_subscribe != "none") {
+			$this->subscribed($stanza->from);
+			if($this->manage_subscribe == "mutual")
+				$this->subscribe($stanza->from);
 		}
 		
 		$this->ev->emit('on_presence_stanza', array($stanza));
