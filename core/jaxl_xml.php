@@ -38,15 +38,8 @@
 
 /**
  * 
- * Usage:
- * ------
- * JAXLXml($name, $ns, $attrs, $text)
- * JAXLXml($name, $ns, $attrs)
- * JAXLXml($name, $ns, $text)
- * JAXLXml($name, $attrs, $text)
- * JAXLXml($name, $attrs)
- * JAXLXml($name, $ns)
- * JAXLXml($name)
+ * Details: http://abhinavsingh.com/blog/2012/09/jaxlxml-strophe-style-xml-builder-working-with-jaxl-a-networking-library-in-php-part-2/
+ * Doc: http://jaxl.readthedocs.org/en/latest/users/xml_objects.html#jaxlxml
  * 
  * @author abhinavsingh
  *
@@ -108,15 +101,11 @@ class JAXLXml {
 		
 	}
 	
-	// merge new attrs with attributes of current rover
 	public function attrs($attrs) {
 		$this->rover->attrs = array_merge($this->rover->attrs, $attrs);
 		return $this;
 	}
 	
-	// pass a kv pair of attrs
-	// this function return bool if all attribute 
-	// keys passed matches their respective values
 	public function match_attrs($attrs) {
 		$matches = true;
 		foreach($attrs as $k=>$v) {
@@ -128,7 +117,6 @@ class JAXLXml {
 		return $matches;
 	}
 	
-	// update text of current rover
 	public function t($text, $append=FALSE) {
 		if(!$append) {
 			$this->rover->text = $text;
@@ -141,7 +129,6 @@ class JAXLXml {
 		return $this;
 	}
 	
-	// append a child node at current rover
 	public function c($name, $ns=null, $attrs=array(), $text=null) {
 		$node = new JAXLXml($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
@@ -150,7 +137,6 @@ class JAXLXml {
 		return $this;
 	}
 	
-	// append a JAXLXml object at current rover
 	public function cnode($node) {
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
@@ -158,22 +144,16 @@ class JAXLXml {
 		return $this;
 	}
 	
-	// move rover to one step up
 	public function up() {
 		if($this->rover->parent) $this->rover = &$this->rover->parent;
 		return $this;
 	}
 	
-	// move rover back to top element
 	public function top() {
 		$this->rover = &$this;
 		return $this;
 	}
-	
-	// checks if a child with $name exists
-	// return child XmlStanza if found otherwise false
-	// NOTE: if multiple children exists with same name,
-	// this function returns on first child check
+
 	public function exists($name, $ns=null, $attrs=array()) {
 		foreach($this->childrens as $child) {
 			if($ns) {
@@ -187,7 +167,6 @@ class JAXLXml {
 		return false;
 	}
 	
-	// update child element
 	public function update($name, $ns=null, $attrs=array(), $text=null) {
 		foreach($this->childrens as $k=>$child) {
 			if($child->name == $name) {
@@ -200,7 +179,6 @@ class JAXLXml {
 		}
 	}
 	
-	// to string conversion
 	public function to_string($parent_ns=null) {
 		$xml = '';
 		

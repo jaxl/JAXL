@@ -57,18 +57,10 @@ abstract class JAXLFsm {
 			$call = method_exists($this, $this->state) ? array(&$this, $this->state): $this->state;
 			$r = call_user_func($call, $event, $args);
 			
-			if(is_array($r) && sizeof($r) == 2) {
-				list($this->state, $ret) = $r;
-			}
-			else if(is_array($r) && sizeof($r) == 1) {
-				$this->state = $r[0];
-			}
-			else if(is_string($r)) {
-				$this->state = $r;
-			}
-			else {
-				$this->handle_invalid_state($r);
-			}
+			if(is_array($r) && sizeof($r) == 2) list($this->state, $ret) = $r;
+			else if(is_array($r) && sizeof($r) == 1) $this->state = $r[0];
+			else if(is_string($r)) $this->state = $r;
+			else $this->handle_invalid_state($r);
 			
 			_debug("current state '".$this->state."'");
 			if(is_array($r) && sizeof($r) == 2) 
