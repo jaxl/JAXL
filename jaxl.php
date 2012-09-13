@@ -715,7 +715,9 @@ class JAXL extends XMPPStream {
 		
 		// on_get_iq, on_result_iq, and other events are only
 		// emitted if on_stanza_id_{id} wasn't emitted above
-		if(!$emited)
+		// TODO: can we add more checks here before calling back
+		// e.g. checks on existence of an attribute, check on 1st level child ns and so on 
+		if(!$emited) 
 			$this->ev->emit('on_'.$stanza->type.'_iq', array($stanza));
 	}
 	

@@ -54,7 +54,8 @@ $client = new JAXL(array(
 
 $client->require_xep(array(
 	'0045',	// MUC
-	'0203'	// Delayed Delivery
+	'0203',	// Delayed Delivery
+	'0199'  // XMPP Ping
 ));
 
 //
