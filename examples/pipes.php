@@ -38,7 +38,7 @@
 
 // include and configure logger
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_DEBUG;
+JAXLLogger::$level = JAXL_INFO;
 
 require_once JAXL_CWD.'/core/jaxl_pipe.php';
 $pipe = new JAXLPipe(getmypid());

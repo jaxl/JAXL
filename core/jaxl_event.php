@@ -88,9 +88,13 @@ class JAXLEvent {
 		
 		foreach($cbs as $pri => $cb) {
 			foreach($cb as $c) {
-				$data = call_user_func_array($c, $data);
-				// this line is to a fix, things will change in future
-				if(!is_array($data)) $data = array();
+				$ret = call_user_func_array($c, $data);
+				// this line is for fixing situation where callback function doesn't return an array type
+				// in such cases next call of call_user_func_array will report error since $data is not an array type as expected
+				// things will change in future, atleast put the callback inside a try/catch block
+				// here we only check if there was a return, if yes we update $data with return value
+				// this is bad design, need more thoughts, should work as of now
+				if($ret) $data = $ret;
 			}
 		}
 		

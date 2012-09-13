@@ -47,7 +47,8 @@ if($argc < 3) {
 require_once 'jaxl.php';
 $xmpp = new JAXL(array(
 	'jid' => $argv[1],
-	'pass' => $argv[2]
+	'pass' => $argv[2],
+	'log_level' => JAXL_INFO
 ));
 
 // register callbacks on required xmpp events

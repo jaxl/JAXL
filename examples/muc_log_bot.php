@@ -49,7 +49,6 @@ $client = new JAXL(array(
 	// (required) credentials
 	'jid' => $argv[1],
 	'pass' => $argv[2],
-	
 	'log_level' => JAXL_INFO
 ));
 

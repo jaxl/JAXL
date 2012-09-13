@@ -47,7 +47,8 @@ if($argc < 3) {
 require_once 'jaxl.php';
 $client = new JAXL(array(
 	'jid' => $argv[1],
-	'pass' => $argv[2]
+	'pass' => $argv[2],
+	'log_level' => JAXL_INFO
 ));
 
 $client->require_xep(array(

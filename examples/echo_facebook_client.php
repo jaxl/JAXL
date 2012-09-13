@@ -57,7 +57,9 @@ $client = new JAXL(array(
 	'auth_type' => 'X-FACEBOOK-PLATFORM',
 	
 	// (optional)
-	//'resource' => 'resource'
+	//'resource' => 'resource',
+	
+	'log_level' => JAXL_INFO
 ));
 
 //
