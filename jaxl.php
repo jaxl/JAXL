@@ -611,24 +611,29 @@ class JAXL extends XMPPStream {
 			return $this->ev->emit('on_stream_features', array($stanza));
 		}
 		
+		// extract available mechanisms
 		$mechs = array();
 		if($mechanisms) foreach($mechanisms->childrens as $mechanism) $mechs[$mechanism->text] = true;
+		
+		// check if preferred auth type exists in available mechanisms
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
 		$pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
 		_debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
 		
+		// if pref auth exists, try it
 		if($pref_auth_exists) {
-			// try prefered auth
 			$mech = $pref_auth;
 		}
+		// if pref auth doesn't exists, choose one from available mechanisms
 		else {
-			// choose one from available mechanisms
 			foreach($mechs as $mech=>$any) {
+				// choose X-FACEBOOK-PLATFORM only if fb_access_token config value is available
 				if($mech == 'X-FACEBOOK-PLATFORM') {
 					if(@$this->cfg['fb_access_token']) {
 						break;
 					}
 				}
+				// else try first of the available methods
 				else {
 					break;
 				}

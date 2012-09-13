@@ -152,6 +152,7 @@ abstract class XMPPStream extends JAXLFsm {
 		
 		switch($mechanism) {
 			case 'PLAIN':
+			case 'X-OAUTH2':
 				$stanza->t(base64_encode("\x00".$user."\x00".$pass));
 				break;
 			case 'DIGEST-MD5':
