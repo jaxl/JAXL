@@ -36,11 +36,16 @@
  *
  */
 
+if($argc < 2) {
+	echo "Usage: $argv[0] url\n";
+	exit;
+}
+
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+JAXLLogger::$level = JAXL_DEBUG;
 require_once JAXL_CWD.'/http/http_client.php';
 
-$request = new HTTPClient('http://google.com/');
+$request = new HTTPClient($argv[1]);
 $request->start();
 
 ?>

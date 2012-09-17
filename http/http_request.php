@@ -129,6 +129,8 @@ class HTTPRequest extends JAXLFsm {
 	
 	//
 	// abstract method implementation
+	//
+	
 	public function handle_invalid_state($r) {
 		_debug("handle invalid state called with");
 		var_dump($r);

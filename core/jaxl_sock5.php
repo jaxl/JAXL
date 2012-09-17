@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -44,93 +44,83 @@ require_once JAXL_CWD.'/core/jaxl_socket_client.php';
  * @author abhinavsingh
  *
  */
-class HTTPClient {
-	
-	private $url = null;
-	private $parts = array();
-	
-	private $headers = array();
-	private $data = null;
-	public $method = null;
+class JAXLSock5 {
 	
 	private $client = null;
 	
-	public function __construct($url, $headers=array(), $data=null) {
-		$this->url = $url;
-		$this->headers = $headers;
-		$this->data = $data;
-		
+	protected $transport = null;
+	protected $ip = null;
+	protected $port = null;
+	
+	public function __construct($transport='tcp') {
+		$this->transport = $transport;
 		$this->client = new JAXLSocketClient();
 		$this->client->set_callback(array(&$this, 'on_response'));
 	}
 	
-	public function start($method='GET') {
-		$this->method = $method;
+	public function __destruct() {
 		
-		$this->parts = parse_url($this->url);
-		$transport = $this->_transport();
-		$ip = $this->_ip();
-		$port = $this->_port();
+	}
+	
+	public function connect($ip, $port=1080) {
+		$this->ip = $ip;
+		$this->port = $port;
+		$sock_path = $this->_sock_path();
 		
-		$socket_path = $transport.'://'.$ip.':'.$port;
-		if($this->client->connect($socket_path)) {
-			_debug("connection to $this->url established");
-			
-			// send request data
-			$this->send_request();
-			
-			// start main loop
-			JAXLLoop::run();
+		if($this->client->connect($sock_path)) {
+			_debug("established connection to $sock_path");
+			return true;
 		}
 		else {
-			_debug("unable to open $this->url");
+			_error("unable to connect $sock_path");
+			return false;
 		}
 	}
 	
+	//
+	// Three phases of SOCK5
+	//
+	
+	// Negotiation pkt consists of 3 part:
+	// 0x05 => Sock protocol version
+	// 0x01 => Number of method identifier octet
+	//
+	// Following auth methods are defined:
+	// 0x00 => No authentication required
+	// 0x01 => GSSAPI
+	// 0x02 => USERNAME/PASSWORD
+	// 0x03 to 0x7F => IANA ASSIGNED
+	// 0x80 to 0xFE => RESERVED FOR PRIVATE METHODS
+	// 0xFF => NO ACCEPTABLE METHODS
+	public function negotiate() {
+		$pkt = pack("C3", 0x05, 0x01, 0x00);
+		$this->client->send($pkt);
+		
+		// enter sub-negotiation state
+	}
+	
+	public function relay_request() {
+		// enter wait for reply state
+	}
+	
+	public function send_data() {
+		
+	}
+	
+	//
+	// Socket client callback
+	//
+	
 	public function on_response($raw) {
-		_info("got http response");
-	}
-	
-	protected function send_request() {
-		$this->client->send($this->_line()."\r\n");
-		$this->client->send($this->_ua()."\r\n");
-		$this->client->send($this->_host()."\r\n");
-		$this->client->send("\r\n");
+		_debug($raw);
 	}
 	
 	//
-	// private methods on uri parts
+	// Private
 	//
 	
-	private function _line() {
-		return $this->method.' '.$this->_uri().' HTTP/1.1';
-	}
-	
-	private function _ua() {
-		return 'User-Agent: jaxl_http_client/3.x';
-	}
-	
-	private function _host() {
-		return 'Host: '.$this->parts['host'].':'.$this->_port();
-	}
-	
-	private function _transport() {
-		return ($this->parts['scheme'] == 'http' ? 'tcp' : 'ssl');
-	}
-	
-	private function _ip() {
-		return gethostbyname($this->parts['host']);
-	}
-	
-	private function _port() {
-		return @$this->parts['port'] ? $this->parts['port'] : 80;
-	}
-	
-	private function _uri() {
-		$uri = $this->parts['path'];
-		if(@$this->parts['query']) $uri .= '?'.$this->parts['query'];
-		if(@$this->parts['fragment']) $uri .= '#'.$this->parts['fragment'];
-		return $uri;
+	protected function _sock_path() {
+		return $this->transport.'://'.$this->ip.':'.$this->port;
 	}
 	
 }
