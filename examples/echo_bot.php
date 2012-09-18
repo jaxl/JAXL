@@ -83,14 +83,14 @@ $client->add_cb('on_auth_success', function() {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 	
-	// set status
-	$client->set_status("available!", "dnd", 10);
+	// fetch roster list
+	$client->get_roster();
 	
 	// fetch vcard
 	$client->get_vcard();
 	
-	// fetch roster list
-	$client->get_roster();
+	// set status
+	$client->set_status("available!", "dnd", 10);
 });
 
 // by default JAXL instance catches incoming roster list results and updates
