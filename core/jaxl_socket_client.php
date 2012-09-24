@@ -186,7 +186,7 @@ class JAXLSocketClient {
 		$this->send_bytes += $bytes;
 		
 		_debug("sent ".$bytes."/".$this->send_bytes." of data");
-		_debug($this->obuffer);
+		_debug(substr($this->obuffer, 0, $bytes));
 		
 		$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
 		
