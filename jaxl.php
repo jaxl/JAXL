@@ -345,6 +345,10 @@ class JAXL extends XMPPStream {
 		));
 	}
 	
+	public function get_socket_path() {
+		return ($this->cfg['port'] == 5223 ? "ssl" : "tcp")."://".$this->cfg['host'].":".$this->cfg['port'];
+	}
+	
 	public function start($opts=array()) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
@@ -374,7 +378,7 @@ class JAXL extends XMPPStream {
 			$this->add_cb('on_connect', array($this, 'start_stream'));
 		
 		// connect to the destination host/port
-		if($this->connect(($this->cfg['port'] == 5223 ? "ssl" : "tcp")."://".$this->cfg['host'].":".$this->cfg['port'])) {
+		if($this->connect($this->get_socket_path())) {
 			// emit
 			$this->ev->emit('on_connect');
 			

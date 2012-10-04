@@ -53,7 +53,7 @@ function on_request($client, $raw) {
 }
 
 @unlink($argv[1]);
-$server = new JAXLSocketServer('unix://'.$argv[1], 'on_request');
+$server = new JAXLSocketServer('unix://'.$argv[1], NULL, 'on_request');
 
 JAXLLoop::run();
 echo "done\n";
