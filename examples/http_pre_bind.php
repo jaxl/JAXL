@@ -49,13 +49,12 @@ if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
+require_once '../jaxl.php';
 
-$to = $attrs['to'];
-$rid = $attrs['rid'];
-$wait = $attrs['wait'];
-$hold = $attrs['hold'];
-echo $to." ".$rid." ".$wait." ".$hold; exit;
+$to = (string)$attrs['to'];
+$rid = (int)$attrs['rid'];
+$wait = (int)$attrs['wait'];
+$hold = (int)$attrs['hold'];
 list($host, $port) = JAXLUtil::get_dns_srv($to);
 
 $client = new JAXL(array(
@@ -66,15 +65,21 @@ $client = new JAXL(array(
 	'bosh_rid' => $rid,
 	'bosh_wait' => $wait,
 	'bosh_hold' => $hold,
-	'auth_type' => 'ANONYMOUS'
+	'auth_type' => 'ANONYMOUS',
+	'log_level' => JAXL_INFO
 ));
 
 $client->add_cb('on_auth_success', function() {
 	global $client;
-	_info($client->full_jid->to_string());
-	_info($client->xeps['0206']->sid);
-	_info($client->xeps['0206']->rid);
+	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+	echo '<body xmlns="'.NS_HTTP_BIND.'" sid="'.$client->xeps['0206']->sid.'" rid="'.$client->xeps['0206']->rid.'" jid="'.$client->full_jid->to_string().'"/>';
 	exit;
+});
+
+$client->add_cb('on_auth_failure', function($reason) {
+	global $client;
+	_info("got on_auth_failure cb with reason $reason");
+	$client->send_end_stream();
 });
 
 //

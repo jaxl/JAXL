@@ -36,8 +36,12 @@
  *
  */
 
+// Run as:
+// php examples/echo_bot.php root@localhost password
+// php examples/echo_bot.php root@localhost password DIGEST-MD5
+// php examples/echo_bot.php localhost "" ANONYMOUS
 if($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
+	echo "Usage: $argv[0] jid pass auth_type\n";
 	exit;
 }
 
@@ -102,8 +106,8 @@ $client->add_cb('on_roster_update', function() {
 
 $client->add_cb('on_auth_failure', function($reason) {
 	global $client;
-	$client->send_end_stream();
 	_info("got on_auth_failure cb with reason $reason");
+	$client->send_end_stream();
 });
 
 $client->add_cb('on_chat_message', function($stanza) {

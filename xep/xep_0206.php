@@ -106,7 +106,7 @@ class XEP_0206 extends XMPPXep {
 				$body = $this->wrap($body);
 			}
 		}
-		_debug("send to ".$this->jaxl->cfg['bosh_url']." body ".$body);
+		_debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$body);
 		
 		$this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
 		curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
