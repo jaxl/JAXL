@@ -143,6 +143,8 @@ class JAXL extends XMPPStream {
 	public function __construct($config) {
 		// env
 		$this->cfg = $config;
+		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : TRUE;
+		if($strict) $this->add_exception_handlers();
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));
 		$this->pid = getmypid();
@@ -230,6 +232,13 @@ class JAXL extends XMPPStream {
 		@unlink($this->get_sock_file_path());
 		
 		parent::__destruct();
+	}
+	
+	public function add_exception_handlers() {
+		_info("strict mode enabled, adding exception handlers. Set 'strict'=>TRUE inside JAXL config to disable this");
+		set_error_handler(array('JAXLException', 'error_handler'));
+		set_exception_handler(array('JAXLException', 'exception_handler'));
+		register_shutdown_function(array('JAXLException', 'shutdown_handler'));
 	}
 	
 	public function get_pid_file_path() {

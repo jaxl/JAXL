@@ -90,8 +90,4 @@ class JAXLException extends Exception {
 	}
 }
 
-set_error_handler(array('JAXLException', 'error_handler'));
-set_exception_handler(array('JAXLException', 'exception_handler'));
-register_shutdown_function(array('JAXLException', 'shutdown_handler'));
-
 ?>
