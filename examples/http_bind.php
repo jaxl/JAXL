@@ -36,21 +36,31 @@
  *
  */
 
-// backward compatibility example
-// for developers who were using JAXL directly via browsers
-// through ajax calls (probably by using distributed jaxl.js)
-// Yet not working, keep an eye on this example file
+if(!isset($_GET['jid']) || !isset($_GET['pass'])) {
+	echo "invalid input";
+	exit;
+}
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
-$bosh = new JAXL();
+require_once '../jaxl.php';
+$client = new JAXL(array(
+	'jid' => $_GET['jid'],
+	'pass' => $_GET['pass'],
+	'bosh_url' => 'http://localhost:5280/http-bind',
+	'log_level' => JAXL_DEBUG
+));
+
+$client->add_cb('on_auth_success', function() {
+	global $client;
+	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+});
 
 //
 // finally start configured xmpp stream
 //
-//$bosh->start();
+$client->start();
 echo "done\n";
 
 ?>
