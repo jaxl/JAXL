@@ -129,7 +129,7 @@ abstract class XMPPStream extends JAXLFsm {
 	
 	public function get_start_stream($jid) {
 		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" ';
-		if(isset($jid->bare)) $xml .= 'from="'.$jid->bare.'" ';
+		//if(isset($jid->bare)) $xml .= 'from="'.$jid->bare.'" ';
 		if(isset($jid->domain)) $xml .= 'to="'.$jid->domain.'" ';
 		$xml .= 'xmlns="'.NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.NS_XML.'">';
 		return $xml;
