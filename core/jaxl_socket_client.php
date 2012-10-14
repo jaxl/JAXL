@@ -82,16 +82,24 @@ class JAXLSocketClient {
 		$this->recv_cb = $recv_cb;
 	}
 	
+	/**
+	 * @param string | resource $socket_path
+	 */
 	public function connect($socket_path) {
-		$path_parts = explode(":", $socket_path);
-		$this->transport = 	$path_parts[0];
-		$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
-		if(sizeof($path_parts) == 3) $this->port = $path_parts[2];
-		
-		_info("trying ".$socket_path);
-		if($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
-		else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
-		
+		if(gettype($socket_path) == "string") {
+			$path_parts = explode(":", $socket_path);
+			$this->transport = 	$path_parts[0];
+			$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
+			if(sizeof($path_parts) == 3) $this->port = $path_parts[2];
+			
+			_info("trying ".$socket_path);
+			if($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+			else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
+		}
+		else {
+			$this->fd = &$socket_path;
+		}
+			
 		if($this->fd) {
 			_debug("connected to ".$socket_path."");
 			stream_set_blocking($this->fd, $this->blocking);

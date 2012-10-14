@@ -40,8 +40,18 @@
 require_once 'jaxl.php';
 JAXLLogger::$level = JAXL_INFO;
 
+// include jaxl pipes
 require_once JAXL_CWD.'/core/jaxl_pipe.php';
-$pipe = new JAXLPipe(getmypid());
+
+// initialize
+$pipe_name = getmypid();
+$pipe = new JAXLPipe($pipe_name);
+
+// add read event callback
+$pipe->set_callback(function($data) {
+	global $pipe;
+	_info("read ".trim($data)." from pipe");
+});
 
 JAXLLoop::run();
 echo "done\n";

@@ -36,6 +36,7 @@
  *
  */
 
+require_once JAXL_CWD.'/core/jaxl_event.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 
 /**
@@ -53,34 +54,38 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
  */
 class JAXLPipe {
 	
-	protected $name = null;
 	protected $perm = 0600;
 	
+	protected $recv_cb = null;
 	protected $fd = null;
+	protected $client = null;
 	
-	public function __construct($name, $perm=0600) {
+	public $name = null;
+	
+	public function __construct($name, $read_cb=null) {
+		$this->ev = new JAXLEvent();
 		$this->name = $name;
-		$this->perm = $perm;
+		$this->read_cb = $read_cb;
 		
 		$pipe_path = $this->get_pipe_file_path();
 		if(!file_exists($pipe_path)) {
 			posix_mkfifo($pipe_path, $this->perm);
 			$this->fd = fopen($pipe_path, 'r+');
-			if(!$this->fd) _error("unable to open pipe");
-			stream_set_blocking($this->fd, false);
-			
-			// watch for incoming data on pipe
-			JAXLLoop::watch($this->fd, array(
-				'read' => array(&$this, 'on_read_ready')
-			));
+			if(!$this->fd) {
+				_error("unable to open pipe");
+			}
+			else {
+				_debug("pipe opened using path $pipe_path");
+				_notice("Usage: $ echo 'Hello World!' > $pipe_path");
+				
+				$this->client = new JAXLSocketClient();
+				$this->client->connect($this->fd);
+				$this->client->set_callback(array(&$this, 'on_data'));
+			}
 		}
 		else {
 			_error("pipe with name $name already exists");
 		}
-	}
-	
-	public function get_pipe_file_path() {
-		return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
 	}
 	
 	public function __destruct() {
@@ -89,9 +94,17 @@ class JAXLPipe {
 		_debug("unlinking pipe file");
 	}
 	
-	public function on_read_ready($fd) {
-		$data = fread($fd, 1024);
-		_debug($data);
+	public function get_pipe_file_path() {
+		return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
+	}
+	
+	public function set_callback($recv_cb) {
+		$this->recv_cb = $recv_cb;
+	}
+	
+	public function on_data($data) {
+		// callback
+		if($this->recv_cb) call_user_func($this->recv_cb, $data);
 	}
 	
 }
