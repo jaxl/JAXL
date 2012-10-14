@@ -63,6 +63,9 @@ class JAXLPipe {
 	public $name = null;
 	
 	public function __construct($name, $read_cb=null) {
+		$pipes_folder = JAXL_CWD.'/.jaxl/pipes';
+		if(!is_dir($pipes_folder)) mkdir($pipes_folder);
+		
 		$this->ev = new JAXLEvent();
 		$this->name = $name;
 		$this->read_cb = $read_cb;
