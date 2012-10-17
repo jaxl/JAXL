@@ -85,22 +85,22 @@ $upload = array('upload', '^/upload', array('GET', 'POST'));
 // some REST CRUD style callback methods
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
 function create_event($request) {
-	_debug("got event create request");
+	_info("got event create request");
 	$request->close();
 }
 
 function read_event($request, $pk) {
-	_debug("got event read request for $pk");
+	_info("got event read request for $pk");
 	$request->close();
 }
 
 function update_event($request, $pk) {
-	_debug("got event update request for $pk");
+	_info("got event update request for $pk");
 	$request->close();
 }
 
 function delete_event($request, $pk) {
-	_debug("got event delete request for $pk");
+	_info("got event delete request for $pk");
 	$request->close();
 }
 
