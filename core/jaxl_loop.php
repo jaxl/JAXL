@@ -85,16 +85,20 @@ class JAXLLoop {
 	public static function unwatch($fd, $opts) {
 		if(isset($opts['read'])) {
 			$fdid = (int) $fd;
-			unset(self::$read_fds[$fdid]);
-			unset(self::$read_cbs[$fdid]);
-			--self::$active_read_fds;
+			if(isset(self::$read_fds[$fdid])) {
+				unset(self::$read_fds[$fdid]);
+				unset(self::$read_cbs[$fdid]);
+				--self::$active_read_fds;
+			}
 		}
 		
 		if(isset($opts['write'])) {
 			$fdid = (int) $fd;
-			unset(self::$write_fds[$fdid]);
-			unset(self::$write_cbs[$fdid]);
-			--self::$active_write_fds;
+			if(isset(self::$write_fds[$fdid])) {
+				unset(self::$write_fds[$fdid]);
+				unset(self::$write_cbs[$fdid]);
+				--self::$active_write_fds;
+			}
 		}
 		
 		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
@@ -109,6 +113,7 @@ class JAXLLoop {
 				self::select();
 			
 			_debug("no more active fd's to select");
+			self::$is_running = false;
 		}
 	}
 	
