@@ -119,6 +119,9 @@ class JAXLSocketClient {
 	}
 	
 	public function disconnect() {
+		JAXLLoop::unwatch($this->fd, array(
+			'read' => true
+		));
 		@fclose($this->fd);
 		$this->fd = null;
 	}
@@ -146,6 +149,7 @@ class JAXLSocketClient {
 		
 		// switch back to non-blocking
 		stream_set_blocking($this->fd, false);
+		return $ret;
 	}
 	
 	public function send($data) {
