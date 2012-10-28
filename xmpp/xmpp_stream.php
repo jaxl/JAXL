@@ -484,10 +484,15 @@ abstract class XMPPStream extends JAXLFsm {
 				$stanza = $args[0];
 				
 				if($stanza->name == 'proceed' && $stanza->ns == NS_TLS) {
-					$this->trans->crypt();
-					$this->xml->reset_parser();
-					$this->send_start_stream($this->jid);
-					return "wait_for_stream_start";
+					if($this->trans->crypt()) {
+						$this->xml->reset_parser();
+						$this->send_start_stream($this->jid);
+						return "wait_for_stream_start";
+					}
+					else {
+						$this->handle_auth_failure("tls-negotiation-failed");
+						return "logged_out";
+					}
 				}
 				else {
 					// FIXME: here
