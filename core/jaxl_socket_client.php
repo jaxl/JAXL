@@ -120,7 +120,8 @@ class JAXLSocketClient {
 	
 	public function disconnect() {
 		JAXLLoop::unwatch($this->fd, array(
-			'read' => true
+			'read' => true,
+			'write' => true
 		));
 		@fclose($this->fd);
 		$this->fd = null;

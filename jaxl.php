@@ -434,7 +434,7 @@ class JAXL extends XMPPStream {
 		$this->end_stream();
 		$this->disconnect();
 		$this->ev->emit('on_disconnect');
-	
+		
 		switch($sig) {
 			// terminal line hangup
 			case SIGHUP:

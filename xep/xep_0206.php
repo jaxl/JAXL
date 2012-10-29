@@ -155,7 +155,7 @@ class XEP_0206 extends XMPPXep {
 						if(!$this->sid) {
 							$this->sid = $attrs['sid'];
 						}
-				
+						
 						if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
 					}
 				}
@@ -223,8 +223,12 @@ class XEP_0206 extends XMPPXep {
 		$this->send($body);
 	}
 	
+	public function session_end() {
+		$this->disconnect();
+	}
+	
 	public function disconnect() {
-		
+		_debug("disconnecting");
 	}
 	
 }

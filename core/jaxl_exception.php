@@ -63,7 +63,7 @@ class JAXLException extends Exception {
 	}
 	
 	public static function error_handler($errno, $error, $file, $line, $vars) {
-		//_debug("error handler called with $errno, $error, $file, $line");
+		_debug("error handler called with $errno, $error, $file, $line");
 		if($errno === 0 || ($errno & error_reporting()) === 0) {
 			return;
 		}
@@ -80,6 +80,7 @@ class JAXLException extends Exception {
 	
 	public static function shutdown_handler() {
 		try {
+			_debug("got shutdown handler");
 			if(null !== ($error = error_get_last())) {
 				throw new JAXLException($error['message'], $error['type'], $error['file'], $error['line']);
 			}
