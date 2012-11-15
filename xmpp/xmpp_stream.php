@@ -361,8 +361,7 @@ abstract class XMPPStream extends JAXLFsm {
 				return $this->do_connect($args);
 				break;
 			// someone else already started the stream
-			// even before "connect" was called
-			// must be bosh
+			// even before "connect" was called must be bosh
 			case "start_cb":
 				$stanza = $args[0];
 				return $this->handle_stream_start($stanza);
@@ -655,6 +654,9 @@ abstract class XMPPStream extends JAXLFsm {
 			case "disconnect":
 				$this->trans->disconnect();
 				return "disconnected";
+				break;
+			case "connect":
+				return $this->do_connect($args);
 				break;
 			default:
 				// exit for any other event in logged_out state
