@@ -44,29 +44,10 @@ require_once JAXL_CWD.'/core/jaxl_exception.php';
 require_once JAXL_CWD.'/core/jaxl_cli.php';
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
+require_once JAXL_CWD.'/xmpp/xmpp_roster_item.php';
 require_once JAXL_CWD.'/core/jaxl_event.php';
 require_once JAXL_CWD.'/core/jaxl_logger.php';
 require_once JAXL_CWD.'/core/jaxl_socket_server.php';
-
-/**
- * 
- * @author abhinavsingh
- */
-class RosterItem {
-	
-	public $jid = null;
-	public $subscription = null;
-	public $groups = array();
-	public $resources = array();
-	public $vcard = null;
-	
-	public function __construct($jid, $subscription, $groups) {
-		$this->jid = $jid;
-		$this->subscription = $subscription;
-		$this->groups = $groups;
-	}
-	
-}
 
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
@@ -149,9 +130,6 @@ class JAXL extends XMPPStream {
 		$this->local_ip = gethostbyname(php_uname('n'));
 		$this->pid = getmypid();
 		
-		// initialize core modules
-		$this->ev = new JAXLEvent();
-		
 		// jid object
 		$jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
 		
@@ -214,6 +192,9 @@ class JAXL extends XMPPStream {
 			$stream_context = @$this->cfg['stream_context'];
 			$transport = new JAXLSocketClient($stream_context);
 		}
+		
+		// lifecycle events callback
+		$this->ev = new JAXLEvent(defined('JAXL_MULTI_CLIENT') ? array(&$this) : array());
 		
 		// initialize xmpp stream with configured transport
 		parent::__construct(
@@ -457,7 +438,7 @@ class JAXL extends XMPPStream {
 				_debug("got sigterm");
 				break;
 		}
-	
+		
 		exit;
 	}
 	
@@ -723,7 +704,7 @@ class JAXL extends XMPPStream {
 						}
 					}
 					
-					$this->roster[$jid] = new RosterItem($jid, $subscription, $groups);
+					$this->roster[$jid] = new XMPPRosterItem($jid, $subscription, $groups);
 				}
 			}
 			

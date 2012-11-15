@@ -49,10 +49,11 @@
  */
 class JAXLEvent {
 	
+	protected $common = array();
 	public $reg = array();
 	
-	public function __construct() {
-		
+	public function __construct($common) {
+		$this->common = $common;
 	}
 	
 	public function __destruct() {
@@ -76,6 +77,7 @@ class JAXLEvent {
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
 	public function emit($ev, $data=array()) {
+		$data = array_merge($this->common, $data);
 		$cbs = array();
 		
 		if(!isset($this->reg[$ev])) return $data;
