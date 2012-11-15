@@ -358,6 +358,16 @@ class JAXL extends XMPPStream {
 		return ($this->cfg['port'] == 5223 ? "ssl" : "tcp")."://".$this->cfg['host'].":".$this->cfg['port'];
 	}
 	
+	public function retry() {
+		$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
+		$this->retry_attempt++;
+		_info("Will try to restart in ".$retry_after." seconds");
+		
+		// TODO: use jaxl cron if sigalarms cannnot be used
+		sleep($retry_after);
+		$this->start();
+	}
+	
 	public function start($opts=array()) {
 		// is bosh bot?
 		if(@$this->cfg['bosh_url']) {
@@ -388,6 +398,9 @@ class JAXL extends XMPPStream {
 		
 		// connect to the destination host/port
 		if($this->connect($this->get_socket_path())) {
+			// reset in case we connected back after retries
+			$this->retry_attempt = 0;
+			
 			// emit
 			$this->ev->emit('on_connect');
 			
@@ -407,13 +420,8 @@ class JAXL extends XMPPStream {
 			|| $this->trans->errno == 110 
 			|| $this->trans->errno == 111
 			) {
-				$retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
-				$this->retry_attempt++;
-				_debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr."), will try again in ".$retry_after." seconds");
-				// TODO: use sigalrm instead
-				// they usually doesn't gel well inside select loop
-				sleep($retry_after);
-				$this->start();
+				_debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
+				$this->retry();
 			}
 			else {
 				$this->ev->emit('on_connect_error', array(
