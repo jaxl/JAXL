@@ -90,7 +90,7 @@ class JAXLClock {
 		
 	}
 	
-	// callback after $time seconds
+	// callback after $time microseconds
 	public function call_fun_after($time, $callback, $args=null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
@@ -103,7 +103,7 @@ class JAXLClock {
 		return sizeof($this->jobs);
 	}
 	
-	// callback periodically after $time seconds
+	// callback periodically after $time microseconds
 	public function call_fun_periodic($time, $callback, $args=null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,

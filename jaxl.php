@@ -64,7 +64,7 @@ require_once JAXL_CWD.'/core/jaxl_socket_server.php';
 class JAXL extends XMPPStream {
 	
 	// lib meta info
-	const version = '3.0.0-alpha-1';
+	const version = '3.0.1';
 	const name = 'JAXL :: Jabber XMPP Library';
 	
 	// cached init config array
@@ -172,7 +172,7 @@ class JAXL extends XMPPStream {
 		$this->require_xep(array('0030', '0115'));
 		
 		// do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
-		$host = @$this->cfg['host']; $port = @$this->cfg['port'];
+		$host = @$this->cfg['host']; $port = @$this->cfg['port'] ? $this->cfg['port'] : 5222;
 		if(!$host && !$port && $jid) {
 			// this dns lookup is blocking
 			_info("dns srv lookup for ".$jid->domain);
