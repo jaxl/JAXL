@@ -759,6 +759,7 @@ class JAXL extends XMPPStream {
 	
 	public function handle_message($stanza) {
 		$stanza = new XMPPStanza($stanza);
+		$stanza->type = (@$stanza->type ? $stanza->type : 'normal');
 		$this->ev->emit('on_'.$stanza->type.'_message', array($stanza));
 	}
 	
