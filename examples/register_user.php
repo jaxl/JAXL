@@ -47,7 +47,7 @@ if($argc < 2) {
 require_once 'jaxl.php';
 $client = new JAXL(array(
 	'jid' => $argv[1],
-	'log_level' => JAXL_INFO
+	'log_level' => JAXL_DEBUG
 ));
 
 $client->require_xep(array(
@@ -66,18 +66,18 @@ $client->require_xep(array(
 // patterns available on XMPPStanza instances
 //
 
+$form = array();
+
 function wait_for_register_response($event, $args) {
-	global $client;
+	global $client, $form;
 	
-	if($event == 'end_stream') {
-		exit;
-	}
-	else if($event == 'stanza_cb') {
+	if($event == 'stanza_cb') {
 		$stanza = $args[0];
 		if($stanza->name == 'iq') {
+			$form['type'] = $stanza->attrs['type'];
 			if($stanza->attrs['type'] == 'result') {
 				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
-				$client->end_stream();
+				$client->send_end_stream();
 				return "logged_out";
 			}
 			else if($stanza->attrs['type'] == 'error') {
@@ -85,20 +85,22 @@ function wait_for_register_response($event, $args) {
 				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
 				echo "error text: ".$error->exists('text')->text.PHP_EOL;
 				echo "shutting down...".PHP_EOL;
-				$client->end_stream();
+				$client->send_end_stream();
 				return "logged_out";
 			}
 		}
 	}
+	else {
+		_notice("unhandled event $event rcvd");
+	}
 }
 
 function wait_for_register_form($event, $args) {
-	global $client;
+	global $client, $form;
 	
 	$stanza = $args[0];
 	$query = $stanza->exists('query', NS_INBAND_REGISTER);
 	if($query) {
-		$form = array();
 		$instructions = $query->exists('instructions');
 		if($instructions) {
 			echo $instructions->text.PHP_EOL;
@@ -107,6 +109,7 @@ function wait_for_register_form($event, $args) {
 		foreach($query->childrens as $k=>$child) {
 			if($child->name != 'instructions') {
 				$form[$child->name] = readline($child->name.":");
+				
 			}
 		}
 		
@@ -129,10 +132,38 @@ $client->add_cb('on_stream_features', function($stanza) {
 	return "wait_for_register_form";
 });
 
+$client->add_cb('on_disconnect', function() {
+	global $form;
+	_info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
+});
+
 //
 // finally start configured xmpp stream
 //
 $client->start();
+
+//
+// if registration was successful
+// try to connect with newly registered account
+//
+if($form['type'] == 'result') {
+
+_info("connecting newly registered user account");
+$client = new JAXL(array(
+	'jid' => $form['username'].'@'.$argv[1],
+	'pass' => $form['password'],
+	'log_level' => JAXL_DEBUG
+));
+
+$client->add_cb('on_auth_success', function() {
+	global $client;
+	$client->set_status('Available');
+});
+
+$client->start();
+
+}
+
 echo "done\n";
 
 ?>
