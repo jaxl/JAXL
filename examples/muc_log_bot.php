@@ -37,7 +37,7 @@
  */
 
 if($argc < 5) {
-	echo "Usage: $argv[0] jid pass room@service.domain.tld nickname\n";
+	echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
 	exit;
 }
 
@@ -47,8 +47,9 @@ if($argc < 5) {
 require_once 'jaxl.php';
 $client = new JAXL(array(
 	// (required) credentials
-	'jid' => $argv[1],
-	'pass' => $argv[2],
+	'jid' => $argv[2],
+	'pass' => $argv[3],
+	'host' => $argv[1],
 	'log_level' => JAXL_INFO
 ));
 
@@ -62,7 +63,7 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-$_room_full_jid = $argv[3]."/".$argv[4];
+$_room_full_jid = $argv[4]."/".$argv[5];
 $room_full_jid = new XMPPJid($_room_full_jid);
 
 $client->add_cb('on_auth_success', function() {
