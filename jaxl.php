@@ -122,8 +122,15 @@ class JAXL extends XMPPStream {
 	private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
 	
 	public function __construct($config) {
-		// env
 		$this->cfg = $config;
+		
+		// setup logger
+		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
+		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
+		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
+		else JAXLLogger::$level = $this->log_level;
+		
+		// env
 		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : TRUE;
 		if($strict) $this->add_exception_handlers();
 		$this->mode = PHP_SAPI;
@@ -154,12 +161,6 @@ class JAXL extends XMPPStream {
 		if(!is_dir($this->log_dir)) mkdir($this->log_dir);
 		if(!is_dir($this->sock_dir)) mkdir($this->sock_dir);
 		
-		// setup logger
-		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
-		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
-		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
-		else JAXLLogger::$level = $this->log_level;
-		
 		// touch pid file
 		if($this->mode == "cli") {
 			touch($this->get_pid_file_path());
@@ -172,13 +173,15 @@ class JAXL extends XMPPStream {
 		$this->require_xep(array('0030', '0115'));
 		
 		// do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
-		$host = @$this->cfg['host']; $port = @$this->cfg['port'] ? $this->cfg['port'] : 5222;
-		if(!$host && !$port && $jid) {
+		$host = @$this->cfg['host'];
+		$port = @$this->cfg['port'];
+		if((!$host || !$port) && $jid) {
 			// this dns lookup is blocking
 			_info("dns srv lookup for ".$jid->domain);
 			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 		}
-		$this->cfg['host'] = $host; $this->cfg['port'] = $port;
+		$this->cfg['host'] = @$this->cfg['host'] ? $this->cfg['host'] : $host;
+		$this->cfg['port'] = @$this->cfg['port'] ? $this->cfg['port'] : $port;
 		
 		// choose appropriate transport
 		// if 'bosh_url' cfg is defined include 0206
@@ -188,7 +191,7 @@ class JAXL extends XMPPStream {
 			$transport = $this->xeps['0206'];
 		}
 		else {
-			list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+			//list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$stream_context = @$this->cfg['stream_context'];
 			$transport = new JAXLSocketClient($stream_context);
 		}
