@@ -177,7 +177,7 @@ class XEP_0206 extends XMPPXep {
 	
 	public function unwrap($body) {
 		// a dirty way but it works efficiently
-		if(substr($body -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
+		if(substr($body, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
 		else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
 		
 		if(isset($m[1][0])) $envelop = "<body ".$m[1][0]."/>";
