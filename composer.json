@@ -19,5 +19,6 @@
     
     "autoload": {
         "files": ["jaxl.php"]
-    }
+    },
+    "bin": ["jaxlctl"]
 }
