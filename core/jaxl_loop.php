@@ -89,7 +89,7 @@ class JAXLLoop
             ++self::$active_write_fds;
         }
 
-        _debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+        _debug("Watch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
     }
 
     public static function unwatch($fd, $opts)
@@ -112,7 +112,7 @@ class JAXLLoop
             }
         }
 
-        _debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+        _debug("Unwatch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
     }
 
     public static function run()
