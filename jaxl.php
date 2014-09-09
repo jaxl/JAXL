@@ -189,8 +189,7 @@ class JAXL extends XMPPStream {
 			_debug("including bosh xep");
 			$this->require_xep('0206');
 			$transport = $this->xeps['0206'];
-		}
-		else {
+		} else {
 			//list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
 			$stream_context = @$this->cfg['stream_context'];
 			$transport = new JAXLSocketClient($stream_context);
@@ -406,8 +405,7 @@ class JAXL extends XMPPStream {
 			) {
 				_debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
 				$this->retry();
-			}
-			else {
+			} else {
 				$this->ev->emit('on_connect_error', array(
 					$this->trans->errno,
 					$this->trans->errstr
@@ -519,8 +517,7 @@ class JAXL extends XMPPStream {
 					$challenge = $stanza->text;
 					$this->send_fb_challenge_response($challenge);
 					return "wait_for_sasl_response";
-				}
-				else {
+				} else {
 					_debug("got unhandled sasl response, should never happen here");
 					exit;
 				}
@@ -544,8 +541,7 @@ class JAXL extends XMPPStream {
 					$resp->t(base64_encode($this->jid->to_string().' '.hash_hmac('md5', $challenge, $this->pass)));
 					$this->send($resp);
 					return "wait_for_sasl_response";
-				}
-				else {
+				} else {
 					_debug("got unhandled sasl response, should never happen here");
 					exit;
 				}
@@ -598,8 +594,7 @@ class JAXL extends XMPPStream {
 					$this->send($resp);
 
 					return "wait_for_sasl_response";
-				}
-				else {
+				} else {
 					_debug("got unhandled sasl response, should never happen here");
 					exit;
 				}
@@ -650,11 +645,9 @@ class JAXL extends XMPPStream {
 
 		if ($pref_auth == 'X-FACEBOOK-PLATFORM') {
 			return "wait_for_fb_sasl_response";
-		}
-		else if ($pref_auth == 'CRAM-MD5') {
+		} else if ($pref_auth == 'CRAM-MD5') {
 			return "wait_for_cram_md5_response";
-		}
-		else if ($pref_auth == 'SCRAM-SHA-1') {
+		} else if ($pref_auth == 'SCRAM-SHA-1') {
 			return "wait_for_scram_sha1_response";
 		}
 	}
@@ -742,8 +735,7 @@ class JAXL extends XMPPStream {
 
 			if ($type == 'available') {
 				$this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
-			}
-			else if ($type == 'unavailable') {
+			} else if ($type == 'unavailable') {
 				if (@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource])
 					unset($this->roster[$jid->bare]->resources[$jid->resource]);
 			}
@@ -774,8 +766,7 @@ class JAXL extends XMPPStream {
 		$ev = 'on_'.$stanza->name.'_stanza';
 		if ($this->ev->exists($ev)) {
 			return $this->ev->emit($ev, array($stanza));
-		}
-		else {
+		} else {
 			_warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
 		}
 	}
@@ -785,11 +776,9 @@ class JAXL extends XMPPStream {
 		foreach ($query->childrens as $k => $child) {
 			if ($child->name == 'identity') {
 				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
-			}
-			else if ($child->name == 'x') {
+			} else if ($child->name == 'x') {
 				//echo 'x ns:'.$child->ns.PHP_EOL;
-			}
-			else if ($child->name == 'feature') {
+			} else if ($child->name == 'feature') {
 				//echo 'feature var:'.$child->attrs['var'].PHP_EOL;
 			}
 		}

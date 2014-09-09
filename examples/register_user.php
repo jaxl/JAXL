@@ -79,8 +79,7 @@ function wait_for_register_response($event, $args) {
 				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
 				$client->send_end_stream();
 				return "logged_out";
-			}
-			else if ($stanza->attrs['type'] == 'error') {
+			} else if ($stanza->attrs['type'] == 'error') {
 				$error = $stanza->exists('error');
 				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
 				echo "error text: ".$error->exists('text')->text.PHP_EOL;
@@ -89,8 +88,7 @@ function wait_for_register_response($event, $args) {
 				return "logged_out";
 			}
 		}
-	}
-	else {
+	} else {
 		_notice("unhandled event $event rcvd");
 	}
 }
@@ -115,8 +113,7 @@ function wait_for_register_form($event, $args) {
 
 		$client->xeps['0077']->set_form($stanza->attrs['from'], $form);
 		return "wait_for_register_response";
-	}
-	else {
+	} else {
 		$client->end_stream();
 		return "logged_out";
 	}

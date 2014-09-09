@@ -70,8 +70,7 @@ class JAXLSock5 {
 		if ($this->client->connect($sock_path)) {
 			_debug("established connection to $sock_path");
 			return true;
-		}
-		else {
+		} else {
 			_error("unable to connect $sock_path");
 			return false;
 		}

@@ -88,8 +88,7 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 
 	if ($from->resource) {
 		echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
-	}
-	else {
+	} else {
 		$subject = $stanza->exists('subject');
 		if ($subject) {
 			echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
@@ -108,12 +107,10 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 			if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
 				$item = $x->exists('item');
 				_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
-			}
-			else {
+			} else {
 				_info("xmlns #user have no x child element");
 			}
-		}
-		else {
+		} else {
 			_warning("=======> odd case 1");
 		}
 	}
@@ -122,12 +119,10 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			$item = $x->exists('item');
 			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
-		}
-		else {
+		} else {
 			_warning("=======> odd case 2");
 		}
-	}
-	else {
+	} else {
 		_warning("=======> odd case 3");
 	}
 

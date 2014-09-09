@@ -73,8 +73,7 @@ abstract class JAXLFsm {
 			// return case
 			if (!is_callable($r) && is_array($r) && sizeof($r) == 2)
 				return $ret;
-		}
-		else {
+		} else {
 			_debug("invalid state found, nothing called for event ".$event."");
 		}
 	}

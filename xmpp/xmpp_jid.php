@@ -58,12 +58,10 @@ class XMPPJid {
 			if (sizeof($tmp) == 2) {
 				$this->domain = $tmp[0];
 				$this->resource = $tmp[1];
-			}
-			else {
+			} else {
 				$this->domain = $tmp[0];
 			}
-		}
-		else if (sizeof($tmp) == 1) {
+		} else if (sizeof($tmp) == 1) {
 			$this->domain = $tmp[0];
 		}
 

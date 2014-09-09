@@ -76,8 +76,7 @@ class JAXLPipe {
 			$this->fd = fopen($pipe_path, 'r+');
 			if (!$this->fd) {
 				_error("unable to open pipe");
-			}
-			else {
+			} else {
 				_debug("pipe opened using path $pipe_path");
 				_notice("Usage: $ echo 'Hello World!' > $pipe_path");
 
@@ -85,8 +84,7 @@ class JAXLPipe {
 				$this->client->connect($this->fd);
 				$this->client->set_callback(array(&$this, 'on_data'));
 			}
-		}
-		else {
+		} else {
 			_error("pipe with name $name already exists");
 		}
 	}

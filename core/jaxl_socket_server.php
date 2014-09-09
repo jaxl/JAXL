@@ -61,12 +61,10 @@ class JAXLSocketServer {
 					'read' => array(&$this, 'on_server_accept_ready')
 				));
 				_info("socket ready to accept on path ".$path);
-			}
-			else {
+			} else {
 				_error("unable to set non block flag");
 			}
-		}
-		else {
+		} else {
 			_error("unable to establish socket server, errno: ".$errno.", errstr: ".$errstr);
 		}
 	}
@@ -125,8 +123,7 @@ class JAXLSocketServer {
 				$this->clients[$client_id]['closed'] = true;
 				unset($this->clients[$client_id]);
 			}
-		}
-		else {
+		} else {
 			_error("unable to set non block flag");
 		}
 	}
@@ -174,13 +171,11 @@ class JAXLSocketServer {
 				// fwrite failed
 				_warning("====> fwrite failed");
 				$this->clients[$client_id]['obuffer'] = $total;
-			}
-			else if ($written == strlen($total) || $written == $this->send_chunk_size) {
+			} else if ($written == strlen($total) || $written == $this->send_chunk_size) {
 				// full chunk written
 				//_debug("full chunk written");
 				$this->clients[$client_id]['obuffer'] = substr($total, $this->send_chunk_size);
-			}
-			else {
+			} else {
 				// partial chunk written
 				//_debug("partial chunk $written written");
 				$this->clients[$client_id]['obuffer'] = substr($total, $written);

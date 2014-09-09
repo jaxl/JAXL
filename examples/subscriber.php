@@ -80,8 +80,7 @@ $client->add_cb('on_headline_message', function($stanza) {
 	global $client;
 	if (($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
 		_info("got pubsub event");
-	}
-	else {
+	} else {
 		_warning("unknown headline message rcvd");
 	}
 });

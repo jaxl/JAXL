@@ -48,8 +48,7 @@ class JAXLException extends Exception {
 		_notice("got jaxl exception construct with $message, $code, $file, $line");
 		if ($code === null) {
 			parent::__construct($message);
-		}
-		else {
+		} else {
 			parent::__construct($message, $code);
 		}
 

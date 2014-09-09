@@ -60,8 +60,7 @@ class JAXLClock {
 		if ($by) {
 			$this->tick += $by;
 			$this->time += $by / pow(10,6);
-		}
-		else {
+		} else {
 			$time = microtime(true);
 			$by = $time - $this->time;
 			$this->tick += $by * pow(10, 6);
@@ -75,8 +74,7 @@ class JAXLClock {
 				call_user_func($job['cb'], $job['args']);
 				if (!$job['is_periodic']) {
 					unset($this->jobs[$ref]);
-				}
-				else {
+				} else {
 					$job['scheduled_on'] = $this->tick;
 					$job['runs']++;
 					$this->jobs[$ref] = $job;

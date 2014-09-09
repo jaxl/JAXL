@@ -68,13 +68,11 @@ class JAXLCtl {
 				$this->buffer_cb = $buffer_cb;
 				$this->cli = new JAXLCli(array(&$this, 'on_terminal_input'), $quit_cb);
 				$this->run();
-			}
-			else {
+			} else {
 				_colorize("oops! internal command error", JAXL_ERROR);
 				exit;
 			}
-		}
-		else {
+		} else {
 			_colorize("error: invalid command '$command' received", JAXL_ERROR);
 			_colorize("type '$exe help' for list of available commands", JAXL_NOTICE);
 			exit;
@@ -94,12 +92,10 @@ class JAXLCtl {
 			// dispatch to buffer callback
 			call_user_func($this->buffer_cb, $this->buffer.$raw);
 			$this->buffer = '';
-		}
-		else if ($last == '\\') {
+		} else if ($last == '\\') {
 			$this->buffer .= substr($raw, 0, -1);
 			echo $this->dots;
-		}
-		else {
+		} else {
 			// buffer command
 			$this->buffer .= $raw."; ";
 			echo $this->dots;

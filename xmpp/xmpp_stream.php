@@ -273,8 +273,7 @@ abstract class XMPPStream extends JAXLFsm {
 			if ($dd) {
 				$key = trim(substr($pair, 0, $dd));
 				$pairs[$key] = trim(trim(substr($pair, $dd + 1)), '"');
-			}
-			else if (strpos(strrev(trim($pair)), '"') === 0 && $key) {
+			} else if (strpos(strrev(trim($pair)), '"') === 0 && $key) {
 				$pairs[$key] .= ',' . trim(trim($pair), '"');
 				continue;
 			}
@@ -345,8 +344,7 @@ abstract class XMPPStream extends JAXLFsm {
 		$socket_path = @$args[0];
 		if ($this->trans->connect($socket_path)) {
 			return array("connected", 1);
-		}
-		else {
+		} else {
 			return array("disconnected", 0);
 		}
 	}
@@ -487,13 +485,11 @@ abstract class XMPPStream extends JAXLFsm {
 						$this->xml->reset_parser();
 						$this->send_start_stream($this->jid);
 						return "wait_for_stream_start";
-					}
-					else {
+					} else {
 						$this->handle_auth_failure("tls-negotiation-failed");
 						return "logged_out";
 					}
-				}
-				else {
+				} else {
 					// FIXME: here
 				}
 
@@ -537,18 +533,15 @@ abstract class XMPPStream extends JAXLFsm {
 					//_debug("sasl failed with reason ".$reason."");
 					$this->handle_auth_failure($reason);
 					return "logged_out";
-				}
-				else if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+				} else if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
 					$challenge = $stanza->text;
 					$this->send_challenge_response($challenge);
 					return "wait_for_sasl_response";
-				}
-				else if ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
+				} else if ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
 					$this->xml->reset_parser();
 					$this->send_start_stream(@$this->jid);
 					return "wait_for_stream_start";
-				}
-				else {
+				} else {
 					_debug("got unhandled sasl response");
 				}
 
@@ -573,8 +566,7 @@ abstract class XMPPStream extends JAXLFsm {
 					$this->full_jid = new XMPPJid($jid->text);
 					$this->send_session_pkt();
 					return "wait_for_session_response";
-				}
-				else {
+				} else {
 					// FIXME:
 				}
 				break;
@@ -608,14 +600,11 @@ abstract class XMPPStream extends JAXLFsm {
 				// call abstract
 				if ($stanza->name == 'message') {
 					$this->handle_message($stanza);
-				}
-				else if ($stanza->name == 'presence') {
+				} else if ($stanza->name == 'presence') {
 					$this->handle_presence($stanza);
-				}
-				else if ($stanza->name == 'iq') {
+				} else if ($stanza->name == 'iq') {
 					$this->handle_iq($stanza);
-				}
-				else {
+				} else {
 					$this->handle_other($event, $args);
 				}
 

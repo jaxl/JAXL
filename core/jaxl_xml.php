@@ -71,13 +71,11 @@ class JAXLXml {
 				if (is_array($argv[1])) {
 					$this->attrs = $argv[1];
 					$this->text = $argv[2];
-				}
-				else {
+				} else {
 					$this->ns = $argv[1];
 					if (is_array($argv[2])) {
 						$this->attrs = $argv[2];
-					}
-					else {
+					} else {
 						$this->text = $argv[2];
 					}
 				}
@@ -85,8 +83,7 @@ class JAXLXml {
 			case 2:
 				if (is_array($argv[1])) {
 					$this->attrs = $argv[1];
-				}
-				else {
+				} else {
 					$this->ns = $argv[1];
 				}
 				break;
@@ -120,8 +117,7 @@ class JAXLXml {
 	public function t($text, $append=FALSE) {
 		if (!$append) {
 			$this->rover->text = $text;
-		}
-		else {
+		} else {
 			if ($this->rover->text === null)
 				$this->rover->text = '';
 			$this->rover->text .= $text;
@@ -159,8 +155,7 @@ class JAXLXml {
 			if ($ns) {
 				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
 					return $child;
-			}
-			else if ($child->name == $name && $child->match_attrs($attrs)) {
+			} else if ($child->name == $name && $child->match_attrs($attrs)) {
 				return $child;
 			}
 		}

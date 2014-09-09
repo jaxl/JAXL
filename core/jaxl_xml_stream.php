@@ -112,8 +112,7 @@ class JAXLXmlStream {
 			else if ($k[0] == NS_XML) {
 				unset($attrs[$key]);
 				$attrs['xml:'.$k[1]] = $v;
-			}
-			else {
+			} else {
 				_error("==================> unhandled ns prefix on attribute");
 				// remove attribute else will cause error with bad stanza format
 				// report to developer if above error message is ever encountered
@@ -129,13 +128,11 @@ class JAXLXmlStream {
 				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				call_user_func($this->start_cb, $stanza);
 			}
-		}
-		else {
+		} else {
 			if (!$this->stanza) {
 				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				$this->stanza = &$stanza;
-			}
-			else {
+			} else {
 				$this->stanza->c($name[1], $name[0], $attrs);
 			}
 		}
@@ -154,8 +151,7 @@ class JAXLXmlStream {
 				$stanza = new JAXLXml($name[1], $this->ns);
 				call_user_func($this->end_cb, $stanza);
 			}
-		}
-		else if ($this->depth > 1) {
+		} else if ($this->depth > 1) {
 			if ($this->stanza) $this->stanza->up();
 
 			if ($this->depth == 2) {

@@ -129,8 +129,7 @@ class HTTPServer {
 		// on received $request object
 		if ($request->state() == 'wait_for_body') {
 			$request->body($raw);
-		}
-		else {
+		} else {
 			// break on crlf
 			$lines = explode(HTTP_CRLF, $raw);
 
@@ -153,8 +152,7 @@ class HTTPServer {
 						$v = implode(":", $line_parts);
 						$request->set_header($k, $v);
 					}
-				}
-				else if (strlen(trim($line_parts[0])) == 0) {
+				} else if (strlen(trim($line_parts[0])) == 0) {
 					$request->empty_line();
 				}
 				// if exploded line array size is 1

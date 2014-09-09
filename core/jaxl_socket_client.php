@@ -95,8 +95,7 @@ class JAXLSocketClient {
 			_info("trying ".$socket_path);
 			if ($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
 			else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
-		}
-		else {
+		} else {
 			$this->fd = &$socket_path;
 		}
 
@@ -110,8 +109,7 @@ class JAXLSocketClient {
 			));
 
 			return true;
-		}
-		else {
+		} else {
 			_error("unable to connect ".$socket_path." with error no: ".$this->errno.", error str: ".$this->errstr."");
 			$this->disconnect();
 			return false;

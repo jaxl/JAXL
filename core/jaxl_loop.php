@@ -130,8 +130,7 @@ class JAXLLoop {
 					print_r(stream_get_meta_data($fd));
 			}*/
 			exit;
-		}
-		else if ($changed > 0) {
+		} else if ($changed > 0) {
 			// read callback
 			foreach ($read as $r) {
 				$fdid = array_search($r, self::$read_fds);
@@ -147,8 +146,7 @@ class JAXLLoop {
 			}
 
 			self::$clock->tick();
-		}
-		else if ($changed === 0) {
+		} else if ($changed === 0) {
 			//_debug("nothing changed while selecting for read");
 			self::$clock->tick((self::$secs * pow(10,6)) + self::$usecs);
 		}

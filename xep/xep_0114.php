@@ -84,8 +84,7 @@ class XEP_0114 extends XMPPXep {
 			$this->jaxl->handle_auth_failure($reason);
 			$this->jaxl->send_end_stream();
 			return array("logged_out", 0);
-		}
-		else {
+		} else {
 			_debug("uncatched stanza received in logged_out");
 		}
 	}

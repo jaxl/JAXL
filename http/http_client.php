@@ -81,8 +81,7 @@ class HTTPClient {
 
 			// start main loop
 			JAXLLoop::run();
-		}
-		else {
+		} else {
 			_debug("unable to open $this->url");
 		}
 	}

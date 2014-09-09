@@ -78,8 +78,7 @@ class XEP_0206 extends XMPPXep {
 	public function send($body) {
 		if (is_object($body)) {
 			$body = $body->to_string();
-		}
-		else {
+		} else {
 			if (substr($body, 0, 15) == '<stream:stream ') {
 				$this->restarted = true;
 
@@ -92,8 +91,7 @@ class XEP_0206 extends XMPPXep {
 				));
 
 				$body = $body->to_string();
-			}
-			else if (substr($body, 0, 16) == '</stream:stream>') {
+			} else if (substr($body, 0, 16) == '</stream:stream>') {
 				$body = new JAXLXml('body', NS_HTTP_BIND, array(
 					'sid' => $this->sid,
 					'rid' => ++$this->rid,
@@ -101,8 +99,7 @@ class XEP_0206 extends XMPPXep {
 				));
 
 				$body = $body->to_string();
-			}
-			else {
+			} else {
 				$body = $this->wrap($body);
 			}
 		}
@@ -150,16 +147,14 @@ class XEP_0206 extends XMPPXep {
 					if (@$attrs['type'] == 'terminate') {
 						// fool me again
 						if ($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
-					}
-					else {
+					} else {
 						if (!$this->sid) {
 							$this->sid = $attrs['sid'];
 						}
 
 						if ($this->recv_cb) call_user_func($this->recv_cb, $stanza);
 					}
-				}
-				else {
+				} else {
 					_error("no ch found");
 					exit;
 				}

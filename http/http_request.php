@@ -226,8 +226,7 @@ class HTTPRequest extends JAXLFsm {
 				if ($this->recvd_body_len < $content_length && $this->multipart->state() != 'done') {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -247,8 +246,7 @@ class HTTPRequest extends JAXLFsm {
 				if ($this->recvd_body_len < $content_length) {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -265,8 +263,7 @@ class HTTPRequest extends JAXLFsm {
 				if ($this->recvd_body_len < $content_length) {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -289,16 +286,13 @@ class HTTPRequest extends JAXLFsm {
 					if (method_exists($this, $protected)) {
 						call_user_func_array(array(&$this, $protected), $args);
 						return 'headers_received';
-					}
-					else {
+					} else {
 						_debug("non-existant method $event called");
 						return 'headers_received';
 					}
-				}
-				else if (@isset($this->shortcuts[$event])) {
+				} else if (@isset($this->shortcuts[$event])) {
 					return $this->handle_shortcut($event, $args);
-				}
-				else {
+				} else {
 					_warning("uncatched $event ".$args[0]);
 					return 'headers_received';
 				}
@@ -384,21 +378,18 @@ class HTTPRequest extends JAXLFsm {
 				// http headers only
 				$headers = $args[0];
 				$body = null;
-			}
-			else {
+			} else {
 				// body only
 				$body = $args[0];
 				$headers = array();
 			}
-		}
-		else if (sizeof($args) == 2) {
+		} else if (sizeof($args) == 2) {
 			// body and http headers both received
 			if (is_array($args[0])) {
 				// header first
 				$body = $args[1];
 				$headers = $args[0];
-			}
-			else {
+			} else {
 				// body first
 				$body = $args[0];
 				$headers = $args[1];
