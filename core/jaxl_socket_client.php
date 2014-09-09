@@ -179,7 +179,7 @@ class JAXLSocketClient
 
 		if ($bytes === 0) {
 			$meta = stream_get_meta_data($fd);
-			if ($meta['eof'] === TRUE) {
+			if ($meta['eof'] === true) {
 				_warning("socket eof, disconnecting");
 				JAXLLoop::unwatch($fd, array(
 					'read' => true

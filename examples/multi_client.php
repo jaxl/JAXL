@@ -43,13 +43,13 @@ define('JAXL_MULTI_CLIENT', true);
 
 // input multiple account credentials
 $accounts = array();
-$add_new = TRUE;
+$add_new = true;
 while ($add_new) {
 	$jid = readline('Enter Jabber Id: ');
 	$pass = readline('Enter Password: ');
 	$accounts[] = array($jid, $pass);
 	$next = readline('Add another account (y/n): ');
-	$add_new = $next == 'y' ? TRUE : FALSE;
+	$add_new = $next == 'y' ? true : false;
 }
 
 // setup jaxl

@@ -119,7 +119,7 @@ class JAXLXml
 		return $matches;
 	}
 
-	public function t($text, $append = FALSE)
+	public function t($text, $append = false)
 	{
 		if (!$append) {
 			$this->rover->text = $text;
@@ -192,7 +192,7 @@ class JAXLXml
 
 		$xml .= '<'.$this->name;
 		if ($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach ($this->attrs as $k => $v) if (!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
+		foreach ($this->attrs as $k => $v) if (!is_null($v) && $v !== false) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
 		$xml .= '>';
 
 		foreach ($this->childrens as $child) $xml .= $child->to_string($this->ns);

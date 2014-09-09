@@ -179,7 +179,7 @@ class JAXLXmlStream
 	{
 		//echo "depth ".$this->depth.", character ".$data." for stanza ".$this->stanza->name.PHP_EOL;
 		if ($this->stanza) {
-			$this->stanza->t(htmlentities($data, ENT_COMPAT, "UTF-8"), TRUE);
+			$this->stanza->t(htmlentities($data, ENT_COMPAT, "UTF-8"), true);
 		}
 	}
 

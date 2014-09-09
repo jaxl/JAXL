@@ -133,7 +133,7 @@ class JAXL extends XMPPStream
 		else JAXLLogger::$level = $this->log_level;
 
 		// env
-		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : TRUE;
+		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : true;
 		if ($strict) $this->add_exception_handlers();
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));

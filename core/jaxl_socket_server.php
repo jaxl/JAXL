@@ -150,7 +150,7 @@ class JAXLSocketServer
 
 		if ($bytes === 0) {
 			$meta = stream_get_meta_data($client);
-			if ($meta['eof'] === TRUE) {
+			if ($meta['eof'] === true) {
 				_debug("socket eof client#".$client_id.", closing");
 				$this->del_read_cb($client_id);
 

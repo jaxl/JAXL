@@ -34,7 +34,7 @@ JAXLXml
 ``JAXLXml`` draws inspiration from StropheJS XML Builder class. Below are available methods
 for modifying and manipulating an ``JAXLXml`` object:
 
-    * ``t($text, $append = FALSE)`` 
+    * ``t($text, $append = false)`` 
             
             update text of current rover
             
