@@ -101,7 +101,7 @@ class JAXLXmlStream {
 		//echo "start of tag ".$name[1]." with ns ".$name[0].PHP_EOL;
 
 		// replace ns with prefix
-		foreach ($attrs as $key=>$v) {
+		foreach ($attrs as $key => $v) {
 			$k = $this->explode($key);
 
 			// no ns specified

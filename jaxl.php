@@ -219,7 +219,7 @@ class JAXL extends XMPPStream {
 	}
 
 	public function add_exception_handlers() {
-		_info("strict mode enabled, adding exception handlers. Set 'strict'=>TRUE inside JAXL config to disable this");
+		_info("strict mode enabled, adding exception handlers. Set 'strict' => TRUE inside JAXL config to disable this");
 		set_error_handler(array('JAXLException', 'error_handler'));
 		set_exception_handler(array('JAXLException', 'exception_handler'));
 		register_shutdown_function(array('JAXLException', 'shutdown_handler'));
@@ -246,7 +246,7 @@ class JAXL extends XMPPStream {
 			$this->xeps[$xep] = new $classname($this);
 
 			// add necessary requested callback on events
-			foreach ($this->xeps[$xep]->init() as $ev=>$cb) {
+			foreach ($this->xeps[$xep]->init() as $ev => $cb) {
 				$this->add_cb($ev, array($this->xeps[$xep], $cb));
 			}
 		}
@@ -272,9 +272,9 @@ class JAXL extends XMPPStream {
 	public function send_chat_msg($to, $body, $thread=null, $subject=null) {
 		$msg = new XMPPMsg(
 			array(
-				'type'=>'chat',
-				'to'=>$to,
-				'from'=>$this->full_jid->to_string()
+				'type' => 'chat',
+				'to' => $to,
+				'from' => $this->full_jid->to_string()
 			),
 			$body,
 			$thread,
@@ -285,8 +285,8 @@ class JAXL extends XMPPStream {
 
 	public function get_vcard($jid=null, $cb=null) {
 		$attrs = array(
-			'type'=>'get',
-			'from'=>$this->full_jid->to_string()
+			'type' => 'get',
+			'from' => $this->full_jid->to_string()
 		);
 
 		if ($jid) {
@@ -305,8 +305,8 @@ class JAXL extends XMPPStream {
 	public function get_roster($cb=null) {
 		$pkt = $this->get_iq_pkt(
 			array(
-				'type'=>'get',
-				'from'=>$this->full_jid->to_string()
+				'type' => 'get',
+				'from' => $this->full_jid->to_string()
 			),
 			new JAXLXml('query', 'jabber:iq:roster')
 		);
@@ -316,25 +316,25 @@ class JAXL extends XMPPStream {
 
 	public function subscribe($to) {
 		$this->send($this->get_pres_pkt(
-			array('to'=>$to, 'type'=>'subscribe')
+			array('to' => $to, 'type' => 'subscribe')
 		));
 	}
 
 	public function subscribed($to) {
 		$this->send($this->get_pres_pkt(
-			array('to'=>$to, 'type'=>'subscribed')
+			array('to' => $to, 'type' => 'subscribed')
 		));
 	}
 
 	public function unsubscribe($to) {
 		$this->send($this->get_pres_pkt(
-			array('to'=>$to, 'type'=>'unsubscribe')
+			array('to' => $to, 'type' => 'unsubscribe')
 		));
 	}
 
 	public function unsubscribed($to) {
 		$this->send($this->get_pres_pkt(
-			array('to'=>$to, 'type'=>'unsubscribed')
+			array('to' => $to, 'type' => 'unsubscribed')
 		));
 	}
 
@@ -631,7 +631,7 @@ class JAXL extends XMPPStream {
 		}
 		// if pref auth doesn't exists, choose one from available mechanisms
 		else {
-			foreach ($mechs as $mech=>$any) {
+			foreach ($mechs as $mech => $any) {
 				// choose X-FACEBOOK-PLATFORM only if fb_access_token config value is available
 				if ($mech == 'X-FACEBOOK-PLATFORM') {
 					if (@$this->cfg['fb_access_token']) {
@@ -782,7 +782,7 @@ class JAXL extends XMPPStream {
 
 	public function handle_domain_info($stanza) {
 		$query = $stanza->exists('query', NS_DISCO_INFO);
-		foreach ($query->childrens as $k=>$child) {
+		foreach ($query->childrens as $k => $child) {
 			if ($child->name == 'identity') {
 				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
 			}
@@ -797,7 +797,7 @@ class JAXL extends XMPPStream {
 
 	public function handle_domain_items($stanza) {
 		$query = $stanza->exists('query', NS_DISCO_ITEMS);
-		foreach ($query->childrens as $k=>$child) {
+		foreach ($query->childrens as $k => $child) {
 			if ($child->name == 'item') {
 				//echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
 			}

@@ -60,7 +60,7 @@ class XEP_0115 extends XMPPXep {
 		foreach ($features as $feature) $S .= $feature.'<';
 		$ver = base64_encode(sha1($S, true));
 
-		$stanza = new JAXLXml('c', NS_CAPS, array('hash'=>'sha1', 'node'=>$node, 'ver'=>$ver));
+		$stanza = new JAXLXml('c', NS_CAPS, array('hash' => 'sha1', 'node' => $node, 'ver' => $ver));
 		return $stanza;
 	}
 

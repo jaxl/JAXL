@@ -49,8 +49,8 @@ abstract class JAXLFsm {
 
 	// returned value from state callbacks can be:
 	// 1) array() <-- is_callable method
-	// 2) array([0]=>'new_state', [1]=>'return value for current callback') <-- is_not_callable method
-	// 3) array([0]=>'new_state')
+	// 2) array([0] => 'new_state', [1] => 'return value for current callback') <-- is_not_callable method
+	// 3) array([0] => 'new_state')
 	// 4) 'new_state'
 	//
 	// for case 1) new state will be an array

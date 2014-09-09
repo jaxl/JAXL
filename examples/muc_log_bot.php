@@ -105,7 +105,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	// self-stanza received, we now have complete room roster
 	if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
 		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
-			if (($status = $x->exists('status', null, array('code'=>'110'))) !== false) {
+			if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
 				$item = $x->exists('item');
 				_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
 			}

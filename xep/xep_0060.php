@@ -60,7 +60,7 @@ class XEP_0060 extends XMPPXep {
 
 	public function get_subscribe_pkt($service, $node, $jid=null) {
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
-		$child->c('subscribe', null, array('node'=>$node, 'jid'=>($jid ? $jid : $this->jaxl->full_jid->to_string())));
+		$child->c('subscribe', null, array('node' => $node, 'jid' => ($jid ? $jid : $this->jaxl->full_jid->to_string())));
 		return $this->get_iq_pkt($service, $child);
 	}
 
@@ -90,7 +90,7 @@ class XEP_0060 extends XMPPXep {
 
 	public function get_publish_item_pkt($service, $node, $item) {
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
-		$child->c('publish', null, array('node'=>$node));
+		$child->c('publish', null, array('node' => $node));
 		$child->cnode($item);
 		return $this->get_iq_pkt($service, $child);
 	}
@@ -109,7 +109,7 @@ class XEP_0060 extends XMPPXep {
 
 	public function get_create_node_pkt($service, $node) {
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
-		$child->c('create', null, array('node'=>$node));
+		$child->c('create', null, array('node' => $node));
 		return $this->get_iq_pkt($service, $child);
 	}
 
@@ -129,7 +129,7 @@ class XEP_0060 extends XMPPXep {
 	// this always add attrs
 	protected function get_iq_pkt($service, $child, $type='set') {
 		return $this->jaxl->get_iq_pkt(
-			array('type'=>$type, 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$service),
+			array('type' => $type, 'from' => $this->jaxl->full_jid->to_string(), 'to' => $service),
 			$child
 		);
 	}

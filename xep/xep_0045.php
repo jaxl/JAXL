@@ -53,9 +53,9 @@ class XEP_0045 extends XMPPXep {
 	public function send_groupchat($room_jid, $body, $thread=null, $subject=null) {
 		$msg = new XMPPMsg(
 			array(
-				'type'=>'groupchat',
-				'to'=>(($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid),
-				'from'=>$this->jaxl->full_jid->to_string()
+				'type' => 'groupchat',
+				'to' => (($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid),
+				'from' => $this->jaxl->full_jid->to_string()
 			),
 			$body,
 			$thread,
@@ -72,8 +72,8 @@ class XEP_0045 extends XMPPXep {
 	public function get_join_room_pkt($room_full_jid, $options) {
 		$pkt = $this->jaxl->get_pres_pkt(
 			array(
-				'from'=>$this->jaxl->full_jid->to_string(),
-				'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
+				'from' => $this->jaxl->full_jid->to_string(),
+				'to' => (($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
 			)
 		);
 		$x = $pkt->c('x', NS_MUC);
@@ -90,7 +90,7 @@ class XEP_0045 extends XMPPXep {
 
 	public function get_leave_room_pkt($room_full_jid) {
 		return $this->jaxl->get_pres_pkt(
-			array('type'=>'unavailable', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid))
+			array('type' => 'unavailable', 'from' => $this->jaxl->full_jid->to_string(), 'to' => (($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid))
 		);
 	}
 

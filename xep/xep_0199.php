@@ -23,9 +23,9 @@ class XEP_0199 extends XMPPXep {
 
 	public function get_ping_pkt() {
 		$attrs = array(
-			'type'=>'get',
-			'from'=>$this->jaxl->full_jid->to_string(),
-			'to'=>$this->jaxl->full_jid->domain
+			'type' => 'get',
+			'from' => $this->jaxl->full_jid->to_string(),
+			'to' => $this->jaxl->full_jid->domain
 		);
 
 		return $this->jaxl->get_iq_pkt(

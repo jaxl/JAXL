@@ -108,7 +108,7 @@ class JAXLXml {
 
 	public function match_attrs($attrs) {
 		$matches = true;
-		foreach ($attrs as $k=>$v) {
+		foreach ($attrs as $k => $v) {
 			if ($this->attrs[$k] !== $v) {
 				$matches = false;
 				break;
@@ -168,7 +168,7 @@ class JAXLXml {
 	}
 
 	public function update($name, $ns=null, $attrs=array(), $text=null) {
-		foreach ($this->childrens as $k=>$child) {
+		foreach ($this->childrens as $k => $child) {
 			if ($child->name == $name) {
 				$child->ns = $ns;
 				$child->attrs($attrs);
@@ -184,7 +184,7 @@ class JAXLXml {
 
 		$xml .= '<'.$this->name;
 		if ($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach ($this->attrs as $k=>$v) if (!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
+		foreach ($this->attrs as $k => $v) if (!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
 		$xml .= '>';
 
 		foreach ($this->childrens as $child) $xml .= $child->to_string($this->ns);

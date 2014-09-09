@@ -54,7 +54,7 @@ class JAXLSocketServer {
 		$this->accept_cb = $accept_cb;
 		$this->request_cb = $request_cb;
 
-		$ctx = stream_context_create(array('socket'=>array('backlog'=>$this->backlog)));
+		$ctx = stream_context_create(array('socket' => array('backlog' => $this->backlog)));
 		if (($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $ctx)) !== false) {
 			if (@stream_set_blocking($this->fd, $this->blocking)) {
 				JAXLLoop::watch($this->fd, array(

@@ -48,15 +48,15 @@ require_once "jaxl.php";
 class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 
 	function test_xmpp_stanza_nested() {
-		$stanza = new JAXLXml('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
+		$stanza = new JAXLXml('message', array('to' => '1@a.z', 'from' => '2@b.c'));
 		$stanza
-		->c('body')->attrs(array('xml:lang'=>'en'))->t('hello')->up()
+		->c('body')->attrs(array('xml:lang' => 'en'))->t('hello')->up()
 		->c('thread')->t('1234')->up()
 		->c('nested')
 		->c('nest')->t('nest1')->up()
 		->c('nest')->t('nest2')->up()
 		->c('nest')->t('nest3')->up()->up()
-		->c('c')->attrs(array('hash'=>'84jsdmnskd'));
+		->c('c')->attrs(array('hash' => '84jsdmnskd'));
 
 		$this->assertEquals(
 			'<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested><nest>nest1</nest><nest>nest2</nest><nest>nest3</nest></nested><c hash="84jsdmnskd"></c></message>',
@@ -66,7 +66,7 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 
 	function test_xmpp_stanza_from_jaxl_xml() {
 		// xml to stanza test
-		$xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to'=>'2@3.com', 'from'=>'4@r.p/q'));
+		$xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to' => '2@3.com', 'from' => '4@r.p/q'));
 		$stanza = new XMPPStanza($xml);
 		$stanza->c('body')->t('hello world');
 		echo $stanza->to."\n";

@@ -14,7 +14,7 @@ JAXLXml
     jaxl 1> $xml = new JAXLXml(
     .......     'dummy', 
     .......     'dummy:packet', 
-    .......     array('attr1'=>'friend@gmail.com', 'attr2'=>''), 
+    .......     array('attr1' => 'friend@gmail.com', 'attr2' => ''), 
     .......     'Hello World!'
     ....... );
     jaxl 2> echo $xml->to_string();

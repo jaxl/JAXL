@@ -22,7 +22,7 @@ Interactive Shell
     >>> ./jaxlctl shell
     jaxl 1>
     jaxl 1> // create a test message object
-    jaxl 1> $msg = new XMPPMsg(array('to'=>'friend@gmail.com'), 'Hello World!');
+    jaxl 1> $msg = new XMPPMsg(array('to' => 'friend@gmail.com'), 'Hello World!');
     jaxl 2>
     jaxl 2> // object to string conversion
     jaxl 2> print_r($msg->to_string());
@@ -35,7 +35,7 @@ Debug Running Instances
     >>> ./jaxlctl attach XXXXX
     jaxl 1>
     jaxl 1> // create a message to be sent
-    jaxl 1> $msg = new XMPPMsg(array('to'=>'friend@gmail.com'), 'Hello World!');
+    jaxl 1> $msg = new XMPPMsg(array('to' => 'friend@gmail.com'), 'Hello World!');
     jaxl 2>
     jaxl 2> // this client is from the echo bot example
     jaxl 2> global $client;

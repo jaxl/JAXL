@@ -51,7 +51,7 @@ $http = new HTTPServer($port);
 // catch all incoming requests here
 function on_request($request) {
     $body = json_encode($request);
-    $request->ok($body, array('Content-Type'=>'application/json'));
+    $request->ok($body, array('Content-Type' => 'application/json'));
 }
 
 // start http server

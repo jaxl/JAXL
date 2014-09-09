@@ -152,7 +152,7 @@ abstract class XMPPStream extends JAXLFsm {
 
 	// someday this all needs to go inside jaxl_sasl_auth
 	public function get_auth_pkt($mechanism, $user, $pass) {
-		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism'=>$mechanism));
+		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism' => $mechanism));
 
 		switch($mechanism) {
 			case 'PLAIN':
@@ -205,7 +205,7 @@ abstract class XMPPStream extends JAXLFsm {
 		if (isset($decoded['qop']) && $decoded['qop'] != 'auth' && strpos($decoded['qop'], 'auth') !== false)
 			$decoded['qop'] = 'auth';
 
-		$data = array_merge($decoded, array('nc'=>$nc));
+		$data = array_merge($decoded, array('nc' => $nc));
 
 		$response = array(
 			'username'=> $this->jid->node,

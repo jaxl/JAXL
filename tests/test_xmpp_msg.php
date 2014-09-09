@@ -48,7 +48,7 @@ require_once "jaxl.php";
 class XMPPMsgTest extends PHPUnit_Framework_TestCase {
 
 	function test_xmpp_msg() {
-		$msg = new XMPPMsg(array('to'=>'2@w.c', 'from'=>'-0@q.p/~', 'type'=>'chat'), 'hi', 'thread1');
+		$msg = new XMPPMsg(array('to' => '2@w.c', 'from' => '-0@q.p/~', 'type' => 'chat'), 'hi', 'thread1');
 
 		echo $msg->to.PHP_EOL;
 		echo $msg->to_node.PHP_EOL;

@@ -55,14 +55,14 @@ class XEP_0249 extends XMPPXep {
 	//
 
 	public function get_invite_pkt($to_bare_jid, $room_jid, $password=null, $reason=null, $thread=null, $continue=null) {
-		$xattrs = array('jid'=>$room_jid);
+		$xattrs = array('jid' => $room_jid);
 		if ($password) $xattrs['password'] = $password;
 		if ($reason) $xattrs['reason'] = $reason;
 		if ($thread) $xattrs['thread'] = $thread;
 		if ($continue) $xattrs['continue'] = $continue;
 
 		return $this->jaxl->get_msg_pkt(
-			array('from'=>$this->jaxl->full_jid->to_string(), 'to'=>$to_bare_jid),
+			array('from' => $this->jaxl->full_jid->to_string(), 'to' => $to_bare_jid),
 			null, null, null,
 			new JAXLXml('x', NS_DIRECT_MUC_INVITATION, $xattrs)
 		);
