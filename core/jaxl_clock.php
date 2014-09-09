@@ -69,7 +69,7 @@ class JAXLClock {
 		}
 
 		// run scheduled jobs
-		foreach($this->jobs as $ref=>$job) {
+		foreach ($this->jobs as $ref=>$job) {
 			if ($this->tick >= $job['scheduled_on'] + $job['after']) {
 				//_debug("running job#".($ref+1)." at tick ".$this->tick.", scheduled on ".$job['scheduled_on']." after ".$job['after'].", periodic ".$job['is_periodic']);
 				call_user_func($job['cb'], $job['args']);

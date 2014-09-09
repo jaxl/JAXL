@@ -101,7 +101,7 @@ class HTTPDispatcher {
 	}
 
 	public function dispatch($request) {
-		foreach($this->rules as $rule) {
+		foreach ($this->rules as $rule) {
 			//_debug("matching $request->path with pattern $rule->pattern");
 			if (($matches = $rule->match($request->path, $request->method)) !== false) {
 				_debug("matching rule found, dispatching");

@@ -57,7 +57,7 @@ class XEP_0115 extends XMPPXep {
 	public function get_caps_pkt($cat, $type, $lang, $name, $node, $features) {
 		asort($features);
 		$S = $cat.'/'.$type.'/'.$lang.'/'.$name.'<';
-		foreach($features as $feature) $S .= $feature.'<';
+		foreach ($features as $feature) $S .= $feature.'<';
 		$ver = base64_encode(sha1($S, true));
 
 		$stanza = new JAXLXml('c', NS_CAPS, array('hash'=>'sha1', 'node'=>$node, 'ver'=>$ver));

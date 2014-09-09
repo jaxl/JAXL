@@ -90,7 +90,7 @@ class HTTPServer {
 	}
 
 	public function dispatch($rules) {
-		foreach($rules as $rule) {
+		foreach ($rules as $rule) {
 			$this->dispatcher->add_rule($rule);
 		}
 	}
@@ -143,7 +143,7 @@ class HTTPServer {
 			}
 
 			// parse headers
-			foreach($lines as $line) {
+			foreach ($lines as $line) {
 				$line_parts = explode(":", $line);
 
 				if (sizeof($line_parts) > 1) {

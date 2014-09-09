@@ -213,7 +213,7 @@ class HTTPRequest extends JAXLFsm {
 					// boundary start, content_disposition, form data, boundary start, ....., boundary end
 					// these define various states of a multipart/form-data
 					$form_data = explode("\r\n", $rcvd);
-					foreach($form_data as $data) {
+					foreach ($form_data as $data) {
 						//_debug("passing $data to multipart fsm");
 						if (!$this->multipart->process($data)) {
 							_debug("multipart fsm returned false");
@@ -424,7 +424,7 @@ class HTTPRequest extends JAXLFsm {
 	}
 
 	protected function _send_headers($code, $headers) {
-		foreach($headers as $k=>$v)
+		foreach ($headers as $k=>$v)
 			$this->_send_header($k, $v);
 	}
 
@@ -464,7 +464,7 @@ class HTTPRequest extends JAXLFsm {
 		if (sizeof($resource) == 2) {
 			$query = $resource[1];
 			$query = explode("&", $query);
-			foreach($query as $q) {
+			foreach ($query as $q) {
 				$q = explode("=", $q);
 				if (sizeof($q) == 1) $q[1] = "";
 				$this->query[$q[0]] = $q[1];

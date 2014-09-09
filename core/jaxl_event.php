@@ -82,14 +82,14 @@ class JAXLEvent {
 
 		if (!isset($this->reg[$ev])) return $data;
 
-		foreach($this->reg[$ev] as $cb) {
+		foreach ($this->reg[$ev] as $cb) {
 			if (!isset($cbs[$cb[0]]))
 				$cbs[$cb[0]] = array();
 			$cbs[$cb[0]][] = $cb[1];
 		}
 
-		foreach($cbs as $pri => $cb) {
-			foreach($cb as $c) {
+		foreach ($cbs as $pri => $cb) {
+			foreach ($cb as $c) {
 				$ret = call_user_func_array($c, $data);
 				// this line is for fixing situation where callback function doesn't return an array type
 				// in such cases next call of call_user_func_array will report error since $data is not an array type as expected

@@ -46,7 +46,7 @@ class JAXLUtil {
 	public static function get_nonce($binary=true) {
 		$nce = '';
 		mt_srand((double) microtime()*10000000);
-		for($i=0; $i<32; $i++) $nce .= chr(mt_rand(0, 255));
+		for ($i=0; $i<32; $i++) $nce .= chr(mt_rand(0, 255));
 		return $binary ? $nce : base64_encode($nce);
 	}
 

@@ -52,7 +52,7 @@ class XMPPStreamTest extends PHPUnit_Framework_TestCase {
 		$xmpp->connect();
 
 		$xmpp->start_stream();
-		while($xmpp->sock->fd) {
+		while ($xmpp->sock->fd) {
 			$xmpp->sock->recv();
 		}
 	}

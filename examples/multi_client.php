@@ -44,7 +44,7 @@ define('JAXL_MULTI_CLIENT', true);
 // input multiple account credentials
 $accounts = array();
 $add_new = TRUE;
-while($add_new) {
+while ($add_new) {
 	$jid = readline('Enter Jabber Id: ');
 	$pass = readline('Enter Password: ');
 	$accounts[] = array($jid, $pass);
@@ -105,7 +105,7 @@ function on_disconnect($client) {
 // bootstrap all account instances
 //
 
-foreach($accounts as $account) {
+foreach ($accounts as $account) {
 	$client = new JAXL(array(
 		'jid' => $account[0],
 		'pass' => $account[1],

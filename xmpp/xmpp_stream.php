@@ -215,7 +215,7 @@ abstract class XMPPStream extends JAXLFsm {
 			'qop' => 'auth'
 		);
 
-		foreach(array('nonce', 'digest-uri', 'realm', 'cnonce') as $key)
+		foreach (array('nonce', 'digest-uri', 'realm', 'cnonce') as $key)
 			if (isset($decoded[$key]))
 				$response[$key] = $decoded[$key];
 
@@ -268,7 +268,7 @@ abstract class XMPPStream extends JAXLFsm {
 		$pairs = array();
 		$key = false;
 
-		foreach($data as $pair) {
+		foreach ($data as $pair) {
 			$dd = strpos($pair, '=');
 			if ($dd) {
 				$key = trim(substr($pair, 0, $dd));
@@ -285,12 +285,12 @@ abstract class XMPPStream extends JAXLFsm {
 
 	public function implode_data($data) {
 		$return = array();
-		foreach($data as $key => $value) $return[] = $key . '="' . $value . '"';
+		foreach ($data as $key => $value) $return[] = $key . '="' . $value . '"';
 		return implode(',', $return);
 	}
 
 	public function encrypt_password($data, $user, $pass) {
-		foreach(array('realm', 'cnonce', 'digest-uri') as $key)
+		foreach (array('realm', 'cnonce', 'digest-uri') as $key)
 			if (!isset($data[$key]))
 				$data[$key] = '';
 

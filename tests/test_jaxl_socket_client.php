@@ -52,7 +52,7 @@ class JAXLSocketClientTest extends PHPUnit_Framework_TestCase {
 		$sock->connect();
 
 		$sock->send("<stream:stream>");
-		while($sock->fd) {
+		while ($sock->fd) {
 			$sock->recv();
 		}
 	}

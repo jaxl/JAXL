@@ -87,7 +87,7 @@ class HTTPMultiPart extends JAXLFsm {
 				$this->form_data[$this->index]['headers'][$disposition[0]] = trim($disposition[1]);
 				$meta = explode(";", $disposition[1]);
 				if (trim(array_shift($meta)) == 'form-data') {
-					foreach($meta as $k) {
+					foreach ($meta as $k) {
 						list($k, $v) = explode("=", $k);
 						$this->form_data[$this->index]['meta'][$k] = $v;
 					}

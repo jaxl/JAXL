@@ -164,7 +164,7 @@ class XEP_0206 extends XMPPXep {
 					exit;
 				}
 			}
-		} while($running);
+		} while ($running);
 	}
 
 	public function set_callback($recv_cb) {

@@ -237,7 +237,7 @@ class JAXL extends XMPPStream {
 		if (!is_array($xeps))
 			$xeps = array($xeps);
 
-		foreach($xeps as $xep) {
+		foreach ($xeps as $xep) {
 			$filename = 'xep_'.$xep.'.php';
 			$classname = 'XEP_'.$xep;
 
@@ -246,7 +246,7 @@ class JAXL extends XMPPStream {
 			$this->xeps[$xep] = new $classname($this);
 
 			// add necessary requested callback on events
-			foreach($this->xeps[$xep]->init() as $ev=>$cb) {
+			foreach ($this->xeps[$xep]->init() as $ev=>$cb) {
 				$this->add_cb($ev, array($this->xeps[$xep], $cb));
 			}
 		}
@@ -357,10 +357,10 @@ class JAXL extends XMPPStream {
 		if (@$this->cfg['bosh_url']) {
 			$this->trans->session_start();
 
-			for(;;) {
+			for (;;) {
 				// while any of the curl request is pending
 				// keep receiving response
-				while(sizeof($this->trans->chs) != 0) {
+				while (sizeof($this->trans->chs) != 0) {
 					$this->trans->recv();
 				}
 
@@ -618,7 +618,7 @@ class JAXL extends XMPPStream {
 
 		// extract available mechanisms
 		$mechs = array();
-		if ($mechanisms) foreach($mechanisms->childrens as $mechanism) $mechs[$mechanism->text] = true;
+		if ($mechanisms) foreach ($mechanisms->childrens as $mechanism) $mechs[$mechanism->text] = true;
 
 		// check if preferred auth type exists in available mechanisms
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
@@ -631,7 +631,7 @@ class JAXL extends XMPPStream {
 		}
 		// if pref auth doesn't exists, choose one from available mechanisms
 		else {
-			foreach($mechs as $mech=>$any) {
+			foreach ($mechs as $mech=>$any) {
 				// choose X-FACEBOOK-PLATFORM only if fb_access_token config value is available
 				if ($mech == 'X-FACEBOOK-PLATFORM') {
 					if (@$this->cfg['fb_access_token']) {
@@ -695,13 +695,13 @@ class JAXL extends XMPPStream {
 
 		// catch roster list
 		if ($stanza->type == 'result' && ($query = $stanza->exists('query', 'jabber:iq:roster'))) {
-			foreach($query->childrens as $child) {
+			foreach ($query->childrens as $child) {
 				if ($child->name == 'item') {
 					$jid = $child->attrs['jid'];
 					$subscription = $child->attrs['subscription'];
 
 					$groups = array();
-					foreach($child->childrens as $group) {
+					foreach ($child->childrens as $group) {
 						if ($group->name == 'group') {
 							$groups[] = $group->text;
 						}
@@ -782,7 +782,7 @@ class JAXL extends XMPPStream {
 
 	public function handle_domain_info($stanza) {
 		$query = $stanza->exists('query', NS_DISCO_INFO);
-		foreach($query->childrens as $k=>$child) {
+		foreach ($query->childrens as $k=>$child) {
 			if ($child->name == 'identity') {
 				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
 			}
@@ -797,7 +797,7 @@ class JAXL extends XMPPStream {
 
 	public function handle_domain_items($stanza) {
 		$query = $stanza->exists('query', NS_DISCO_ITEMS);
-		foreach($query->childrens as $k=>$child) {
+		foreach ($query->childrens as $k=>$child) {
 			if ($child->name == 'item') {
 				//echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
 			}
