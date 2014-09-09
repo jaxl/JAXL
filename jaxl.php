@@ -251,7 +251,7 @@ class JAXL extends XMPPStream {
 		}
 	}
 
-	public function add_cb($ev, $cb, $pri=1) {
+	public function add_cb($ev, $cb, $pri = 1) {
 		return $this->ev->add($ev, $cb, $pri);
 	}
 
@@ -259,7 +259,7 @@ class JAXL extends XMPPStream {
 		$this->ev->del($ref);
 	}
 
-	public function set_status($status, $show='chat', $priority=10) {
+	public function set_status($status, $show = 'chat', $priority = 10) {
 		$this->send($this->get_pres_pkt(
 			array(),
 			$status,
@@ -268,7 +268,7 @@ class JAXL extends XMPPStream {
 		));
 	}
 
-	public function send_chat_msg($to, $body, $thread=null, $subject=null) {
+	public function send_chat_msg($to, $body, $thread = null, $subject = null) {
 		$msg = new XMPPMsg(
 			array(
 				'type' => 'chat',
@@ -282,7 +282,7 @@ class JAXL extends XMPPStream {
 		$this->send($msg);
 	}
 
-	public function get_vcard($jid=null, $cb=null) {
+	public function get_vcard($jid = null, $cb = null) {
 		$attrs = array(
 			'type' => 'get',
 			'from' => $this->full_jid->to_string()
@@ -301,7 +301,7 @@ class JAXL extends XMPPStream {
 		$this->send($pkt);
 	}
 
-	public function get_roster($cb=null) {
+	public function get_roster($cb = null) {
 		$pkt = $this->get_iq_pkt(
 			array(
 				'type' => 'get',
@@ -351,7 +351,7 @@ class JAXL extends XMPPStream {
 		$this->start();
 	}
 
-	public function start($opts=array()) {
+	public function start($opts = array()) {
 		// is bosh bot?
 		if (@$this->cfg['bosh_url']) {
 			$this->trans->session_start();

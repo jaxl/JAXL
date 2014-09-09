@@ -76,7 +76,7 @@ class JAXLEvent {
 	// emit event to notify registered callbacks
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
-	public function emit($ev, $data=array()) {
+	public function emit($ev, $data = array()) {
 		$data = array_merge($this->common, $data);
 		$cbs = array();
 

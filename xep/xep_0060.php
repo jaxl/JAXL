@@ -58,13 +58,13 @@ class XEP_0060 extends XMPPXep {
 	// api methods (subscriber use case)
 	//
 
-	public function get_subscribe_pkt($service, $node, $jid=null) {
+	public function get_subscribe_pkt($service, $node, $jid = null) {
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
 		$child->c('subscribe', null, array('node' => $node, 'jid' => ($jid ? $jid : $this->jaxl->full_jid->to_string())));
 		return $this->get_iq_pkt($service, $child);
 	}
 
-	public function subscribe($service, $node, $jid=null) {
+	public function subscribe($service, $node, $jid = null) {
 		$this->jaxl->send($this->get_subscribe_pkt($service, $node, $jid));
 	}
 
@@ -127,7 +127,7 @@ class XEP_0060 extends XMPPXep {
 	//
 
 	// this always add attrs
-	protected function get_iq_pkt($service, $child, $type='set') {
+	protected function get_iq_pkt($service, $child, $type = 'set') {
 		return $this->jaxl->get_iq_pkt(
 			array('type' => $type, 'from' => $this->jaxl->full_jid->to_string(), 'to' => $service),
 			$child

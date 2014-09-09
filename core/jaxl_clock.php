@@ -55,7 +55,7 @@ class JAXLClock {
 		_info("shutting down clock server...");
 	}
 
-	public function tick($by=null) {
+	public function tick($by = null) {
 		// update clock
 		if ($by) {
 			$this->tick += $by;
@@ -84,12 +84,12 @@ class JAXLClock {
 	}
 
 	// calculate execution time of callback
-	public function tc($callback, $args=null) {
+	public function tc($callback, $args = null) {
 
 	}
 
 	// callback after $time microseconds
-	public function call_fun_after($time, $callback, $args=null) {
+	public function call_fun_after($time, $callback, $args = null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -102,7 +102,7 @@ class JAXLClock {
 	}
 
 	// callback periodically after $time microseconds
-	public function call_fun_periodic($time, $callback, $args=null) {
+	public function call_fun_periodic($time, $callback, $args = null) {
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,

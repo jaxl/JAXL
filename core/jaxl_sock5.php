@@ -52,7 +52,7 @@ class JAXLSock5 {
 	protected $ip = null;
 	protected $port = null;
 
-	public function __construct($transport='tcp') {
+	public function __construct($transport = 'tcp') {
 		$this->transport = $transport;
 		$this->client = new JAXLSocketClient();
 		$this->client->set_callback(array(&$this, 'on_response'));
@@ -62,7 +62,7 @@ class JAXLSock5 {
 
 	}
 
-	public function connect($ip, $port=1080) {
+	public function connect($ip, $port = 1080) {
 		$this->ip = $ip;
 		$this->port = $port;
 		$sock_path = $this->_sock_path();

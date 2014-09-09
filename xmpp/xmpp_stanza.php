@@ -53,7 +53,7 @@ class XMPPStanza {
 
 	private $xml;
 
-	public function __construct($name, $attrs=array(), $ns=NS_JABBER_CLIENT) {
+	public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT) {
 		if ($name instanceof JAXLXml) $this->xml = $name;
 		else $this->xml = new JAXLXml($name, $ns, $attrs);
 	}

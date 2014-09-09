@@ -61,7 +61,7 @@ require_once JAXL_CWD.'/http/http_multipart.php';
 //
 // all the above methods can also be directly performed using:
 //
-//     $request->send_response($code, $headers=array(), $body=null)
+//     $request->send_response($code, $headers = array(), $body = null)
 //
 // Note: All the send_* methods do not manage connection close/keep-alive logic,
 // it is upto you to do that, by default connection will usually be dropped
@@ -423,7 +423,7 @@ class HTTPRequest extends JAXLFsm {
 		$this->_send($body);
 	}
 
-	protected function _send_response($code, $headers=array(), $body=null) {
+	protected function _send_response($code, $headers = array(), $body = null) {
 		// send out response line
 		$this->_send_line($code);
 

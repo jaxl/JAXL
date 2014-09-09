@@ -50,7 +50,7 @@ class XEP_0045 extends XMPPXep {
 		return array();
 	}
 
-	public function send_groupchat($room_jid, $body, $thread=null, $subject=null) {
+	public function send_groupchat($room_jid, $body, $thread = null, $subject = null) {
 		$msg = new XMPPMsg(
 			array(
 				'type' => 'groupchat',

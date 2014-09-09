@@ -89,7 +89,7 @@ abstract class XMPPStream extends JAXLFsm {
 	// public api
 	//
 
-	public function __construct($transport, $jid, $pass=null, $resource=null, $force_tls=false) {
+	public function __construct($transport, $jid, $pass = null, $resource = null, $force_tls = false) {
 		$this->jid = $jid;
 		$this->pass = $pass;
 		$this->resource = $resource ? $resource : md5(time());
@@ -237,14 +237,14 @@ abstract class XMPPStream extends JAXLFsm {
 		), $stanza);
 	}
 
-	public function get_msg_pkt($attrs, $body=null, $thread=null, $subject=null, $payload=null) {
+	public function get_msg_pkt($attrs, $body = null, $thread = null, $subject = null, $payload = null) {
 		$msg = new XMPPMsg($attrs, $body, $thread, $subject);
 		if (!$msg->id) $msg->id = $this->get_id();
 		if ($payload) $msg->cnode($payload);
 		return $msg;
 	}
 
-	public function get_pres_pkt($attrs, $status=null, $show=null, $priority=null, $payload=null) {
+	public function get_pres_pkt($attrs, $status = null, $show = null, $priority = null, $payload = null) {
 		$pres = new XMPPPres($attrs, $status, $show, $priority);
 		if (!$pres->id) $pres->id = $this->get_id();
 		if ($payload) $pres->cnode($payload);

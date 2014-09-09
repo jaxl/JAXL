@@ -47,7 +47,7 @@ class JAXLCli {
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
 
-	public function __construct($recv_cb=null, $quit_cb=null) {
+	public function __construct($recv_cb = null, $quit_cb = null) {
 		$this->recv_cb = $recv_cb;
 		$this->quit_cb = $quit_cb;
 
@@ -86,7 +86,7 @@ class JAXLCli {
 		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 
-	public static function prompt($inc=true) {
+	public static function prompt($inc = true) {
 		if ($inc) ++self::$counter;
 		echo "jaxl ".self::$counter."> ";
 	}

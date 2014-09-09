@@ -69,7 +69,7 @@ class JAXLSocketClient {
 	private $recv_chunk_size = 1024;
 	private $writing = false;
 
-	public function __construct($stream_context=null) {
+	public function __construct($stream_context = null) {
 		$this->stream_context = $stream_context;
 	}
 

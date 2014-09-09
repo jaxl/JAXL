@@ -73,7 +73,7 @@ class HTTPServer {
 	private $dispatcher = null;
 	private $requests = array();
 
-	public function __construct($port=9699, $address="127.0.0.1") {
+	public function __construct($port = 9699, $address = "127.0.0.1") {
 		$path = 'tcp://'.$address.':'.$port;
 
 		$this->server = new JAXLSocketServer(
@@ -95,7 +95,7 @@ class HTTPServer {
 		}
 	}
 
-	public function start($cb=null) {
+	public function start($cb = null) {
 		$this->cb = $cb;
 		JAXLLoop::run();
 	}

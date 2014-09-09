@@ -55,7 +55,7 @@ class HTTPClient {
 
 	private $client = null;
 
-	public function __construct($url, $headers=array(), $data=null) {
+	public function __construct($url, $headers = array(), $data = null) {
 		$this->url = $url;
 		$this->headers = $headers;
 		$this->data = $data;
@@ -64,7 +64,7 @@ class HTTPClient {
 		$this->client->set_callback(array(&$this, 'on_response'));
 	}
 
-	public function start($method='GET') {
+	public function start($method = 'GET') {
 		$this->method = $method;
 
 		$this->parts = parse_url($this->url);

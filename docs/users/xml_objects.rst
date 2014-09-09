@@ -34,11 +34,11 @@ JAXLXml
 ``JAXLXml`` draws inspiration from StropheJS XML Builder class. Below are available methods
 for modifying and manipulating an ``JAXLXml`` object:
 
-    * ``t($text, $append=FALSE)`` 
+    * ``t($text, $append = FALSE)`` 
             
             update text of current rover
             
-    * ``c($name, $ns=null, $attrs=array(), $text=null)`` 
+    * ``c($name, $ns = null, $attrs = array(), $text = null)`` 
         
             append a child node at current rover
             
@@ -54,11 +54,11 @@ for modifying and manipulating an ``JAXLXml`` object:
             
             move rover back to top element in the xml tree
             
-    * ``exists($name, $ns=null, $attrs=array())`` 
+    * ``exists($name, $ns = null, $attrs = array())`` 
             
             checks if a child with $name exists, return child ``JAXLXml`` if found otherwise false. This function returns at first matching child.
     
-    * ``update($name, $ns=null, $attrs=array(), $text=null)``
+    * ``update($name, $ns = null, $attrs = array(), $text = null)``
         
             update specified child element
     

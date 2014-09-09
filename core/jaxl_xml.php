@@ -114,7 +114,7 @@ class JAXLXml {
 		return $matches;
 	}
 
-	public function t($text, $append=FALSE) {
+	public function t($text, $append = FALSE) {
 		if (!$append) {
 			$this->rover->text = $text;
 		} else {
@@ -125,7 +125,7 @@ class JAXLXml {
 		return $this;
 	}
 
-	public function c($name, $ns=null, $attrs=array(), $text=null) {
+	public function c($name, $ns = null, $attrs = array(), $text = null) {
 		$node = new JAXLXml($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
@@ -150,7 +150,7 @@ class JAXLXml {
 		return $this;
 	}
 
-	public function exists($name, $ns=null, $attrs=array()) {
+	public function exists($name, $ns = null, $attrs = array()) {
 		foreach ($this->childrens as $child) {
 			if ($ns) {
 				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
@@ -162,7 +162,7 @@ class JAXLXml {
 		return false;
 	}
 
-	public function update($name, $ns=null, $attrs=array(), $text=null) {
+	public function update($name, $ns = null, $attrs = array(), $text = null) {
 		foreach ($this->childrens as $k => $child) {
 			if ($child->name == $name) {
 				$child->ns = $ns;
@@ -174,7 +174,7 @@ class JAXLXml {
 		}
 	}
 
-	public function to_string($parent_ns=null) {
+	public function to_string($parent_ns = null) {
 		$xml = '';
 
 		$xml .= '<'.$this->name;
