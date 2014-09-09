@@ -73,7 +73,8 @@ class HTTPServer {
 	private $dispatcher = null;
 	private $requests = array();
 
-	public function __construct($port = 9699, $address = "127.0.0.1") {
+	public function __construct($port = 9699, $address = "127.0.0.1")
+	{
 		$path = 'tcp://'.$address.':'.$port;
 
 		$this->server = new JAXLSocketServer(
@@ -85,22 +86,26 @@ class HTTPServer {
 		$this->dispatcher = new HTTPDispatcher();
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		$this->server = null;
 	}
 
-	public function dispatch($rules) {
+	public function dispatch($rules)
+	{
 		foreach ($rules as $rule) {
 			$this->dispatcher->add_rule($rule);
 		}
 	}
 
-	public function start($cb = null) {
+	public function start($cb = null)
+	{
 		$this->cb = $cb;
 		JAXLLoop::run();
 	}
 
-	public function on_accept($sock, $addr) {
+	public function on_accept($sock, $addr)
+	{
 		_debug("on_accept for client#$sock, addr:$addr");
 
 		// initialize new request obj
@@ -120,7 +125,8 @@ class HTTPServer {
 		$this->server->read($sock);
 	}
 
-	public function on_request($sock, $raw) {
+	public function on_request($sock, $raw)
+	{
 		_debug("on_request for client#$sock");
 		$request = $this->requests[$sock];
 

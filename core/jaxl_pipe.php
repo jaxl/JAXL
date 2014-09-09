@@ -62,7 +62,8 @@ class JAXLPipe {
 
 	public $name = null;
 
-	public function __construct($name, $read_cb = null) {
+	public function __construct($name, $read_cb = null)
+	{
 		$pipes_folder = JAXL_CWD.'/.jaxl/pipes';
 		if (!is_dir($pipes_folder)) mkdir($pipes_folder);
 
@@ -89,21 +90,25 @@ class JAXLPipe {
 		}
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		@fclose($this->fd);
 		@unlink($this->get_pipe_file_path());
 		_debug("unlinking pipe file");
 	}
 
-	public function get_pipe_file_path() {
+	public function get_pipe_file_path()
+	{
 		return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
 	}
 
-	public function set_callback($recv_cb) {
+	public function set_callback($recv_cb)
+	{
 		$this->recv_cb = $recv_cb;
 	}
 
-	public function on_data($data) {
+	public function on_data($data)
+	{
 		// callback
 		if ($this->recv_cb) call_user_func($this->recv_cb, $data);
 	}

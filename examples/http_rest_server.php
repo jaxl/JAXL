@@ -49,7 +49,8 @@ require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
 // callback method for dispatch rule (see below)
-function index($request) {
+function index($request)
+{
 	$request->send_response(
 		200, array('Content-Type' => 'text/html'),
 		'<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
@@ -58,7 +59,8 @@ function index($request) {
 }
 
 // callback method for dispatch rule (see below)
-function upload($request) {
+function upload($request)
+{
 	if ($request->method == 'GET') {
 		$request->ok(array(
 			'Content-Type' => 'text/html'),
@@ -82,22 +84,26 @@ $upload = array('upload', '^/upload', array('GET', 'POST'));
 
 // some REST CRUD style callback methods
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
-function create_event($request) {
+function create_event($request)
+{
 	_info("got event create request");
 	$request->close();
 }
 
-function read_event($request, $pk) {
+function read_event($request, $pk)
+{
 	_info("got event read request for $pk");
 	$request->close();
 }
 
-function update_event($request, $pk) {
+function update_event($request, $pk)
+{
 	_info("got event update request for $pk");
 	$request->close();
 }
 
-function delete_event($request, $pk) {
+function delete_event($request, $pk)
+{
 	_info("got event delete request for $pk");
 	$request->close();
 }

@@ -47,7 +47,8 @@ require_once "jaxl.php";
  */
 class JAXLEventTest extends PHPUnit_Framework_TestCase {
 
-	function test_jaxl_event() {
+	function test_jaxl_event()
+	{
 		$ev = new JAXLEvent();
 
 		$ref1 = $ev->add('on_connect', 'some_func', 0);

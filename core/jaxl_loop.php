@@ -61,10 +61,16 @@ class JAXLLoop {
 	private static $secs = 0;
 	private static $usecs = 30000;
 
-	private function __construct() {}
-	private function __clone() {}
+	private function __construct()
+	{
+	}
 
-	public static function watch($fd, $opts) {
+	private function __clone()
+	{
+	}
+
+	public static function watch($fd, $opts)
+	{
 		if (isset($opts['read'])) {
 			$fdid = (int) $fd;
 			self::$read_fds[$fdid] = $fd;
@@ -82,7 +88,8 @@ class JAXLLoop {
 		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
 	}
 
-	public static function unwatch($fd, $opts) {
+	public static function unwatch($fd, $opts)
+	{
 		if (isset($opts['read'])) {
 			$fdid = (int) $fd;
 			if (isset(self::$read_fds[$fdid])) {
@@ -104,7 +111,8 @@ class JAXLLoop {
 		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
 	}
 
-	public static function run() {
+	public static function run()
+	{
 		if (!self::$is_running) {
 			self::$is_running = true;
 			self::$clock = new JAXLClock();
@@ -117,7 +125,8 @@ class JAXLLoop {
 		}
 	}
 
-	private static function select() {
+	private static function select()
+	{
 		$read = self::$read_fds;
 		$write = self::$write_fds;
 		$except = null;

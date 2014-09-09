@@ -47,7 +47,8 @@ require_once "jaxl.php";
  */
 class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 
-	function test_xmpp_stanza_nested() {
+	function test_xmpp_stanza_nested()
+	{
 		$stanza = new JAXLXml('message', array('to' => '1@a.z', 'from' => '2@b.c'));
 		$stanza
 		->c('body')->attrs(array('xml:lang' => 'en'))->t('hello')->up()
@@ -64,7 +65,8 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 		);
 	}
 
-	function test_xmpp_stanza_from_jaxl_xml() {
+	function test_xmpp_stanza_from_jaxl_xml()
+	{
 		// xml to stanza test
 		$xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to' => '2@3.com', 'from' => '4@r.p/q'));
 		$stanza = new XMPPStanza($xml);

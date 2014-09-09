@@ -46,7 +46,8 @@ class XEP_0203 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array();
 	}
 

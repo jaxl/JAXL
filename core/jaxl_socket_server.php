@@ -50,7 +50,8 @@ class JAXLSocketServer {
 	private $blocking = false;
 	private $backlog = 200;
 
-	public function __construct($path, $accept_cb, $request_cb) {
+	public function __construct($path, $accept_cb, $request_cb)
+	{
 		$this->accept_cb = $accept_cb;
 		$this->request_cb = $request_cb;
 
@@ -69,26 +70,31 @@ class JAXLSocketServer {
 		}
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		_info("shutting down socket server");
 	}
 
-	public function read($client_id) {
+	public function read($client_id)
+	{
 		//_debug("reactivating read on client sock");
 		$this->add_read_cb($client_id);
 	}
 
-	public function send($client_id, $data) {
+	public function send($client_id, $data)
+	{
 		$this->clients[$client_id]['obuffer'] .= $data;
 		$this->add_write_cb($client_id);
 	}
 
-	public function close($client_id) {
+	public function close($client_id)
+	{
 		$this->clients[$client_id]['close'] = true;
 		$this->add_write_cb($client_id);
 	}
 
-	public function on_server_accept_ready($server) {
+	public function on_server_accept_ready($server)
+	{
 		//_debug("got server accept");
 		$client = @stream_socket_accept($server, 0, $addr);
 		if (!$client) {
@@ -128,7 +134,8 @@ class JAXLSocketServer {
 		}
 	}
 
-	public function on_client_read_ready($client) {
+	public function on_client_read_ready($client)
+	{
 		// deactive socket for read
 		$client_id = (int) $client;
 		//_debug("client#$client_id is read ready");
@@ -158,7 +165,8 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 
-	public function on_client_write_ready($client) {
+	public function on_client_write_ready($client)
+	{
 		$client_id = (int) $client;
 		_debug("client#$client_id is write ready");
 
@@ -204,7 +212,8 @@ class JAXLSocketServer {
 	// client sock event register utils
 	//
 
-	protected function add_read_cb($client_id) {
+	protected function add_read_cb($client_id)
+	{
 		if ($this->clients[$client_id]['reading'])
 			return;
 
@@ -215,7 +224,8 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['reading'] = true;
 	}
 
-	protected function add_write_cb($client_id) {
+	protected function add_write_cb($client_id)
+	{
 		if ($this->clients[$client_id]['writing'])
 			return;
 
@@ -226,7 +236,8 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['writing'] = true;
 	}
 
-	protected function del_read_cb($client_id) {
+	protected function del_read_cb($client_id)
+	{
 		if (!$this->clients[$client_id]['reading'])
 			return;
 
@@ -237,7 +248,8 @@ class JAXLSocketServer {
 		$this->clients[$client_id]['reading'] = false;
 	}
 
-	protected function del_write_cb($client_id) {
+	protected function del_write_cb($client_id)
+	{
 		if (!$this->clients[$client_id]['writing'])
 			return;
 

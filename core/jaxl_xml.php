@@ -55,7 +55,8 @@ class JAXLXml {
 	public $parent = null;
 	public $rover = null;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$argv = func_get_args();
 		$argc = sizeof($argv);
 
@@ -94,16 +95,19 @@ class JAXLXml {
 		$this->rover = &$this;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 
 	}
 
-	public function attrs($attrs) {
+	public function attrs($attrs)
+	{
 		$this->rover->attrs = array_merge($this->rover->attrs, $attrs);
 		return $this;
 	}
 
-	public function match_attrs($attrs) {
+	public function match_attrs($attrs)
+	{
 		$matches = true;
 		foreach ($attrs as $k => $v) {
 			if ($this->attrs[$k] !== $v) {
@@ -114,7 +118,8 @@ class JAXLXml {
 		return $matches;
 	}
 
-	public function t($text, $append = FALSE) {
+	public function t($text, $append = FALSE)
+	{
 		if (!$append) {
 			$this->rover->text = $text;
 		} else {
@@ -125,7 +130,8 @@ class JAXLXml {
 		return $this;
 	}
 
-	public function c($name, $ns = null, $attrs = array(), $text = null) {
+	public function c($name, $ns = null, $attrs = array(), $text = null)
+	{
 		$node = new JAXLXml($name, $ns, $attrs, $text);
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
@@ -133,24 +139,28 @@ class JAXLXml {
 		return $this;
 	}
 
-	public function cnode($node) {
+	public function cnode($node)
+	{
 		$node->parent = &$this->rover;
 		$this->rover->childrens[] = &$node;
 		$this->rover = &$node;
 		return $this;
 	}
 
-	public function up() {
+	public function up()
+	{
 		if ($this->rover->parent) $this->rover = &$this->rover->parent;
 		return $this;
 	}
 
-	public function top() {
+	public function top()
+	{
 		$this->rover = &$this;
 		return $this;
 	}
 
-	public function exists($name, $ns = null, $attrs = array()) {
+	public function exists($name, $ns = null, $attrs = array())
+	{
 		foreach ($this->childrens as $child) {
 			if ($ns) {
 				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
@@ -162,7 +172,8 @@ class JAXLXml {
 		return false;
 	}
 
-	public function update($name, $ns = null, $attrs = array(), $text = null) {
+	public function update($name, $ns = null, $attrs = array(), $text = null)
+	{
 		foreach ($this->childrens as $k => $child) {
 			if ($child->name == $name) {
 				$child->ns = $ns;
@@ -174,7 +185,8 @@ class JAXLXml {
 		}
 	}
 
-	public function to_string($parent_ns = null) {
+	public function to_string($parent_ns = null)
+	{
 		$xml = '';
 
 		$xml .= '<'.$this->name;

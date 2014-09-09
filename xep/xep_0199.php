@@ -10,7 +10,8 @@ class XEP_0199 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array(
 			'on_auth_success' => 'on_auth_success',
 			'on_get_iq' => 'on_xmpp_ping'
@@ -21,7 +22,8 @@ class XEP_0199 extends XMPPXep {
 	// api methods
 	//
 
-	public function get_ping_pkt() {
+	public function get_ping_pkt()
+	{
 		$attrs = array(
 			'type' => 'get',
 			'from' => $this->jaxl->full_jid->to_string(),
@@ -34,7 +36,8 @@ class XEP_0199 extends XMPPXep {
 		);
 	}
 
-	public function ping() {
+	public function ping()
+	{
 		$this->jaxl->send($this->get_ping_pkt());
 	}
 
@@ -42,11 +45,13 @@ class XEP_0199 extends XMPPXep {
 	// event callbacks
 	//
 
-	public function on_auth_success() {
+	public function on_auth_success()
+	{
 		JAXLLoop::$clock->call_fun_periodic(30 * pow(10,6), array(&$this, 'ping'));
 	}
 
-	public function on_xmpp_ping($stanza) {
+	public function on_xmpp_ping($stanza)
+	{
 		if ($stanza->exists('ping', NS_XMPP_PING)) {
 			$stanza->type = "result";
 			$stanza->to = $stanza->from;

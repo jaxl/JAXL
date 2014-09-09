@@ -54,11 +54,13 @@ class JAXLXmlStream {
 	private $stanza_cb;
 	private $end_cb;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->init_parser();
 	}
 
-	private function init_parser() {
+	private function init_parser()
+	{
 		$this->depth = -1;
 		$this->parser = xml_parser_create_ns("UTF-8", $this->delimiter);
 
@@ -70,33 +72,39 @@ class JAXLXmlStream {
 		xml_set_element_handler($this->parser, array(&$this, "handle_start_tag"), array(&$this, "handle_end_tag"));
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		//_debug("cleaning up xml parser...");
 		@xml_parser_free($this->parser);
 	}
 
-	public function reset_parser() {
+	public function reset_parser()
+	{
 		$this->parse_final(null);
 		@xml_parser_free($this->parser);
 		$this->parser = null;
 		$this->init_parser();
 	}
 
-	public function set_callback($start_cb, $end_cb, $stanza_cb) {
+	public function set_callback($start_cb, $end_cb, $stanza_cb)
+	{
 		$this->start_cb = $start_cb;
 		$this->end_cb = $end_cb;
 		$this->stanza_cb = $stanza_cb;
 	}
 
-	public function parse($str) {
+	public function parse($str)
+	{
 		xml_parse($this->parser, $str, false);
 	}
 
-	public function parse_final($str) {
+	public function parse_final($str)
+	{
 		xml_parse($this->parser, $str, true);
 	}
 
-	protected function handle_start_tag($parser, $name, $attrs) {
+	protected function handle_start_tag($parser, $name, $attrs)
+	{
 		$name = $this->explode($name);
 		//echo "start of tag ".$name[1]." with ns ".$name[0].PHP_EOL;
 
@@ -140,7 +148,8 @@ class JAXLXmlStream {
 		++$this->depth;
 	}
 
-	protected function handle_end_tag($parser, $name) {
+	protected function handle_end_tag($parser, $name)
+	{
 		$name = explode($this->delimiter, $name);
 		$name = sizeof($name) == 1 ? array('', $name[0]) : $name;
 
@@ -165,18 +174,21 @@ class JAXLXmlStream {
 		--$this->depth;
 	}
 
-	protected function handle_character($parser, $data) {
+	protected function handle_character($parser, $data)
+	{
 		//echo "depth ".$this->depth.", character ".$data." for stanza ".$this->stanza->name.PHP_EOL;
 		if ($this->stanza) {
 			$this->stanza->t(htmlentities($data, ENT_COMPAT, "UTF-8"), TRUE);
 		}
 	}
 
-	private function implode($data) {
+	private function implode($data)
+	{
 		return implode($this->delimiter, $data);
 	}
 
-	private function explode($data) {
+	private function explode($data)
+	{
 		$data = explode($this->delimiter, $data);
 		$data = sizeof($data) == 1 ? array(null, $data[0]) : $data;
 		return $data;

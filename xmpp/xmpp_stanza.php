@@ -53,16 +53,19 @@ class XMPPStanza {
 
 	private $xml;
 
-	public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT) {
+	public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT)
+	{
 		if ($name instanceof JAXLXml) $this->xml = $name;
 		else $this->xml = new JAXLXml($name, $ns, $attrs);
 	}
 
-	public function __call($method, $args) {
+	public function __call($method, $args)
+	{
 		return call_user_func_array(array($this->xml, $method), $args);
 	}
 
-	public function __get($prop) {
+	public function __get($prop)
+	{
 		switch($prop) {
 			// access to jaxl xml properties
 			case 'name':
@@ -114,7 +117,8 @@ class XMPPStanza {
 		}
 	}
 
-	public function __set($prop, $val) {
+	public function __set($prop, $val)
+	{
 		switch($prop) {
 			// access to jaxl xml properties
 			case 'name':

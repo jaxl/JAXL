@@ -89,7 +89,8 @@ abstract class XMPPStream extends JAXLFsm {
 	// public api
 	//
 
-	public function __construct($transport, $jid, $pass = null, $resource = null, $force_tls = false) {
+	public function __construct($transport, $jid, $pass = null, $resource = null, $force_tls = false)
+	{
 		$this->jid = $jid;
 		$this->pass = $pass;
 		$this->resource = $resource ? $resource : md5(time());
@@ -104,22 +105,26 @@ abstract class XMPPStream extends JAXLFsm {
 		parent::__construct("setup");
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		//_debug("cleaning up xmpp stream...");
 	}
 
-	public function handle_invalid_state($r) {
+	public function handle_invalid_state($r)
+	{
 		_error("got invalid return value from state handler '".$this->state."', sending end stream...");
 		$this->send_end_stream();
 		$this->state = "logged_out";
 		_notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
 	}
 
-	public function send($stanza) {
+	public function send($stanza)
+	{
 		$this->trans->send($stanza->to_string());
 	}
 
-	public function send_raw($data) {
+	public function send_raw($data)
+	{
 		$this->trans->send($data);
 	}
 
@@ -127,7 +132,8 @@ abstract class XMPPStream extends JAXLFsm {
 	// pkt creation utilities
 	//
 
-	public function get_start_stream($jid) {
+	public function get_start_stream($jid)
+	{
 		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" ';
 		//if (isset($jid->bare)) $xml .= 'from="'.$jid->bare.'" ';
 		if (isset($jid->domain)) $xml .= 'to="'.$jid->domain.'" ';
@@ -135,23 +141,27 @@ abstract class XMPPStream extends JAXLFsm {
 		return $xml;
 	}
 
-	public function get_end_stream() {
+	public function get_end_stream()
+	{
 		return '</stream:stream>';
 	}
 
-	public function get_starttls_pkt() {
+	public function get_starttls_pkt()
+	{
 		$stanza = new JAXLXml('starttls', NS_TLS);
 		return $stanza;
 	}
 
-	public function get_compress_pkt($method) {
+	public function get_compress_pkt($method)
+	{
 		$stanza = new JAXLXml('compress', NS_COMPRESSION_PROTOCOL);
 		$stanza->c('method')->t($method);
 		return $stanza;
 	}
 
 	// someday this all needs to go inside jaxl_sasl_auth
-	public function get_auth_pkt($mechanism, $user, $pass) {
+	public function get_auth_pkt($mechanism, $user, $pass)
+	{
 		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism' => $mechanism));
 
 		switch($mechanism) {
@@ -181,7 +191,8 @@ abstract class XMPPStream extends JAXLFsm {
 		return $stanza;
 	}
 
-	public function get_challenge_response_pkt($challenge) {
+	public function get_challenge_response_pkt($challenge)
+	{
 		$stanza = new JAXLXml('response', NS_SASL);
 		$decoded = $this->explode_data(base64_decode($challenge));
 
@@ -193,7 +204,8 @@ abstract class XMPPStream extends JAXLFsm {
 		return $stanza;
 	}
 
-	public function get_challenge_response($decoded) {
+	public function get_challenge_response($decoded)
+	{
 		$response = array();
 		$nc = '00000001';
 
@@ -222,7 +234,8 @@ abstract class XMPPStream extends JAXLFsm {
 		return base64_encode($this->implode_data($response));
 	}
 
-	public function get_bind_pkt($resource) {
+	public function get_bind_pkt($resource)
+	{
 		$stanza = new JAXLXml('bind', NS_BIND);
 		$stanza->c('resource')->t($resource);
 		return $this->get_iq_pkt(array(
@@ -230,40 +243,46 @@ abstract class XMPPStream extends JAXLFsm {
 		), $stanza);
 	}
 
-	public function get_session_pkt() {
+	public function get_session_pkt()
+	{
 		$stanza = new JAXLXml('session', NS_SESSION);
 		return $this->get_iq_pkt(array(
 			'type' => 'set'
 		), $stanza);
 	}
 
-	public function get_msg_pkt($attrs, $body = null, $thread = null, $subject = null, $payload = null) {
+	public function get_msg_pkt($attrs, $body = null, $thread = null, $subject = null, $payload = null)
+	{
 		$msg = new XMPPMsg($attrs, $body, $thread, $subject);
 		if (!$msg->id) $msg->id = $this->get_id();
 		if ($payload) $msg->cnode($payload);
 		return $msg;
 	}
 
-	public function get_pres_pkt($attrs, $status = null, $show = null, $priority = null, $payload = null) {
+	public function get_pres_pkt($attrs, $status = null, $show = null, $priority = null, $payload = null)
+	{
 		$pres = new XMPPPres($attrs, $status, $show, $priority);
 		if (!$pres->id) $pres->id = $this->get_id();
 		if ($payload) $pres->cnode($payload);
 		return $pres;
 	}
 
-	public function get_iq_pkt($attrs, $payload) {
+	public function get_iq_pkt($attrs, $payload)
+	{
 		$iq = new XMPPIq($attrs);
 		if (!$iq->id) $iq->id = $this->get_id();
 		if ($payload) $iq->cnode($payload);
 		return $iq;
 	}
 
-	public function get_id() {
+	public function get_id()
+	{
 		++$this->last_id;
 		return dechex($this->last_id);
 	}
 
-	public function explode_data($data) {
+	public function explode_data($data)
+	{
 		$data = explode(',', $data);
 		$pairs = array();
 		$key = false;
@@ -282,13 +301,15 @@ abstract class XMPPStream extends JAXLFsm {
 		return $pairs;
 	}
 
-	public function implode_data($data) {
+	public function implode_data($data)
+	{
 		$return = array();
 		foreach ($data as $key => $value) $return[] = $key . '="' . $value . '"';
 		return implode(',', $return);
 	}
 
-	public function encrypt_password($data, $user, $pass) {
+	public function encrypt_password($data, $user, $pass)
+	{
 		foreach (array('realm', 'cnonce', 'digest-uri') as $key)
 			if (!isset($data[$key]))
 				$data[$key] = '';
@@ -308,39 +329,48 @@ abstract class XMPPStream extends JAXLFsm {
 	// socket senders
 	//
 
-	protected function send_start_stream($jid) {
+	protected function send_start_stream($jid)
+	{
 		$this->send_raw($this->get_start_stream($jid));
 	}
 
-	public function send_end_stream() {
+	public function send_end_stream()
+	{
 		$this->send_raw($this->get_end_stream());
 	}
 
-	protected function send_auth_pkt($type, $user, $pass) {
+	protected function send_auth_pkt($type, $user, $pass)
+	{
 		$this->send($this->get_auth_pkt($type, $user, $pass));
 	}
 
-	protected function send_starttls_pkt() {
+	protected function send_starttls_pkt()
+	{
 		$this->send($this->get_starttls_pkt());
 	}
 
-	protected function send_compress_pkt($method) {
+	protected function send_compress_pkt($method)
+	{
 		$this->send($this->get_compress_pkt($method));
 	}
 
-	protected function send_challenge_response($challenge) {
+	protected function send_challenge_response($challenge)
+	{
 		$this->send($this->get_challenge_response_pkt($challenge));
 	}
 
-	protected function send_bind_pkt($resource) {
+	protected function send_bind_pkt($resource)
+	{
 		$this->send($this->get_bind_pkt($resource));
 	}
 
-	protected function send_session_pkt() {
+	protected function send_session_pkt()
+	{
 		$this->send($this->get_session_pkt());
 	}
 
-	private function do_connect($args) {
+	private function do_connect($args)
+	{
 		$socket_path = @$args[0];
 		if ($this->trans->connect($socket_path)) {
 			return array("connected", 1);
@@ -353,7 +383,8 @@ abstract class XMPPStream extends JAXLFsm {
 	// fsm States
 	//
 
-	public function setup($event, $args) {
+	public function setup($event, $args)
+	{
 		switch($event) {
 			case "connect":
 				return $this->do_connect($args);
@@ -373,7 +404,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function connected($event, $args) {
+	public function connected($event, $args)
+	{
 		switch($event) {
 			case "start_stream":
 				$this->send_start_stream($this->jid);
@@ -394,7 +426,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function disconnected($event, $args) {
+	public function disconnected($event, $args)
+	{
 		switch($event) {
 			case "connect":
 				return $this->do_connect($args);
@@ -411,7 +444,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_stream_start($event, $args) {
+	public function wait_for_stream_start($event, $args)
+	{
 		switch($event) {
 			case "start_cb":
 				// TODO: save stream id and other meta info
@@ -427,7 +461,8 @@ abstract class XMPPStream extends JAXLFsm {
 	}
 
 	// XEP-0170: Recommended Order of Stream Feature Negotiation
-	public function wait_for_stream_features($event, $args) {
+	public function wait_for_stream_features($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -475,7 +510,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_tls_result($event, $args) {
+	public function wait_for_tls_result($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -502,7 +538,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_compression_result($event, $args) {
+	public function wait_for_compression_result($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -523,7 +560,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_sasl_response($event, $args) {
+	public function wait_for_sasl_response($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -555,7 +593,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_bind_response($event, $args) {
+	public function wait_for_bind_response($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -578,7 +617,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_session_response($event, $args) {
+	public function wait_for_session_response($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$this->handle_auth_success();
@@ -592,7 +632,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function logged_in($event, $args) {
+	public function logged_in($event, $args)
+	{
 		switch($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
@@ -630,7 +671,8 @@ abstract class XMPPStream extends JAXLFsm {
 		}
 	}
 
-	public function logged_out($event, $args) {
+	public function logged_out($event, $args)
+	{
 		switch($event) {
 			case "end_cb":
 				$this->trans->disconnect();

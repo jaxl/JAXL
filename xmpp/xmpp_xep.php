@@ -53,11 +53,13 @@ abstract class XMPPXep {
 	// which required me
 	protected $jaxl = null;
 
-	public function __construct($jaxl) {
+	public function __construct($jaxl)
+	{
 		$this->jaxl = $jaxl;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 
 	}
 }

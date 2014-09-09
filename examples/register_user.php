@@ -68,7 +68,8 @@ $client->require_xep(array(
 
 $form = array();
 
-function wait_for_register_response($event, $args) {
+function wait_for_register_response($event, $args)
+{
 	global $client, $form;
 
 	if ($event == 'stanza_cb') {
@@ -93,7 +94,8 @@ function wait_for_register_response($event, $args) {
 	}
 }
 
-function wait_for_register_form($event, $args) {
+function wait_for_register_form($event, $args)
+{
 	global $client, $form;
 
 	$stanza = $args[0];

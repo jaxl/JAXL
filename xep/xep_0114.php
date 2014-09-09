@@ -46,7 +46,8 @@ class XEP_0114 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array(
 			'on_connect' => 'start_stream',
 			'on_stream_start' => 'start_handshake',
@@ -59,12 +60,14 @@ class XEP_0114 extends XMPPXep {
 	// event callbacks
 	//
 
-	public function start_stream() {
+	public function start_stream()
+	{
 		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" to="'.$this->jaxl->jid->to_string().'" xmlns="'.NS_JABBER_COMPONENT_ACCEPT.'">';
 		$this->jaxl->send_raw($xml);
 	}
 
-	public function start_handshake($stanza) {
+	public function start_handshake($stanza)
+	{
 		_debug("starting component handshake");
 		$id = $stanza->id;
 		$hash = strtolower(sha1($id.$this->jaxl->pass));
@@ -72,13 +75,15 @@ class XEP_0114 extends XMPPXep {
 		$this->jaxl->send($stanza);
 	}
 
-	public function logged_in($stanza) {
+	public function logged_in($stanza)
+	{
 		_debug("component handshake complete");
 		$this->jaxl->handle_auth_success();
 		return array("logged_in", 1);
 	}
 
-	public function logged_out($stanza) {
+	public function logged_out($stanza)
+	{
 		if ($stanza->name == "error" && $stanza->ns == NS_XMPP) {
 			$reason = $stanza->childrens[0]->name;
 			$this->jaxl->handle_auth_failure($reason);

@@ -49,7 +49,8 @@ require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
 // catch all incoming requests here
-function on_request($request) {
+function on_request($request)
+{
     $body = json_encode($request);
     $request->ok($body, array('Content-Type' => 'application/json'));
 }

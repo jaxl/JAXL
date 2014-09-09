@@ -50,7 +50,8 @@ class XMPPJid {
 	public $resource = null;
 	public $bare = null;
 
-	public function __construct($str) {
+	public function __construct($str)
+	{
 		$tmp = explode("@", $str);
 		if (sizeof($tmp) == 2) {
 			$this->node = $tmp[0];
@@ -68,7 +69,8 @@ class XMPPJid {
 		$this->bare = $this->node ? $this->node."@".$this->domain : $this->domain;
 	}
 
-	public function to_string() {
+	public function to_string()
+	{
 		$str = "";
 		if ($this->node) $str .= $this->node.'@'.$this->domain;
 		else if ($this->domain) $str .= $this->domain;

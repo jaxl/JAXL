@@ -47,15 +47,18 @@ class JAXLClock {
 	// scheduled jobs
 	public $jobs = array();
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->time = microtime(true);
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		_info("shutting down clock server...");
 	}
 
-	public function tick($by = null) {
+	public function tick($by = null)
+	{
 		// update clock
 		if ($by) {
 			$this->tick += $by;
@@ -84,12 +87,14 @@ class JAXLClock {
 	}
 
 	// calculate execution time of callback
-	public function tc($callback, $args = null) {
+	public function tc($callback, $args = null)
+	{
 
 	}
 
 	// callback after $time microseconds
-	public function call_fun_after($time, $callback, $args = null) {
+	public function call_fun_after($time, $callback, $args = null)
+	{
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -102,7 +107,8 @@ class JAXLClock {
 	}
 
 	// callback periodically after $time microseconds
-	public function call_fun_periodic($time, $callback, $args = null) {
+	public function call_fun_periodic($time, $callback, $args = null)
+	{
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -115,7 +121,8 @@ class JAXLClock {
 	}
 
 	// cancel a previously scheduled callback
-	public function cancel_fun_call($ref) {
+	public function cancel_fun_call($ref)
+	{
 		unset($this->jobs[$ref-1]);
 	}
 }

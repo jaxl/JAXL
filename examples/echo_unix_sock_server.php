@@ -46,7 +46,8 @@ JAXLLogger::$level = JAXL_INFO;
 
 $server = null;
 
-function on_request($client, $raw) {
+function on_request($client, $raw)
+{
 	global $server;
 	$server->send($client, $raw);
 	_info("got client callback ".$raw);

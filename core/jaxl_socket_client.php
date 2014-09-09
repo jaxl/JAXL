@@ -69,23 +69,27 @@ class JAXLSocketClient {
 	private $recv_chunk_size = 1024;
 	private $writing = false;
 
-	public function __construct($stream_context = null) {
+	public function __construct($stream_context = null)
+	{
 		$this->stream_context = $stream_context;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		//_debug("cleaning up xmpp socket...");
 		$this->disconnect();
 	}
 
-	public function set_callback($recv_cb) {
+	public function set_callback($recv_cb)
+	{
 		$this->recv_cb = $recv_cb;
 	}
 
 	/**
 	 * @param string | resource $socket_path
 	 */
-	public function connect($socket_path) {
+	public function connect($socket_path)
+	{
 		if (gettype($socket_path) == "string") {
 			$path_parts = explode(":", $socket_path);
 			$this->transport = 	$path_parts[0];
@@ -116,7 +120,8 @@ class JAXLSocketClient {
 		}
 	}
 
-	public function disconnect() {
+	public function disconnect()
+	{
 		JAXLLoop::unwatch($this->fd, array(
 			'read' => true,
 			'write' => true
@@ -125,13 +130,15 @@ class JAXLSocketClient {
 		$this->fd = null;
 	}
 
-	public function compress() {
+	public function compress()
+	{
 		$this->compressed = true;
 		//stream_filter_append($this->fd, 'zlib.inflate', STREAM_FILTER_READ);
 		//stream_filter_append($this->fd, 'zlib.deflate', STREAM_FILTER_WRITE);
 	}
 
-	public function crypt() {
+	public function crypt()
+	{
 		// set blocking (since tls negotiation fails if stream is non-blocking)
 		stream_set_blocking($this->fd, true);
 
@@ -151,7 +158,8 @@ class JAXLSocketClient {
 		return $ret;
 	}
 
-	public function send($data) {
+	public function send($data)
+	{
 		$this->obuffer .= $data;
 
 		// add watch for write events
@@ -162,7 +170,8 @@ class JAXLSocketClient {
 		$this->writing = true;
 	}
 
-	public function on_read_ready($fd) {
+	public function on_read_ready($fd)
+	{
 		//_debug("on read ready called");
 		$raw = @fread($fd, $this->recv_chunk_size);
 		$bytes = strlen($raw);
@@ -190,7 +199,8 @@ class JAXLSocketClient {
 		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 
-	public function on_write_ready($fd) {
+	public function on_write_ready($fd)
+	{
 		//_debug("on write ready called");
 		$total = strlen($this->obuffer);
 		$bytes = @fwrite($fd, $this->obuffer);

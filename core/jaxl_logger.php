@@ -44,17 +44,35 @@ define('JAXL_INFO', 4);
 define('JAXL_DEBUG', 5);
 
 // generic global logging shortcuts for different level of verbosity
-function _error($msg) { JAXLLogger::log($msg, JAXL_ERROR); }
-function _warning($msg) { JAXLLogger::log($msg, JAXL_WARNING); }
-function _notice($msg) { JAXLLogger::log($msg, JAXL_NOTICE); }
-function _info($msg) { JAXLLogger::log($msg, JAXL_INFO); }
-function _debug($msg) { JAXLLogger::log($msg, JAXL_DEBUG); }
+function _error($msg)
+{
+    JAXLLogger::log($msg, JAXL_ERROR);
+}
+function _warning($msg)
+{
+    JAXLLogger::log($msg, JAXL_WARNING);
+}
+function _notice($msg)
+{
+    JAXLLogger::log($msg, JAXL_NOTICE);
+}
+function _info($msg)
+{
+    JAXLLogger::log($msg, JAXL_INFO);
+}
+function _debug($msg)
+{
+    JAXLLogger::log($msg, JAXL_DEBUG);
+}
 
 // generic global terminal output colorize method
 // finally sends colorized message to terminal using error_log/1
 // this method is mainly to escape $msg from file:line and time
 // prefix done by _debug, _error, ... methods
-function _colorize($msg, $verbosity) { error_log(JAXLLogger::colorize($msg, $verbosity)); }
+function _colorize($msg, $verbosity)
+{
+    error_log(JAXLLogger::colorize($msg, $verbosity));
+}
 
 class JAXLLogger {
 
@@ -70,7 +88,8 @@ class JAXLLogger {
 		5 => 37		// debug: white
 	);
 
-	public static function log($msg, $verbosity = 1) {
+	public static function log($msg, $verbosity = 1)
+	{
 		if ($verbosity <= self::$level) {
 			$bt = debug_backtrace(); array_shift($bt); $callee = array_shift($bt);
 			$msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
@@ -83,7 +102,8 @@ class JAXLLogger {
 		}
 	}
 
-	public static function colorize($msg, $verbosity) {
+	public static function colorize($msg, $verbosity)
+	{
 		return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
 	}
 }

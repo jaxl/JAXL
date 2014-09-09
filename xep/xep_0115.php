@@ -46,7 +46,8 @@ class XEP_0115 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array();
 	}
 
@@ -54,7 +55,8 @@ class XEP_0115 extends XMPPXep {
 	// api methods
 	//
 
-	public function get_caps_pkt($cat, $type, $lang, $name, $node, $features) {
+	public function get_caps_pkt($cat, $type, $lang, $name, $node, $features)
+	{
 		asort($features);
 		$S = $cat.'/'.$type.'/'.$lang.'/'.$name.'<';
 		foreach ($features as $feature) $S .= $feature.'<';

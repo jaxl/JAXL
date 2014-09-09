@@ -47,7 +47,8 @@ class JAXLCli {
 	private $recv_cb = null;
 	private $recv_chunk_size = 1024;
 
-	public function __construct($recv_cb = null, $quit_cb = null) {
+	public function __construct($recv_cb = null, $quit_cb = null)
+	{
 		$this->recv_cb = $recv_cb;
 		$this->quit_cb = $quit_cb;
 
@@ -59,17 +60,20 @@ class JAXLCli {
 		));
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		@fclose($this->in);
 	}
 
-	public function stop() {
+	public function stop()
+	{
 		JAXLLoop::unwatch($this->in, array(
 			'read' => true
 		));
 	}
 
-	public function on_read_ready($in) {
+	public function on_read_ready($in)
+	{
 		$raw = @fread($in, $this->recv_chunk_size);
 
 		if (ord($raw) == 10) {
@@ -86,7 +90,8 @@ class JAXLCli {
 		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 
-	public static function prompt($inc = true) {
+	public static function prompt($inc = true)
+	{
 		if ($inc) ++self::$counter;
 		echo "jaxl ".self::$counter."> ";
 	}

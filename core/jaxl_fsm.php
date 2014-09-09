@@ -43,7 +43,8 @@ abstract class JAXLFsm {
 	// abstract method
 	abstract public function handle_invalid_state($r);
 
-	public function __construct($state) {
+	public function __construct($state)
+	{
 		$this->state = $state;
 	}
 
@@ -55,7 +56,8 @@ abstract class JAXLFsm {
 	//
 	// for case 1) new state will be an array
 	// for other cases new state will be a string
-	public function __call($event, $args) {
+	public function __call($event, $args)
+	{
 		if ($this->state) {
 			// call state method
 			_debug("calling state handler '".(is_array($this->state) ? $this->state[1] : $this->state)."' for incoming event '".$event."'");

@@ -52,11 +52,13 @@ class JAXLEvent {
 	protected $common = array();
 	public $reg = array();
 
-	public function __construct($common) {
+	public function __construct($common)
+	{
 		$this->common = $common;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 
 	}
 
@@ -64,7 +66,8 @@ class JAXLEvent {
 	// returns a reference to be used while deleting callback
 	// callback'd method must return TRUE to be persistent
 	// if none returned or FALSE, callback will be removed automatically
-	public function add($ev, $cb, $pri) {
+	public function add($ev, $cb, $pri)
+	{
 		if (!isset($this->reg[$ev]))
 			$this->reg[$ev] = array();
 
@@ -76,7 +79,8 @@ class JAXLEvent {
 	// emit event to notify registered callbacks
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
-	public function emit($ev, $data = array()) {
+	public function emit($ev, $data = array())
+	{
 		$data = array_merge($this->common, $data);
 		$cbs = array();
 
@@ -105,12 +109,14 @@ class JAXLEvent {
 	}
 
 	// remove previous registered callback
-	public function del($ref) {
+	public function del($ref)
+	{
 		$ref = explode("-", $ref);
 		unset($this->reg[$ref[0]][$ref[1]]);
 	}
 
-	public function exists($ev) {
+	public function exists($ev)
+	{
 		$ret = isset($this->reg[$ev]);
 		//_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
 		return $ret;

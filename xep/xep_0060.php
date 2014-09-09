@@ -46,7 +46,8 @@ class XEP_0060 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array();
 	}
 
@@ -58,29 +59,35 @@ class XEP_0060 extends XMPPXep {
 	// api methods (subscriber use case)
 	//
 
-	public function get_subscribe_pkt($service, $node, $jid = null) {
+	public function get_subscribe_pkt($service, $node, $jid = null)
+	{
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
 		$child->c('subscribe', null, array('node' => $node, 'jid' => ($jid ? $jid : $this->jaxl->full_jid->to_string())));
 		return $this->get_iq_pkt($service, $child);
 	}
 
-	public function subscribe($service, $node, $jid = null) {
+	public function subscribe($service, $node, $jid = null)
+	{
 		$this->jaxl->send($this->get_subscribe_pkt($service, $node, $jid));
 	}
 
-	public function unsubscribe() {
+	public function unsubscribe()
+	{
 
 	}
 
-	public function get_subscription_options() {
+	public function get_subscription_options()
+	{
 
 	}
 
-	public function set_subscription_options() {
+	public function set_subscription_options()
+	{
 
 	}
 
-	public function get_node_items() {
+	public function get_node_items()
+	{
 
 	}
 
@@ -88,18 +95,21 @@ class XEP_0060 extends XMPPXep {
 	// api methods (publisher use case)
 	//
 
-	public function get_publish_item_pkt($service, $node, $item) {
+	public function get_publish_item_pkt($service, $node, $item)
+	{
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
 		$child->c('publish', null, array('node' => $node));
 		$child->cnode($item);
 		return $this->get_iq_pkt($service, $child);
 	}
 
-	public function publish_item($service, $node, $item) {
+	public function publish_item($service, $node, $item)
+	{
 		$this->jaxl->send($this->get_publish_item_pkt($service, $node, $item));
 	}
 
-	public function delete_item() {
+	public function delete_item()
+	{
 
 	}
 
@@ -107,13 +117,15 @@ class XEP_0060 extends XMPPXep {
 	// api methods (owner use case)
 	//
 
-	public function get_create_node_pkt($service, $node) {
+	public function get_create_node_pkt($service, $node)
+	{
 		$child = new JAXLXml('pubsub', NS_PUBSUB);
 		$child->c('create', null, array('node' => $node));
 		return $this->get_iq_pkt($service, $child);
 	}
 
-	public function create_node($service, $node) {
+	public function create_node($service, $node)
+	{
 		$this->jaxl->send($this->get_create_node_pkt($service, $node));
 	}
 
@@ -127,7 +139,8 @@ class XEP_0060 extends XMPPXep {
 	//
 
 	// this always add attrs
-	protected function get_iq_pkt($service, $child, $type = 'set') {
+	protected function get_iq_pkt($service, $child, $type = 'set')
+	{
 		return $this->jaxl->get_iq_pkt(
 			array('type' => $type, 'from' => $this->jaxl->full_jid->to_string(), 'to' => $service),
 			$child

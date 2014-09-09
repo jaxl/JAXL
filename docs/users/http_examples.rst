@@ -17,7 +17,8 @@ Define a callback method that will accept all incoming ``HTTPRequest`` objects
 
 .. code-block:: ruby
 
-    function on_request($request) {
+    function on_request($request)
+    {
         if ($request->method == 'GET') {
             $body = json_encode($request);
             $request->ok($body, array('Content-Type' => 'application:json'));
@@ -55,7 +56,8 @@ Define our REST resources callback methods:
 
 .. code-block:: ruby
 
-    function index($request) {
+    function index($request)
+    {
         $request->send_response(
             200, array('Content-Type' => 'text/html'), 
             '<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
@@ -63,7 +65,8 @@ Define our REST resources callback methods:
         $request->close();
     }
     
-    function upload($request) {
+    function upload($request)
+    {
         if ($request->method == 'GET') {
             $request->send_response(
                 200, array('Content-Type' => 'text/html'),

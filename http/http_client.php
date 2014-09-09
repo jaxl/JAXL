@@ -55,7 +55,8 @@ class HTTPClient {
 
 	private $client = null;
 
-	public function __construct($url, $headers = array(), $data = null) {
+	public function __construct($url, $headers = array(), $data = null)
+	{
 		$this->url = $url;
 		$this->headers = $headers;
 		$this->data = $data;
@@ -64,7 +65,8 @@ class HTTPClient {
 		$this->client->set_callback(array(&$this, 'on_response'));
 	}
 
-	public function start($method = 'GET') {
+	public function start($method = 'GET')
+	{
 		$this->method = $method;
 
 		$this->parts = parse_url($this->url);
@@ -86,11 +88,13 @@ class HTTPClient {
 		}
 	}
 
-	public function on_response($raw) {
+	public function on_response($raw)
+	{
 		_info("got http response");
 	}
 
-	protected function send_request() {
+	protected function send_request()
+	{
 		$this->client->send($this->_line()."\r\n");
 		$this->client->send($this->_ua()."\r\n");
 		$this->client->send($this->_host()."\r\n");
@@ -101,31 +105,38 @@ class HTTPClient {
 	// private methods on uri parts
 	//
 
-	private function _line() {
+	private function _line()
+	{
 		return $this->method.' '.$this->_uri().' HTTP/1.1';
 	}
 
-	private function _ua() {
+	private function _ua()
+	{
 		return 'User-Agent: jaxl_http_client/3.x';
 	}
 
-	private function _host() {
+	private function _host()
+	{
 		return 'Host: '.$this->parts['host'].':'.$this->_port();
 	}
 
-	private function _transport() {
+	private function _transport()
+	{
 		return ($this->parts['scheme'] == 'http' ? 'tcp' : 'ssl');
 	}
 
-	private function _ip() {
+	private function _ip()
+	{
 		return gethostbyname($this->parts['host']);
 	}
 
-	private function _port() {
+	private function _port()
+	{
 		return @$this->parts['port'] ? $this->parts['port'] : 80;
 	}
 
-	private function _uri() {
+	private function _uri()
+	{
 		$uri = $this->parts['path'];
 		if (@$this->parts['query']) $uri .= '?'.$this->parts['query'];
 		if (@$this->parts['fragment']) $uri .= '#'.$this->parts['fragment'];

@@ -44,20 +44,24 @@ class HTTPMultiPart extends JAXLFsm {
 	public $form_data = array();
 	public $index = -1;
 
-	public function handle_invalid_state($r) {
+	public function handle_invalid_state($r)
+	{
 		_error("got invalid event $r");
 	}
 
-	public function __construct($boundary) {
+	public function __construct($boundary)
+	{
 		$this->boundary = $boundary;
 		parent::__construct('wait_for_boundary_start');
 	}
 
-	public function state() {
+	public function state()
+	{
 		return $this->state;
 	}
 
-	public function wait_for_boundary_start($event, $data) {
+	public function wait_for_boundary_start($event, $data)
+	{
 		if ($event == 'process') {
 			if ($data[0] == '--'.$this->boundary) {
 				$this->index += 1;
@@ -77,7 +81,8 @@ class HTTPMultiPart extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_content_disposition($event, $data) {
+	public function wait_for_content_disposition($event, $data)
+	{
 		if ($event == 'process') {
 			$disposition = explode(":", $data[0]);
 
@@ -105,7 +110,8 @@ class HTTPMultiPart extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_content_type($event, $data) {
+	public function wait_for_content_type($event, $data)
+	{
 		if ($event == 'process') {
 			$type = explode(":", $data[0]);
 			if (strtolower(trim($type[0])) == 'content-type') {
@@ -122,7 +128,8 @@ class HTTPMultiPart extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_content_body($event, $data) {
+	public function wait_for_content_body($event, $data)
+	{
 		if ($event == 'process') {
 			if ($data[0] == '--'.$this->boundary) {
 				_debug("start of new multipart/form-data detected");
@@ -140,7 +147,8 @@ class HTTPMultiPart extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_empty_line($event, $data) {
+	public function wait_for_empty_line($event, $data)
+	{
 		if ($event == 'process') {
 			if ($data[0] == '') {
 				return array('done', true);
@@ -154,7 +162,8 @@ class HTTPMultiPart extends JAXLFsm {
 		}
 	}
 
-	public function done($event, $data) {
+	public function done($event, $data)
+	{
 		_warning("got unhandled event $event with data $data[0]");
 		return array('done', false);
 	}

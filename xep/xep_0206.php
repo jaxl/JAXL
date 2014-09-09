@@ -63,7 +63,8 @@ class XEP_0206 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		$this->mch = curl_multi_init();
 
 		return array(
@@ -75,7 +76,8 @@ class XEP_0206 extends XMPPXep {
 	// event callbacks
 	//
 
-	public function send($body) {
+	public function send($body)
+	{
 		if (is_object($body)) {
 			$body = $body->to_string();
 		} else {
@@ -117,7 +119,8 @@ class XEP_0206 extends XMPPXep {
 		curl_multi_add_handle($this->mch, $this->chs[$this->rid]);
 	}
 
-	public function recv() {
+	public function recv()
+	{
 		if ($this->restarted) {
 			$this->restarted = false;
 
@@ -162,15 +165,18 @@ class XEP_0206 extends XMPPXep {
 		} while ($running);
 	}
 
-	public function set_callback($recv_cb) {
+	public function set_callback($recv_cb)
+	{
 		$this->recv_cb = $recv_cb;
 	}
 
-	public function wrap($stanza) {
+	public function wrap($stanza)
+	{
 		return '<body sid="'.$this->sid.'" rid="'.++$this->rid.'" xmlns="'.NS_HTTP_BIND.'">'.$stanza.'</body>';
 	}
 
-	public function unwrap($body) {
+	public function unwrap($body)
+	{
 		// a dirty way but it works efficiently
 		if (substr($body, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
 		else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
@@ -184,7 +190,8 @@ class XEP_0206 extends XMPPXep {
 		return array($envelop, $payload);
 	}
 
-	public function session_start() {
+	public function session_start()
+	{
 		$this->rid = @$this->jaxl->cfg['bosh_rid'] ? $this->jaxl->cfg['bosh_rid'] : rand(1000, 10000);
 		$this->hold = @$this->jaxl->cfg['bosh_hold'] ? $this->jaxl->cfg['bosh_hold'] : $this->hold;
 		$this->wait = @$this->jaxl->cfg['bosh_wait'] ? $this->jaxl->cfg['bosh_wait'] : $this->wait;
@@ -213,16 +220,19 @@ class XEP_0206 extends XMPPXep {
 		$this->send($body);
 	}
 
-	public function ping() {
+	public function ping()
+	{
 		$body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
 		$this->send($body);
 	}
 
-	public function session_end() {
+	public function session_end()
+	{
 		$this->disconnect();
 	}
 
-	public function disconnect() {
+	public function disconnect()
+	{
 		_debug("disconnecting");
 	}
 }

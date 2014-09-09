@@ -63,14 +63,16 @@ class HTTPDispatchRule {
 	// other matching rules
 	public $extra = array();
 
-	public function __construct($cb, $pattern, $methods = array('GET'), $extra = array()) {
+	public function __construct($cb, $pattern, $methods = array('GET'), $extra = array())
+	{
 		$this->cb = $cb;
 		$this->pattern = $pattern;
 		$this->methods = $methods;
 		$this->extra = $extra;
 	}
 
-	public function match($path, $method) {
+	public function match($path, $method)
+	{
 		if (preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path, $matches)) {
 			if (in_array($method, $this->methods)) {
 				return $matches;
@@ -84,11 +86,13 @@ class HTTPDispatcher {
 
 	protected $rules = array();
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->rules = array();
 	}
 
-	public function add_rule($rule) {
+	public function add_rule($rule)
+	{
 		$s = sizeof($rule);
 		if ($s > 4) { _debug("invalid rule"); return; }
 
@@ -100,7 +104,8 @@ class HTTPDispatcher {
 		$this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);
 	}
 
-	public function dispatch($request) {
+	public function dispatch($request)
+	{
 		foreach ($this->rules as $rule) {
 			//_debug("matching $request->path with pattern $rule->pattern");
 			if (($matches = $rule->match($request->path, $request->method)) !== false) {

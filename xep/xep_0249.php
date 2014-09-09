@@ -46,7 +46,8 @@ class XEP_0249 extends XMPPXep {
 	// abstract method
 	//
 
-	public function init() {
+	public function init()
+	{
 		return array();
 	}
 
@@ -54,7 +55,8 @@ class XEP_0249 extends XMPPXep {
 	// api methods
 	//
 
-	public function get_invite_pkt($to_bare_jid, $room_jid, $password = null, $reason = null, $thread = null, $continue = null) {
+	public function get_invite_pkt($to_bare_jid, $room_jid, $password = null, $reason = null, $thread = null, $continue = null)
+	{
 		$xattrs = array('jid' => $room_jid);
 		if ($password) $xattrs['password'] = $password;
 		if ($reason) $xattrs['reason'] = $reason;
@@ -68,7 +70,8 @@ class XEP_0249 extends XMPPXep {
 		);
 	}
 
-	public function invite($to_bare_jid, $room_jid, $password = null, $reason = null, $thread = null, $continue = null) {
+	public function invite($to_bare_jid, $room_jid, $password = null, $reason = null, $thread = null, $continue = null)
+	{
 		$this->jaxl->send($this->get_invite_pkt($to_bare_jid, $room_jid, $password, $reason, $thread, $continue));
 	}
 

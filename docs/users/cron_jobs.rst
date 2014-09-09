@@ -7,7 +7,8 @@ Lets try some cron job scheduling using Jaxl interactive shell:
 
     >>> ./jaxlctl shell
     jaxl 1>
-    jaxl 1> function do_job($params) {
+    jaxl 1> function do_job($params)
+    ....... {
     .......     echo "cron job called";
     ....... }
     jaxl 2>

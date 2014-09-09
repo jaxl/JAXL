@@ -47,7 +47,8 @@ require_once "jaxl.php";
  */
 class XMPPStreamTest extends PHPUnit_Framework_TestCase {
 
-	function test_xmpp_stream() {
+	function test_xmpp_stream()
+	{
 		$xmpp = new XMPPStream("test@localhost", "password");
 		$xmpp->connect();
 

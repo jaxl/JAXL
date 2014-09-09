@@ -47,7 +47,8 @@ require_once "jaxl.php";
  */
 class XMPPJidTest extends PHPUnit_Framework_TestCase {
 
-	function test_xmpp_jid_construct() {
+	function test_xmpp_jid_construct()
+	{
 		$jid = new XMPPJid("1@domain.tld/res");
 		$this->assertEquals('1@domain.tld/res', $jid->to_string());
 
