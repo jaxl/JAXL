@@ -67,7 +67,7 @@ class JAXLSock5 {
 		$this->port = $port;
 		$sock_path = $this->_sock_path();
 
-		if($this->client->connect($sock_path)) {
+		if ($this->client->connect($sock_path)) {
 			_debug("established connection to $sock_path");
 			return true;
 		}

@@ -66,7 +66,7 @@ class XEP_0030 extends XMPPXep {
 
 	public function get_info($entity_jid, $callback=null) {
 		$pkt = $this->get_info_pkt($entity_jid);
-		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+		if ($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
 		$this->jaxl->send($pkt);
 	}
 
@@ -79,7 +79,7 @@ class XEP_0030 extends XMPPXep {
 
 	public function get_items($entity_jid, $callback=null) {
 		$pkt = $this->get_items_pkt($entity_jid);
-		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+		if ($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
 		$this->jaxl->send($pkt);
 	}
 

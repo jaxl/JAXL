@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 2) {
+if ($argc < 2) {
 	echo "Usage: $argv[0] domain\n";
 	exit;
 }
@@ -71,16 +71,16 @@ $form = array();
 function wait_for_register_response($event, $args) {
 	global $client, $form;
 
-	if($event == 'stanza_cb') {
+	if ($event == 'stanza_cb') {
 		$stanza = $args[0];
-		if($stanza->name == 'iq') {
+		if ($stanza->name == 'iq') {
 			$form['type'] = $stanza->attrs['type'];
-			if($stanza->attrs['type'] == 'result') {
+			if ($stanza->attrs['type'] == 'result') {
 				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
 				$client->send_end_stream();
 				return "logged_out";
 			}
-			else if($stanza->attrs['type'] == 'error') {
+			else if ($stanza->attrs['type'] == 'error') {
 				$error = $stanza->exists('error');
 				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
 				echo "error text: ".$error->exists('text')->text.PHP_EOL;
@@ -100,14 +100,14 @@ function wait_for_register_form($event, $args) {
 
 	$stanza = $args[0];
 	$query = $stanza->exists('query', NS_INBAND_REGISTER);
-	if($query) {
+	if ($query) {
 		$instructions = $query->exists('instructions');
-		if($instructions) {
+		if ($instructions) {
 			echo $instructions->text.PHP_EOL;
 		}
 
 		foreach($query->childrens as $k=>$child) {
-			if($child->name != 'instructions') {
+			if ($child->name != 'instructions') {
 				$form[$child->name] = readline($child->name.":");
 
 			}
@@ -146,7 +146,7 @@ $client->start();
 // if registration was successful
 // try to connect with newly registered account
 //
-if($form['type'] == 'result') {
+if ($form['type'] == 'result') {
 
 _info("connecting newly registered user account");
 $client = new JAXL(array(

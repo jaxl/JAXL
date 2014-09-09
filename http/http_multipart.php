@@ -58,8 +58,8 @@ class HTTPMultiPart extends JAXLFsm {
 	}
 
 	public function wait_for_boundary_start($event, $data) {
-		if($event == 'process') {
-			if($data[0] == '--'.$this->boundary) {
+		if ($event == 'process') {
+			if ($data[0] == '--'.$this->boundary) {
 				$this->index += 1;
 				$this->form_data[$this->index] = array(
 					'meta' => array(),
@@ -80,13 +80,13 @@ class HTTPMultiPart extends JAXLFsm {
 	}
 
 	public function wait_for_content_disposition($event, $data) {
-		if($event == 'process') {
+		if ($event == 'process') {
 			$disposition = explode(":", $data[0]);
 
-			if(strtolower(trim($disposition[0])) == 'content-disposition') {
+			if (strtolower(trim($disposition[0])) == 'content-disposition') {
 				$this->form_data[$this->index]['headers'][$disposition[0]] = trim($disposition[1]);
 				$meta = explode(";", $disposition[1]);
-				if(trim(array_shift($meta)) == 'form-data') {
+				if (trim(array_shift($meta)) == 'form-data') {
 					foreach($meta as $k) {
 						list($k, $v) = explode("=", $k);
 						$this->form_data[$this->index]['meta'][$k] = $v;
@@ -111,9 +111,9 @@ class HTTPMultiPart extends JAXLFsm {
 	}
 
 	public function wait_for_content_type($event, $data) {
-		if($event == 'process') {
+		if ($event == 'process') {
 			$type = explode(":", $data[0]);
-			if(strtolower(trim($type[0])) == 'content-type') {
+			if (strtolower(trim($type[0])) == 'content-type') {
 				$this->form_data[$this->index]['headers'][$type[0]] = trim($type[1]);
 				$this->form_data[$this->index]['meta']['type'] = $type[1];
 				return array('wait_for_content_body', true);
@@ -130,12 +130,12 @@ class HTTPMultiPart extends JAXLFsm {
 	}
 
 	public function wait_for_content_body($event, $data) {
-		if($event == 'process') {
-			if($data[0] == '--'.$this->boundary) {
+		if ($event == 'process') {
+			if ($data[0] == '--'.$this->boundary) {
 				_debug("start of new multipart/form-data detected");
 				return array('wait_for_content_disposition', true);
 			}
-			else if($data[0] == '--'.$this->boundary.'--') {
+			else if ($data[0] == '--'.$this->boundary.'--') {
 				_debug("end of multipart form data detected");
 				return array('wait_for_empty_line', true);
 			}
@@ -151,8 +151,8 @@ class HTTPMultiPart extends JAXLFsm {
 	}
 
 	public function wait_for_empty_line($event, $data) {
-		if($event == 'process') {
-			if($data[0] == '') {
+		if ($event == 'process') {
+			if ($data[0] == '') {
 				return array('done', true);
 			}
 			else {

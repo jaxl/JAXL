@@ -61,9 +61,9 @@ class JAXLCtl {
 	public function __construct($command, $params) {
 		global $exe;
 
-		if(method_exists($this, $command)) {
+		if (method_exists($this, $command)) {
 			$r = call_user_func_array(array(&$this, $command), $params);
-			if(sizeof($r) == 2) {
+			if (sizeof($r) == 2) {
 				list($buffer_cb, $quit_cb) = $r;
 				$this->buffer_cb = $buffer_cb;
 				$this->cli = new JAXLCli(array(&$this, 'on_terminal_input'), $quit_cb);
@@ -90,12 +90,12 @@ class JAXLCtl {
 		$raw = trim($raw);
 		$last = substr($raw, -1, 1);
 
-		if($last == ";") {
+		if ($last == ";") {
 			// dispatch to buffer callback
 			call_user_func($this->buffer_cb, $this->buffer.$raw);
 			$this->buffer = '';
 		}
-		else if($last == '\\') {
+		else if ($last == '\\') {
 			$this->buffer .= substr($raw, 0, -1);
 			echo $this->dots;
 		}
@@ -178,7 +178,7 @@ class JAXLCtl {
 }
 
 // we atleast need a command argument
-if($argc < 2) {
+if ($argc < 2) {
 	JAXLCtl::print_help();
 	exit;
 }

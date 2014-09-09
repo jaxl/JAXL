@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 3) {
+if ($argc < 3) {
 	echo "Usage: $argv[0] jid pass\n";
 	exit;
 }
@@ -78,7 +78,7 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_headline_message', function($stanza) {
 	global $client;
-	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
+	if (($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
 		_info("got pubsub event");
 	}
 	else {

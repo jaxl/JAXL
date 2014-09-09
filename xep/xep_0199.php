@@ -47,7 +47,7 @@ class XEP_0199 extends XMPPXep {
 	}
 
 	public function on_xmpp_ping($stanza) {
-		if($stanza->exists('ping', NS_XMPP_PING)) {
+		if ($stanza->exists('ping', NS_XMPP_PING)) {
 			$stanza->type = "result";
 			$stanza->to = $stanza->from;
 			$stanza->from = $this->jaxl->full_jid->to_string();

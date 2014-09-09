@@ -56,22 +56,22 @@ abstract class JAXLFsm {
 	// for case 1) new state will be an array
 	// for other cases new state will be a string
 	public function __call($event, $args) {
-		if($this->state) {
+		if ($this->state) {
 			// call state method
 			_debug("calling state handler '".(is_array($this->state) ? $this->state[1] : $this->state)."' for incoming event '".$event."'");
 			$call = is_callable($this->state) ? $this->state : (method_exists($this, $this->state) ? array(&$this, $this->state): $this->state);
 			$r = call_user_func($call, $event, $args);
 
 			// 4 cases of possible return value
-			if(is_callable($r)) $this->state = $r;
-			else if(is_array($r) && sizeof($r) == 2) list($this->state, $ret) = $r;
-			else if(is_array($r) && sizeof($r) == 1) $this->state = $r[0];
-			else if(is_string($r)) $this->state = $r;
+			if (is_callable($r)) $this->state = $r;
+			else if (is_array($r) && sizeof($r) == 2) list($this->state, $ret) = $r;
+			else if (is_array($r) && sizeof($r) == 1) $this->state = $r[0];
+			else if (is_string($r)) $this->state = $r;
 			else $this->handle_invalid_state($r);
 			_debug("current state '".(is_array($this->state) ? $this->state[1] : $this->state)."'");
 
 			// return case
-			if(!is_callable($r) && is_array($r) && sizeof($r) == 2)
+			if (!is_callable($r) && is_array($r) && sizeof($r) == 2)
 				return $ret;
 		}
 		else {

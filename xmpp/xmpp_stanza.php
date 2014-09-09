@@ -54,7 +54,7 @@ class XMPPStanza {
 	private $xml;
 
 	public function __construct($name, $attrs=array(), $ns=NS_JABBER_CLIENT) {
-		if($name instanceof JAXLXml) $this->xml = $name;
+		if ($name instanceof JAXLXml) $this->xml = $name;
 		else $this->xml = new JAXLXml($name, $ns, $attrs);
 	}
 
@@ -90,7 +90,7 @@ class XMPPStanza {
 			case 'from_resource':
 				list($attr, $key) = explode('_', $prop);
 				$val = @$this->xml->attrs[$attr] ? $this->xml->attrs[$attr] : null;
-				if(!$val) return null;
+				if (!$val) return null;
 
 				$val = new XMPPJid($val);
 				return $val->$key;
@@ -104,7 +104,7 @@ class XMPPStanza {
 			case 'thread':
 			case 'subject':
 				$val = $this->xml->exists($prop);
-				if(!$val) return null;
+				if (!$val) return null;
 				return $val->text;
 				break;
 
@@ -143,7 +143,7 @@ class XMPPStanza {
 			case 'from_resource':
 				list($attr, $key) = explode('_', $prop);
 				$val1 = @$this->xml->attrs[$attr];
-				if(!$val1) $val1 = '';
+				if (!$val1) $val1 = '';
 
 				$val1 = new XMPPJid($val1);
 				$val1->$key = $val;
@@ -160,7 +160,7 @@ class XMPPStanza {
 			case 'thread':
 			case 'subject':
 				$val1 = $this->xml->exists($prop);
-				if(!$val1) $this->xml->c($prop)->t($val)->up();
+				if (!$val1) $this->xml->c($prop)->t($val)->up();
 				else $this->xml->update($prop, $val1->ns, $val1->attrs, $val);
 				return true;
 				break;

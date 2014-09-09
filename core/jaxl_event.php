@@ -65,7 +65,7 @@ class JAXLEvent {
 	// callback'd method must return TRUE to be persistent
 	// if none returned or FALSE, callback will be removed automatically
 	public function add($ev, $cb, $pri) {
-		if(!isset($this->reg[$ev]))
+		if (!isset($this->reg[$ev]))
 			$this->reg[$ev] = array();
 
 		$ref = sizeof($this->reg[$ev]);
@@ -80,10 +80,10 @@ class JAXLEvent {
 		$data = array_merge($this->common, $data);
 		$cbs = array();
 
-		if(!isset($this->reg[$ev])) return $data;
+		if (!isset($this->reg[$ev])) return $data;
 
 		foreach($this->reg[$ev] as $cb) {
-			if(!isset($cbs[$cb[0]]))
+			if (!isset($cbs[$cb[0]]))
 				$cbs[$cb[0]] = array();
 			$cbs[$cb[0]][] = $cb[1];
 		}
@@ -96,7 +96,7 @@ class JAXLEvent {
 				// things will change in future, atleast put the callback inside a try/catch block
 				// here we only check if there was a return, if yes we update $data with return value
 				// this is bad design, need more thoughts, should work as of now
-				if($ret) $data = $ret;
+				if ($ret) $data = $ret;
 			}
 		}
 

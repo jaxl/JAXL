@@ -79,7 +79,7 @@ class XEP_0114 extends XMPPXep {
 	}
 
 	public function logged_out($stanza) {
-		if($stanza->name == "error" && $stanza->ns == NS_XMPP) {
+		if ($stanza->name == "error" && $stanza->ns == NS_XMPP) {
 			$reason = $stanza->childrens[0]->name;
 			$this->jaxl->handle_auth_failure($reason);
 			$this->jaxl->send_end_stream();

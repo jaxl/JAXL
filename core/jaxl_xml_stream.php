@@ -105,11 +105,11 @@ class JAXLXmlStream {
 			$k = $this->explode($key);
 
 			// no ns specified
-			if($k[0] == null) {
+			if ($k[0] == null) {
 				$attrs[$k[1]] = $v;
 			}
 			// xml ns
-			else if($k[0] == NS_XML) {
+			else if ($k[0] == NS_XML) {
 				unset($attrs[$key]);
 				$attrs['xml:'.$k[1]] = $v;
 			}
@@ -121,17 +121,17 @@ class JAXLXmlStream {
 			}
 		}
 
-		if($this->depth <= 0) {
+		if ($this->depth <= 0) {
 			$this->depth = 0;
 			$this->ns = $name[1];
 
-			if($this->start_cb) {
+			if ($this->start_cb) {
 				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				call_user_func($this->start_cb, $stanza);
 			}
 		}
 		else {
-			if(!$this->stanza) {
+			if (!$this->stanza) {
 				$stanza = new JAXLXml($name[1], $name[0], $attrs);
 				$this->stanza = &$stanza;
 			}
@@ -149,17 +149,17 @@ class JAXLXmlStream {
 
 		//echo "depth ".$this->depth.", $name[1] tag ended".PHP_EOL.PHP_EOL;
 
-		if($this->depth == 1) {
-			if($this->end_cb) {
+		if ($this->depth == 1) {
+			if ($this->end_cb) {
 				$stanza = new JAXLXml($name[1], $this->ns);
 				call_user_func($this->end_cb, $stanza);
 			}
 		}
-		else if($this->depth > 1) {
-			if($this->stanza) $this->stanza->up();
+		else if ($this->depth > 1) {
+			if ($this->stanza) $this->stanza->up();
 
-			if($this->depth == 2) {
-				if($this->stanza_cb) {
+			if ($this->depth == 2) {
+				if ($this->stanza_cb) {
 					call_user_func($this->stanza_cb, $this->stanza);
 					$this->stanza = null;
 				}
@@ -171,7 +171,7 @@ class JAXLXmlStream {
 
 	protected function handle_character($parser, $data) {
 		//echo "depth ".$this->depth.", character ".$data." for stanza ".$this->stanza->name.PHP_EOL;
-		if($this->stanza) {
+		if ($this->stanza) {
 			$this->stanza->t(htmlentities($data, ENT_COMPAT, "UTF-8"), TRUE);
 		}
 	}

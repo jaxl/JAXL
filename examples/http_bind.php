@@ -36,7 +36,7 @@
  *
  */
 
-if(!isset($_GET['jid']) || !isset($_GET['pass'])) {
+if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
 	echo "invalid input";
 	exit;
 }

@@ -40,7 +40,7 @@
 // php examples/echo_bot.php root@localhost password
 // php examples/echo_bot.php root@localhost password DIGEST-MD5
 // php examples/echo_bot.php localhost "" ANONYMOUS
-if($argc < 3) {
+if ($argc < 3) {
 	echo "Usage: $argv[0] jid pass auth_type\n";
 	exit;
 }
@@ -126,7 +126,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
 
-	if($type == "available") {
+	if ($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);
 	}

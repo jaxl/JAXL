@@ -36,7 +36,7 @@
  *
  */
 
-if($argc != 5) {
+if ($argc != 5) {
 	echo "Usage: $argv[0] jid pass host port\n";
 	exit;
 }

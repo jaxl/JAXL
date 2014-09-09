@@ -41,7 +41,7 @@ $body = file_get_contents("php://input");
 $body = new SimpleXMLElement($body);
 $attrs = $body->attributes();
 
-if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
+if (!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
 	echo "invalid input";
 	exit;
 }

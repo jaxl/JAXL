@@ -91,7 +91,7 @@ function on_presence_stanza($client, $stanza) {
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
 
-	if($type == "available") {
+	if ($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);
 	}

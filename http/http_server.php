@@ -127,7 +127,7 @@ class HTTPServer {
 		// 'wait_for_body' state is reached when ever
 		// application calls recv_body() method
 		// on received $request object
-		if($request->state() == 'wait_for_body') {
+		if ($request->state() == 'wait_for_body') {
 			$request->body($raw);
 		}
 		else {
@@ -135,7 +135,7 @@ class HTTPServer {
 			$lines = explode(HTTP_CRLF, $raw);
 
 			// parse request line
-			if($request->state() == 'wait_for_request_line') {
+			if ($request->state() == 'wait_for_request_line') {
 				list($method, $resource, $version) = explode(" ", $lines[0]);
 				$request->line($method, $resource, $version);
 				unset($lines[0]);
@@ -146,15 +146,15 @@ class HTTPServer {
 			foreach($lines as $line) {
 				$line_parts = explode(":", $line);
 
-				if(sizeof($line_parts) > 1) {
-					if(strlen($line_parts[0]) > 0) {
+				if (sizeof($line_parts) > 1) {
+					if (strlen($line_parts[0]) > 0) {
 						$k = $line_parts[0];
 						unset($line_parts[0]);
 						$v = implode(":", $line_parts);
 						$request->set_header($k, $v);
 					}
 				}
-				else if(strlen(trim($line_parts[0])) == 0) {
+				else if (strlen(trim($line_parts[0])) == 0) {
 					$request->empty_line();
 				}
 				// if exploded line array size is 1
@@ -167,19 +167,19 @@ class HTTPServer {
 		}
 
 		// if request has reached 'headers_received' state?
-		if($request->state() == 'headers_received') {
+		if ($request->state() == 'headers_received') {
 			// dispatch to any matching rule found
 			_debug("delegating to dispatcher for further routing");
 			$dispatched = $this->dispatcher->dispatch($request);
 
 			// if no dispatch rule matched call generic callback
-			if(!$dispatched && $this->cb) {
+			if (!$dispatched && $this->cb) {
 				_debug("no dispatch rule matched, sending to generic callback");
 				call_user_func($this->cb, $request);
 			}
 			// else if not dispatched and not generic callbacked
 			// send 404 not_found
-			else if(!$dispatched) {
+			else if (!$dispatched) {
 				// TODO: send 404 if no callback is registered for this request
 				_debug("dropping request since no matching dispatch rule or generic callback was specified");
 				$request->not_found('404 Not Found');

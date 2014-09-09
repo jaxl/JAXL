@@ -68,13 +68,13 @@ class JAXLXml {
 				$this->text = $argv[3];
 				break;
 			case 3:
-				if(is_array($argv[1])) {
+				if (is_array($argv[1])) {
 					$this->attrs = $argv[1];
 					$this->text = $argv[2];
 				}
 				else {
 					$this->ns = $argv[1];
-					if(is_array($argv[2])) {
+					if (is_array($argv[2])) {
 						$this->attrs = $argv[2];
 					}
 					else {
@@ -83,7 +83,7 @@ class JAXLXml {
 				}
 				break;
 			case 2:
-				if(is_array($argv[1])) {
+				if (is_array($argv[1])) {
 					$this->attrs = $argv[1];
 				}
 				else {
@@ -109,7 +109,7 @@ class JAXLXml {
 	public function match_attrs($attrs) {
 		$matches = true;
 		foreach($attrs as $k=>$v) {
-			if($this->attrs[$k] !== $v) {
+			if ($this->attrs[$k] !== $v) {
 				$matches = false;
 				break;
 			}
@@ -118,11 +118,11 @@ class JAXLXml {
 	}
 
 	public function t($text, $append=FALSE) {
-		if(!$append) {
+		if (!$append) {
 			$this->rover->text = $text;
 		}
 		else {
-			if($this->rover->text === null)
+			if ($this->rover->text === null)
 				$this->rover->text = '';
 			$this->rover->text .= $text;
 		}
@@ -145,7 +145,7 @@ class JAXLXml {
 	}
 
 	public function up() {
-		if($this->rover->parent) $this->rover = &$this->rover->parent;
+		if ($this->rover->parent) $this->rover = &$this->rover->parent;
 		return $this;
 	}
 
@@ -156,11 +156,11 @@ class JAXLXml {
 
 	public function exists($name, $ns=null, $attrs=array()) {
 		foreach($this->childrens as $child) {
-			if($ns) {
-				if($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
+			if ($ns) {
+				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
 					return $child;
 			}
-			else if($child->name == $name && $child->match_attrs($attrs)) {
+			else if ($child->name == $name && $child->match_attrs($attrs)) {
 				return $child;
 			}
 		}
@@ -169,7 +169,7 @@ class JAXLXml {
 
 	public function update($name, $ns=null, $attrs=array(), $text=null) {
 		foreach($this->childrens as $k=>$child) {
-			if($child->name == $name) {
+			if ($child->name == $name) {
 				$child->ns = $ns;
 				$child->attrs($attrs);
 				$child->text = $text;
@@ -183,13 +183,13 @@ class JAXLXml {
 		$xml = '';
 
 		$xml .= '<'.$this->name;
-		if($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach($this->attrs as $k=>$v) if(!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
+		if ($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
+		foreach($this->attrs as $k=>$v) if (!is_null($v) && $v !== FALSE) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
 		$xml .= '>';
 
 		foreach($this->childrens as $child) $xml .= $child->to_string($this->ns);
 
-		if($this->text) $xml .= htmlspecialchars($this->text);
+		if ($this->text) $xml .= htmlspecialchars($this->text);
 		$xml .= '</'.$this->name.'>';
 		return $xml;
 	}

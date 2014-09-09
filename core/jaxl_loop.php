@@ -65,14 +65,14 @@ class JAXLLoop {
 	private function __clone() {}
 
 	public static function watch($fd, $opts) {
-		if(isset($opts['read'])) {
+		if (isset($opts['read'])) {
 			$fdid = (int) $fd;
 			self::$read_fds[$fdid] = $fd;
 			self::$read_cbs[$fdid] = $opts['read'];
 			++self::$active_read_fds;
 		}
 
-		if(isset($opts['write'])) {
+		if (isset($opts['write'])) {
 			$fdid = (int) $fd;
 			self::$write_fds[$fdid] = $fd;
 			self::$write_cbs[$fdid] = $opts['write'];
@@ -83,18 +83,18 @@ class JAXLLoop {
 	}
 
 	public static function unwatch($fd, $opts) {
-		if(isset($opts['read'])) {
+		if (isset($opts['read'])) {
 			$fdid = (int) $fd;
-			if(isset(self::$read_fds[$fdid])) {
+			if (isset(self::$read_fds[$fdid])) {
 				unset(self::$read_fds[$fdid]);
 				unset(self::$read_cbs[$fdid]);
 				--self::$active_read_fds;
 			}
 		}
 
-		if(isset($opts['write'])) {
+		if (isset($opts['write'])) {
 			$fdid = (int) $fd;
-			if(isset(self::$write_fds[$fdid])) {
+			if (isset(self::$write_fds[$fdid])) {
 				unset(self::$write_fds[$fdid]);
 				unset(self::$write_cbs[$fdid]);
 				--self::$active_write_fds;
@@ -105,7 +105,7 @@ class JAXLLoop {
 	}
 
 	public static function run() {
-		if(!self::$is_running) {
+		if (!self::$is_running) {
 			self::$is_running = true;
 			self::$clock = new JAXLClock();
 
@@ -123,32 +123,32 @@ class JAXLLoop {
 		$except = null;
 
 		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
-		if($changed === false) {
+		if ($changed === false) {
 			_error("error in the event loop, shutting down...");
 			/*foreach(self::$read_fds as $fd) {
-				if(is_resource($fd))
+				if (is_resource($fd))
 					print_r(stream_get_meta_data($fd));
 			}*/
 			exit;
 		}
-		else if($changed > 0) {
+		else if ($changed > 0) {
 			// read callback
 			foreach($read as $r) {
 				$fdid = array_search($r, self::$read_fds);
-				if(isset(self::$read_fds[$fdid]))
+				if (isset(self::$read_fds[$fdid]))
 					call_user_func(self::$read_cbs[$fdid], self::$read_fds[$fdid]);
 			}
 
 			// write callback
 			foreach($write as $w) {
 				$fdid = array_search($w, self::$write_fds);
-				if(isset(self::$write_fds[$fdid]))
+				if (isset(self::$write_fds[$fdid]))
 					call_user_func(self::$write_cbs[$fdid], self::$write_fds[$fdid]);
 			}
 
 			self::$clock->tick();
 		}
-		else if($changed === 0) {
+		else if ($changed === 0) {
 			//_debug("nothing changed while selecting for read");
 			self::$clock->tick((self::$secs * pow(10,6)) + self::$usecs);
 		}

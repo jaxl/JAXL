@@ -36,7 +36,7 @@
  *
  */
 
-if($argc != 4) {
+if ($argc != 4) {
 	echo "Usage: $argv[0] fb_user_id_or_username fb_app_key fb_access_token\n";
 	exit;
 }

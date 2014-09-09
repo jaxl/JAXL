@@ -86,21 +86,21 @@ class JAXLSocketClient {
 	 * @param string | resource $socket_path
 	 */
 	public function connect($socket_path) {
-		if(gettype($socket_path) == "string") {
+		if (gettype($socket_path) == "string") {
 			$path_parts = explode(":", $socket_path);
 			$this->transport = 	$path_parts[0];
 			$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
-			if(sizeof($path_parts) == 3) $this->port = $path_parts[2];
+			if (sizeof($path_parts) == 3) $this->port = $path_parts[2];
 
 			_info("trying ".$socket_path);
-			if($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+			if ($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
 			else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
 		}
 		else {
 			$this->fd = &$socket_path;
 		}
 
-		if($this->fd) {
+		if ($this->fd) {
 			_debug("connected to ".$socket_path."");
 			stream_set_blocking($this->fd, $this->blocking);
 
@@ -138,11 +138,11 @@ class JAXLSocketClient {
 		stream_set_blocking($this->fd, true);
 
 		$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
-		if($ret == false) {
+		if ($ret == false) {
 			$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv3_CLIENT);
-			if($ret == false) {
+			if ($ret == false) {
 				$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv2_CLIENT);
-				if($ret == false) {
+				if ($ret == false) {
 					$ret = stream_socket_enable_crypto($this->fd, true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
 				}
 			}
@@ -157,7 +157,7 @@ class JAXLSocketClient {
 		$this->obuffer .= $data;
 
 		// add watch for write events
-		if($this->writing) return;
+		if ($this->writing) return;
 		JAXLLoop::watch($this->fd, array(
 			'write' => array(&$this, 'on_write_ready')
 		));
@@ -169,9 +169,9 @@ class JAXLSocketClient {
 		$raw = @fread($fd, $this->recv_chunk_size);
 		$bytes = strlen($raw);
 
-		if($bytes === 0) {
+		if ($bytes === 0) {
 			$meta = stream_get_meta_data($fd);
-			if($meta['eof'] === TRUE) {
+			if ($meta['eof'] === TRUE) {
 				_warning("socket eof, disconnecting");
 				JAXLLoop::unwatch($fd, array(
 					'read' => true
@@ -186,10 +186,10 @@ class JAXLSocketClient {
 
 		$this->ibuffer = "";
 		_debug("read ".$bytes."/".$this->recv_bytes." of data");
-		if($bytes > 0) _debug($raw);
+		if ($bytes > 0) _debug($raw);
 
 		// callback
-		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
+		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
 	}
 
 	public function on_write_ready($fd) {
@@ -204,7 +204,7 @@ class JAXLSocketClient {
 		$this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
 
 		// unwatch for write if obuffer is empty
-		if(strlen($this->obuffer) === 0) {
+		if (strlen($this->obuffer) === 0) {
 			JAXLLoop::unwatch($fd, array(
 				'write' => true
 			));

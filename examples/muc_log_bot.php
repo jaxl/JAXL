@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 5) {
+if ($argc < 5) {
 	echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
 	exit;
 }
@@ -86,12 +86,12 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 	$from = new XMPPJid($stanza->from);
 	$delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 
-	if($from->resource) {
+	if ($from->resource) {
 		echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
 	}
 	else {
 		$subject = $stanza->exists('subject');
-		if($subject) {
+		if ($subject) {
 			echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
 		}
 	}
@@ -103,9 +103,9 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	$from = new XMPPJid($stanza->from);
 
 	// self-stanza received, we now have complete room roster
-	if(strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
-		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
-			if(($status = $x->exists('status', null, array('code'=>'110'))) !== false) {
+	if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
+		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+			if (($status = $x->exists('status', null, array('code'=>'110'))) !== false) {
 				$item = $x->exists('item');
 				_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
 			}
@@ -118,8 +118,8 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 		}
 	}
 	// stanza from other users received
-	else if(strtolower($from->bare) == strtolower($room_full_jid->bare)) {
-		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+	else if (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
+		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			$item = $x->exists('item');
 			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
 		}

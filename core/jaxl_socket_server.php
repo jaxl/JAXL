@@ -55,8 +55,8 @@ class JAXLSocketServer {
 		$this->request_cb = $request_cb;
 
 		$ctx = stream_context_create(array('socket'=>array('backlog'=>$this->backlog)));
-		if(($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $ctx)) !== false) {
-			if(@stream_set_blocking($this->fd, $this->blocking)) {
+		if (($this->fd = @stream_socket_server($path, $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $ctx)) !== false) {
+			if (@stream_set_blocking($this->fd, $this->blocking)) {
 				JAXLLoop::watch($this->fd, array(
 					'read' => array(&$this, 'on_server_accept_ready')
 				));
@@ -93,12 +93,12 @@ class JAXLSocketServer {
 	public function on_server_accept_ready($server) {
 		//_debug("got server accept");
 		$client = @stream_socket_accept($server, 0, $addr);
-		if(!$client) {
+		if (!$client) {
 			_error("unable to accept new client conn");
 			return;
 		}
 
-		if(@stream_set_blocking($client, $this->blocking)) {
+		if (@stream_set_blocking($client, $this->blocking)) {
 			$client_id = (int) $client;
 			$this->clients[$client_id] = array(
 				'fd' => $client,
@@ -115,7 +115,7 @@ class JAXLSocketServer {
 
 			// if accept callback is registered
 			// callback and let user land take further control of what to do
-			if($this->accept_cb) {
+			if ($this->accept_cb) {
 				call_user_func($this->accept_cb, $client_id, $this->clients[$client_id]['addr']);
 			}
 			// if no accept callback is registered
@@ -143,9 +143,9 @@ class JAXLSocketServer {
 		_debug("recv $bytes bytes from client#$client_id");
 		//_debug($raw);
 
-		if($bytes === 0) {
+		if ($bytes === 0) {
 			$meta = stream_get_meta_data($client);
-			if($meta['eof'] === TRUE) {
+			if ($meta['eof'] === TRUE) {
 				_debug("socket eof client#".$client_id.", closing");
 				$this->del_read_cb($client_id);
 
@@ -156,7 +156,7 @@ class JAXLSocketServer {
 		}
 
 		$total = $this->clients[$client_id]['ibuffer'] . $raw;
-		if($this->request_cb)
+		if ($this->request_cb)
 			call_user_func($this->request_cb, $client_id, $total);
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
@@ -170,12 +170,12 @@ class JAXLSocketServer {
 			$total = $this->clients[$client_id]['obuffer'];
 			$written = @fwrite($client, substr($total, 0, $this->send_chunk_size));
 
-			if($written === false) {
+			if ($written === false) {
 				// fwrite failed
 				_warning("====> fwrite failed");
 				$this->clients[$client_id]['obuffer'] = $total;
 			}
-			else if($written == strlen($total) || $written == $this->send_chunk_size) {
+			else if ($written == strlen($total) || $written == $this->send_chunk_size) {
 				// full chunk written
 				//_debug("full chunk written");
 				$this->clients[$client_id]['obuffer'] = substr($total, $this->send_chunk_size);
@@ -187,11 +187,11 @@ class JAXLSocketServer {
 			}
 
 			// if no more stuff to write, remove write handler
-			if(strlen($this->clients[$client_id]['obuffer']) === 0) {
+			if (strlen($this->clients[$client_id]['obuffer']) === 0) {
 				$this->del_write_cb($client_id);
 
 				// if scheduled for close and not closed do it and clean up
-				if($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
+				if ($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
 					@fclose($client);
 					$this->clients[$client_id]['closed'] = true;
 					unset($this->clients[$client_id]);
@@ -210,7 +210,7 @@ class JAXLSocketServer {
 	//
 
 	protected function add_read_cb($client_id) {
-		if($this->clients[$client_id]['reading'])
+		if ($this->clients[$client_id]['reading'])
 			return;
 
 		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
@@ -221,7 +221,7 @@ class JAXLSocketServer {
 	}
 
 	protected function add_write_cb($client_id) {
-		if($this->clients[$client_id]['writing'])
+		if ($this->clients[$client_id]['writing'])
 			return;
 
 		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
@@ -232,7 +232,7 @@ class JAXLSocketServer {
 	}
 
 	protected function del_read_cb($client_id) {
-		if(!$this->clients[$client_id]['reading'])
+		if (!$this->clients[$client_id]['reading'])
 			return;
 
 		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(
@@ -243,7 +243,7 @@ class JAXLSocketServer {
 	}
 
 	protected function del_write_cb($client_id) {
-		if(!$this->clients[$client_id]['writing'])
+		if (!$this->clients[$client_id]['writing'])
 			return;
 
 		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(

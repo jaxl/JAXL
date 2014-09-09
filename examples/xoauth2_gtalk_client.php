@@ -36,7 +36,7 @@
  *
  */
 
-if($argc != 3) {
+if ($argc != 3) {
 	echo "Usage: $argv[0] jid access_token\n";
 	exit;
 }
