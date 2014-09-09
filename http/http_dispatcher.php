@@ -48,7 +48,8 @@
 //                  by default 'GET' will be the method allowed on this rule
 //     $extra       reserved for future (you can totally omit this as of now)
 //
-class HTTPDispatchRule {
+class HTTPDispatchRule
+{
 
 	// match callback
 	public $cb = null;
@@ -82,7 +83,8 @@ class HTTPDispatchRule {
 	}
 }
 
-class HTTPDispatcher {
+class HTTPDispatcher
+{
 
 	protected $rules = array();
 

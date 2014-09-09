@@ -4,7 +4,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_XMPP_PING', 'urn:xmpp:ping');
 
-class XEP_0199 extends XMPPXep {
+class XEP_0199 extends XMPPXep
+{
 
 	//
 	// abstract method

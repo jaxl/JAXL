@@ -43,7 +43,8 @@
  * @author abhinavsingh
  *
  */
-class XMPPJid {
+class XMPPJid
+{
 
 	public $node = null;
 	public $domain = null;

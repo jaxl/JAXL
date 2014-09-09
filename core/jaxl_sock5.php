@@ -44,7 +44,8 @@ require_once JAXL_CWD.'/core/jaxl_socket_client.php';
  * @author abhinavsingh
  *
  */
-class JAXLSock5 {
+class JAXLSock5
+{
 
 	private $client = null;
 

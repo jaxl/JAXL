@@ -47,7 +47,8 @@ JAXLLogger::$level = JAXL_INFO;
 // TODO: an abstract JAXLCtlCommand class
 // with seperate class per command
 // a mechanism to register new commands
-class JAXLCtl {
+class JAXLCtl
+{
 
 	protected $ipc = null;
 

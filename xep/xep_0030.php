@@ -41,7 +41,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_DISCO_INFO', 'http://jabber.org/protocol/disco#info');
 define('NS_DISCO_ITEMS', 'http://jabber.org/protocol/disco#items');
 
-class XEP_0030 extends XMPPXep {
+class XEP_0030 extends XMPPXep
+{
 
 	//
 	// abstract method

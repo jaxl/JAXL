@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLEventTest extends PHPUnit_Framework_TestCase {
+class JAXLEventTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_jaxl_event()
 	{

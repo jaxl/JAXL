@@ -36,7 +36,8 @@
  *
  */
 
-abstract class JAXLFsm {
+abstract class JAXLFsm
+{
 
 	protected $state = null;
 

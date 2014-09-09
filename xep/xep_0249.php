@@ -40,7 +40,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_DIRECT_MUC_INVITATION', 'jabber:x:conference');
 
-class XEP_0249 extends XMPPXep {
+class XEP_0249 extends XMPPXep
+{
 
 	//
 	// abstract method

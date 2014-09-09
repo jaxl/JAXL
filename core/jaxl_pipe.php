@@ -52,7 +52,8 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
  * @author abhinavsingh
  *
  */
-class JAXLPipe {
+class JAXLPipe
+{
 
 	protected $perm = 0600;
 

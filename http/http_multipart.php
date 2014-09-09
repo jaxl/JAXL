@@ -38,7 +38,8 @@
 
 require_once JAXL_CWD.'/core/jaxl_fsm.php';
 
-class HTTPMultiPart extends JAXLFsm {
+class HTTPMultiPart extends JAXLFsm
+{
 
 	public $boundary = null;
 	public $form_data = array();

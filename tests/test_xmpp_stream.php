@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class XMPPStreamTest extends PHPUnit_Framework_TestCase {
+class XMPPStreamTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_xmpp_stream()
 	{

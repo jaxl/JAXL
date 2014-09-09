@@ -40,7 +40,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_JABBER_COMPONENT_ACCEPT', 'jabber:component:accept');
 
-class XEP_0114 extends XMPPXep {
+class XEP_0114 extends XMPPXep
+{
 
 	//
 	// abstract method

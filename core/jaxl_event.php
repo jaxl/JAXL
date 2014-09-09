@@ -47,7 +47,8 @@
  * @author abhinavsingh
  *
  */
-class JAXLEvent {
+class JAXLEvent
+{
 
 	protected $common = array();
 	public $reg = array();

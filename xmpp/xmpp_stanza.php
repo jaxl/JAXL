@@ -49,7 +49,8 @@ require_once JAXL_CWD.'/core/jaxl_xml.php';
  * @author abhinavsingh
  *
  */
-class XMPPStanza {
+class XMPPStanza
+{
 
 	private $xml;
 

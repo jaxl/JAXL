@@ -40,7 +40,8 @@
  *
  * @author abhinavsingh
  */
-class XMPPRosterItem {
+class XMPPRosterItem
+{
 
 	public $jid = null;
 	public $subscription = null;

@@ -61,7 +61,8 @@ require_once JAXL_CWD.'/core/jaxl_socket_server.php';
  * @author abhinavsingh
  *
  */
-class JAXL extends XMPPStream {
+class JAXL extends XMPPStream
+{
 
 	// lib meta info
 	const version = '3.0.1';

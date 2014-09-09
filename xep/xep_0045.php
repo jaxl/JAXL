@@ -40,7 +40,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_MUC', 'http://jabber.org/protocol/muc');
 
-class XEP_0045 extends XMPPXep {
+class XEP_0045 extends XMPPXep
+{
 
 	//
 	// abstract method

@@ -41,7 +41,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_FEATURE_REGISTER', 'http://jabber.org/features/iq-register');
 define('NS_INBAND_REGISTER', 'jabber:iq:register');
 
-class XEP_0077 extends XMPPXep {
+class XEP_0077 extends XMPPXep
+{
 
 	//
 	// abstract method

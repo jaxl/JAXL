@@ -67,7 +67,8 @@ require_once JAXL_CWD.'/http/http_multipart.php';
 // it is upto you to do that, by default connection will usually be dropped
 // on client disconnect if not handled by you.
 //
-class HTTPRequest extends JAXLFsm {
+class HTTPRequest extends JAXLFsm
+{
 
 	// peer identifier
 	public $sock = null;

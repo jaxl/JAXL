@@ -74,7 +74,8 @@ function _colorize($msg, $verbosity)
     error_log(JAXLLogger::colorize($msg, $verbosity));
 }
 
-class JAXLLogger {
+class JAXLLogger
+{
 
 	public static $level = JAXL_DEBUG;
 	public static $path = null;

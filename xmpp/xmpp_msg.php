@@ -38,7 +38,8 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_stanza.php';
 
-class XMPPMsg extends XMPPStanza {
+class XMPPMsg extends XMPPStanza
+{
 
 	public function __construct($attrs, $body = null, $thread = null, $subject = null)
 	{

@@ -65,7 +65,8 @@ define('HTTP_499', 'Client Closed Request'); // Nginx
 define('HTTP_500', 'Internal Server Error');
 define('HTTP_503', 'Service Unavailable');
 
-class HTTPServer {
+class HTTPServer
+{
 
 	private $server = null;
 	public $cb = null;

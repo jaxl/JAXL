@@ -38,7 +38,8 @@
 
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 
-class JAXLCli {
+class JAXLCli
+{
 
 	public static $counter = 0;
 	private $in = null;

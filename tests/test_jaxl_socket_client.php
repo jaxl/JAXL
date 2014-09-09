@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLSocketClientTest extends PHPUnit_Framework_TestCase {
+class JAXLSocketClientTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_jaxl_socket_client()
 	{

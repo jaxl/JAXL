@@ -40,7 +40,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_CAPS', 'http://jabber.org/protocol/caps');
 
-class XEP_0115 extends XMPPXep {
+class XEP_0115 extends XMPPXep
+{
 
 	//
 	// abstract method

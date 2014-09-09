@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class XMPPMsgTest extends PHPUnit_Framework_TestCase {
+class XMPPMsgTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_xmpp_msg()
 	{

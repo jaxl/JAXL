@@ -42,7 +42,8 @@
  * @author abhinavsingh
  *
  */
-class JAXLXmlStream {
+class JAXLXmlStream
+{
 
 	private $delimiter = '\\';
 	private $ns;

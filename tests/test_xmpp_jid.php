@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class XMPPJidTest extends PHPUnit_Framework_TestCase {
+class XMPPJidTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_xmpp_jid_construct()
 	{

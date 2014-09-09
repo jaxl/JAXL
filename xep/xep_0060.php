@@ -40,7 +40,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_PUBSUB', 'http://jabber.org/protocol/pubsub');
 
-class XEP_0060 extends XMPPXep {
+class XEP_0060 extends XMPPXep
+{
 
 	//
 	// abstract method

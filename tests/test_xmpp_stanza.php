@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
+class XMPPStanzaTest extends PHPUnit_Framework_TestCase
+{
 
 	function test_xmpp_stanza_nested()
 	{

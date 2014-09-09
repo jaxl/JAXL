@@ -45,7 +45,8 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLXmlStreamTest extends PHPUnit_Framework_TestCase {
+class JAXLXmlStreamTest extends PHPUnit_Framework_TestCase
+{
 
 	function xml_start_cb($node)
 	{

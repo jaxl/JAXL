@@ -41,7 +41,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_HTTP_BIND', 'http://jabber.org/protocol/httpbind');
 define('NS_BOSH', 'urn:xmpp:xbosh');
 
-class XEP_0206 extends XMPPXep {
+class XEP_0206 extends XMPPXep
+{
 
 	private $mch = null;
 	public $chs = array();

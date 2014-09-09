@@ -41,7 +41,8 @@
  * @author abhinavsingh
  *
  */
-abstract class XMPPXep {
+abstract class XMPPXep
+{
 
 	// init() method defines various callbacks
 	// required by this xep extension

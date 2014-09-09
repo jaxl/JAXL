@@ -45,6 +45,7 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLTest extends PHPUnit_Framework_TestCase {
+class JAXLTest extends PHPUnit_Framework_TestCase
+{
 
 }

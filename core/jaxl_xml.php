@@ -44,7 +44,8 @@
  * @author abhinavsingh
  *
  */
-class JAXLXml {
+class JAXLXml
+{
 
 	public $name;
 	public $ns = null;

@@ -36,7 +36,8 @@
  *
  */
 
-class JAXLClock {
+class JAXLClock
+{
 
 	// current clock time in microseconds
 	private $tick = 0;

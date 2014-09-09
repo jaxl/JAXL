@@ -42,7 +42,8 @@ error_reporting(E_ALL | E_STRICT);
  *
  * @author abhinavsingh
  */
-class JAXLException extends Exception {
+class JAXLException extends Exception
+{
 
 	public function __construct($message = null, $code = null, $file = null, $line = null)
 	{

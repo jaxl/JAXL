@@ -54,7 +54,8 @@ require_once JAXL_CWD.'/xmpp/xmpp_iq.php';
  * @author abhinavsingh
  *
  */
-abstract class XMPPStream extends JAXLFsm {
+abstract class XMPPStream extends JAXLFsm
+{
 
 	// jid with binding resource value
 	public $full_jid = null;
