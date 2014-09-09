@@ -55,5 +55,3 @@ $pipe->set_callback(function($data) {
 
 JAXLLoop::run();
 echo "done\n";
-
-?>

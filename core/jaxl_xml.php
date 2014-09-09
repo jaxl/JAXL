@@ -193,7 +193,4 @@ class JAXLXml {
 		$xml .= '</'.$this->name.'>';
 		return $xml;
 	}
-
 }
-
-?>

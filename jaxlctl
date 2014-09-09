@@ -175,7 +175,6 @@ class JAXLCtl {
 		$this->ipc->disconnect();
 		exit;
 	}
-
 }
 
 // we atleast need a command argument
@@ -186,5 +185,3 @@ if($argc < 2) {
 
 $ctl = new JAXLCtl($command, $params);
 echo "done\n";
-
-?>

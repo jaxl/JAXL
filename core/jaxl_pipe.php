@@ -109,7 +109,4 @@ class JAXLPipe {
 		// callback
 		if($this->recv_cb) call_user_func($this->recv_cb, $data);
 	}
-
 }
-
-?>

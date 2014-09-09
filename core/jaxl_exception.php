@@ -90,5 +90,3 @@ class JAXLException extends Exception {
 		}
 	}
 }
-
-?>

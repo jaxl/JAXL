@@ -72,5 +72,4 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 		echo $stanza->to."\n";
 		echo $stanza->to_string()."\n";
 	}
-
 }

@@ -62,5 +62,3 @@ $client->add_cb('on_auth_success', function() {
 //
 $client->start();
 echo "done\n";
-
-?>

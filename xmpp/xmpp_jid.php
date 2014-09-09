@@ -77,7 +77,4 @@ class XMPPJid {
 		if($this->resource) $str .= '/'.$this->resource;
 		return $str;
 	}
-
 }
-
-?>

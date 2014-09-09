@@ -665,7 +665,4 @@ abstract class XMPPStream extends JAXLFsm {
 				break;
 		}
 	}
-
 }
-
-?>

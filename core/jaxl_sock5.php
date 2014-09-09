@@ -122,7 +122,4 @@ class JAXLSock5 {
 	protected function _sock_path() {
 		return $this->transport.'://'.$this->ip.':'.$this->port;
 	}
-
 }
-
-?>

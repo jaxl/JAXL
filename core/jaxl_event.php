@@ -115,7 +115,4 @@ class JAXLEvent {
 		//_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
 		return $ret;
 	}
-
 }
-
-?>

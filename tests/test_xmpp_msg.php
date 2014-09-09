@@ -64,5 +64,4 @@ class XMPPMsgTest extends PHPUnit_Framework_TestCase {
 		echo $msg->from.PHP_EOL;
 		echo $msg->to_string().PHP_EOL;
 	}
-
 }

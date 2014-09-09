@@ -120,7 +120,4 @@ class JAXLClock {
 	public function cancel_fun_call($ref) {
 		unset($this->jobs[$ref-1]);
 	}
-
 }
-
-?>

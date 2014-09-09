@@ -77,7 +77,4 @@ class XEP_0077 extends XMPPXep {
 		);
 		$this->jaxl->send($pkt);
 	}
-
 }
-
-?>

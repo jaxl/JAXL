@@ -133,7 +133,4 @@ class XEP_0060 extends XMPPXep {
 			$child
 		);
 	}
-
 }
-
-?>

@@ -43,7 +43,4 @@ class XMPPIq extends XMPPStanza {
 	public function __construct($attrs) {
 		parent::__construct('iq', $attrs);
 	}
-
 }
-
-?>

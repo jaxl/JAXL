@@ -57,7 +57,4 @@ class XEP_0203 extends XMPPXep {
 	//
 	// event callbacks
 	//
-
 }
-
-?>

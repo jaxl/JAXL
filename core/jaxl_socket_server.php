@@ -252,7 +252,4 @@ class JAXLSocketServer {
 
 		$this->clients[$client_id]['writing'] = false;
 	}
-
 }
-
-?>

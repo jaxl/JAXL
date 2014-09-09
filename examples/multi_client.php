@@ -125,5 +125,3 @@ foreach($accounts as $account) {
 // start core loop
 JAXLLoop::run();
 echo "done\n";
-
-?>

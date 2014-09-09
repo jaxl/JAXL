@@ -57,5 +57,3 @@ $server = new JAXLSocketServer('unix://'.$argv[1], NULL, 'on_request');
 
 JAXLLoop::run();
 echo "done\n";
-
-?>

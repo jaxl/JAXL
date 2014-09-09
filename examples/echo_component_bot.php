@@ -96,5 +96,3 @@ $comp->add_cb('on_disconnect', function() {
 //
 $comp->start();
 echo "done\n";
-
-?>

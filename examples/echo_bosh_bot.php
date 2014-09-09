@@ -104,5 +104,3 @@ $client->add_cb('on_disconnect', function() {
 //
 $client->start();
 echo "done\n";
-
-?>

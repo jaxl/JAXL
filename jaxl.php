@@ -803,7 +803,4 @@ class JAXL extends XMPPStream {
 			}
 		}
 	}
-
 }
-
-?>

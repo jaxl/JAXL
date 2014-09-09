@@ -58,5 +58,3 @@ define('NS_ROSTER',                   'jabber:iq:roster');
 // Stream Compression (XEP-0138)
 define('NS_COMPRESSION_FEATURE',	  'http://jabber.org/features/compress');
 define('NS_COMPRESSION_PROTOCOL',	  'http://jabber.org/protocol/compress');
-
-?>

@@ -86,7 +86,4 @@ class JAXLLogger {
 	public static function colorize($msg, $verbosity) {
 		return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
 	}
-
 }
-
-?>

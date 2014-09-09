@@ -78,7 +78,6 @@ class HTTPDispatchRule {
 		}
 		return false;
 	}
-
 }
 
 class HTTPDispatcher {
@@ -115,7 +114,4 @@ class HTTPDispatcher {
 		}
 		return false;
 	}
-
 }
-
-?>

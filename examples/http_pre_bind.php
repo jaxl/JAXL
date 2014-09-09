@@ -87,5 +87,3 @@ $client->add_cb('on_auth_failure', function($reason) {
 //
 $client->start();
 echo "done\n";
-
-?>

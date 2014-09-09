@@ -91,7 +91,4 @@ class JAXLCli {
 		if($inc) ++self::$counter;
 		echo "jaxl ".self::$counter."> ";
 	}
-
 }
-
-?>

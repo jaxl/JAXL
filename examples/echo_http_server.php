@@ -56,5 +56,3 @@ function on_request($request) {
 
 // start http server
 $http->start('on_request');
-
-?>

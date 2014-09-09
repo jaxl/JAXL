@@ -54,7 +54,4 @@ class XEP_0199 extends XMPPXep {
 			$this->jaxl->send($stanza);
 		}
 	}
-
 }
-
-?>

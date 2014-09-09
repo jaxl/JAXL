@@ -53,7 +53,4 @@ class XMPPRosterItem {
 		$this->subscription = $subscription;
 		$this->groups = $groups;
 	}
-
 }
-
-?>

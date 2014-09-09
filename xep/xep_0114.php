@@ -89,7 +89,4 @@ class XEP_0114 extends XMPPXep {
 			_debug("uncatched stanza received in logged_out");
 		}
 	}
-
 }
-
-?>

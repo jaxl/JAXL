@@ -47,7 +47,4 @@ class XMPPPres extends XMPPStanza {
 		if($show) $this->c('show')->t($show)->up();
 		if($priority) $this->c('priority')->t($priority)->up();
 	}
-
 }
-
-?>

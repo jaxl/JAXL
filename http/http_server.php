@@ -191,7 +191,4 @@ class HTTPServer {
 			$this->server->read($sock);
 		}
 	}
-
 }
-
-?>

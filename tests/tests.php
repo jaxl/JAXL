@@ -48,5 +48,3 @@ require_once "jaxl.php";
 class JAXLTest extends PHPUnit_Framework_TestCase {
 
 }
-
-?>

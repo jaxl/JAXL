@@ -60,7 +60,4 @@ abstract class XMPPXep {
 	public function __destruct() {
 
 	}
-
 }
-
-?>

@@ -213,7 +213,4 @@ class JAXLSocketClient {
 
 		//_debug("current obuffer size: ".strlen($this->obuffer)."");
 	}
-
 }
-
-?>

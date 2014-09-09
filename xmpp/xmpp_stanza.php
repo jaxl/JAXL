@@ -170,7 +170,4 @@ class XMPPStanza {
 				break;
 		}
 	}
-
 }
-
-?>

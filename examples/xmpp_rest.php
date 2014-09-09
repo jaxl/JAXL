@@ -73,5 +73,3 @@ $http->cb = function($request) {
 // This will start main JAXLLoop,
 // hence we don't need to call $http->start() explicitly
 $xmpp->start();
-
-?>

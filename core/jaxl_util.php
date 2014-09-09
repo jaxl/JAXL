@@ -61,7 +61,4 @@ class JAXLUtil {
 	public static function pbkdf2($data, $secret, $iteration, $dkLen=32, $algo='sha1') {
 		return '';
 	}
-
 }
-
-?>

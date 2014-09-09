@@ -47,7 +47,4 @@ class XMPPMsg extends XMPPStanza {
 		if($thread) $this->c('thread')->t($thread)->up();
 		if($subject) $this->c('subject')->t($subject)->up();
 	}
-
 }
-
-?>

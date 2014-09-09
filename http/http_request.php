@@ -485,8 +485,4 @@ class HTTPRequest extends JAXLFsm {
 	private function _close() {
 		call_user_func($this->_close_cb, $this->sock);
 	}
-
-
 }
-
-?>

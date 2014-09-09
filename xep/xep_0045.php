@@ -108,7 +108,4 @@ class XEP_0045 extends XMPPXep {
 	//
 	// event callbacks
 	//
-
 }
-
-?>

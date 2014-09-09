@@ -165,5 +165,3 @@ $client->start();
 }
 
 echo "done\n";
-
-?>

@@ -230,7 +230,4 @@ class XEP_0206 extends XMPPXep {
 	public function disconnect() {
 		_debug("disconnecting");
 	}
-
 }
-
-?>

@@ -153,7 +153,4 @@ class JAXLLoop {
 			self::$clock->tick((self::$secs * pow(10,6)) + self::$usecs);
 		}
 	}
-
 }
-
-?>

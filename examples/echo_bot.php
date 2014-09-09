@@ -145,5 +145,3 @@ $client->start(array(
 	'--with-unix-sock' => true
 ));
 echo "done\n";
-
-?>

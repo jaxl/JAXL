@@ -68,5 +68,4 @@ class JAXLEventTest extends PHPUnit_Framework_TestCase {
 
 		//print_r($ev->reg);
 	}
-
 }

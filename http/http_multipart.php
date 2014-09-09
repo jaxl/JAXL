@@ -170,7 +170,4 @@ class HTTPMultiPart extends JAXLFsm {
 		_warning("got unhandled event $event with data $data[0]");
 		return array('done', false);
 	}
-
 }
-
-?>

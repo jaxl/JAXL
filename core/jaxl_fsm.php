@@ -78,7 +78,4 @@ abstract class JAXLFsm {
 			_debug("invalid state found, nothing called for event ".$event."");
 		}
 	}
-
 }
-
-?>

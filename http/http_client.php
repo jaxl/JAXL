@@ -132,7 +132,4 @@ class HTTPClient {
 		if(@$this->parts['fragment']) $uri .= '#'.$this->parts['fragment'];
 		return $uri;
 	}
-
 }
-
-?>

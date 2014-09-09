@@ -56,5 +56,4 @@ class JAXLSocketClientTest extends PHPUnit_Framework_TestCase {
 			$sock->recv();
 		}
 	}
-
 }

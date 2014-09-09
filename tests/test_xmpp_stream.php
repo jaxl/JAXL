@@ -56,5 +56,4 @@ class XMPPStreamTest extends PHPUnit_Framework_TestCase {
 			$xmpp->sock->recv();
 		}
 	}
-
 }

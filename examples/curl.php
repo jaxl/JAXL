@@ -47,5 +47,3 @@ require_once JAXL_CWD.'/http/http_client.php';
 
 $request = new HTTPClient($argv[1]);
 $request->start();
-
-?>

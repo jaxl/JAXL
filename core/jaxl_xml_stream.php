@@ -185,7 +185,4 @@ class JAXLXmlStream {
 		$data = sizeof($data) == 1 ? array(null, $data[0]) : $data;
 		return $data;
 	}
-
 }
-
-?>
