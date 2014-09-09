@@ -41,11 +41,11 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_JABBER_COMPONENT_ACCEPT', 'jabber:component:accept');
 
 class XEP_0114 extends XMPPXep {
-	
+
 	//
 	// abstract method
 	//
-	
+
 	public function init() {
 		return array(
 			'on_connect' => 'start_stream',
@@ -54,16 +54,16 @@ class XEP_0114 extends XMPPXep {
 			'on_error_stanza' => 'logged_out'
 		);
 	}
-	
+
 	//
 	// event callbacks
 	//
-	
+
 	public function start_stream() {
 		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" to="'.$this->jaxl->jid->to_string().'" xmlns="'.NS_JABBER_COMPONENT_ACCEPT.'">';
 		$this->jaxl->send_raw($xml);
 	}
-	
+
 	public function start_handshake($stanza) {
 		_debug("starting component handshake");
 		$id = $stanza->id;
@@ -71,13 +71,13 @@ class XEP_0114 extends XMPPXep {
 		$stanza = new JAXLXml('handshake', null, $hash);
 		$this->jaxl->send($stanza);
 	}
-	
+
 	public function logged_in($stanza) {
 		_debug("component handshake complete");
 		$this->jaxl->handle_auth_success();
 		return array("logged_in", 1);
 	}
-	
+
 	public function logged_out($stanza) {
 		if($stanza->name == "error" && $stanza->ns == NS_XMPP) {
 			$reason = $stanza->childrens[0]->name;
@@ -89,7 +89,7 @@ class XEP_0114 extends XMPPXep {
 			_debug("uncatched stanza received in logged_out");
 		}
 	}
-	
+
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -51,7 +51,7 @@ $http = new HTTPServer($port);
 // callback method for dispatch rule (see below)
 function index($request) {
 	$request->send_response(
-		200, array('Content-Type'=>'text/html'), 
+		200, array('Content-Type'=>'text/html'),
 		'<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
 	);
 	$request->close();

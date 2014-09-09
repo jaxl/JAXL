@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -82,7 +82,7 @@ class HTTPMultiPart extends JAXLFsm {
 	public function wait_for_content_disposition($event, $data) {
 		if($event == 'process') {
 			$disposition = explode(":", $data[0]);
-				
+
 			if(strtolower(trim($disposition[0])) == 'content-disposition') {
 				$this->form_data[$this->index]['headers'][$disposition[0]] = trim($disposition[1]);
 				$meta = explode(";", $disposition[1]);
@@ -91,7 +91,7 @@ class HTTPMultiPart extends JAXLFsm {
 						list($k, $v) = explode("=", $k);
 						$this->form_data[$this->index]['meta'][$k] = $v;
 					}
-						
+
 					return array('wait_for_content_type', true);
 				}
 				else {

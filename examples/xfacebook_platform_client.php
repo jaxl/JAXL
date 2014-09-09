@@ -55,10 +55,10 @@ $client = new JAXL(array(
 	'force_tls' => true,
 	// (required) force facebook oauth
 	'auth_type' => 'X-FACEBOOK-PLATFORM',
-	
+
 	// (optional)
 	//'resource' => 'resource',
-	
+
 	'log_level' => JAXL_INFO
 ));
 
@@ -80,7 +80,7 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_chat_message', function($stanza) {
 	global $client;
-	
+
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
 	$stanza->from = $client->full_jid->to_string();

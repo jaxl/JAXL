@@ -37,19 +37,19 @@
 */
 
 /**
- * 
+ *
  * Xmpp Jid
- * 
+ *
  * @author abhinavsingh
  *
  */
 class XMPPJid {
-	
+
 	public $node = null;
 	public $domain = null;
 	public $resource = null;
 	public $bare = null;
-	
+
 	public function __construct($str) {
 		$tmp = explode("@", $str);
 		if(sizeof($tmp) == 2) {
@@ -66,10 +66,10 @@ class XMPPJid {
 		else if(sizeof($tmp) == 1) {
 			$this->domain = $tmp[0];
 		}
-		
+
 		$this->bare = $this->node ? $this->node."@".$this->domain : $this->domain;
 	}
-	
+
 	public function to_string() {
 		$str = "";
 		if($this->node) $str .= $this->node.'@'.$this->domain;
@@ -77,7 +77,7 @@ class XMPPJid {
 		if($this->resource) $str .= '/'.$this->resource;
 		return $str;
 	}
-	
+
 }
 
 ?>

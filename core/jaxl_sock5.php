@@ -40,33 +40,33 @@ require_once JAXL_CWD.'/core/jaxl_socket_client.php';
 
 /**
  * TODO: convert into a finite state machine
- * 
+ *
  * @author abhinavsingh
  *
  */
 class JAXLSock5 {
-	
+
 	private $client = null;
-	
+
 	protected $transport = null;
 	protected $ip = null;
 	protected $port = null;
-	
+
 	public function __construct($transport='tcp') {
 		$this->transport = $transport;
 		$this->client = new JAXLSocketClient();
 		$this->client->set_callback(array(&$this, 'on_response'));
 	}
-	
+
 	public function __destruct() {
-		
+
 	}
-	
+
 	public function connect($ip, $port=1080) {
 		$this->ip = $ip;
 		$this->port = $port;
 		$sock_path = $this->_sock_path();
-		
+
 		if($this->client->connect($sock_path)) {
 			_debug("established connection to $sock_path");
 			return true;
@@ -76,11 +76,11 @@ class JAXLSock5 {
 			return false;
 		}
 	}
-	
+
 	//
 	// Three phases of SOCK5
 	//
-	
+
 	// Negotiation pkt consists of 3 part:
 	// 0x05 => Sock protocol version
 	// 0x01 => Number of method identifier octet
@@ -95,34 +95,34 @@ class JAXLSock5 {
 	public function negotiate() {
 		$pkt = pack("C3", 0x05, 0x01, 0x00);
 		$this->client->send($pkt);
-		
+
 		// enter sub-negotiation state
 	}
-	
+
 	public function relay_request() {
 		// enter wait for reply state
 	}
-	
+
 	public function send_data() {
-		
+
 	}
-	
+
 	//
 	// Socket client callback
 	//
-	
+
 	public function on_response($raw) {
 		_debug($raw);
 	}
-	
+
 	//
 	// Private
 	//
-	
+
 	protected function _sock_path() {
 		return $this->transport.'://'.$this->ip.':'.$this->port;
 	}
-	
+
 }
 
 ?>

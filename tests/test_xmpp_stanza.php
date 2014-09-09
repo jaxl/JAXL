@@ -41,12 +41,12 @@ error_reporting(E_ALL);
 require_once "jaxl.php";
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
 class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
-	
+
 	function test_xmpp_stanza_nested() {
 		$stanza = new JAXLXml('message', array('to'=>'1@a.z', 'from'=>'2@b.c'));
 		$stanza
@@ -57,13 +57,13 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 		->c('nest')->t('nest2')->up()
 		->c('nest')->t('nest3')->up()->up()
 		->c('c')->attrs(array('hash'=>'84jsdmnskd'));
-		
+
 		$this->assertEquals(
 			'<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested><nest>nest1</nest><nest>nest2</nest><nest>nest3</nest></nested><c hash="84jsdmnskd"></c></message>',
 			$stanza->to_string()
 		);
 	}
-	
+
 	function test_xmpp_stanza_from_jaxl_xml() {
 		// xml to stanza test
 		$xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to'=>'2@3.com', 'from'=>'4@r.p/q'));
@@ -72,5 +72,5 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase {
 		echo $stanza->to."\n";
 		echo $stanza->to_string()."\n";
 	}
-	
+
 }

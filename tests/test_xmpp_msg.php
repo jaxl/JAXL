@@ -41,12 +41,12 @@ error_reporting(E_ALL);
 require_once "jaxl.php";
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
 class XMPPMsgTest extends PHPUnit_Framework_TestCase {
-	
+
 	function test_xmpp_msg() {
 		$msg = new XMPPMsg(array('to'=>'2@w.c', 'from'=>'-0@q.p/~', 'type'=>'chat'), 'hi', 'thread1');
 
@@ -54,15 +54,15 @@ class XMPPMsgTest extends PHPUnit_Framework_TestCase {
 		echo $msg->to_node.PHP_EOL;
 		echo $msg->from.PHP_EOL;
 		echo $msg->to_string().PHP_EOL;
-		
+
 		$msg->to = '4@w.c/sp';
 		$msg->body = 'hello world';
 		$msg->subject = 'some subject';
-		
+
 		echo $msg->to.PHP_EOL;
 		echo $msg->to_node.PHP_EOL;
 		echo $msg->from.PHP_EOL;
 		echo $msg->to_string().PHP_EOL;
 	}
-	
+
 }

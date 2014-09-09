@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -61,13 +61,13 @@ require_once 'jaxl.php';
 
 function on_auth_success($client) {
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	
+
 	// fetch roster list
 	$client->get_roster();
-	
+
 	// fetch vcard
 	$client->get_vcard();
-	
+
 	// set status
 	$client->set_status("available!", "dnd", 10);
 }
@@ -86,11 +86,11 @@ function on_chat_message($client, $stanza) {
 
 function on_presence_stanza($client, $stanza) {
 	global $client;
-	
+
 	$type = ($stanza->type ? $stanza->type : "available");
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
-	
+
 	if($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);
@@ -111,13 +111,13 @@ foreach($accounts as $account) {
 		'pass' => $account[1],
 		'log_level' => JAXL_DEBUG
 	));
-	
+
 	$client->add_cb('on_auth_success', 'on_auth_success');
 	$client->add_cb('on_auth_failure', 'on_auth_failure');
 	$client->add_cb('on_chat_message', 'on_chat_message');
 	$client->add_cb('on_presence_stanza', 'on_presence_stanza');
 	$client->add_cb('on_disconnect', 'on_disconnect');
-	
+
 	$client->connect($client->get_socket_path());
 	$client->start_stream();
 }

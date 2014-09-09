@@ -37,23 +37,23 @@
  */
 
 /**
- * 
+ *
  * @author abhinavsingh
  */
 class XMPPRosterItem {
-	
+
 	public $jid = null;
 	public $subscription = null;
 	public $groups = array();
 	public $resources = array();
 	public $vcard = null;
-	
+
 	public function __construct($jid, $subscription, $groups) {
 		$this->jid = $jid;
 		$this->subscription = $subscription;
 		$this->groups = $groups;
 	}
-	
+
 }
 
 ?>
