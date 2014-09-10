@@ -96,9 +96,9 @@ class HTTPRequest extends JAXLFsm
     public $multipart = null;
 
     // callback for send/read/close actions on accepted sock
-    private $_send_cb = null;
-    private $_read_cb = null;
-    private $_close_cb = null;
+    private $send_cb = null;
+    private $read_cb = null;
+    private $close_cb = null;
 
     private $shortcuts = array(
         'ok' => 200, // 2xx
@@ -149,9 +149,9 @@ class HTTPRequest extends JAXLFsm
     {
         switch ($event) {
             case 'set_sock_cb':
-                $this->_send_cb = $args[0];
-                $this->_read_cb = $args[1];
-                $this->_close_cb = $args[2];
+                $this->send_cb = $args[0];
+                $this->read_cb = $args[1];
+                $this->close_cb = $args[2];
                 return 'wait_for_request_line';
                 break;
             default:
@@ -164,7 +164,7 @@ class HTTPRequest extends JAXLFsm
     {
         switch ($event) {
             case 'line':
-                $this->_line($args[0], $args[1], $args[2]);
+                $this->line($args[0], $args[1], $args[2]);
                 return 'wait_for_headers';
                 break;
             default:
@@ -230,7 +230,7 @@ class HTTPRequest extends JAXLFsm
                         //_debug("passing $data to multipart fsm");
                         if (!$this->multipart->process($data)) {
                             _debug("multipart fsm returned false");
-                            $this->_close();
+                            $this->close();
                             return array('closed', false);
                         }
                     }
@@ -252,7 +252,7 @@ class HTTPRequest extends JAXLFsm
 
                 if (!$this->multipart->process($body)) {
                     _debug("multipart fsm returned false");
-                    $this->_close();
+                    $this->close();
                     return array('closed', false);
                 }
 
@@ -269,7 +269,7 @@ class HTTPRequest extends JAXLFsm
 
                 if (!$this->multipart->process('')) {
                     _debug("multipart fsm returned false");
-                    $this->_close();
+                    $this->close();
                     return array('closed', false);
                 }
 
@@ -360,9 +360,9 @@ class HTTPRequest extends JAXLFsm
                 list($headers, $body) = $this->parse_shortcut_args($args);
 
                 $code = $this->shortcuts[$event];
-                $this->_send_response($code, $headers, $body);
+                $this->send_response($code, $headers, $body);
 
-                $this->_close();
+                $this->close();
                 return 'closed';
                 break;
             // others
@@ -370,16 +370,16 @@ class HTTPRequest extends JAXLFsm
                 // send expect header if required
                 if ($this->expect) {
                     $this->expect = false;
-                    $this->_send_line(100);
+                    $this->send_line(100);
                 }
 
                 // read data
-                $this->_read();
+                $this->read();
 
                 return 'wait_for_body';
                 break;
             case 'close':
-                $this->_close();
+                $this->close();
                 return 'closed';
                 break;
         }
@@ -423,34 +423,34 @@ class HTTPRequest extends JAXLFsm
     // available only on 'headers_received' state
     //
 
-    protected function _send_line($code)
+    protected function send_line($code)
     {
         $raw = $this->version." ".$code." ".constant('HTTP_'.$code).HTTP_CRLF;
-        $this->_send($raw);
+        $this->send($raw);
     }
 
-    protected function _send_header($k, $v)
+    protected function send_header($k, $v)
     {
         $raw = $k.': '.$v.HTTP_CRLF;
-        $this->_send($raw);
+        $this->send($raw);
     }
 
-    protected function _send_headers($code, $headers)
+    protected function send_headers($code, $headers)
     {
         foreach ($headers as $k => $v) {
-            $this->_send_header($k, $v);
+            $this->send_header($k, $v);
         }
     }
 
-    protected function _send_body($body)
+    protected function send_body($body)
     {
-        $this->_send($body);
+        $this->send($body);
     }
 
-    protected function _send_response($code, $headers = array(), $body = null)
+    protected function send_response($code, $headers = array(), $body = null)
     {
         // send out response line
-        $this->_send_line($code);
+        $this->send_line($code);
 
         // set content length of body exists and is not already set
         if ($body && !isset($headers['Content-Length'])) {
@@ -458,13 +458,13 @@ class HTTPRequest extends JAXLFsm
         }
 
         // send out headers
-        $this->_send_headers($code, $headers);
+        $this->send_headers($code, $headers);
 
         // send body
         // prefixed with an empty line
         _debug("sending out HTTP_CRLF prefixed body");
         if ($body) {
-            $this->_send_body(HTTP_CRLF.$body);
+            $this->send_body(HTTP_CRLF.$body);
         }
     }
 
@@ -473,7 +473,7 @@ class HTTPRequest extends JAXLFsm
     //
 
     // initializes status line elements
-    private function _line($method, $resource, $version)
+    private function line($method, $resource, $version)
     {
         $this->method = $method;
         $this->resource = $resource;
@@ -495,18 +495,18 @@ class HTTPRequest extends JAXLFsm
         $this->version = $version;
     }
 
-    private function _send($raw)
+    private function send($raw)
     {
-        call_user_func($this->_send_cb, $this->sock, $raw);
+        call_user_func($this->send_cb, $this->sock, $raw);
     }
 
-    private function _read()
+    private function read()
     {
-        call_user_func($this->_read_cb, $this->sock);
+        call_user_func($this->read_cb, $this->sock);
     }
 
-    private function _close()
+    private function close()
     {
-        call_user_func($this->_close_cb, $this->sock);
+        call_user_func($this->close_cb, $this->sock);
     }
 }

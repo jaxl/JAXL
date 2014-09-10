@@ -71,9 +71,9 @@ class HTTPClient
         $this->method = $method;
 
         $this->parts = parse_url($this->url);
-        $transport = $this->_transport();
-        $ip = $this->_ip();
-        $port = $this->_port();
+        $transport = $this->transport();
+        $ip = $this->ip();
+        $port = $this->port();
 
         $socket_path = $transport.'://'.$ip.':'.$port;
         if ($this->client->connect($socket_path)) {
@@ -96,9 +96,9 @@ class HTTPClient
 
     protected function send_request()
     {
-        $this->client->send($this->_line()."\r\n");
-        $this->client->send($this->_ua()."\r\n");
-        $this->client->send($this->_host()."\r\n");
+        $this->client->send($this->line()."\r\n");
+        $this->client->send($this->ua()."\r\n");
+        $this->client->send($this->host()."\r\n");
         $this->client->send("\r\n");
     }
 
@@ -106,37 +106,37 @@ class HTTPClient
     // private methods on uri parts
     //
 
-    private function _line()
+    private function line()
     {
-        return $this->method.' '.$this->_uri().' HTTP/1.1';
+        return $this->method.' '.$this->uri().' HTTP/1.1';
     }
 
-    private function _ua()
+    private function ua()
     {
         return 'User-Agent: jaxl_http_client/3.x';
     }
 
-    private function _host()
+    private function host()
     {
-        return 'Host: '.$this->parts['host'].':'.$this->_port();
+        return 'Host: '.$this->parts['host'].':'.$this->port();
     }
 
-    private function _transport()
+    private function transport()
     {
         return ($this->parts['scheme'] == 'http' ? 'tcp' : 'ssl');
     }
 
-    private function _ip()
+    private function ip()
     {
         return gethostbyname($this->parts['host']);
     }
 
-    private function _port()
+    private function port()
     {
         return isset($this->parts['port']) ? $this->parts['port'] : 80;
     }
 
-    private function _uri()
+    private function uri()
     {
         $uri = $this->parts['path'];
         if (isset($this->parts['query'])) {

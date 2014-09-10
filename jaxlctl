@@ -135,7 +135,7 @@ class JAXLCtl
         return array(array(&$this, 'on_shell_input'), array(&$this, 'on_shell_quit'));
     }
 
-    private function _eval($raw, $symbols)
+    private function eval_($raw, $symbols)
     {
         extract($symbols);
 
@@ -149,7 +149,7 @@ class JAXLCtl
 
     public function on_shell_input($raw)
     {
-        $this->symbols = $this->_eval($raw, $this->symbols);
+        $this->symbols = $this->eval_($raw, $this->symbols);
         JAXLCli::prompt();
     }
 

@@ -68,7 +68,7 @@ class JAXLSock5
     {
         $this->ip = $ip;
         $this->port = $port;
-        $sock_path = $this->_sock_path();
+        $sock_path = $this->sock_path();
 
         if ($this->client->connect($sock_path)) {
             _debug("established connection to $sock_path");
@@ -124,7 +124,7 @@ class JAXLSock5
     // Private
     //
 
-    protected function _sock_path()
+    protected function sock_path()
     {
         return $this->transport.'://'.$this->ip.':'.$this->port;
     }
