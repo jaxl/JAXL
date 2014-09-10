@@ -64,8 +64,8 @@ class JAXL extends XMPPStream
 {
     
     // lib meta info
-    const version = '3.0.1';
-    const name = 'JAXL :: Jabber XMPP Library';
+    const VERSION = '3.0.1';
+    const NAME = 'JAXL :: Jabber XMPP Library';
     
     // cached init config array
     public $cfg = array();
