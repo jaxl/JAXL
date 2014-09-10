@@ -162,7 +162,9 @@ class JAXLXmlStream
 				call_user_func($this->end_cb, $stanza);
 			}
 		} elseif ($this->depth > 1) {
-			if ($this->stanza) $this->stanza->up();
+			if ($this->stanza) {
+			    $this->stanza->up();
+			}
 
 			if ($this->depth == 2) {
 				if ($this->stanza_cb) {

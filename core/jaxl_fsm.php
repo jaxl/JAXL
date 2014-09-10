@@ -66,16 +66,23 @@ abstract class JAXLFsm
 			$r = call_user_func($call, $event, $args);
 
 			// 4 cases of possible return value
-			if (is_callable($r)) $this->state = $r;
-			elseif (is_array($r) && sizeof($r) == 2) list($this->state, $ret) = $r;
-			elseif (is_array($r) && sizeof($r) == 1) $this->state = $r[0];
-			elseif (is_string($r)) $this->state = $r;
-			else $this->handle_invalid_state($r);
+			if (is_callable($r)) {
+			    $this->state = $r;
+			} elseif (is_array($r) && sizeof($r) == 2) {
+			    list($this->state, $ret) = $r;
+			} elseif (is_array($r) && sizeof($r) == 1) {
+			    $this->state = $r[0];
+			} elseif (is_string($r)) {
+			    $this->state = $r;
+			} else {
+			    $this->handle_invalid_state($r);
+			}
 			_debug("current state '".(is_array($this->state) ? $this->state[1] : $this->state)."'");
 
 			// return case
-			if (!is_callable($r) && is_array($r) && sizeof($r) == 2)
+			if (!is_callable($r) && is_array($r) && sizeof($r) == 2) {
 				return $ret;
+			}
 		} else {
 			_debug("invalid state found, nothing called for event ".$event."");
 		}

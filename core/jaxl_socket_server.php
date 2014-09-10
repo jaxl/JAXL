@@ -161,8 +161,9 @@ class JAXLSocketServer
 		}
 
 		$total = $this->clients[$client_id]['ibuffer'] . $raw;
-		if ($this->request_cb)
+		if ($this->request_cb) {
 			call_user_func($this->request_cb, $client_id, $total);
+		}
 		$this->clients[$client_id]['ibuffer'] = '';
 	}
 
@@ -215,8 +216,9 @@ class JAXLSocketServer
 
 	protected function add_read_cb($client_id)
 	{
-		if ($this->clients[$client_id]['reading'])
+		if ($this->clients[$client_id]['reading']) {
 			return;
+		}
 
 		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
 			'read' => array(&$this, 'on_client_read_ready')
@@ -227,8 +229,9 @@ class JAXLSocketServer
 
 	protected function add_write_cb($client_id)
 	{
-		if ($this->clients[$client_id]['writing'])
+		if ($this->clients[$client_id]['writing']) {
 			return;
+		}
 
 		JAXLLoop::watch($this->clients[$client_id]['fd'], array(
 			'write' => array(&$this, 'on_client_write_ready')
@@ -239,8 +242,9 @@ class JAXLSocketServer
 
 	protected function del_read_cb($client_id)
 	{
-		if (!$this->clients[$client_id]['reading'])
+		if (!$this->clients[$client_id]['reading']) {
 			return;
+		}
 
 		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(
 			'read' => true
@@ -251,8 +255,9 @@ class JAXLSocketServer
 
 	protected function del_write_cb($client_id)
 	{
-		if (!$this->clients[$client_id]['writing'])
+		if (!$this->clients[$client_id]['writing']) {
 			return;
+		}
 
 		JAXLLoop::unwatch($this->clients[$client_id]['fd'], array(
 			'write' => true

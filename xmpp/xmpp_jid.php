@@ -73,9 +73,14 @@ class XMPPJid
 	public function to_string()
 	{
 		$str = "";
-		if ($this->node) $str .= $this->node.'@'.$this->domain;
-		elseif ($this->domain) $str .= $this->domain;
-		if ($this->resource) $str .= '/'.$this->resource;
+		if ($this->node) {
+		    $str .= $this->node.'@'.$this->domain;
+		} elseif ($this->domain) {
+		    $str .= $this->domain;
+		}
+		if ($this->resource) {
+		    $str .= '/'.$this->resource;
+		}
 		return $str;
 	}
 }

@@ -84,16 +84,22 @@ class JAXLCli
 		} elseif (trim($raw) == 'quit') {
 			$this->stop();
 			$this->in = null;
-			if ($this->quit_cb) call_user_func($this->quit_cb);
+			if ($this->quit_cb) {
+			    call_user_func($this->quit_cb);
+			}
 			return;
 		}
 
-		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
+		if ($this->recv_cb) {
+		    call_user_func($this->recv_cb, $raw);
+		}
 	}
 
 	public static function prompt($inc = true)
 	{
-		if ($inc) ++self::$counter;
+		if ($inc) {
+		    ++self::$counter;
+		}
 		echo "jaxl ".self::$counter."> ";
 	}
 }

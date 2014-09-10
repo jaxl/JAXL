@@ -95,11 +95,16 @@ class JAXLSocketClient
 			$path_parts = explode(":", $socket_path);
 			$this->transport = 	$path_parts[0];
 			$this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
-			if (sizeof($path_parts) == 3) $this->port = $path_parts[2];
+			if (sizeof($path_parts) == 3) {
+			    $this->port = $path_parts[2];
+			}
 
 			_info("trying ".$socket_path);
-			if ($this->stream_context) $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
-			else $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
+			if ($this->stream_context) {
+			    $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream_context);
+			} else {
+			    $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
+			}
 		} else {
 			$this->fd = &$socket_path;
 		}
@@ -164,7 +169,9 @@ class JAXLSocketClient
 		$this->obuffer .= $data;
 
 		// add watch for write events
-		if ($this->writing) return;
+		if ($this->writing) {
+		    return;
+		}
 		JAXLLoop::watch($this->fd, array(
 			'write' => array(&$this, 'on_write_ready')
 		));
@@ -194,10 +201,14 @@ class JAXLSocketClient
 
 		$this->ibuffer = "";
 		_debug("read ".$bytes."/".$this->recv_bytes." of data");
-		if ($bytes > 0) _debug($raw);
+		if ($bytes > 0) {
+		    _debug($raw);
+		}
 
 		// callback
-		if ($this->recv_cb) call_user_func($this->recv_cb, $raw);
+		if ($this->recv_cb) {
+		    call_user_func($this->recv_cb, $raw);
+		}
 	}
 
 	public function on_write_ready($fd)

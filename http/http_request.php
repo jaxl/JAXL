@@ -216,8 +216,11 @@ class HTTPRequest extends JAXLFsm
 				$rcvd_len = strlen($rcvd);
 				$this->recvd_body_len += $rcvd_len;
 
-				if ($this->body === null) $this->body = $rcvd;
-				else $this->body .= $rcvd;
+				if ($this->body === null) {
+				    $this->body = $rcvd;
+				} else {
+				    $this->body .= $rcvd;
+				}
 
 				if ($this->multipart) {
 					// boundary start, content_disposition, form data, boundary start, ....., boundary end
@@ -448,8 +451,9 @@ class HTTPRequest extends JAXLFsm
 		$this->_send_line($code);
 
 		// set content length of body exists and is not already set
-		if ($body && !isset($headers['Content-Length']))
+		if ($body && !isset($headers['Content-Length'])) {
 			$headers['Content-Length'] = strlen($body);
+		}
 
 		// send out headers
 		$this->_send_headers($code, $headers);
@@ -457,8 +461,9 @@ class HTTPRequest extends JAXLFsm
 		// send body
 		// prefixed with an empty line
 		_debug("sending out HTTP_CRLF prefixed body");
-		if ($body)
+		if ($body) {
 			$this->_send_body(HTTP_CRLF.$body);
+		}
 	}
 
 	//
@@ -478,7 +483,9 @@ class HTTPRequest extends JAXLFsm
 			$query = explode("&", $query);
 			foreach ($query as $q) {
 				$q = explode("=", $q);
-				if (sizeof($q) == 1) $q[1] = "";
+				if (sizeof($q) == 1) {
+				    $q[1] = "";
+				}
 				$this->query[$q[0]] = $q[1];
 			}
 		}

@@ -136,23 +136,26 @@ class JAXLLoop
 		if ($changed === false) {
 			_error("error in the event loop, shutting down...");
 			/*foreach (self::$read_fds as $fd) {
-				if (is_resource($fd))
+				if (is_resource($fd)) {
 					print_r(stream_get_meta_data($fd));
+				}
 			}*/
 			exit;
 		} elseif ($changed > 0) {
 			// read callback
 			foreach ($read as $r) {
 				$fdid = array_search($r, self::$read_fds);
-				if (isset(self::$read_fds[$fdid]))
+				if (isset(self::$read_fds[$fdid])) {
 					call_user_func(self::$read_cbs[$fdid], self::$read_fds[$fdid]);
+				}
 			}
 
 			// write callback
 			foreach ($write as $w) {
 				$fdid = array_search($w, self::$write_fds);
-				if (isset(self::$write_fds[$fdid]))
+				if (isset(self::$write_fds[$fdid])) {
 					call_user_func(self::$write_cbs[$fdid], self::$write_fds[$fdid]);
+				}
 			}
 
 			self::$clock->tick();

@@ -139,8 +139,12 @@ class HTTPClient
 	private function _uri()
 	{
 		$uri = $this->parts['path'];
-		if (@$this->parts['query']) $uri .= '?'.$this->parts['query'];
-		if (@$this->parts['fragment']) $uri .= '#'.$this->parts['fragment'];
+		if (@$this->parts['query']) {
+		    $uri .= '?'.$this->parts['query'];
+		}
+		if (@$this->parts['fragment']) {
+		    $uri .= '#'.$this->parts['fragment'];
+		}
 		return $uri;
 	}
 }

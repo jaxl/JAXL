@@ -127,7 +127,9 @@ class XEP_0206 extends XMPPXep
 
 			// fool xmpp_stream state machine with stream start packet
 			// and make transition to wait_for_stream_features state
-			if ($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
+			if ($this->recv_cb) {
+			    call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
+			}
 		}
 
 		_debug("recving for $this->rid");
@@ -150,13 +152,17 @@ class XEP_0206 extends XMPPXep
 
 					if (@$attrs['type'] == 'terminate') {
 						// fool me again
-						if ($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
+						if ($this->recv_cb) {
+						    call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
+						}
 					} else {
 						if (!$this->sid) {
 							$this->sid = $attrs['sid'];
 						}
 
-						if ($this->recv_cb) call_user_func($this->recv_cb, $stanza);
+						if ($this->recv_cb) {
+						    call_user_func($this->recv_cb, $stanza);
+						}
 					}
 				} else {
 					_error("no ch found");
@@ -179,14 +185,23 @@ class XEP_0206 extends XMPPXep
 	public function unwrap($body)
 	{
 		// a dirty way but it works efficiently
-		if (substr($body, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
-		else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
+		if (substr($body, -2, 2) == "/>") {
+		    preg_match_all('/<body (.*?)\/>/smi', $body, $m);
+		} else {
+		    preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
+		}
 
-		if (isset($m[1][0])) $envelop = "<body ".$m[1][0]."/>";
-		else $envelop = "<body/>";
+		if (isset($m[1][0])) {
+		    $envelop = "<body ".$m[1][0]."/>";
+		} else {
+		    $envelop = "<body/>";
+		}
 
-		if (isset($m[2][0])) $payload = $m[2][0];
-		else $payload = '';
+		if (isset($m[2][0])) {
+		    $payload = $m[2][0];
+		} else {
+		    $payload = '';
+		}
 
 		return array($envelop, $payload);
 	}
@@ -199,8 +214,9 @@ class XEP_0206 extends XMPPXep
 
 		// fool xmpp_stream state machine with stream start packet
 		// and make transition to wait_for_stream_features state
-		if ($this->recv_cb)
+		if ($this->recv_cb) {
 			call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
+		}
 
 		$attrs = array(
 			'content' => 'text/xml; charset=utf-8',
@@ -216,7 +232,9 @@ class XEP_0206 extends XMPPXep
 			'ver' => '1.10'
 		);
 
-		if (@$this->jaxl->cfg['jid']) $attrs['from'] = @$this->jaxl->cfg['jid'];
+		if (@$this->jaxl->cfg['jid']) {
+		    $attrs['from'] = @$this->jaxl->cfg['jid'];
+		}
 		$body = new JAXLXml('body', NS_HTTP_BIND, $attrs);
 		$this->send($body);
 	}

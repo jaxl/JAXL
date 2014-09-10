@@ -127,14 +127,21 @@ class JAXL extends XMPPStream
 		$this->cfg = $config;
 
 		// setup logger
-		if (isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
-		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
-		if (isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
-		else JAXLLogger::$level = $this->log_level;
+		if (isset($this->cfg['log_path'])) {
+		    JAXLLogger::$path = $this->cfg['log_path'];
+		}
+		//else { JAXLLogger::$path = $this->log_dir."/jaxl.log"; }
+		if (isset($this->cfg['log_level'])) {
+		    JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
+		} else {
+		    JAXLLogger::$level = $this->log_level;
+		}
 
 		// env
 		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : true;
-		if ($strict) $this->add_exception_handlers();
+		if ($strict) {
+		    $this->add_exception_handlers();
+		}
 		$this->mode = PHP_SAPI;
 		$this->local_ip = gethostbyname(php_uname('n'));
 		$this->pid = getmypid();
@@ -157,11 +164,21 @@ class JAXL extends XMPPStream
 		$this->pid_dir = $this->priv_dir."/run";
 		$this->log_dir = $this->priv_dir."/log";
 		$this->sock_dir = $this->priv_dir."/sock";
-		if (!is_dir($this->priv_dir)) mkdir($this->priv_dir);
-		if (!is_dir($this->tmp_dir)) mkdir($this->tmp_dir);
-		if (!is_dir($this->pid_dir)) mkdir($this->pid_dir);
-		if (!is_dir($this->log_dir)) mkdir($this->log_dir);
-		if (!is_dir($this->sock_dir)) mkdir($this->sock_dir);
+		if (!is_dir($this->priv_dir)) {
+		    mkdir($this->priv_dir);
+		}
+		if (!is_dir($this->tmp_dir)) {
+		    mkdir($this->tmp_dir);
+		}
+		if (!is_dir($this->pid_dir)) {
+		    mkdir($this->pid_dir);
+		}
+		if (!is_dir($this->log_dir)) {
+		    mkdir($this->log_dir);
+		}
+		if (!is_dir($this->sock_dir)) {
+		    mkdir($this->sock_dir);
+		}
 
 		// touch pid file
 		if ($this->mode == "cli") {
@@ -240,8 +257,9 @@ class JAXL extends XMPPStream
 
 	public function require_xep($xeps)
 	{
-		if (!is_array($xeps))
+		if (!is_array($xeps)) {
 			$xeps = array($xeps);
+		}
 
 		foreach ($xeps as $xep) {
 			$filename = 'xep_'.$xep.'.php';
@@ -309,7 +327,9 @@ class JAXL extends XMPPStream
 			$attrs,
 			new JAXLXml('vCard', 'vcard-temp')
 		);
-		if ($cb) $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		if ($cb) {
+		    $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		}
 		$this->send($pkt);
 	}
 
@@ -322,7 +342,9 @@ class JAXL extends XMPPStream
 			),
 			new JAXLXml('query', 'jabber:iq:roster')
 		);
-		if ($cb) $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		if ($cb) {
+		    $this->add_cb('on_stanza_id_'.$pkt->id, $cb);
+		}
 		$this->send($pkt);
 	}
 
@@ -396,8 +418,9 @@ class JAXL extends XMPPStream
 		// if on_connect event have no callbacks
 		// set default on_connect callback to $this->start_stream()
 		// i.e. xmpp client mode
-		if (!$this->ev->exists('on_connect'))
+		if (!$this->ev->exists('on_connect')) {
 			$this->add_cb('on_connect', array($this, 'start_stream'));
+		}
 
 		// connect to the destination host/port
 		if ($this->connect($this->get_socket_path())) {
@@ -408,8 +431,12 @@ class JAXL extends XMPPStream
 			$this->ev->emit('on_connect');
 
 			// parse opts
-			if (@$opts['--with-debug-shell']) $this->enable_debug_shell();
-			if (@$opts['--with-unix-sock']) $this->enable_unix_sock();
+			if (@$opts['--with-debug-shell']) {
+			    $this->enable_debug_shell();
+			}
+			if (@$opts['--with-unix-sock']) {
+			    $this->enable_unix_sock();
+			}
 
 			// run main loop
 			JAXLLoop::run();
@@ -646,7 +673,11 @@ class JAXL extends XMPPStream
 
 		// extract available mechanisms
 		$mechs = array();
-		if ($mechanisms) foreach ($mechanisms->childrens as $mechanism) $mechs[$mechanism->text] = true;
+		if ($mechanisms) {
+		    foreach ($mechanisms->childrens as $mechanism) {
+		        $mechs[$mechanism->text] = true;
+		    }
+		}
 
 		// check if preferred auth type exists in available mechanisms
 		$pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
@@ -742,23 +773,26 @@ class JAXL extends XMPPStream
 			}
 
 			// emit this event if not emited above
-			if (!$emited)
+			if (!$emited) {
 				$this->ev->emit('on_roster_update');
+			}
 		}
 
 		// if managing roster
 		// catch contact vcard results
 		if ($this->manage_roster && $stanza->type == 'result' && ($query = $stanza->exists('vCard', 'vcard-temp'))) {
-			if (@$this->roster[$stanza->from])
+			if (@$this->roster[$stanza->from]) {
 				$this->roster[$stanza->from]->vcard = $query;
+			}
 		}
 
 		// on_get_iq, on_result_iq, and other events are only
 		// emitted if on_stanza_id_{id} wasn't emitted above
 		// TODO: can we add more checks here before calling back
 		// e.g. checks on existence of an attribute, check on 1st level child ns and so on
-		if (!$emited)
+		if (!$emited) {
 			$this->ev->emit('on_'.$stanza->type.'_iq', array($stanza));
+		}
 	}
 
 	public function handle_presence($stanza)
@@ -774,8 +808,9 @@ class JAXL extends XMPPStream
 			if ($type == 'available') {
 				$this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
 			} elseif ($type == 'unavailable') {
-				if (@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource])
+				if (@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource]) {
 					unset($this->roster[$jid->bare]->resources[$jid->resource]);
+				}
 			}
 		}
 
@@ -783,8 +818,9 @@ class JAXL extends XMPPStream
 		// we need to automate stuff here
 		if ($stanza->type == "subscribe" && $this->manage_subscribe != "none") {
 			$this->subscribed($stanza->from);
-			if ($this->manage_subscribe == "mutual")
+			if ($this->manage_subscribe == "mutual") {
 				$this->subscribe($stanza->from);
+			}
 		}
 
 		$this->ev->emit('on_presence_stanza', array($stanza));

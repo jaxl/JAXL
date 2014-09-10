@@ -96,12 +96,21 @@ class HTTPDispatcher
 	public function add_rule($rule)
 	{
 		$s = sizeof($rule);
-		if ($s > 4) { _debug("invalid rule"); return; }
+		if ($s > 4) {
+		    _debug("invalid rule");
+		    return;
+		}
 
 		// fill up defaults
-		if ($s == 3) { $rule[] = array();
-		} elseif ($s == 2) { $rule[] = array('GET'); $rule[] = array();
-		} else { _debug("invalid rule"); return; }
+		if ($s == 3) {
+		    $rule[] = array();
+		} elseif ($s == 2) {
+		    $rule[] = array('GET');
+		    $rule[] = array();
+		} else {
+		    _debug("invalid rule");
+		    return;
+		}
 
 		$this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);
 	}
@@ -114,7 +123,9 @@ class HTTPDispatcher
 				_debug("matching rule found, dispatching");
 				$params = array($request);
 				// TODO: a bad way to restrict on 'pk', fix me for generalization
-				if (@isset($matches['pk'])) $params[] = $matches['pk'];
+				if (@isset($matches['pk'])) {
+				    $params[] = $matches['pk'];
+				}
 				call_user_func_array($rule->cb, $params);
 				return true;
 			}

@@ -136,8 +136,10 @@ abstract class XMPPStream extends JAXLFsm
 	public function get_start_stream($jid)
 	{
 		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" ';
-		//if (isset($jid->bare)) $xml .= 'from="'.$jid->bare.'" ';
-		if (isset($jid->domain)) $xml .= 'to="'.$jid->domain.'" ';
+		//if (isset($jid->bare)) { $xml .= 'from="'.$jid->bare.'" '; }
+		if (isset($jid->domain)) {
+		    $xml .= 'to="'.$jid->domain.'" ';
+		}
 		$xml .= 'xmlns="'.NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.NS_XML.'">';
 		return $xml;
 	}
@@ -182,8 +184,9 @@ abstract class XMPPStream extends JAXLFsm
 				break;
 			case 'EXTERNAL':
 				// If no password, then we are probably doing certificate auth, so follow RFC 6120 form and pass '='.
-				if (strlen($pass) == 0)
+				if (strlen($pass) == 0) {
 					$stanza->t('=');
+				}
 				break;
 			default:
 				break;
@@ -210,13 +213,15 @@ abstract class XMPPStream extends JAXLFsm
 		$response = array();
 		$nc = '00000001';
 
-		if (!isset($decoded['digest-uri']))
+		if (!isset($decoded['digest-uri'])) {
 			$decoded['digest-uri'] = 'xmpp/'.$this->jid->domain;
+		}
 
 		$decoded['cnonce'] = base64_encode(JAXLUtil::get_nonce());
 
-		if (isset($decoded['qop']) && $decoded['qop'] != 'auth' && strpos($decoded['qop'], 'auth') !== false)
+		if (isset($decoded['qop']) && $decoded['qop'] != 'auth' && strpos($decoded['qop'], 'auth') !== false) {
 			$decoded['qop'] = 'auth';
+		}
 
 		$data = array_merge($decoded, array('nc' => $nc));
 
@@ -228,9 +233,11 @@ abstract class XMPPStream extends JAXLFsm
 			'qop' => 'auth'
 		);
 
-		foreach (array('nonce', 'digest-uri', 'realm', 'cnonce') as $key)
-			if (isset($decoded[$key]))
+		foreach (array('nonce', 'digest-uri', 'realm', 'cnonce') as $key) {
+			if (isset($decoded[$key])) {
 				$response[$key] = $decoded[$key];
+			}
+		}
 
 		return base64_encode($this->implode_data($response));
 	}
@@ -255,24 +262,36 @@ abstract class XMPPStream extends JAXLFsm
 	public function get_msg_pkt($attrs, $body = null, $thread = null, $subject = null, $payload = null)
 	{
 		$msg = new XMPPMsg($attrs, $body, $thread, $subject);
-		if (!$msg->id) $msg->id = $this->get_id();
-		if ($payload) $msg->cnode($payload);
+		if (!$msg->id) {
+		    $msg->id = $this->get_id();
+		}
+		if ($payload) {
+		    $msg->cnode($payload);
+		}
 		return $msg;
 	}
 
 	public function get_pres_pkt($attrs, $status = null, $show = null, $priority = null, $payload = null)
 	{
 		$pres = new XMPPPres($attrs, $status, $show, $priority);
-		if (!$pres->id) $pres->id = $this->get_id();
-		if ($payload) $pres->cnode($payload);
+		if (!$pres->id) {
+		    $pres->id = $this->get_id();
+		}
+		if ($payload) {
+		    $pres->cnode($payload);
+		}
 		return $pres;
 	}
 
 	public function get_iq_pkt($attrs, $payload)
 	{
 		$iq = new XMPPIq($attrs);
-		if (!$iq->id) $iq->id = $this->get_id();
-		if ($payload) $iq->cnode($payload);
+		if (!$iq->id) {
+		    $iq->id = $this->get_id();
+		}
+		if ($payload) {
+		    $iq->cnode($payload);
+		}
 		return $iq;
 	}
 
@@ -311,16 +330,19 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function encrypt_password($data, $user, $pass)
 	{
-		foreach (array('realm', 'cnonce', 'digest-uri') as $key)
-			if (!isset($data[$key]))
+		foreach (array('realm', 'cnonce', 'digest-uri') as $key) {
+			if (!isset($data[$key])) {
 				$data[$key] = '';
+			}
+        }
 
 		$pack = md5($user.':'.$data['realm'].':'.$pass);
 
-		if (isset($data['authzid']))
+		if (isset($data['authzid'])) {
 			$a1 = pack('H32',$pack).sprintf(':%s:%s:%s',$data['nonce'],$data['cnonce'],$data['authzid']);
-		else
+		} else {
 			$a1 = pack('H32',$pack).sprintf(':%s:%s',$data['nonce'],$data['cnonce']);
+		}
 
 		$a2 = 'AUTHENTICATE:'.$data['digest-uri'];
 		return md5(sprintf('%s:%s:%s:%s:%s:%s', md5($a1), $data['nonce'], $data['nc'], $data['cnonce'], $data['qop'], md5($a2)));

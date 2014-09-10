@@ -45,8 +45,14 @@ class XMPPPres extends XMPPStanza
 	{
 		parent::__construct('presence', $attrs);
 
-		if ($status) $this->c('status')->t($status)->up();
-		if ($show) $this->c('show')->t($show)->up();
-		if ($priority) $this->c('priority')->t($priority)->up();
+		if ($status) {
+		    $this->c('status')->t($status)->up();
+		}
+		if ($show) {
+		    $this->c('show')->t($show)->up();
+		}
+		if ($priority) {
+		    $this->c('priority')->t($priority)->up();
+		}
 	}
 }

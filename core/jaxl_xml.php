@@ -124,8 +124,9 @@ class JAXLXml
 		if (!$append) {
 			$this->rover->text = $text;
 		} else {
-			if ($this->rover->text === null)
+			if ($this->rover->text === null) {
 				$this->rover->text = '';
+			}
 			$this->rover->text .= $text;
 		}
 		return $this;
@@ -150,7 +151,9 @@ class JAXLXml
 
 	public function up()
 	{
-		if ($this->rover->parent) $this->rover = &$this->rover->parent;
+		if ($this->rover->parent) {
+		    $this->rover = &$this->rover->parent;
+		}
 		return $this;
 	}
 
@@ -164,8 +167,9 @@ class JAXLXml
 	{
 		foreach ($this->childrens as $child) {
 			if ($ns) {
-				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
+				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs)) {
 					return $child;
+				}
 			} elseif ($child->name == $name && $child->match_attrs($attrs)) {
 				return $child;
 			}
@@ -191,13 +195,23 @@ class JAXLXml
 		$xml = '';
 
 		$xml .= '<'.$this->name;
-		if ($this->ns && $this->ns != $parent_ns) $xml .= ' xmlns="'.$this->ns.'"';
-		foreach ($this->attrs as $k => $v) if (!is_null($v) && $v !== false) $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
+		if ($this->ns && $this->ns != $parent_ns) {
+		    $xml .= ' xmlns="'.$this->ns.'"';
+		}
+		foreach ($this->attrs as $k => $v) {
+		    if (!is_null($v) && $v !== false) {
+		        $xml .= ' '.$k.'="'.htmlspecialchars($v).'"';
+		    }
+		}
 		$xml .= '>';
 
-		foreach ($this->childrens as $child) $xml .= $child->to_string($this->ns);
+		foreach ($this->childrens as $child) {
+		    $xml .= $child->to_string($this->ns);
+		}
 
-		if ($this->text) $xml .= htmlspecialchars($this->text);
+		if ($this->text) {
+		    $xml .= htmlspecialchars($this->text);
+		}
 		$xml .= '</'.$this->name.'>';
 		return $xml;
 	}
