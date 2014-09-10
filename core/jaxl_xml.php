@@ -166,7 +166,7 @@ class JAXLXml
 			if ($ns) {
 				if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs))
 					return $child;
-			} else if ($child->name == $name && $child->match_attrs($attrs)) {
+			} elseif ($child->name == $name && $child->match_attrs($attrs)) {
 				return $child;
 			}
 		}

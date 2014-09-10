@@ -66,7 +66,7 @@ function upload($request)
 			'Content-Type' => 'text/html'),
 			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action="http://127.0.0.1:9699/upload/"><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
 		);
-	} else if ($request->method == 'POST') {
+	} elseif ($request->method == 'POST') {
 		if ($request->body === null && $request->expect) {
 			$request->recv_body();
 		} else {

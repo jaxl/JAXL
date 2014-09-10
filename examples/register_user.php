@@ -80,7 +80,7 @@ function wait_for_register_response($event, $args)
 				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
 				$client->send_end_stream();
 				return "logged_out";
-			} else if ($stanza->attrs['type'] == 'error') {
+			} elseif ($stanza->attrs['type'] == 'error') {
 				$error = $stanza->exists('error');
 				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
 				echo "error text: ".$error->exists('text')->text.PHP_EOL;

@@ -94,7 +94,7 @@ class XEP_0206 extends XMPPXep
 				));
 
 				$body = $body->to_string();
-			} else if (substr($body, 0, 16) == '</stream:stream>') {
+			} elseif (substr($body, 0, 16) == '</stream:stream>') {
 				$body = new JAXLXml('body', NS_HTTP_BIND, array(
 					'sid' => $this->sid,
 					'rid' => ++$this->rid,

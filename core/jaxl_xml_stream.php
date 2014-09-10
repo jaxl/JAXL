@@ -118,7 +118,7 @@ class JAXLXmlStream
 				$attrs[$k[1]] = $v;
 			}
 			// xml ns
-			else if ($k[0] == NS_XML) {
+			elseif ($k[0] == NS_XML) {
 				unset($attrs[$key]);
 				$attrs['xml:'.$k[1]] = $v;
 			} else {
@@ -161,7 +161,7 @@ class JAXLXmlStream
 				$stanza = new JAXLXml($name[1], $this->ns);
 				call_user_func($this->end_cb, $stanza);
 			}
-		} else if ($this->depth > 1) {
+		} elseif ($this->depth > 1) {
 			if ($this->stanza) $this->stanza->up();
 
 			if ($this->depth == 2) {

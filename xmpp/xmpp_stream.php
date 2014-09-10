@@ -293,7 +293,7 @@ abstract class XMPPStream extends JAXLFsm
 			if ($dd) {
 				$key = trim(substr($pair, 0, $dd));
 				$pairs[$key] = trim(trim(substr($pair, $dd + 1)), '"');
-			} else if (strpos(strrev(trim($pair)), '"') === 0 && $key) {
+			} elseif (strpos(strrev(trim($pair)), '"') === 0 && $key) {
 				$pairs[$key] .= ',' . trim(trim($pair), '"');
 				continue;
 			}
@@ -494,7 +494,7 @@ abstract class XMPPStream extends JAXLFsm
 					return "wait_for_bind_response";
 				}
 				/*// compression not supported due to bug in php stream filters
-				else if ($comp) {
+				elseif ($comp) {
 					$this->send_compress_pkt("zlib");
 					return "wait_for_compression_result";
 				}*/
@@ -572,11 +572,11 @@ abstract class XMPPStream extends JAXLFsm
 					//_debug("sasl failed with reason ".$reason."");
 					$this->handle_auth_failure($reason);
 					return "logged_out";
-				} else if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+				} elseif ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
 					$challenge = $stanza->text;
 					$this->send_challenge_response($challenge);
 					return "wait_for_sasl_response";
-				} else if ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
+				} elseif ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
 					$this->xml->reset_parser();
 					$this->send_start_stream(@$this->jid);
 					return "wait_for_stream_start";
@@ -642,9 +642,9 @@ abstract class XMPPStream extends JAXLFsm
 				// call abstract
 				if ($stanza->name == 'message') {
 					$this->handle_message($stanza);
-				} else if ($stanza->name == 'presence') {
+				} elseif ($stanza->name == 'presence') {
 					$this->handle_presence($stanza);
-				} else if ($stanza->name == 'iq') {
+				} elseif ($stanza->name == 'iq') {
 					$this->handle_iq($stanza);
 				} else {
 					$this->handle_other($event, $args);

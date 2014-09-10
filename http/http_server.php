@@ -159,7 +159,7 @@ class HTTPServer
 						$v = implode(":", $line_parts);
 						$request->set_header($k, $v);
 					}
-				} else if (strlen(trim($line_parts[0])) == 0) {
+				} elseif (strlen(trim($line_parts[0])) == 0) {
 					$request->empty_line();
 				}
 				// if exploded line array size is 1
@@ -182,9 +182,9 @@ class HTTPServer
 				_debug("no dispatch rule matched, sending to generic callback");
 				call_user_func($this->cb, $request);
 			}
-			// else if not dispatched and not generic callbacked
+			// elseif not dispatched and not generic callbacked
 			// send 404 not_found
-			else if (!$dispatched) {
+			elseif (!$dispatched) {
 				// TODO: send 404 if no callback is registered for this request
 				_debug("dropping request since no matching dispatch rule or generic callback was specified");
 				$request->not_found('404 Not Found');

@@ -63,7 +63,7 @@ class XMPPJid
 			} else {
 				$this->domain = $tmp[0];
 			}
-		} else if (sizeof($tmp) == 1) {
+		} elseif (sizeof($tmp) == 1) {
 			$this->domain = $tmp[0];
 		}
 
@@ -74,7 +74,7 @@ class XMPPJid
 	{
 		$str = "";
 		if ($this->node) $str .= $this->node.'@'.$this->domain;
-		else if ($this->domain) $str .= $this->domain;
+		elseif ($this->domain) $str .= $this->domain;
 		if ($this->resource) $str .= '/'.$this->resource;
 		return $str;
 	}

@@ -81,7 +81,7 @@ class JAXLCli
 			// enter key
 			JAXLCli::prompt(false);
 			return;
-		} else if (trim($raw) == 'quit') {
+		} elseif (trim($raw) == 'quit') {
 			$this->stop();
 			$this->in = null;
 			if ($this->quit_cb) call_user_func($this->quit_cb);

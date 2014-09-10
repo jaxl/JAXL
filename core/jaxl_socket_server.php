@@ -180,7 +180,7 @@ class JAXLSocketServer
 				// fwrite failed
 				_warning("====> fwrite failed");
 				$this->clients[$client_id]['obuffer'] = $total;
-			} else if ($written == strlen($total) || $written == $this->send_chunk_size) {
+			} elseif ($written == strlen($total) || $written == $this->send_chunk_size) {
 				// full chunk written
 				//_debug("full chunk written");
 				$this->clients[$client_id]['obuffer'] = substr($total, $this->send_chunk_size);

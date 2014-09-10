@@ -301,7 +301,7 @@ class HTTPRequest extends JAXLFsm
 						_debug("non-existant method $event called");
 						return 'headers_received';
 					}
-				} else if (@isset($this->shortcuts[$event])) {
+				} elseif (@isset($this->shortcuts[$event])) {
 					return $this->handle_shortcut($event, $args);
 				} else {
 					_warning("uncatched $event ".$args[0]);
@@ -398,7 +398,7 @@ class HTTPRequest extends JAXLFsm
 				$body = $args[0];
 				$headers = array();
 			}
-		} else if (sizeof($args) == 2) {
+		} elseif (sizeof($args) == 2) {
 			// body and http headers both received
 			if (is_array($args[0])) {
 				// header first

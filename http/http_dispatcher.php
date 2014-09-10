@@ -100,7 +100,7 @@ class HTTPDispatcher
 
 		// fill up defaults
 		if ($s == 3) { $rule[] = array();
-		} else if ($s == 2) { $rule[] = array('GET'); $rule[] = array();
+		} elseif ($s == 2) { $rule[] = array('GET'); $rule[] = array();
 		} else { _debug("invalid rule"); return; }
 
 		$this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);

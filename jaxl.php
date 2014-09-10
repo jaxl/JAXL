@@ -678,9 +678,9 @@ class JAXL extends XMPPStream
 
 		if ($pref_auth == 'X-FACEBOOK-PLATFORM') {
 			return "wait_for_fb_sasl_response";
-		} else if ($pref_auth == 'CRAM-MD5') {
+		} elseif ($pref_auth == 'CRAM-MD5') {
 			return "wait_for_cram_md5_response";
-		} else if ($pref_auth == 'SCRAM-SHA-1') {
+		} elseif ($pref_auth == 'SCRAM-SHA-1') {
 			return "wait_for_scram_sha1_response";
 		}
 	}
@@ -773,7 +773,7 @@ class JAXL extends XMPPStream
 
 			if ($type == 'available') {
 				$this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
-			} else if ($type == 'unavailable') {
+			} elseif ($type == 'unavailable') {
 				if (@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource])
 					unset($this->roster[$jid->bare]->resources[$jid->resource]);
 			}
@@ -817,9 +817,9 @@ class JAXL extends XMPPStream
 		foreach ($query->childrens as $k => $child) {
 			if ($child->name == 'identity') {
 				//echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
-			} else if ($child->name == 'x') {
+			} elseif ($child->name == 'x') {
 				//echo 'x ns:'.$child->ns.PHP_EOL;
-			} else if ($child->name == 'feature') {
+			} elseif ($child->name == 'feature') {
 				//echo 'feature var:'.$child->attrs['var'].PHP_EOL;
 			}
 		}

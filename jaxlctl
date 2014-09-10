@@ -96,7 +96,7 @@ class JAXLCtl
 			// dispatch to buffer callback
 			call_user_func($this->buffer_cb, $this->buffer.$raw);
 			$this->buffer = '';
-		} else if ($last == '\\') {
+		} elseif ($last == '\\') {
 			$this->buffer .= substr($raw, 0, -1);
 			echo $this->dots;
 		} else {

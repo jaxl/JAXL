@@ -135,7 +135,7 @@ class HTTPMultiPart extends JAXLFsm
 			if ($data[0] == '--'.$this->boundary) {
 				_debug("start of new multipart/form-data detected");
 				return array('wait_for_content_disposition', true);
-			} else if ($data[0] == '--'.$this->boundary.'--') {
+			} elseif ($data[0] == '--'.$this->boundary.'--') {
 				_debug("end of multipart form data detected");
 				return array('wait_for_empty_line', true);
 			} else {

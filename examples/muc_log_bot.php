@@ -115,7 +115,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 		}
 	}
 	// stanza from other users received
-	else if (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
+	elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
 		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
 			$item = $x->exists('item');
 			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
