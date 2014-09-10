@@ -146,21 +146,19 @@ $client->start();
 // try to connect with newly registered account
 //
 if ($form['type'] == 'result') {
+    _info("connecting newly registered user account");
+    $client = new JAXL(array(
+        'jid' => $form['username'].'@'.$argv[1],
+        'pass' => $form['password'],
+        'log_level' => JAXL_DEBUG
+    ));
 
-_info("connecting newly registered user account");
-$client = new JAXL(array(
-	'jid' => $form['username'].'@'.$argv[1],
-	'pass' => $form['password'],
-	'log_level' => JAXL_DEBUG
-));
+    $client->add_cb('on_auth_success', function () {
+        global $client;
+        $client->set_status('Available');
+    });
 
-$client->add_cb('on_auth_success', function () {
-	global $client;
-	$client->set_status('Available');
-});
-
-$client->start();
-
+    $client->start();
 }
 
 echo "done\n";
