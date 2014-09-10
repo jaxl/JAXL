@@ -204,8 +204,7 @@ class JAXLSocketServer
 					_debug("closed client#".$client_id);
 				}
 			}
-		}
-		catch(JAXLException $e) {
+		} catch (JAXLException $e) {
 			_debug("====> got fwrite exception");
 		}
 	}

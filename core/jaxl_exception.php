@@ -88,8 +88,7 @@ class JAXLException extends Exception
 			if (null !== ($error = error_get_last())) {
 				throw new JAXLException($error['message'], $error['type'], $error['file'], $error['line']);
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			_debug("shutdown handler catched with exception ".json_encode($e));
 		}
 	}
