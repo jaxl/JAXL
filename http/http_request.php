@@ -436,8 +436,9 @@ class HTTPRequest extends JAXLFsm
 
 	protected function _send_headers($code, $headers)
 	{
-		foreach ($headers as $k => $v)
+		foreach ($headers as $k => $v) {
 			$this->_send_header($k, $v);
+		}
 	}
 
 	protected function _send_body($body)

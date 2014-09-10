@@ -324,7 +324,9 @@ abstract class XMPPStream extends JAXLFsm
 	public function implode_data($data)
 	{
 		$return = array();
-		foreach ($data as $key => $value) $return[] = $key . '="' . $value . '"';
+		foreach ($data as $key => $value) {
+		    $return[] = $key . '="' . $value . '"';
+		}
 		return implode(',', $return);
 	}
 

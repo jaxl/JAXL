@@ -118,8 +118,9 @@ class JAXLLoop
 			self::$is_running = true;
 			self::$clock = new JAXLClock();
 
-			while ((self::$active_read_fds + self::$active_write_fds) > 0)
+			while ((self::$active_read_fds + self::$active_write_fds) > 0) {
 				self::select();
+			}
 
 			_debug("no more active fd's to select");
 			self::$is_running = false;
