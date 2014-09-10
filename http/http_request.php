@@ -322,7 +322,8 @@ class HTTPRequest extends JAXLFsm
 	// called internally for every header received
 	protected function set_header($k, $v)
 	{
-		$k = trim($k); $v = ltrim($v);
+		$k = trim($k);
+		$v = ltrim($v);
 
 		// is expect header?
 		if (strtolower($k) == 'expect' && strtolower($v) == '100-continue') {

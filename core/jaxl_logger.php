@@ -92,7 +92,9 @@ class JAXLLogger
 	public static function log($msg, $verbosity = 1)
 	{
 		if ($verbosity <= self::$level) {
-			$bt = debug_backtrace(); array_shift($bt); $callee = array_shift($bt);
+			$bt = debug_backtrace();
+			array_shift($bt);
+			$callee = array_shift($bt);
 			$msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
 
 			$size = strlen($msg);
