@@ -48,7 +48,7 @@ require_once "jaxl.php";
 class JAXLEventTest extends PHPUnit_Framework_TestCase
 {
 
-	function test_jaxl_event()
+	public function test_jaxl_event()
 	{
 		$ev = new JAXLEvent();
 
