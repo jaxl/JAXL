@@ -341,9 +341,9 @@ abstract class XMPPStream extends JAXLFsm
 		$pack = md5($user.':'.$data['realm'].':'.$pass);
 
 		if (isset($data['authzid'])) {
-			$a1 = pack('H32',$pack).sprintf(':%s:%s:%s',$data['nonce'],$data['cnonce'],$data['authzid']);
+			$a1 = pack('H32', $pack).sprintf(':%s:%s:%s', $data['nonce'], $data['cnonce'], $data['authzid']);
 		} else {
-			$a1 = pack('H32',$pack).sprintf(':%s:%s',$data['nonce'],$data['cnonce']);
+			$a1 = pack('H32', $pack).sprintf(':%s:%s', $data['nonce'], $data['cnonce']);
 		}
 
 		$a2 = 'AUTHENTICATE:'.$data['digest-uri'];

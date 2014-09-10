@@ -63,7 +63,7 @@ class JAXLClock
 		// update clock
 		if ($by) {
 			$this->tick += $by;
-			$this->time += $by / pow(10,6);
+			$this->time += $by / pow(10, 6);
 		} else {
 			$time = microtime(true);
 			$by = $time - $this->time;

@@ -48,7 +48,7 @@ class XEP_0199 extends XMPPXep
 
 	public function on_auth_success()
 	{
-		JAXLLoop::$clock->call_fun_periodic(30 * pow(10,6), array(&$this, 'ping'));
+		JAXLLoop::$clock->call_fun_periodic(30 * pow(10, 6), array(&$this, 'ping'));
 	}
 
 	public function on_xmpp_ping($stanza)
