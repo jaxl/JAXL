@@ -37,24 +37,24 @@
 */
 
 // XML
-define('NS_XML_pfx',                  "xml");
-define('NS_XML',                      'http://www.w3.org/XML/1998/namespace');
+define('NS_XML_pfx', "xml");
+define('NS_XML', 'http://www.w3.org/XML/1998/namespace');
 
 // XMPP Core (RFC 3920)
-define('NS_XMPP_pfx',                 "stream");
-define('NS_XMPP',                     'http://etherx.jabber.org/streams');
-define('NS_STREAM_ERRORS',            'urn:ietf:params:xml:ns:xmpp-streams');
-define('NS_TLS',                      'urn:ietf:params:xml:ns:xmpp-tls');
-define('NS_SASL',                     'urn:ietf:params:xml:ns:xmpp-sasl');
-define('NS_BIND',                     'urn:ietf:params:xml:ns:xmpp-bind');
-define('NS_STANZA_ERRORS',            'urn:ietf:params:xml:ns:xmpp-stanzas');
+define('NS_XMPP_pfx', "stream");
+define('NS_XMPP', 'http://etherx.jabber.org/streams');
+define('NS_STREAM_ERRORS', 'urn:ietf:params:xml:ns:xmpp-streams');
+define('NS_TLS', 'urn:ietf:params:xml:ns:xmpp-tls');
+define('NS_SASL', 'urn:ietf:params:xml:ns:xmpp-sasl');
+define('NS_BIND', 'urn:ietf:params:xml:ns:xmpp-bind');
+define('NS_STANZA_ERRORS', 'urn:ietf:params:xml:ns:xmpp-stanzas');
 
 // XMPP-IM (RFC 3921)
-define('NS_JABBER_CLIENT',            'jabber:client');
-define('NS_JABBER_SERVER',            'jabber:server');
-define('NS_SESSION',                  'urn:ietf:params:xml:ns:xmpp-session');
-define('NS_ROSTER',                   'jabber:iq:roster');
+define('NS_JABBER_CLIENT', 'jabber:client');
+define('NS_JABBER_SERVER', 'jabber:server');
+define('NS_SESSION', 'urn:ietf:params:xml:ns:xmpp-session');
+define('NS_ROSTER', 'jabber:iq:roster');
 
 // Stream Compression (XEP-0138)
-define('NS_COMPRESSION_FEATURE',	  'http://jabber.org/features/compress');
-define('NS_COMPRESSION_PROTOCOL',	  'http://jabber.org/protocol/compress');
+define('NS_COMPRESSION_FEATURE', 'http://jabber.org/features/compress');
+define('NS_COMPRESSION_PROTOCOL', 'http://jabber.org/protocol/compress');
