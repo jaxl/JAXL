@@ -37,11 +37,11 @@
 */
 
 // XML
-define('NS_XML_pfx', "xml");
+define('NS_XML_PFX', "xml");
 define('NS_XML', 'http://www.w3.org/XML/1998/namespace');
 
 // XMPP Core (RFC 3920)
-define('NS_XMPP_pfx', "stream");
+define('NS_XMPP_PFX', "stream");
 define('NS_XMPP', 'http://etherx.jabber.org/streams');
 define('NS_STREAM_ERRORS', 'urn:ietf:params:xml:ns:xmpp-streams');
 define('NS_TLS', 'urn:ietf:params:xml:ns:xmpp-tls');
