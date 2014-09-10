@@ -74,7 +74,9 @@ class XEP_0249 extends XMPPXep
 
 		return $this->jaxl->get_msg_pkt(
 			array('from' => $this->jaxl->full_jid->to_string(), 'to' => $to_bare_jid),
-			null, null, null,
+			null,
+		    null,
+		    null,
 			new JAXLXml('x', NS_DIRECT_MUC_INVITATION, $xattrs)
 		);
 	}
