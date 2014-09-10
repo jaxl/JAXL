@@ -516,13 +516,13 @@ abstract class XMPPStream extends JAXLFsm
 				if ($bind) {
 					$this->send_bind_pkt($this->resource);
 					return "wait_for_bind_response";
-				}
-				/*// compression not supported due to bug in php stream filters
-				elseif ($comp) {
+				/*} elseif ($comp) {
+				    // compression not supported due to bug in php stream filters
+
 					$this->send_compress_pkt("zlib");
 					return "wait_for_compression_result";
-				}*/
-				else {
+				*/
+				} else {
 					_debug("no catch");
 				}
 

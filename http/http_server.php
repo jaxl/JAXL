@@ -161,11 +161,11 @@ class HTTPServer
 					}
 				} elseif (strlen(trim($line_parts[0])) == 0) {
 					$request->empty_line();
-				}
-				// if exploded line array size is 1
-				// and thr is something in $line_parts[0]
-				// must be request body
-				else {
+				} else {
+				    // if exploded line array size is 1
+				    // and there is something in $line_parts[0]
+				    // must be request body
+
 					$request->body($line);
 				}
 			}
@@ -181,18 +181,18 @@ class HTTPServer
 			if (!$dispatched && $this->cb) {
 				_debug("no dispatch rule matched, sending to generic callback");
 				call_user_func($this->cb, $request);
-			}
-			// elseif not dispatched and not generic callbacked
-			// send 404 not_found
-			elseif (!$dispatched) {
+			} elseif (!$dispatched) {
+			    // elseif not dispatched and not generic callbacked
+			    // send 404 not_found
+
 				// TODO: send 404 if no callback is registered for this request
 				_debug("dropping request since no matching dispatch rule or generic callback was specified");
 				$request->not_found('404 Not Found');
 			}
-		}
-		// if state is not 'headers_received'
-		// reactivate client socket for read event
-		else {
+		} else {
+		    // if state is not 'headers_received'
+		    // reactivate client socket for read event
+
 			$this->server->read($sock);
 		}
 	}

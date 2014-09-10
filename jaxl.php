@@ -443,9 +443,9 @@ class JAXL extends XMPPStream
 
 			// emit
 			$this->ev->emit('on_disconnect');
-		}
-		// if connection to the destination fails
-		else {
+		} else {
+		    // if connection to the destination fails
+
 			if ($this->trans->errno == 61
 			|| $this->trans->errno == 110
 			|| $this->trans->errno == 111
@@ -687,18 +687,18 @@ class JAXL extends XMPPStream
 		// if pref auth exists, try it
 		if ($pref_auth_exists) {
 			$mech = $pref_auth;
-		}
-		// if pref auth doesn't exists, choose one from available mechanisms
-		else {
+		} else {
+		    // if pref auth doesn't exists, choose one from available mechanisms
+
 			foreach ($mechs as $mech => $any) {
 				// choose X-FACEBOOK-PLATFORM only if fb_access_token config value is available
 				if ($mech == 'X-FACEBOOK-PLATFORM') {
 					if (@$this->cfg['fb_access_token']) {
 						break;
 					}
-				}
-				// else try first of the available methods
-				else {
+				} else {
+				    // else try first of the available methods
+
 					break;
 				}
 			}

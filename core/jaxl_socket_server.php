@@ -122,10 +122,10 @@ class JAXLSocketServer
 			// callback and let user land take further control of what to do
 			if ($this->accept_cb) {
 				call_user_func($this->accept_cb, $client_id, $this->clients[$client_id]['addr']);
-			}
-			// if no accept callback is registered
-			// close the accepted connection
-			else {
+			} else {
+			    // if no accept callback is registered
+			    // close the accepted connection
+
 				@fclose($client);
 				$this->clients[$client_id]['closed'] = true;
 				unset($this->clients[$client_id]);
