@@ -65,19 +65,19 @@ $client = new JAXL(array(
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function () {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 	$client->set_status("available!", "dnd", 10);
 });
 
-$client->add_cb('on_auth_failure', function($reason) {
+$client->add_cb('on_auth_failure', function ($reason) {
 	global $client;
 	$client->send_end_stream();
 	_info("got on_auth_failure cb with reason $reason");
 });
 
-$client->add_cb('on_chat_message', function($stanza) {
+$client->add_cb('on_chat_message', function ($stanza) {
 	global $client;
 
 	// echo back incoming message stanza
@@ -86,7 +86,7 @@ $client->add_cb('on_chat_message', function($stanza) {
 	$client->send($stanza);
 });
 
-$client->add_cb('on_disconnect', function() {
+$client->add_cb('on_disconnect', function () {
 	_info("got on_disconnect cb");
 });
 

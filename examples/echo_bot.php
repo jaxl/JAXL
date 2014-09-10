@@ -83,7 +83,7 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function () {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
@@ -99,18 +99,18 @@ $client->add_cb('on_auth_success', function() {
 
 // by default JAXL instance catches incoming roster list results and updates
 // roster list is parsed/cached and an event 'on_roster_update' is emitted
-$client->add_cb('on_roster_update', function() {
+$client->add_cb('on_roster_update', function () {
 	//global $client;
 	//print_r($client->roster);
 });
 
-$client->add_cb('on_auth_failure', function($reason) {
+$client->add_cb('on_auth_failure', function ($reason) {
 	global $client;
 	_info("got on_auth_failure cb with reason $reason");
 	$client->send_end_stream();
 });
 
-$client->add_cb('on_chat_message', function($stanza) {
+$client->add_cb('on_chat_message', function ($stanza) {
 	global $client;
 
 	// echo back incoming chat message stanza
@@ -119,7 +119,7 @@ $client->add_cb('on_chat_message', function($stanza) {
 	$client->send($stanza);
 });
 
-$client->add_cb('on_presence_stanza', function($stanza) {
+$client->add_cb('on_presence_stanza', function ($stanza) {
 	global $client;
 
 	$type = ($stanza->type ? $stanza->type : "available");
@@ -132,7 +132,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	}
 });
 
-$client->add_cb('on_disconnect', function() {
+$client->add_cb('on_disconnect', function () {
 	_info("got on_disconnect cb");
 });
 

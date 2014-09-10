@@ -69,14 +69,14 @@ $client = new JAXL(array(
 	'log_level' => JAXL_INFO
 ));
 
-$client->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function () {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 	echo '<body xmlns="'.NS_HTTP_BIND.'" sid="'.$client->xeps['0206']->sid.'" rid="'.$client->xeps['0206']->rid.'" jid="'.$client->full_jid->to_string().'"/>';
 	exit;
 });
 
-$client->add_cb('on_auth_failure', function($reason) {
+$client->add_cb('on_auth_failure', function ($reason) {
 	global $client;
 	_info("got on_auth_failure cb with reason $reason");
 	$client->send_end_stream();

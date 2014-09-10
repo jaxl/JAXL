@@ -66,7 +66,7 @@ $client->require_xep(array(
 $_room_full_jid = $argv[4]."/".$argv[5];
 $room_full_jid = new XMPPJid($_room_full_jid);
 
-$client->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function () {
 	global $client, $room_full_jid;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
@@ -74,13 +74,13 @@ $client->add_cb('on_auth_success', function() {
 	$client->xeps['0045']->join_room($room_full_jid);
 });
 
-$client->add_cb('on_auth_failure', function($reason) {
+$client->add_cb('on_auth_failure', function ($reason) {
 	global $client;
 	$client->send_end_stream();
 	_info("got on_auth_failure cb with reason $reason");
 });
 
-$client->add_cb('on_groupchat_message', function($stanza) {
+$client->add_cb('on_groupchat_message', function ($stanza) {
 	global $client;
 
 	$from = new XMPPJid($stanza->from);
@@ -96,7 +96,7 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 	}
 });
 
-$client->add_cb('on_presence_stanza', function($stanza) {
+$client->add_cb('on_presence_stanza', function ($stanza) {
 	global $client, $room_full_jid;
 
 	$from = new XMPPJid($stanza->from);
@@ -128,7 +128,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 
 });
 
-$client->add_cb('on_disconnect', function() {
+$client->add_cb('on_disconnect', function () {
 	_info("got on_disconnect cb");
 });
 

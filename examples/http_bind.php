@@ -52,7 +52,7 @@ $client = new JAXL(array(
 	'log_level' => JAXL_DEBUG
 ));
 
-$client->add_cb('on_auth_success', function() {
+$client->add_cb('on_auth_success', function () {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 });

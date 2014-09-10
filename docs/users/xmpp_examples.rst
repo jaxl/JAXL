@@ -21,14 +21,14 @@ Next we need to register callbacks on events of interest using ``JAXL::add_cb/2`
 
 .. code-block:: ruby
 
-    $client->add_cb('on_auth_success', function() {
+    $client->add_cb('on_auth_success', function () {
         global $client;
         $client->set_status("available!");  // set your status
         $client->get_vcard();               // fetch your vcard
         $client->get_roster();              // fetch your roster list
     });
     
-    $client->add_cb('on_chat_message', function($msg) {
+    $client->add_cb('on_chat_message', function ($msg) {
         global $client;
         
         // echo back
@@ -37,7 +37,7 @@ Next we need to register callbacks on events of interest using ``JAXL::add_cb/2`
         $client->send($msg);
     });
     
-    $client->add_cb('on_disconnect', function() {
+    $client->add_cb('on_disconnect', function () {
         _debug("got on_disconnect cb");
     });
 
