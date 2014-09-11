@@ -73,4 +73,30 @@ class XMPPJidTest extends PHPUnit_Framework_TestCase
             array('1@domain-2.tld//res')
         );
     }
+
+    /**
+     * @dataProvider jidNegativeProvider
+     * @expectedException InvalidArgumentException
+     */
+    public function testJidNegative($jidText)
+    {
+        $jid = new XMPPJid($jidText);
+    }
+
+    public function jidNegativeProvider()
+    {
+        return array(
+            array('"@domain'),
+            array('&@domain'),
+            array("'@domain"),
+            array('/@domain'),
+            array(':@domain'),
+            array('<@domain'),
+            array('>@domain'),
+            array('@@domain'),
+            array("\x7F" . '@domain'),
+            array("\xFF\xFE" . '@domain'),
+            array("\xFF\xFF" . '@domain')
+        );
+    }
 }
