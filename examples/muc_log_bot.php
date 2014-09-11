@@ -66,38 +66,41 @@ $client->require_xep(array(
 $_room_full_jid = $argv[4]."/".$argv[5];
 $room_full_jid = new XMPPJid($_room_full_jid);
 
-$client->add_cb('on_auth_success', function() {
-	global $client, $room_full_jid;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+function on_auth_success_callback() {
+    global $client, $room_full_jid;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
-	// join muc room
-	$client->xeps['0045']->join_room($room_full_jid);
-});
+    // join muc room
+    $client->xeps['0045']->join_room($room_full_jid);
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+function on_auth_failure_callback($reason) {
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-$client->add_cb('on_groupchat_message', function($stanza) {
-	global $client;
+function on_groupchat_message_callback($stanza) {
+    global $client;
 
-	$from = new XMPPJid($stanza->from);
-	$delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
+    $from = new XMPPJid($stanza->from);
+    $delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 
-	if($from->resource) {
-		echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
-	}
-	else {
-		$subject = $stanza->exists('subject');
-		if($subject) {
-			echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
-		}
-	}
-});
+    if($from->resource) {
+        echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+    }
+    else {
+        $subject = $stanza->exists('subject');
+        if($subject) {
+            echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+        }
+    }
+}
+$client->add_cb('on_groupchat_message', 'on_chat_message_callback');
 
-$client->add_cb('on_presence_stanza', function($stanza) {
+function on_presence_stanza_callback($stanza) {
 	global $client, $room_full_jid;
 
 	$from = new XMPPJid($stanza->from);
@@ -131,11 +134,13 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 		_warning("=======> odd case 3");
 	}
 
-});
+}
+$client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 
-$client->add_cb('on_disconnect', function() {
+function on_disconnect_callback() {
 	_info("got on_disconnect cb");
-});
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream

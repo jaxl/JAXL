@@ -59,24 +59,26 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+function on_auth_success_callback() {
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
-	// create node
-	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
+    // create node
+    //$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
 
-	// subscribe
-	$client->xeps['0060']->subscribe('pubsub.localhost', 'dummy_node');
-});
+    // subscribe
+    $client->xeps['0060']->subscribe('pubsub.localhost', 'dummy_node');
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+function on_auth_failure_callback($reason) {
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-$client->add_cb('on_headline_message', function($stanza) {
+function on_headline_message_callback($stanza) {
 	global $client;
 	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
 		_info("got pubsub event");
@@ -84,11 +86,13 @@ $client->add_cb('on_headline_message', function($stanza) {
 	else {
 		_warning("unknown headline message rcvd");
 	}
-});
+}
+$client->add_cb('on_headline_message', 'on_headline_message_callback');
 
-$client->add_cb('on_disconnect', function() {
+function on_disconnect_callback() {
 	_info("got on_disconnect cb");
-});
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
