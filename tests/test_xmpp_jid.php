@@ -47,19 +47,22 @@ require_once "jaxl.php";
  */
 class XMPPJidTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @dataProvider jidPositiveProvider
+     */
+    public function test_xmpp_jid_construct($jidText)
+    {
+        $jid = new XMPPJid($jidText);
+        $this->assertEquals($jidText, $jid->to_string());
+    }
 
-	public function test_xmpp_jid_construct()
-	{
-		$jid = new XMPPJid("1@domain.tld/res");
-		$this->assertEquals('1@domain.tld/res', $jid->to_string());
-
-		$jid = new XMPPJid("domain.tld/res");
-		$this->assertEquals('domain.tld/res', $jid->to_string());
-
-		$jid = new XMPPJid("component.domain.tld");
-		$this->assertEquals('component.domain.tld', $jid->to_string());
-
-		$jid = new XMPPJid("1@domain.tld");
-		$this->assertEquals('1@domain.tld', $jid->to_string());
-	}
+    public function jidPositiveProvider()
+    {
+        return array(
+            array('1@domain.tld/res'),
+            array('domain.tld/res'),
+            array('component.domain.tld'),
+            array('1@domain.tld')
+        );
+    }
 }
