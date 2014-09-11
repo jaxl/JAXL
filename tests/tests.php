@@ -47,5 +47,14 @@ require_once "jaxl.php";
  */
 class JAXLTest extends PHPUnit_Framework_TestCase
 {
-
+    public function testProtocolOption()
+    {
+        $config = array(
+            'host' => 'domain.tld',
+            'port' => 5223,
+            'protocol' => 'tcp'
+        );
+        $jaxl = new JAXL($config);
+        $this->assertEquals('tcp://domain.tld:5223', $jaxl->get_socket_path());
+    }
 }
