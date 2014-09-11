@@ -61,13 +61,14 @@ require_once JAXL_CWD.'/http/http_multipart.php';
 //
 // all the above methods can also be directly performed using:
 //
-//     $request->send_response($code, $headers=array(), $body=null)
+//     $request->send_response($code, $headers = array(), $body = null)
 //
 // Note: All the send_* methods do not manage connection close/keep-alive logic,
 // it is upto you to do that, by default connection will usually be dropped
 // on client disconnect if not handled by you.
 //
-class HTTPRequest extends JAXLFsm {
+class HTTPRequest extends JAXLFsm
+{
 
 	// peer identifier
 	public $sock = null;
@@ -107,23 +108,26 @@ class HTTPRequest extends JAXLFsm {
 		'recv_body' => true, 'close' => true // others
 	);
 
-	public function __construct($sock, $addr) {
+	public function __construct($sock, $addr)
+	{
 		$this->sock = $sock;
 
 		$addr = explode(":", $addr);
 		$this->ip = $addr[0];
-		if(sizeof($addr) == 2) {
+		if (sizeof($addr) == 2) {
 			$this->port = $addr[1];
 		}
 
 		parent::__construct("setup");
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		_debug("http request going down in ".$this->state." state");
 	}
 
-	public function state() {
+	public function state()
+	{
 		return $this->state;
 	}
 
@@ -131,7 +135,8 @@ class HTTPRequest extends JAXLFsm {
 	// abstract method implementation
 	//
 
-	public function handle_invalid_state($r) {
+	public function handle_invalid_state($r)
+	{
 		_debug("handle invalid state called with");
 		var_dump($r);
 	}
@@ -140,7 +145,8 @@ class HTTPRequest extends JAXLFsm {
 	// fsm States
 	//
 
-	public function setup($event, $args) {
+	public function setup($event, $args)
+	{
 		switch($event) {
 			case 'set_sock_cb':
 				$this->_send_cb = $args[0];
@@ -154,7 +160,8 @@ class HTTPRequest extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_request_line($event, $args) {
+	public function wait_for_request_line($event, $args)
+	{
 		switch($event) {
 			case 'line':
 				$this->_line($args[0], $args[1], $args[2]);
@@ -166,7 +173,8 @@ class HTTPRequest extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_headers($event, $args) {
+	public function wait_for_headers($event, $args)
+	{
 		switch($event) {
 			case 'set_header':
 				$this->set_header($args[0], $args[1]);
@@ -180,7 +188,8 @@ class HTTPRequest extends JAXLFsm {
 		}
 	}
 
-	public function maybe_headers_received($event, $args) {
+	public function maybe_headers_received($event, $args)
+	{
 		switch($event) {
 			case 'set_header':
 				$this->set_header($args[0], $args[1]);
@@ -198,7 +207,8 @@ class HTTPRequest extends JAXLFsm {
 		}
 	}
 
-	public function wait_for_body($event, $args) {
+	public function wait_for_body($event, $args)
+	{
 		switch($event) {
 			case 'body':
 				$content_length = $this->headers['Content-Length'];
@@ -206,16 +216,19 @@ class HTTPRequest extends JAXLFsm {
 				$rcvd_len = strlen($rcvd);
 				$this->recvd_body_len += $rcvd_len;
 
-				if($this->body === null) $this->body = $rcvd;
-				else $this->body .= $rcvd;
+				if ($this->body === null) {
+				    $this->body = $rcvd;
+				} else {
+				    $this->body .= $rcvd;
+				}
 
-				if($this->multipart) {
+				if ($this->multipart) {
 					// boundary start, content_disposition, form data, boundary start, ....., boundary end
 					// these define various states of a multipart/form-data
 					$form_data = explode("\r\n", $rcvd);
-					foreach($form_data as $data) {
+					foreach ($form_data as $data) {
 						//_debug("passing $data to multipart fsm");
-						if(!$this->multipart->process($data)) {
+						if (!$this->multipart->process($data)) {
 							_debug("multipart fsm returned false");
 							$this->_close();
 							return array('closed', false);
@@ -223,11 +236,10 @@ class HTTPRequest extends JAXLFsm {
 					}
 				}
 
-				if($this->recvd_body_len < $content_length && $this->multipart->state() != 'done') {
+				if ($this->recvd_body_len < $content_length && $this->multipart->state() != 'done') {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -238,17 +250,16 @@ class HTTPRequest extends JAXLFsm {
 				$rcvd_len = strlen($body);
 				$this->recvd_body_len += $rcvd_len;
 
-				if(!$this->multipart->process($body)) {
+				if (!$this->multipart->process($body)) {
 					_debug("multipart fsm returned false");
 					$this->_close();
 					return array('closed', false);
 				}
 
-				if($this->recvd_body_len < $content_length) {
+				if ($this->recvd_body_len < $content_length) {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -256,17 +267,16 @@ class HTTPRequest extends JAXLFsm {
 			case 'empty_line':
 				$content_length = $this->headers['Content-Length'];
 
-				if(!$this->multipart->process('')) {
+				if (!$this->multipart->process('')) {
 					_debug("multipart fsm returned false");
 					$this->_close();
 					return array('closed', false);
 				}
 
-				if($this->recvd_body_len < $content_length) {
+				if ($this->recvd_body_len < $content_length) {
 					_debug("rcvd body len: $this->recvd_body_len/$content_length");
 					return 'wait_for_body';
-				}
-				else {
+				} else {
 					_debug("all data received, switching state for dispatch");
 					return 'headers_received';
 				}
@@ -278,53 +288,54 @@ class HTTPRequest extends JAXLFsm {
 	}
 
 	// headers and may be body received
-	public function headers_received($event, $args) {
+	public function headers_received($event, $args)
+	{
 		switch($event) {
 			case 'empty_line':
 				return 'headers_received';
 				break;
 			default:
-				if(substr($event, 0, 5) == 'send_') {
+				if (substr($event, 0, 5) == 'send_') {
 					$protected = '_'.$event;
-					if(method_exists($this, $protected)) {
+					if (method_exists($this, $protected)) {
 						call_user_func_array(array(&$this, $protected), $args);
 						return 'headers_received';
-					}
-					else {
+					} else {
 						_debug("non-existant method $event called");
 						return 'headers_received';
 					}
-				}
-				else if(@isset($this->shortcuts[$event])) {
+				} elseif (@isset($this->shortcuts[$event])) {
 					return $this->handle_shortcut($event, $args);
-				}
-				else {
+				} else {
 					_warning("uncatched $event ".$args[0]);
 					return 'headers_received';
 				}
 		}
 	}
 
-	public function closed($event, $args) {
+	public function closed($event, $args)
+	{
 		_warning("uncatched $event");
 	}
 
 	// sets input headers
 	// called internally for every header received
-	protected function set_header($k, $v) {
-		$k = trim($k); $v = ltrim($v);
+	protected function set_header($k, $v)
+	{
+		$k = trim($k);
+		$v = ltrim($v);
 
 		// is expect header?
-		if(strtolower($k) == 'expect' && strtolower($v) == '100-continue') {
+		if (strtolower($k) == 'expect' && strtolower($v) == '100-continue') {
 			$this->expect = true;
 		}
 
 		// is multipart form data?
-		if(strtolower($k) == 'content-type') {
+		if (strtolower($k) == 'content-type') {
 			$ctype = explode(';', $v);
-			if(sizeof($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
+			if (sizeof($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
 				$boundary = explode('=', trim($ctype[1]));
-				if(strtolower(trim($boundary[0])) == 'boundary') {
+				if (strtolower(trim($boundary[0])) == 'boundary') {
 					_debug("multipart with boundary $boundary[1] detected");
 					$this->multipart = new HTTPMultiPart(ltrim($boundary[1]));
 				}
@@ -335,7 +346,8 @@ class HTTPRequest extends JAXLFsm {
 	}
 
 	// shortcut handler
-	protected function handle_shortcut($event, $args) {
+	protected function handle_shortcut($event, $args)
+	{
 		_debug("executing shortcut '$event'");
 		switch($event) {
 			// http status code shortcuts
@@ -356,7 +368,7 @@ class HTTPRequest extends JAXLFsm {
 			// others
 			case 'recv_body':
 				// send expect header if required
-				if($this->expect) {
+				if ($this->expect) {
 					$this->expect = false;
 					$this->_send_line(100);
 				}
@@ -373,32 +385,30 @@ class HTTPRequest extends JAXLFsm {
 		}
 	}
 
-	private function parse_shortcut_args($args) {
-		if(sizeof($args) == 0) {
+	private function parse_shortcut_args($args)
+	{
+		if (sizeof($args) == 0) {
 			$body = null;
 			$headers = array();
 		}
-		if(sizeof($args) == 1) {
+		if (sizeof($args) == 1) {
 			// http headers or body only received
-			if(is_array($args[0])) {
+			if (is_array($args[0])) {
 				// http headers only
 				$headers = $args[0];
 				$body = null;
-			}
-			else {
+			} else {
 				// body only
 				$body = $args[0];
 				$headers = array();
 			}
-		}
-		else if(sizeof($args) == 2) {
+		} elseif (sizeof($args) == 2) {
 			// body and http headers both received
-			if(is_array($args[0])) {
+			if (is_array($args[0])) {
 				// header first
 				$body = $args[1];
 				$headers = $args[0];
-			}
-			else {
+			} else {
 				// body first
 				$body = $args[0];
 				$headers = $args[1];
@@ -413,32 +423,39 @@ class HTTPRequest extends JAXLFsm {
 	// available only on 'headers_received' state
 	//
 
-	protected function _send_line($code) {
+	protected function _send_line($code)
+	{
 		$raw = $this->version." ".$code." ".constant('HTTP_'.$code).HTTP_CRLF;
 		$this->_send($raw);
 	}
 
-	protected function _send_header($k, $v) {
+	protected function _send_header($k, $v)
+	{
 		$raw = $k.': '.$v.HTTP_CRLF;
 		$this->_send($raw);
 	}
 
-	protected function _send_headers($code, $headers) {
-		foreach($headers as $k=>$v)
+	protected function _send_headers($code, $headers)
+	{
+		foreach ($headers as $k => $v) {
 			$this->_send_header($k, $v);
+		}
 	}
 
-	protected function _send_body($body) {
+	protected function _send_body($body)
+	{
 		$this->_send($body);
 	}
 
-	protected function _send_response($code, $headers=array(), $body=null) {
+	protected function _send_response($code, $headers = array(), $body = null)
+	{
 		// send out response line
 		$this->_send_line($code);
 
 		// set content length of body exists and is not already set
-		if($body && !isset($headers['Content-Length']))
+		if ($body && !isset($headers['Content-Length'])) {
 			$headers['Content-Length'] = strlen($body);
+		}
 
 		// send out headers
 		$this->_send_headers($code, $headers);
@@ -446,8 +463,9 @@ class HTTPRequest extends JAXLFsm {
 		// send body
 		// prefixed with an empty line
 		_debug("sending out HTTP_CRLF prefixed body");
-		if($body)
+		if ($body) {
 			$this->_send_body(HTTP_CRLF.$body);
+		}
 	}
 
 	//
@@ -455,18 +473,21 @@ class HTTPRequest extends JAXLFsm {
 	//
 
 	// initializes status line elements
-	private function _line($method, $resource, $version) {
+	private function _line($method, $resource, $version)
+	{
 		$this->method = $method;
 		$this->resource = $resource;
 
 		$resource = explode("?", $resource);
 		$this->path = $resource[0];
-		if(sizeof($resource) == 2) {
+		if (sizeof($resource) == 2) {
 			$query = $resource[1];
 			$query = explode("&", $query);
-			foreach($query as $q) {
+			foreach ($query as $q) {
 				$q = explode("=", $q);
-				if(sizeof($q) == 1) $q[1] = "";
+				if (sizeof($q) == 1) {
+				    $q[1] = "";
+				}
 				$this->query[$q[0]] = $q[1];
 			}
 		}
@@ -474,19 +495,18 @@ class HTTPRequest extends JAXLFsm {
 		$this->version = $version;
 	}
 
-	private function _send($raw) {
+	private function _send($raw)
+	{
 		call_user_func($this->_send_cb, $this->sock, $raw);
 	}
 
-	private function _read() {
+	private function _read()
+	{
 		call_user_func($this->_read_cb, $this->sock);
 	}
 
-	private function _close() {
+	private function _close()
+	{
 		call_user_func($this->_close_cb, $this->sock);
 	}
-
-
 }
-
-?>

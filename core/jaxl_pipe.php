@@ -52,7 +52,8 @@ require_once JAXL_CWD.'/core/jaxl_loop.php';
  * @author abhinavsingh
  *
  */
-class JAXLPipe {
+class JAXLPipe
+{
 
 	protected $perm = 0600;
 
@@ -62,22 +63,24 @@ class JAXLPipe {
 
 	public $name = null;
 
-	public function __construct($name, $read_cb=null) {
+	public function __construct($name, $read_cb = null)
+	{
 		$pipes_folder = JAXL_CWD.'/.jaxl/pipes';
-		if(!is_dir($pipes_folder)) mkdir($pipes_folder);
+		if (!is_dir($pipes_folder)) {
+		    mkdir($pipes_folder);
+		}
 
 		$this->ev = new JAXLEvent();
 		$this->name = $name;
 		$this->read_cb = $read_cb;
 
 		$pipe_path = $this->get_pipe_file_path();
-		if(!file_exists($pipe_path)) {
+		if (!file_exists($pipe_path)) {
 			posix_mkfifo($pipe_path, $this->perm);
 			$this->fd = fopen($pipe_path, 'r+');
-			if(!$this->fd) {
+			if (!$this->fd) {
 				_error("unable to open pipe");
-			}
-			else {
+			} else {
 				_debug("pipe opened using path $pipe_path");
 				_notice("Usage: $ echo 'Hello World!' > $pipe_path");
 
@@ -85,31 +88,33 @@ class JAXLPipe {
 				$this->client->connect($this->fd);
 				$this->client->set_callback(array(&$this, 'on_data'));
 			}
-		}
-		else {
+		} else {
 			_error("pipe with name $name already exists");
 		}
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		@fclose($this->fd);
 		@unlink($this->get_pipe_file_path());
 		_debug("unlinking pipe file");
 	}
 
-	public function get_pipe_file_path() {
+	public function get_pipe_file_path()
+	{
 		return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
 	}
 
-	public function set_callback($recv_cb) {
+	public function set_callback($recv_cb)
+	{
 		$this->recv_cb = $recv_cb;
 	}
 
-	public function on_data($data) {
+	public function on_data($data)
+	{
 		// callback
-		if($this->recv_cb) call_user_func($this->recv_cb, $data);
+		if ($this->recv_cb) {
+		    call_user_func($this->recv_cb, $data);
+		}
 	}
-
 }
-
-?>

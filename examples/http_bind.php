@@ -36,7 +36,7 @@
  *
  */
 
-if(!isset($_GET['jid']) || !isset($_GET['pass'])) {
+if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
 	echo "invalid input";
 	exit;
 }
@@ -52,7 +52,8 @@ $client = new JAXL(array(
 	'log_level' => JAXL_DEBUG
 ));
 
-function on_auth_success_callback() {
+function on_auth_success_callback()
+{
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 }
@@ -63,5 +64,3 @@ $client->add_cb('on_auth_success', 'on_auth_success_callback');
 //
 $client->start();
 echo "done\n";
-
-?>

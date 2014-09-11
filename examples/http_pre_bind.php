@@ -41,7 +41,7 @@ $body = file_get_contents("php://input");
 $body = new SimpleXMLElement($body);
 $attrs = $body->attributes();
 
-if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
+if (!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
 	echo "invalid input";
 	exit;
 }
@@ -69,7 +69,8 @@ $client = new JAXL(array(
 	'log_level' => JAXL_INFO
 ));
 
-function on_auth_success_callback() {
+function on_auth_success_callback()
+{
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     echo '<body xmlns="'.NS_HTTP_BIND.'" sid="'.$client->xeps['0206']->sid.'" rid="'.$client->xeps['0206']->rid.'" jid="'.$client->full_jid->to_string().'"/>';
@@ -77,7 +78,8 @@ function on_auth_success_callback() {
 }
 $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-function on_auth_failure_callback($reason) {
+function on_auth_failure_callback($reason)
+{
     global $client;
     $client->send_end_stream();
     _info("got on_auth_failure cb with reason $reason");
@@ -89,5 +91,3 @@ $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 //
 $client->start();
 echo "done\n";
-
-?>

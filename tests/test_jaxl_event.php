@@ -45,9 +45,11 @@ require_once "jaxl.php";
  * @author abhinavsingh
  *
  */
-class JAXLEventTest extends PHPUnit_Framework_TestCase {
+class JAXLEventTest extends PHPUnit_Framework_TestCase
+{
 
-	function test_jaxl_event() {
+	public function test_jaxl_event()
+	{
 		$ev = new JAXLEvent();
 
 		$ref1 = $ev->add('on_connect', 'some_func', 0);
@@ -68,5 +70,4 @@ class JAXLEventTest extends PHPUnit_Framework_TestCase {
 
 		//print_r($ev->reg);
 	}
-
 }

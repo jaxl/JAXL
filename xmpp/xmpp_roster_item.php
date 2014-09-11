@@ -40,7 +40,8 @@
  *
  * @author abhinavsingh
  */
-class XMPPRosterItem {
+class XMPPRosterItem
+{
 
 	public $jid = null;
 	public $subscription = null;
@@ -48,12 +49,10 @@ class XMPPRosterItem {
 	public $resources = array();
 	public $vcard = null;
 
-	public function __construct($jid, $subscription, $groups) {
+	public function __construct($jid, $subscription, $groups)
+	{
 		$this->jid = $jid;
 		$this->subscription = $subscription;
 		$this->groups = $groups;
 	}
-
 }
-
-?>

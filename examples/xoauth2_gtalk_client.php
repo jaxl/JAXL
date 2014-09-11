@@ -36,7 +36,7 @@
  *
  */
 
-if($argc != 3) {
+if ($argc != 3) {
 	echo "Usage: $argv[0] jid access_token\n";
 	exit;
 }
@@ -65,21 +65,24 @@ $client = new JAXL(array(
 // add necessary event callbacks here
 //
 
-function on_auth_success_callback() {
+function on_auth_success_callback()
+{
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     $client->set_status("available!", "dnd", 10);
 }
 $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-function on_auth_failure_callback($reason) {
+function on_auth_failure_callback($reason)
+{
     global $client;
     $client->send_end_stream();
     _info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-function on_chat_message_callback($stanza) {
+function on_chat_message_callback($stanza)
+{
     global $client;
 
     // echo back incoming message stanza
@@ -89,7 +92,8 @@ function on_chat_message_callback($stanza) {
 }
 $client->add_cb('on_chat_message', 'on_chat_message_callback');
 
-function on_disconnect_callback() {
+function on_disconnect_callback()
+{
 	_info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
@@ -99,5 +103,3 @@ $client->add_cb('on_disconnect', 'on_disconnect_callback');
 //
 $client->start();
 echo "done\n";
-
-?>

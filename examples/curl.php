@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 2) {
+if ($argc < 2) {
 	echo "Usage: $argv[0] url\n";
 	exit;
 }
@@ -47,5 +47,3 @@ require_once JAXL_CWD.'/http/http_client.php';
 
 $request = new HTTPClient($argv[1]);
 $request->start();
-
-?>

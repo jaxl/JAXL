@@ -47,16 +47,19 @@
  * @author abhinavsingh
  *
  */
-class JAXLEvent {
+class JAXLEvent
+{
 
 	protected $common = array();
 	public $reg = array();
 
-	public function __construct($common) {
+	public function __construct($common)
+	{
 		$this->common = $common;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 
 	}
 
@@ -64,9 +67,11 @@ class JAXLEvent {
 	// returns a reference to be used while deleting callback
 	// callback'd method must return TRUE to be persistent
 	// if none returned or FALSE, callback will be removed automatically
-	public function add($ev, $cb, $pri) {
-		if(!isset($this->reg[$ev]))
+	public function add($ev, $cb, $pri)
+	{
+		if (!isset($this->reg[$ev])) {
 			$this->reg[$ev] = array();
+		}
 
 		$ref = sizeof($this->reg[$ev]);
 		$this->reg[$ev][] = array($pri, $cb);
@@ -76,27 +81,33 @@ class JAXLEvent {
 	// emit event to notify registered callbacks
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
-	public function emit($ev, $data=array()) {
+	public function emit($ev, $data = array())
+	{
 		$data = array_merge($this->common, $data);
 		$cbs = array();
 
-		if(!isset($this->reg[$ev])) return $data;
+		if (!isset($this->reg[$ev])) {
+		    return $data;
+		}
 
-		foreach($this->reg[$ev] as $cb) {
-			if(!isset($cbs[$cb[0]]))
+		foreach ($this->reg[$ev] as $cb) {
+			if (!isset($cbs[$cb[0]])) {
 				$cbs[$cb[0]] = array();
+			}
 			$cbs[$cb[0]][] = $cb[1];
 		}
 
-		foreach($cbs as $pri => $cb) {
-			foreach($cb as $c) {
+		foreach ($cbs as $pri => $cb) {
+			foreach ($cb as $c) {
 				$ret = call_user_func_array($c, $data);
 				// this line is for fixing situation where callback function doesn't return an array type
 				// in such cases next call of call_user_func_array will report error since $data is not an array type as expected
 				// things will change in future, atleast put the callback inside a try/catch block
 				// here we only check if there was a return, if yes we update $data with return value
 				// this is bad design, need more thoughts, should work as of now
-				if($ret) $data = $ret;
+				if ($ret) {
+				    $data = $ret;
+				}
 			}
 		}
 
@@ -105,17 +116,16 @@ class JAXLEvent {
 	}
 
 	// remove previous registered callback
-	public function del($ref) {
+	public function del($ref)
+	{
 		$ref = explode("-", $ref);
 		unset($this->reg[$ref[0]][$ref[1]]);
 	}
 
-	public function exists($ev) {
+	public function exists($ev)
+	{
 		$ret = isset($this->reg[$ev]);
 		//_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
 		return $ret;
 	}
-
 }
-
-?>

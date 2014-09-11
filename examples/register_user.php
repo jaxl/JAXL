@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 2) {
+if ($argc < 2) {
 	echo "Usage: $argv[0] domain\n";
 	exit;
 }
@@ -68,19 +68,19 @@ $client->require_xep(array(
 
 $form = array();
 
-function wait_for_register_response($event, $args) {
+function wait_for_register_response($event, $args)
+{
 	global $client, $form;
 
-	if($event == 'stanza_cb') {
+	if ($event == 'stanza_cb') {
 		$stanza = $args[0];
-		if($stanza->name == 'iq') {
+		if ($stanza->name == 'iq') {
 			$form['type'] = $stanza->attrs['type'];
-			if($stanza->attrs['type'] == 'result') {
+			if ($stanza->attrs['type'] == 'result') {
 				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
 				$client->send_end_stream();
 				return "logged_out";
-			}
-			else if($stanza->attrs['type'] == 'error') {
+			} elseif ($stanza->attrs['type'] == 'error') {
 				$error = $stanza->exists('error');
 				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
 				echo "error text: ".$error->exists('text')->text.PHP_EOL;
@@ -89,25 +89,25 @@ function wait_for_register_response($event, $args) {
 				return "logged_out";
 			}
 		}
-	}
-	else {
+	} else {
 		_notice("unhandled event $event rcvd");
 	}
 }
 
-function wait_for_register_form($event, $args) {
+function wait_for_register_form($event, $args)
+{
 	global $client, $form;
 
 	$stanza = $args[0];
 	$query = $stanza->exists('query', NS_INBAND_REGISTER);
-	if($query) {
+	if ($query) {
 		$instructions = $query->exists('instructions');
-		if($instructions) {
+		if ($instructions) {
 			echo $instructions->text.PHP_EOL;
 		}
 
-		foreach($query->childrens as $k=>$child) {
-			if($child->name != 'instructions') {
+		foreach ($query->childrens as $k => $child) {
+			if ($child->name != 'instructions') {
 				$form[$child->name] = readline($child->name.":");
 
 			}
@@ -115,8 +115,7 @@ function wait_for_register_form($event, $args) {
 
 		$client->xeps['0077']->set_form($stanza->attrs['from'], $form);
 		return "wait_for_register_response";
-	}
-	else {
+	} else {
 		$client->end_stream();
 		return "logged_out";
 	}
@@ -126,14 +125,16 @@ function wait_for_register_form($event, $args) {
 // add necessary event callbacks here
 //
 
-function on_stream_features_callback($stanza) {
+function on_stream_features_callback($stanza)
+{
 	global $client, $argv;
 	$client->xeps['0077']->get_form($argv[1]);
 	return "wait_for_register_form";
 }
 $client->add_cb('on_stream_features', 'on_stream_features_callback');
 
-function on_disconnect_callback() {
+function on_disconnect_callback()
+{
 	global $form;
 	_info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
 }
@@ -148,25 +149,22 @@ $client->start();
 // if registration was successful
 // try to connect with newly registered account
 //
-if($form['type'] == 'result') {
+if ($form['type'] == 'result') {
+    _info("connecting newly registered user account");
+    $client = new JAXL(array(
+        'jid' => $form['username'].'@'.$argv[1],
+        'pass' => $form['password'],
+        'log_level' => JAXL_DEBUG
+    ));
 
-_info("connecting newly registered user account");
-$client = new JAXL(array(
-	'jid' => $form['username'].'@'.$argv[1],
-	'pass' => $form['password'],
-	'log_level' => JAXL_DEBUG
-));
+    function on_auth_success_callback()
+    {
+        global $client;
+        $client->set_status('Available');
+    }
+    $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-function on_auth_success_callback() {
-    global $client;
-    $client->set_status('Available');
-}
-$client->add_cb('on_auth_success', 'on_auth_success_callback');
-
-$client->start();
-
+    $client->start();
 }
 
 echo "done\n";
-
-?>

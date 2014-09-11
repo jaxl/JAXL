@@ -43,41 +43,44 @@
  * @author abhinavsingh
  *
  */
-class XMPPJid {
+class XMPPJid
+{
 
 	public $node = null;
 	public $domain = null;
 	public $resource = null;
 	public $bare = null;
 
-	public function __construct($str) {
+	public function __construct($str)
+	{
 		$tmp = explode("@", $str);
-		if(sizeof($tmp) == 2) {
+		if (sizeof($tmp) == 2) {
 			$this->node = $tmp[0];
 			$tmp = explode("/", $tmp[1]);
-			if(sizeof($tmp) == 2) {
+			if (sizeof($tmp) == 2) {
 				$this->domain = $tmp[0];
 				$this->resource = $tmp[1];
-			}
-			else {
+			} else {
 				$this->domain = $tmp[0];
 			}
-		}
-		else if(sizeof($tmp) == 1) {
+		} elseif (sizeof($tmp) == 1) {
 			$this->domain = $tmp[0];
 		}
 
 		$this->bare = $this->node ? $this->node."@".$this->domain : $this->domain;
 	}
 
-	public function to_string() {
+	public function to_string()
+	{
 		$str = "";
-		if($this->node) $str .= $this->node.'@'.$this->domain;
-		else if($this->domain) $str .= $this->domain;
-		if($this->resource) $str .= '/'.$this->resource;
+		if ($this->node) {
+		    $str .= $this->node.'@'.$this->domain;
+		} elseif ($this->domain) {
+		    $str .= $this->domain;
+		}
+		if ($this->resource) {
+		    $str .= '/'.$this->resource;
+		}
 		return $str;
 	}
-
 }
-
-?>

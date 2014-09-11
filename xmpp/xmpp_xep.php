@@ -41,7 +41,8 @@
  * @author abhinavsingh
  *
  */
-abstract class XMPPXep {
+abstract class XMPPXep
+{
 
 	// init() method defines various callbacks
 	// required by this xep extension
@@ -53,14 +54,13 @@ abstract class XMPPXep {
 	// which required me
 	protected $jaxl = null;
 
-	public function __construct($jaxl) {
+	public function __construct($jaxl)
+	{
 		$this->jaxl = $jaxl;
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 
 	}
-
 }
-
-?>

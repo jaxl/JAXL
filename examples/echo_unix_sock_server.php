@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 2) {
+if ($argc < 2) {
 	echo "Usage: $argv[0] /path/to/server.sock\n";
 	exit;
 }
@@ -46,16 +46,15 @@ JAXLLogger::$level = JAXL_INFO;
 
 $server = null;
 
-function on_request($client, $raw) {
+function on_request($client, $raw)
+{
 	global $server;
 	$server->send($client, $raw);
 	_info("got client callback ".$raw);
 }
 
 @unlink($argv[1]);
-$server = new JAXLSocketServer('unix://'.$argv[1], NULL, 'on_request');
+$server = new JAXLSocketServer('unix://'.$argv[1], null, 'on_request');
 
 JAXLLoop::run();
 echo "done\n";
-
-?>

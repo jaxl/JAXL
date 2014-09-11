@@ -40,7 +40,7 @@
 // php examples/echo_bot.php root@localhost password
 // php examples/echo_bot.php root@localhost password DIGEST-MD5
 // php examples/echo_bot.php localhost "" ANONYMOUS
-if($argc < 3) {
+if ($argc < 3) {
 	echo "Usage: $argv[0] jid pass auth_type\n";
 	exit;
 }
@@ -83,7 +83,8 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-function on_auth_success_callback() {
+function on_auth_success_callback()
+{
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
@@ -100,20 +101,23 @@ $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
 // by default JAXL instance catches incoming roster list results and updates
 // roster list is parsed/cached and an event 'on_roster_update' is emitted
-function on_roster_update_callback() {
+function on_roster_update_callback()
+{
 	//global $client;
 	//print_r($client->roster);
 }
 $client->add_cb('on_roster_update', 'on_roster_update_callback');
 
-function on_auth_failure_callback($reason) {
+function on_auth_failure_callback($reason)
+{
     global $client;
     $client->send_end_stream();
     _info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-function on_chat_message_callback($stanza) {
+function on_chat_message_callback($stanza)
+{
     global $client;
 
     // echo back incoming chat message stanza
@@ -123,21 +127,23 @@ function on_chat_message_callback($stanza) {
 }
 $client->add_cb('on_chat_message', 'on_chat_message_callback');
 
-function on_presence_stanza_callback($stanza) {
+function on_presence_stanza_callback($stanza)
+{
 	global $client;
 
 	$type = ($stanza->type ? $stanza->type : "available");
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
 
-	if($type == "available") {
+	if ($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);
 	}
 }
 $client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 
-function on_disconnect_callback() {
+function on_disconnect_callback()
+{
 	_info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
@@ -151,5 +157,3 @@ $client->start(array(
 	'--with-unix-sock' => true
 ));
 echo "done\n";
-
-?>

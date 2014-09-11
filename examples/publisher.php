@@ -36,7 +36,7 @@
  *
  */
 
-if($argc < 3) {
+if ($argc < 3) {
 	echo "Usage: $argv[0] jid pass\n";
 	exit;
 }
@@ -59,7 +59,8 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-function on_auth_success_callback() {
+function on_auth_success_callback()
+{
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
@@ -67,12 +68,12 @@ function on_auth_success_callback() {
     //$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
 
     // publish
-    $item = new JAXLXml('item', null, array('id'=>time()));
+	$item = new JAXLXml('item', null, array('id' => time()));
     $item->c('entry', 'http://www.w3.org/2005/Atom');
 
     $item->c('title')->t('Soliloquy')->up();
     $item->c('summary')->t('To be, or not to be: that is the question')->up();
-    $item->c('link', null, array('rel'=>'alternate', 'type'=>'text/html', 'href'=>'http://denmark.lit/2003/12/13/atom03'))->up();
+	$item->c('link', null, array('rel' => 'alternate', 'type' => 'text/html', 'href' => 'http://denmark.lit/2003/12/13/atom03'))->up();
     $item->c('id')->t('tag:denmark.lit,2003:entry-32397')->up();
     $item->c('published')->t('2003-12-13T18:30:02Z')->up();
     $item->c('updated')->t('2003-12-13T18:30:02Z')->up();
@@ -81,14 +82,16 @@ function on_auth_success_callback() {
 }
 $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-function on_auth_failure_callback($reason) {
+function on_auth_failure_callback($reason)
+{
     global $client;
     $client->send_end_stream();
     _info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-function on_disconnect_callback() {
+function on_disconnect_callback()
+{
 	_info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
@@ -98,5 +101,3 @@ $client->add_cb('on_disconnect', 'on_disconnect_callback');
 //
 $client->start();
 echo "done\n";
-
-?>

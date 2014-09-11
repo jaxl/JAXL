@@ -43,13 +43,13 @@ define('JAXL_MULTI_CLIENT', true);
 
 // input multiple account credentials
 $accounts = array();
-$add_new = TRUE;
-while($add_new) {
+$add_new = true;
+while ($add_new) {
 	$jid = readline('Enter Jabber Id: ');
 	$pass = readline('Enter Password: ');
 	$accounts[] = array($jid, $pass);
 	$next = readline('Add another account (y/n): ');
-	$add_new = $next == 'y' ? TRUE : FALSE;
+	$add_new = $next == 'y' ? true : false;
 }
 
 // setup jaxl
@@ -59,7 +59,8 @@ require_once 'jaxl.php';
 // common callbacks
 //
 
-function on_auth_success($client) {
+function on_auth_success($client)
+{
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
 	// fetch roster list
@@ -72,32 +73,36 @@ function on_auth_success($client) {
 	$client->set_status("available!", "dnd", 10);
 }
 
-function on_auth_failure($client, $reason) {
+function on_auth_failure($client, $reason)
+{
 	_info("got on_auth_failure cb with reason $reason");
 	$client->send_end_stream();
 }
 
-function on_chat_message($client, $stanza) {
+function on_chat_message($client, $stanza)
+{
 	// echo back incoming chat message stanza
 	$stanza->to = $stanza->from;
 	$stanza->from = $client->full_jid->to_string();
 	$client->send($stanza);
 }
 
-function on_presence_stanza($client, $stanza) {
+function on_presence_stanza($client, $stanza)
+{
 	global $client;
 
 	$type = ($stanza->type ? $stanza->type : "available");
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
 
-	if($type == "available") {
+	if ($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);
 	}
 }
 
-function on_disconnect($client) {
+function on_disconnect($client)
+{
 	_info("got on_disconnect cb");
 }
 
@@ -105,7 +110,7 @@ function on_disconnect($client) {
 // bootstrap all account instances
 //
 
-foreach($accounts as $account) {
+foreach ($accounts as $account) {
 	$client = new JAXL(array(
 		'jid' => $account[0],
 		'pass' => $account[1],
@@ -125,5 +130,3 @@ foreach($accounts as $account) {
 // start core loop
 JAXLLoop::run();
 echo "done\n";
-
-?>

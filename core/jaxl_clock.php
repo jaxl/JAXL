@@ -36,7 +36,8 @@
  *
  */
 
-class JAXLClock {
+class JAXLClock
+{
 
 	// current clock time in microseconds
 	private $tick = 0;
@@ -47,21 +48,23 @@ class JAXLClock {
 	// scheduled jobs
 	public $jobs = array();
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->time = microtime(true);
 	}
 
-	public function __destruct() {
+	public function __destruct()
+	{
 		_info("shutting down clock server...");
 	}
 
-	public function tick($by=null) {
+	public function tick($by = null)
+	{
 		// update clock
-		if($by) {
+		if ($by) {
 			$this->tick += $by;
-			$this->time += $by / pow(10,6);
-		}
-		else {
+			$this->time += $by / pow(10, 6);
+		} else {
 			$time = microtime(true);
 			$by = $time - $this->time;
 			$this->tick += $by * pow(10, 6);
@@ -69,14 +72,13 @@ class JAXLClock {
 		}
 
 		// run scheduled jobs
-		foreach($this->jobs as $ref=>$job) {
-			if($this->tick >= $job['scheduled_on'] + $job['after']) {
+		foreach ($this->jobs as $ref => $job) {
+			if ($this->tick >= $job['scheduled_on'] + $job['after']) {
 				//_debug("running job#".($ref+1)." at tick ".$this->tick.", scheduled on ".$job['scheduled_on']." after ".$job['after'].", periodic ".$job['is_periodic']);
 				call_user_func($job['cb'], $job['args']);
-				if(!$job['is_periodic']) {
+				if (!$job['is_periodic']) {
 					unset($this->jobs[$ref]);
-				}
-				else {
+				} else {
 					$job['scheduled_on'] = $this->tick;
 					$job['runs']++;
 					$this->jobs[$ref] = $job;
@@ -86,12 +88,14 @@ class JAXLClock {
 	}
 
 	// calculate execution time of callback
-	public function tc($callback, $args=null) {
+	public function tc($callback, $args = null)
+	{
 
 	}
 
 	// callback after $time microseconds
-	public function call_fun_after($time, $callback, $args=null) {
+	public function call_fun_after($time, $callback, $args = null)
+	{
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -104,7 +108,8 @@ class JAXLClock {
 	}
 
 	// callback periodically after $time microseconds
-	public function call_fun_periodic($time, $callback, $args=null) {
+	public function call_fun_periodic($time, $callback, $args = null)
+	{
 		$this->jobs[] = array(
 			'scheduled_on' => $this->tick,
 			'after' => $time,
@@ -117,10 +122,8 @@ class JAXLClock {
 	}
 
 	// cancel a previously scheduled callback
-	public function cancel_fun_call($ref) {
+	public function cancel_fun_call($ref)
+	{
 		unset($this->jobs[$ref-1]);
 	}
-
 }
-
-?>

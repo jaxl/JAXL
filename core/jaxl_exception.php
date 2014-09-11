@@ -42,53 +42,54 @@ error_reporting(E_ALL | E_STRICT);
  *
  * @author abhinavsingh
  */
-class JAXLException extends Exception {
+class JAXLException extends Exception
+{
 
-	public function __construct($message = null, $code = null, $file = null, $line = null) {
+	public function __construct($message = null, $code = null, $file = null, $line = null)
+	{
 		_notice("got jaxl exception construct with $message, $code, $file, $line");
-		if($code === null) {
+		if ($code === null) {
 			parent::__construct($message);
-		}
-		else {
+		} else {
 			parent::__construct($message, $code);
 		}
 
-		if($file !== null) {
+		if ($file !== null) {
 			$this->file = $file;
 		}
 
-		if($line !== null) {
+		if ($line !== null) {
 			$this->line = $line;
 		}
 	}
 
-	public static function error_handler($errno, $error, $file, $line, $vars) {
+	public static function error_handler($errno, $error, $file, $line, $vars)
+	{
 		_debug("error handler called with $errno, $error, $file, $line");
-		if($errno === 0 || ($errno & error_reporting()) === 0) {
+		if ($errno === 0 || ($errno & error_reporting()) === 0) {
 			return;
 		}
 
 		throw new JAXLException($error, $errno, $file, $line);
 	}
 
-	public static function exception_handler($e) {
+	public static function exception_handler($e)
+	{
 		_debug("exception handler catched ".json_encode($e));
 
 		// TODO: Pretty print backtrace
 		//print_r(debug_backtrace());
 	}
 
-	public static function shutdown_handler() {
+	public static function shutdown_handler()
+	{
 		try {
 			_debug("got shutdown handler");
-			if(null !== ($error = error_get_last())) {
+			if (null !== ($error = error_get_last())) {
 				throw new JAXLException($error['message'], $error['type'], $error['file'], $error['line']);
 			}
-		}
-		catch(Exception $e) {
+		} catch (Exception $e) {
 			_debug("shutdown handler catched with exception ".json_encode($e));
 		}
 	}
 }
-
-?>
