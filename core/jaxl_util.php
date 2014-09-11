@@ -37,19 +37,19 @@
 */
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
 class JAXLUtil {
-	
+
 	public static function get_nonce($binary=true) {
 		$nce = '';
 		mt_srand((double) microtime()*10000000);
 		for($i=0; $i<32; $i++) $nce .= chr(mt_rand(0, 255));
 		return $binary ? $nce : base64_encode($nce);
 	}
-	
+
 	public static function get_dns_srv($domain) {
 		$rec = dns_get_record("_xmpp-client._tcp.".$domain, DNS_SRV);
 		if(is_array($rec)) {
@@ -57,11 +57,11 @@ class JAXLUtil {
 			if(sizeof($rec) > 0) return array($rec[0]['target'], $rec[0]['port']);
 		}
 	}
-	
+
 	public static function pbkdf2($data, $secret, $iteration, $dkLen=32, $algo='sha1') {
 		return '';
 	}
-	
+
 }
 
 ?>

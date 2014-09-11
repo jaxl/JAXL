@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *

@@ -1,5 +1,5 @@
 #!/usr/bin/env php
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -48,19 +48,19 @@ JAXLLogger::$level = JAXL_INFO;
 // with seperate class per command
 // a mechanism to register new commands
 class JAXLCtl {
-	
+
 	protected $ipc = null;
-	
+
 	protected $buffer = '';
 	protected $buffer_cb = null;
 	protected $cli = null;
 	public $dots = "....... ";
-	
+
 	protected $symbols = array();
-	
+
 	public function __construct($command, $params) {
 		global $exe;
-		
+
 		if(method_exists($this, $command)) {
 			$r = call_user_func_array(array(&$this, $command), $params);
 			if(sizeof($r) == 2) {
@@ -80,16 +80,16 @@ class JAXLCtl {
 			exit;
 		}
 	}
-	
+
 	public function run() {
 		JAXLCli::prompt();
 		JAXLLoop::run();
 	}
-	
+
 	public function on_terminal_input($raw) {
 		$raw = trim($raw);
 		$last = substr($raw, -1, 1);
-		
+
 		if($last == ";") {
 			// dispatch to buffer callback
 			call_user_func($this->buffer_cb, $this->buffer.$raw);
@@ -105,7 +105,7 @@ class JAXLCtl {
 			echo $this->dots;
 		}
 	}
-	
+
 	public static function print_help() {
 		global $exe;
 		_colorize("Usage: $exe command [options...]\n", JAXL_INFO);
@@ -115,67 +115,67 @@ class JAXLCtl {
 		_colorize("    shell     Open up Jaxl shell emulator", JAXL_DEBUG);
 		echo "\n";
 	}
-	
+
 	protected function help() {
 		JAXLCtl::print_help();
 		exit;
 	}
-	
+
 	//
 	// shell command
 	//
-	
+
 	protected function shell() {
 		return array(array(&$this, 'on_shell_input'), array(&$this, 'on_shell_quit'));
 	}
-	
+
 	private function _eval($raw, $symbols) {
 		extract($symbols);
-		
+
 		eval($raw);
 		$g = get_defined_vars();
-		
+
 		unset($g['raw']);
 		unset($g['symbols']);
 		return $g;
 	}
-	
+
 	public function on_shell_input($raw) {
 		$this->symbols = $this->_eval($raw, $this->symbols);
 		JAXLCli::prompt();
 	}
-	
+
 	public function on_shell_quit() {
 		exit;
 	}
-	
+
 	//
 	// debug command
 	//
-	
+
 	protected function debug($sock_path) {
 		$this->ipc = new JAXLSocketClient();
 		$this->ipc->set_callback(array(&$this, 'on_debug_response'));
 		$this->ipc->connect('unix://'.$sock_path);
 		return array(array(&$this, 'on_debug_input'), array(&$this, 'on_debug_quit'));
 	}
-	
+
 	public function on_debug_response($raw) {
 		$ret = unserialize($raw);
 		print_r($ret);
 		echo "\n";
 		JAXLCli::prompt();
 	}
-	
+
 	public function on_debug_input($raw) {
 		$this->ipc->send($this->buffer.$raw);
 	}
-	
+
 	public function on_debug_quit() {
 		$this->ipc->disconnect();
 		exit;
 	}
-	
+
 }
 
 // we atleast need a command argument

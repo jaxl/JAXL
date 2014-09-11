@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -62,21 +62,21 @@ $client->require_xep(array(
 $client->add_cb('on_auth_success', function() {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	
+
 	// create node
 	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
-	
+
 	// publish
 	$item = new JAXLXml('item', null, array('id'=>time()));
 	$item->c('entry', 'http://www.w3.org/2005/Atom');
-	
+
 	$item->c('title')->t('Soliloquy')->up();
 	$item->c('summary')->t('To be, or not to be: that is the question')->up();
 	$item->c('link', null, array('rel'=>'alternate', 'type'=>'text/html', 'href'=>'http://denmark.lit/2003/12/13/atom03'))->up();
 	$item->c('id')->t('tag:denmark.lit,2003:entry-32397')->up();
 	$item->c('published')->t('2003-12-13T18:30:02Z')->up();
 	$item->c('updated')->t('2003-12-13T18:30:02Z')->up();
-	
+
 	$client->xeps['0060']->publish_item('pubsub.localhost', 'dummy_node', $item);
 });
 

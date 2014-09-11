@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -43,7 +43,7 @@ error_reporting(E_ALL | E_STRICT);
  * @author abhinavsingh
  */
 class JAXLException extends Exception {
-	
+
 	public function __construct($message = null, $code = null, $file = null, $line = null) {
 		_notice("got jaxl exception construct with $message, $code, $file, $line");
 		if($code === null) {
@@ -61,23 +61,23 @@ class JAXLException extends Exception {
 			$this->line = $line;
 		}
 	}
-	
+
 	public static function error_handler($errno, $error, $file, $line, $vars) {
 		_debug("error handler called with $errno, $error, $file, $line");
 		if($errno === 0 || ($errno & error_reporting()) === 0) {
 			return;
 		}
-		
+
 		throw new JAXLException($error, $errno, $file, $line);
 	}
-	
+
 	public static function exception_handler($e) {
 		_debug("exception handler catched ".json_encode($e));
-		
+
 		// TODO: Pretty print backtrace
 		//print_r(debug_backtrace());
 	}
-	
+
 	public static function shutdown_handler() {
 		try {
 			_debug("got shutdown handler");

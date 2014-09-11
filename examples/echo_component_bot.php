@@ -49,11 +49,11 @@ $comp = new JAXL(array(
 	// (required) component host and secret
 	'jid' => $argv[1],
 	'pass' => $argv[2],
-	
+
 	// (required)
 	'host' => @$argv[3],
 	'port' => $argv[4],
-	
+
 	'log_level' => JAXL_INFO
 ));
 
@@ -80,7 +80,7 @@ $comp->add_cb('on_auth_failure', function($reason) {
 
 $comp->add_cb('on_chat_message', function($stanza) {
 	global $comp;
-	
+
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
 	$stanza->from = $comp->jid->to_string();

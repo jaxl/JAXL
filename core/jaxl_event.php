@@ -40,26 +40,26 @@
  * following kind of events are possible:
  * 1) hook i.e. if a callback for such an event is registered, calling function is responsible for the workflow from their on
  * 2) filter i.e. calling function will manipulate passed arguments and modified arguments will be passed to next chain of filter
- * 
+ *
  * As a rule of thumb, only 1 hook can be registered for an event, while more than 1 filter is allowed for an event
  * hook and filter both cannot be applied on an event
- * 
+ *
  * @author abhinavsingh
  *
  */
 class JAXLEvent {
-	
+
 	protected $common = array();
 	public $reg = array();
-	
+
 	public function __construct($common) {
 		$this->common = $common;
 	}
-	
+
 	public function __destruct() {
-		
+
 	}
-	
+
 	// add callback on a event
 	// returns a reference to be used while deleting callback
 	// callback'd method must return TRUE to be persistent
@@ -67,27 +67,27 @@ class JAXLEvent {
 	public function add($ev, $cb, $pri) {
 		if(!isset($this->reg[$ev]))
 			$this->reg[$ev] = array();
-		
+
 		$ref = sizeof($this->reg[$ev]);
 		$this->reg[$ev][] = array($pri, $cb);
 		return $ev."-".$ref;
 	}
-	
+
 	// emit event to notify registered callbacks
 	// is a pqueue required here for performance enhancement
 	// in case we have too many cbs on a specific event?
 	public function emit($ev, $data=array()) {
 		$data = array_merge($this->common, $data);
 		$cbs = array();
-		
+
 		if(!isset($this->reg[$ev])) return $data;
-		
+
 		foreach($this->reg[$ev] as $cb) {
 			if(!isset($cbs[$cb[0]]))
 				$cbs[$cb[0]] = array();
 			$cbs[$cb[0]][] = $cb[1];
 		}
-		
+
 		foreach($cbs as $pri => $cb) {
 			foreach($cb as $c) {
 				$ret = call_user_func_array($c, $data);
@@ -99,23 +99,23 @@ class JAXLEvent {
 				if($ret) $data = $ret;
 			}
 		}
-		
+
 		unset($cbs);
 		return $data;
 	}
-	
+
 	// remove previous registered callback
 	public function del($ref) {
 		$ref = explode("-", $ref);
 		unset($this->reg[$ref[0]][$ref[1]]);
 	}
-	
+
 	public function exists($ev) {
 		$ret = isset($this->reg[$ev]);
 		//_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
 		return $ret;
 	}
-	
+
 }
 
 ?>

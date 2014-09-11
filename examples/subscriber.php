@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -62,10 +62,10 @@ $client->require_xep(array(
 $client->add_cb('on_auth_success', function() {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	
+
 	// create node
 	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
-	
+
 	// subscribe
 	$client->xeps['0060']->subscribe('pubsub.localhost', 'dummy_node');
 });
@@ -78,7 +78,7 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_headline_message', function($stanza) {
 	global $client;
-	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) { 
+	if(($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
 		_info("got pubsub event");
 	}
 	else {

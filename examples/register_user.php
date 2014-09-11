@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -51,7 +51,7 @@ $client = new JAXL(array(
 ));
 
 $client->require_xep(array(
-	'0077'	// InBand Registration	
+	'0077'	// InBand Registration
 ));
 
 //
@@ -59,10 +59,10 @@ $client->require_xep(array(
 // our client's xmpp_stream lifecycle
 // consider as if these methods are directly
 // inside xmpp_stream state machine
-// 
+//
 // Note: $stanza = $args[0] is an instance of
-// JAXLXml in xmpp_stream state methods, 
-// it is yet not ready for easy access 
+// JAXLXml in xmpp_stream state methods,
+// it is yet not ready for easy access
 // patterns available on XMPPStanza instances
 //
 
@@ -70,7 +70,7 @@ $form = array();
 
 function wait_for_register_response($event, $args) {
 	global $client, $form;
-	
+
 	if($event == 'stanza_cb') {
 		$stanza = $args[0];
 		if($stanza->name == 'iq') {
@@ -97,7 +97,7 @@ function wait_for_register_response($event, $args) {
 
 function wait_for_register_form($event, $args) {
 	global $client, $form;
-	
+
 	$stanza = $args[0];
 	$query = $stanza->exists('query', NS_INBAND_REGISTER);
 	if($query) {
@@ -105,14 +105,14 @@ function wait_for_register_form($event, $args) {
 		if($instructions) {
 			echo $instructions->text.PHP_EOL;
 		}
-		
+
 		foreach($query->childrens as $k=>$child) {
 			if($child->name != 'instructions') {
 				$form[$child->name] = readline($child->name.":");
-				
+
 			}
 		}
-		
+
 		$client->xeps['0077']->set_form($stanza->attrs['from'], $form);
 		return "wait_for_register_response";
 	}

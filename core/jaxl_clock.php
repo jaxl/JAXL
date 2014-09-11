@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -37,24 +37,24 @@
  */
 
 class JAXLClock {
-	
+
 	// current clock time in microseconds
 	private $tick = 0;
-	
+
 	// current Unix timestamp with microseconds
 	public $time = null;
-	
+
 	// scheduled jobs
 	public $jobs = array();
-	
+
 	public function __construct() {
 		$this->time = microtime(true);
 	}
-	
+
 	public function __destruct() {
 		_info("shutting down clock server...");
 	}
-	
+
 	public function tick($by=null) {
 		// update clock
 		if($by) {
@@ -67,7 +67,7 @@ class JAXLClock {
 			$this->tick += $by * pow(10, 6);
 			$this->time = $time;
 		}
-		
+
 		// run scheduled jobs
 		foreach($this->jobs as $ref=>$job) {
 			if($this->tick >= $job['scheduled_on'] + $job['after']) {
@@ -84,12 +84,12 @@ class JAXLClock {
 			}
 		}
 	}
-	
+
 	// calculate execution time of callback
 	public function tc($callback, $args=null) {
-		
+
 	}
-	
+
 	// callback after $time microseconds
 	public function call_fun_after($time, $callback, $args=null) {
 		$this->jobs[] = array(
@@ -102,7 +102,7 @@ class JAXLClock {
 		);
 		return sizeof($this->jobs);
 	}
-	
+
 	// callback periodically after $time microseconds
 	public function call_fun_periodic($time, $callback, $args=null) {
 		$this->jobs[] = array(
@@ -115,12 +115,12 @@ class JAXLClock {
 		);
 		return sizeof($this->jobs);
 	}
-	
+
 	// cancel a previously scheduled callback
 	public function cancel_fun_call($ref) {
 		unset($this->jobs[$ref-1]);
 	}
-	
+
 }
 
 ?>

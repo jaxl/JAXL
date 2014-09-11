@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -66,64 +66,64 @@ define('HTTP_500', 'Internal Server Error');
 define('HTTP_503', 'Service Unavailable');
 
 class HTTPServer {
-	
+
 	private $server = null;
 	public $cb = null;
-	
+
 	private $dispatcher = null;
 	private $requests = array();
-	
+
 	public function __construct($port=9699, $address="127.0.0.1") {
 		$path = 'tcp://'.$address.':'.$port;
-		
+
 		$this->server = new JAXLSocketServer(
-			$path, 
+			$path,
 			array(&$this, 'on_accept'),
 			array(&$this, 'on_request')
 		);
-		
+
 		$this->dispatcher = new HTTPDispatcher();
 	}
-	
+
 	public function __destruct() {
 		$this->server = null;
 	}
-	
+
 	public function dispatch($rules) {
 		foreach($rules as $rule) {
 			$this->dispatcher->add_rule($rule);
 		}
 	}
-	
+
 	public function start($cb=null) {
 		$this->cb = $cb;
 		JAXLLoop::run();
 	}
-	
+
 	public function on_accept($sock, $addr) {
 		_debug("on_accept for client#$sock, addr:$addr");
-		
+
 		// initialize new request obj
 		$request = new HTTPRequest($sock, $addr);
-		
+
 		// setup sock cb
 		$request->set_sock_cb(
 			array(&$this->server, 'send'),
 			array(&$this->server, 'read'),
 			array(&$this->server, 'close')
 		);
-		
+
 		// cache request object
 		$this->requests[$sock] = &$request;
-		
+
 		// reactive client for further read
 		$this->server->read($sock);
 	}
-	
+
 	public function on_request($sock, $raw) {
 		_debug("on_request for client#$sock");
 		$request = $this->requests[$sock];
-		
+
 		// 'wait_for_body' state is reached when ever
 		// application calls recv_body() method
 		// on received $request object
@@ -133,7 +133,7 @@ class HTTPServer {
 		else {
 			// break on crlf
 			$lines = explode(HTTP_CRLF, $raw);
-			
+
 			// parse request line
 			if($request->state() == 'wait_for_request_line') {
 				list($method, $resource, $version) = explode(" ", $lines[0]);
@@ -141,11 +141,11 @@ class HTTPServer {
 				unset($lines[0]);
 				_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
 			}
-			
+
 			// parse headers
 			foreach($lines as $line) {
 				$line_parts = explode(":", $line);
-				
+
 				if(sizeof($line_parts) > 1) {
 					if(strlen($line_parts[0]) > 0) {
 						$k = $line_parts[0];
@@ -165,15 +165,15 @@ class HTTPServer {
 				}
 			}
 		}
-		
+
 		// if request has reached 'headers_received' state?
 		if($request->state() == 'headers_received') {
 			// dispatch to any matching rule found
 			_debug("delegating to dispatcher for further routing");
 			$dispatched = $this->dispatcher->dispatch($request);
-			
+
 			// if no dispatch rule matched call generic callback
-			if(!$dispatched && $this->cb) {	
+			if(!$dispatched && $this->cb) {
 				_debug("no dispatch rule matched, sending to generic callback");
 				call_user_func($this->cb, $request);
 			}
@@ -191,7 +191,7 @@ class HTTPServer {
 			$this->server->read($sock);
 		}
 	}
-	
+
 }
 
 ?>

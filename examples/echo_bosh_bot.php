@@ -63,10 +63,10 @@ $client = new JAXL(array(
 
 	// (optional)
 	//'resource' => 'resource',
-	
+
 	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
 	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
-	
+
 	'log_level' => JAXL_INFO
 ));
 
@@ -88,7 +88,7 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_chat_message', function($stanza) {
 	global $client;
-	
+
 	// echo back incoming message stanza
 	$stanza->to = $stanza->from;
 	$stanza->from = $client->full_jid->to_string();

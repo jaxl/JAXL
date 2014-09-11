@@ -42,39 +42,39 @@ define('NS_HTTP_BIND', 'http://jabber.org/protocol/httpbind');
 define('NS_BOSH', 'urn:xmpp:xbosh');
 
 class XEP_0206 extends XMPPXep {
-	
+
 	private $mch = null;
 	public $chs = array();
 	private $recv_cb = null;
-	
+
 	public $rid = null;
 	public $sid = null;
 	private $hold = 1;
 	private $wait = 30;
-	
+
 	private $restarted = false;
-	
+
 	public $headers = array(
 		'Accept-Encoding: gzip, deflate',
 		'Content-Type: text/xml; charset=utf-8'
 	);
-	
+
 	//
 	// abstract method
 	//
-	
+
 	public function init() {
 		$this->mch = curl_multi_init();
-		
+
 		return array(
-			
+
 		);
 	}
-	
+
 	//
 	// event callbacks
 	//
-	
+
 	public function send($body) {
 		if(is_object($body)) {
 			$body = $body->to_string();
@@ -82,7 +82,7 @@ class XEP_0206 extends XMPPXep {
 		else {
 			if(substr($body, 0, 15) == '<stream:stream ') {
 				$this->restarted = true;
-				
+
 				$body = new JAXLXml('body', NS_HTTP_BIND, array(
 					'sid' => $this->sid,
 					'rid' => ++$this->rid,
@@ -90,7 +90,7 @@ class XEP_0206 extends XMPPXep {
 					'xmpp:restart' => 'true',
 					'xmlns:xmpp' => NS_BOSH
 				));
-				
+
 				$body = $body->to_string();
 			}
 			else if(substr($body, 0, 16) == '</stream:stream>') {
@@ -99,7 +99,7 @@ class XEP_0206 extends XMPPXep {
 					'rid' => ++$this->rid,
 					'type' => 'terminate'
 				));
-				
+
 				$body = $body->to_string();
 			}
 			else {
@@ -107,7 +107,7 @@ class XEP_0206 extends XMPPXep {
 			}
 		}
 		_debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$body);
-		
+
 		$this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
 		curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->chs[$this->rid], CURLOPT_ENCODING, 'gzip,deflate');
@@ -116,37 +116,37 @@ class XEP_0206 extends XMPPXep {
 		curl_setopt($this->chs[$this->rid], CURLOPT_VERBOSE, false);
 		curl_setopt($this->chs[$this->rid], CURLOPT_POST, 1);
 		curl_setopt($this->chs[$this->rid], CURLOPT_POSTFIELDS, $body);
-		
+
 		curl_multi_add_handle($this->mch, $this->chs[$this->rid]);
 	}
-	
+
 	public function recv() {
 		if($this->restarted) {
 			$this->restarted = false;
-			
+
 			// fool xmpp_stream state machine with stream start packet
 			// and make transition to wait_for_stream_features state
 			if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
 		}
-		
+
 		_debug("recving for $this->rid");
 		do {
 			$ret = curl_multi_exec($this->mch, $running);
 			$changed = curl_multi_select($this->mch, 0.1);
-			
+
 			if($changed == 0 && $running == 0) {
 				$ch = @$this->chs[$this->rid];
 				if($ch) {
 					$data = curl_multi_getcontent($ch);
-					
+
 					curl_multi_remove_handle($this->mch, $ch);
 					unset($this->chs[$this->rid]);
 					_debug("recvd for $this->rid ".$data);
-				
+
 					list($body, $stanza) = $this->unwrap($data);
 					$body = new SimpleXMLElement($body);
 					$attrs = $body->attributes();
-					
+
 					if(@$attrs['type'] == 'terminate') {
 						// fool me again
 						if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
@@ -155,7 +155,7 @@ class XEP_0206 extends XMPPXep {
 						if(!$this->sid) {
 							$this->sid = $attrs['sid'];
 						}
-						
+
 						if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
 					}
 				}
@@ -166,39 +166,39 @@ class XEP_0206 extends XMPPXep {
 			}
 		} while($running);
 	}
-	
+
 	public function set_callback($recv_cb) {
 		$this->recv_cb = $recv_cb;
 	}
-	
+
 	public function wrap($stanza) {
 		return '<body sid="'.$this->sid.'" rid="'.++$this->rid.'" xmlns="'.NS_HTTP_BIND.'">'.$stanza.'</body>';
 	}
-	
+
 	public function unwrap($body) {
 		// a dirty way but it works efficiently
 		if(substr($body, -2, 2) == "/>") preg_match_all('/<body (.*?)\/>/smi', $body, $m);
 		else preg_match_all('/<body (.*?)>(.*)<\/body>/smi', $body, $m);
-		
+
 		if(isset($m[1][0])) $envelop = "<body ".$m[1][0]."/>";
 		else $envelop = "<body/>";
-		
+
 		if(isset($m[2][0])) $payload = $m[2][0];
 		else $payload = '';
-		
+
 		return array($envelop, $payload);
 	}
-	
+
 	public function session_start() {
 		$this->rid = @$this->jaxl->cfg['bosh_rid'] ? $this->jaxl->cfg['bosh_rid'] : rand(1000, 10000);
 		$this->hold = @$this->jaxl->cfg['bosh_hold'] ? $this->jaxl->cfg['bosh_hold'] : $this->hold;
 		$this->wait = @$this->jaxl->cfg['bosh_wait'] ? $this->jaxl->cfg['bosh_wait'] : $this->wait;
-		
+
 		// fool xmpp_stream state machine with stream start packet
 		// and make transition to wait_for_stream_features state
-		if($this->recv_cb) 
+		if($this->recv_cb)
 			call_user_func($this->recv_cb, $this->jaxl->get_start_stream(new XMPPJid("bosh.jaxl")));
-		
+
 		$attrs = array(
 			'content' => 'text/xml; charset=utf-8',
 			'to' => @$this->jaxl->jid ? $this->jaxl->jid->domain : $this->jaxl->cfg['domain'],
@@ -212,25 +212,25 @@ class XEP_0206 extends XMPPXep {
 			'rid' => $this->rid,
 			'ver' => '1.10'
 		);
-		
+
 		if(@$this->jaxl->cfg['jid']) $attrs['from'] = @$this->jaxl->cfg['jid'];
 		$body = new JAXLXml('body', NS_HTTP_BIND, $attrs);
 		$this->send($body);
 	}
-	
+
 	public function ping() {
 		$body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
 		$this->send($body);
 	}
-	
+
 	public function session_end() {
 		$this->disconnect();
 	}
-	
+
 	public function disconnect() {
 		_debug("disconnecting");
 	}
-	
+
 }
 
 ?>

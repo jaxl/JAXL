@@ -53,7 +53,7 @@ $client = new JAXL(array(
 	// (required) credentials
 	'jid' => $argv[1],
 	'pass' => $argv[2],
-	
+
 	// (optional) srv lookup is done if not provided
 	//'host' => 'xmpp.domain.tld',
 
@@ -65,10 +65,10 @@ $client = new JAXL(array(
 
 	// (optional)
 	//'resource' => 'resource',
-	
+
 	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
 	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
-	
+
 	'log_level' => JAXL_INFO
 ));
 
@@ -86,13 +86,13 @@ $client->require_xep(array(
 $client->add_cb('on_auth_success', function() {
 	global $client;
 	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	
+
 	// fetch roster list
 	$client->get_roster();
-	
+
 	// fetch vcard
 	$client->get_vcard();
-	
+
 	// set status
 	$client->set_status("available!", "dnd", 10);
 });
@@ -112,7 +112,7 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_chat_message', function($stanza) {
 	global $client;
-	
+
 	// echo back incoming chat message stanza
 	$stanza->to = $stanza->from;
 	$stanza->from = $client->full_jid->to_string();
@@ -121,11 +121,11 @@ $client->add_cb('on_chat_message', function($stanza) {
 
 $client->add_cb('on_presence_stanza', function($stanza) {
 	global $client;
-	
+
 	$type = ($stanza->type ? $stanza->type : "available");
 	$show = ($stanza->show ? $stanza->show : "???");
 	_info($stanza->from." is now ".$type." ($show)");
-	
+
 	if($type == "available") {
 		// fetch vcard
 		$client->get_vcard($stanza->from);

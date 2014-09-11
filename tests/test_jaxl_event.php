@@ -41,32 +41,32 @@ error_reporting(E_ALL);
 require_once "jaxl.php";
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
 class JAXLEventTest extends PHPUnit_Framework_TestCase {
-	
+
 	function test_jaxl_event() {
 		$ev = new JAXLEvent();
-	
+
 		$ref1 = $ev->add('on_connect', 'some_func', 0);
 		$ref2 = $ev->add('on_connect', 'some_func1', 0);
 		$ref3 = $ev->add('on_connect', 'some_func2', 1);
 		$ref4 = $ev->add('on_connect', 'some_func3', 4);
 		$ref5 = $ev->add('on_disconnect', 'some_func', 1);
 		$ref6 = $ev->add('on_disconnect', 'some_func1', 1);
-	
+
 		//$ev->emit('on_connect', null);
-	
+
 		$ev->del($ref2);
 		$ev->del($ref1);
 		$ev->del($ref6);
 		$ev->del($ref5);
 		$ev->del($ref4);
 		$ev->del($ref3);
-	
+
 		//print_r($ev->reg);
 	}
-	
+
 }

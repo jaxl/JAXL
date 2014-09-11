@@ -82,10 +82,10 @@ $client->add_cb('on_auth_failure', function($reason) {
 
 $client->add_cb('on_groupchat_message', function($stanza) {
 	global $client;
-	
+
 	$from = new XMPPJid($stanza->from);
 	$delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
-	
+
 	if($from->resource) {
 		echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
 	}
@@ -99,9 +99,9 @@ $client->add_cb('on_groupchat_message', function($stanza) {
 
 $client->add_cb('on_presence_stanza', function($stanza) {
 	global $client, $room_full_jid;
-	
+
 	$from = new XMPPJid($stanza->from);
-	
+
 	// self-stanza received, we now have complete room roster
 	if(strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
 		if(($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
@@ -130,7 +130,7 @@ $client->add_cb('on_presence_stanza', function($stanza) {
 	else {
 		_warning("=======> odd case 3");
 	}
-	
+
 });
 
 $client->add_cb('on_disconnect', function() {

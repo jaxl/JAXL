@@ -39,15 +39,15 @@
 require_once JAXL_CWD.'/xmpp/xmpp_stanza.php';
 
 class XMPPPres extends XMPPStanza {
-	
+
 	public function __construct($attrs, $status=null, $show=null, $priority=null) {
 		parent::__construct('presence', $attrs);
-		
+
 		if($status) $this->c('status')->t($status)->up();
 		if($show) $this->c('show')->t($show)->up();
 		if($priority) $this->c('priority')->t($priority)->up();
 	}
-	
+
 }
 
 ?>
