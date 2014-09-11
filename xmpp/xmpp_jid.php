@@ -53,10 +53,10 @@ class XMPPJid
 
 	public function __construct($str)
 	{
-		$tmp = explode("@", $str);
+		$tmp = explode("@", $str, 2);
 		if (sizeof($tmp) == 2) {
 			$this->node = $tmp[0];
-			$tmp = explode("/", $tmp[1]);
+			$tmp = explode("/", $tmp[1], 2);
 			if (sizeof($tmp) == 2) {
 				$this->domain = $tmp[0];
 				$this->resource = $tmp[1];
