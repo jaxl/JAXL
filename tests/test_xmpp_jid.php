@@ -59,10 +59,18 @@ class XMPPJidTest extends PHPUnit_Framework_TestCase
     public function jidPositiveProvider()
     {
         return array(
-            array('1@domain.tld/res'),
+            array('domain'),
+            array('domain.tld'),
+            array('1@domain'),
+            array('1@domain.tld'),
+            array('domain/res'),
             array('domain.tld/res'),
+            array('1@domain/res'),
+            array('1@domain.tld/res'),
             array('component.domain.tld'),
-            array('1@domain.tld')
+            array('1@domain-2.tld/res'),
+            array('1@domain-2.tld/@res'),
+            array('1@domain-2.tld//res')
         );
     }
 }
