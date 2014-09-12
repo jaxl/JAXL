@@ -5,14 +5,26 @@
     "keywords":    ["xmpp", "jabber", "http", "asynchronous", "non blocking", "event loop", "php", "jaxl", "abhinavsingh"],
     "homepage":    "http://jaxl.readthedocs.org/en/latest/index.html",
     "license":     "MIT",
+    "support": {
+        "forum":   "https://groups.google.com/forum/#!forum/jaxl",
+        "issues":  "https://github.com/abhinavsingh/JAXL/issues",
+        "source":  "https://github.com/abhinavsingh/JAXL"
+    },
     "authors": [
         {
-            "name": "Abhinavsingh",
+            "name":     "Abhinavsingh",
             "homepage": "https://abhinavsingh.com/"
         }
     ],
     "require": {
-        "php": ">=5.2.4"
+        "php": ">=5.2.4",
+        "ext-curl": "*",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-openssl": "*",
+        "ext-pcre": "*",
+        "ext-sockets": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "1.*",
