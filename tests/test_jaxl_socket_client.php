@@ -50,8 +50,8 @@ class JAXLSocketClientTest extends PHPUnit_Framework_TestCase
 
 	public function test_jaxl_socket_client()
 	{
-		$sock = new JAXLSocketClient("127.0.0.1", 5222);
-		$sock->connect();
+		$sock = new JAXLSocketClient();
+		$sock->connect('tcp://127.0.0.1:5222');
 
 		$sock->send("<stream:stream>");
 		while ($sock->fd) {

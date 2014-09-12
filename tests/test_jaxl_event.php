@@ -50,7 +50,7 @@ class JAXLEventTest extends PHPUnit_Framework_TestCase
 
 	public function test_jaxl_event()
 	{
-		$ev = new JAXLEvent();
+		$ev = new JAXLEvent(array());
 
 		$ref1 = $ev->add('on_connect', 'some_func', 0);
 		$ref2 = $ev->add('on_connect', 'some_func1', 0);
