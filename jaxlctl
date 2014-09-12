@@ -71,7 +71,7 @@ class JAXLCtl
             if (sizeof($r) == 2) {
                 list($buffer_cb, $quit_cb) = $r;
                 $this->buffer_cb = $buffer_cb;
-                $this->cli = new JAXLCli(array(&$this, 'on_terminal_input'), $quit_cb);
+                $this->cli = new JAXLCli(array(&$this, 'onTerminalInput'), $quit_cb);
                 $this->run();
             } else {
                 _colorize("oops! internal command error", JAXL_ERROR);
@@ -90,7 +90,7 @@ class JAXLCtl
         JAXLLoop::run();
     }
 
-    public function on_terminal_input($raw)
+    public function onTerminalInput($raw)
     {
         $raw = trim($raw);
         $last = substr($raw, -1, 1);
@@ -109,7 +109,7 @@ class JAXLCtl
         }
     }
 
-    public static function print_help()
+    public static function printHelp()
     {
         global $exe;
         _colorize("Usage: $exe command [options...]\n", JAXL_INFO);
@@ -122,7 +122,7 @@ class JAXLCtl
 
     protected function help()
     {
-        JAXLCtl::print_help();
+        JAXLCtl::printHelp();
         exit;
     }
 
@@ -132,7 +132,7 @@ class JAXLCtl
 
     protected function shell()
     {
-        return array(array(&$this, 'on_shell_input'), array(&$this, 'on_shell_quit'));
+        return array(array(&$this, 'onShellInput'), array(&$this, 'onShellQuit'));
     }
 
     private function eval_($raw, $symbols)
@@ -147,13 +147,13 @@ class JAXLCtl
         return $g;
     }
 
-    public function on_shell_input($raw)
+    public function onShellInput($raw)
     {
         $this->symbols = $this->eval_($raw, $this->symbols);
         JAXLCli::prompt();
     }
 
-    public function on_shell_quit()
+    public function onShellQuit()
     {
         exit;
     }
@@ -165,12 +165,12 @@ class JAXLCtl
     protected function debug($sock_path)
     {
         $this->ipc = new JAXLSocketClient();
-        $this->ipc->set_callback(array(&$this, 'on_debug_response'));
+        $this->ipc->set_callback(array(&$this, 'onDebugResponse'));
         $this->ipc->connect('unix://'.$sock_path);
-        return array(array(&$this, 'on_debug_input'), array(&$this, 'on_debug_quit'));
+        return array(array(&$this, 'onDebugInput'), array(&$this, 'onDebugQuit'));
     }
 
-    public function on_debug_response($raw)
+    public function onDebugResponse($raw)
     {
         $ret = unserialize($raw);
         print_r($ret);
@@ -178,12 +178,12 @@ class JAXLCtl
         JAXLCli::prompt();
     }
 
-    public function on_debug_input($raw)
+    public function onDebugInput($raw)
     {
         $this->ipc->send($this->buffer.$raw);
     }
 
-    public function on_debug_quit()
+    public function onDebugQuit()
     {
         $this->ipc->disconnect();
         exit;
@@ -192,7 +192,7 @@ class JAXLCtl
 
 // we atleast need a command argument
 if ($argc < 2) {
-    JAXLCtl::print_help();
+    JAXLCtl::printHelp();
     exit;
 }
 
