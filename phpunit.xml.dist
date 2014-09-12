@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnFailure="false"
+>
+    <testsuites>
+        <testsuite name="JAXL">
+            <directory suffix=".php">tests/</directory>
+            <exclude>tests/test_jaxl_socket_client.php</exclude>
+            <exclude>tests/test_xmpp_stream.php</exclude>
+        </testsuite>
+    </testsuites>
+</phpunit>
