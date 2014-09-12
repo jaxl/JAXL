@@ -83,8 +83,7 @@ $client->require_xep(array(
 // add necessary event callbacks here
 //
 
-function on_auth_success_callback()
-{
+$client->add_cb('on_auth_success', function () {
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
@@ -96,39 +95,31 @@ function on_auth_success_callback()
 
     // set status
     $client->set_status("available!", "dnd", 10);
-}
-$client->add_cb('on_auth_success', 'on_auth_success_callback');
+});
 
 // by default JAXL instance catches incoming roster list results and updates
 // roster list is parsed/cached and an event 'on_roster_update' is emitted
-function on_roster_update_callback()
-{
+$client->add_cb('on_roster_update', function () {
     //global $client;
     //print_r($client->roster);
-}
-$client->add_cb('on_roster_update', 'on_roster_update_callback');
+});
 
-function on_auth_failure_callback($reason)
-{
+$client->add_cb('on_auth_failure', function ($reason) {
     global $client;
-    $client->send_end_stream();
     _info("got on_auth_failure cb with reason $reason");
-}
-$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
+    $client->send_end_stream();
+});
 
-function on_chat_message_callback($stanza)
-{
+$client->add_cb('on_chat_message', function ($stanza) {
     global $client;
 
     // echo back incoming chat message stanza
     $stanza->to = $stanza->from;
     $stanza->from = $client->full_jid->to_string();
     $client->send($stanza);
-}
-$client->add_cb('on_chat_message', 'on_chat_message_callback');
+});
 
-function on_presence_stanza_callback($stanza)
-{
+$client->add_cb('on_presence_stanza', function ($stanza) {
     global $client;
 
     $type = ($stanza->type ? $stanza->type : "available");
@@ -139,14 +130,11 @@ function on_presence_stanza_callback($stanza)
         // fetch vcard
         $client->get_vcard($stanza->from);
     }
-}
-$client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
+});
 
-function on_disconnect_callback()
-{
+$client->add_cb('on_disconnect', function () {
     _info("got on_disconnect cb");
-}
-$client->add_cb('on_disconnect', 'on_disconnect_callback');
+});
 
 //
 // finally start configured xmpp stream

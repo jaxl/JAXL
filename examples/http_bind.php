@@ -52,12 +52,10 @@ $client = new JAXL(array(
     'log_level' => JAXL_DEBUG
 ));
 
-function on_auth_success_callback()
-{
+$client->add_cb('on_auth_success', function () {
     global $client;
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-}
-$client->add_cb('on_auth_success', 'on_auth_success_callback');
+});
 
 //
 // finally start configured xmpp stream

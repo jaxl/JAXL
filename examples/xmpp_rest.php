@@ -52,12 +52,10 @@ $xmpp = new JAXL(array(
 ));
 
 // register callbacks on required xmpp events
-function on_auth_success_callback()
-{
+$xmpp->add_cb('on_auth_success', function () {
     global $xmpp;
     _info("got on_auth_success cb, jid ".$xmpp->full_jid->to_string());
-}
-$xmpp->add_cb('on_auth_success', 'on_auth_success_callback');
+});
 
 // initialize http server
 require_once JAXL_CWD.'/http/http_server.php';
@@ -66,13 +64,11 @@ $http = new HTTPServer();
 // add generic callback
 // you can also dispatch REST style callback
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
-function generic_callback($request)
-{
+$http->cb = function ($request) {
     // For demo purposes we simply return xmpp client full jid
     global $xmpp;
     $request->ok($xmpp->full_jid->to_string());
-}
-$http->cb = 'generic_callback';
+};
 
 // This will start main JAXLLoop,
 // hence we don't need to call $http->start() explicitly
