@@ -20,15 +20,6 @@ Both XMPP and HTTP protocol stacks are written on top of the Core stack.
 Infact the source code of protocol implementations knows nothing 
 about the standard (inbuilt) PHP socket and stream methods.
 
-## Contribute to JAXL
-
-JAXL v3.0.1 adopt [PSR-2](http://www.php-fig.org/psr/psr-2/).
-Check your PRs with [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer):
-
-```ShellSession
-/path/to/phpcs
-```
-
 [Examples](https://github.com/frost-nzcr4/JAXL/tree/v3.0.1/examples/)
 
 [Documentation](http://jaxl.readthedocs.org/)
@@ -38,3 +29,18 @@ Check your PRs with [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniff
 [Create a bug/issue](https://github.com/abhinavsingh/JAXL/issues/new)
 
 [Author](http://abhinavsingh.com/)
+
+## Contributing
+
+JAXL v3.0.1 adopt [PSR-2](http://www.php-fig.org/psr/psr-2/).
+To make it easier to maintain the code contribute your changes after they have
+passed [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+and [PHPUnit](https://github.com/sebastianbergmann/phpunit). If possible, add
+a unit tests for your changes into the *tests* folder.
+
+To know current errors and failed tests, run:
+
+```ShellSession
+./vendor/bin/phpcs
+./vendor/bin/phpunit
+```
