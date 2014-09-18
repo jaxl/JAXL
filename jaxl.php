@@ -270,7 +270,15 @@ class JAXL extends XMPPStream
     {
         return $this->pid_dir."/jaxl_".$this->pid.".pid";
     }
-    
+
+    /**
+     * @return JAXLSocketClient|XEP_0206
+     */
+    public function getTransport()
+    {
+        return $this->trans;
+    }
+
     public function get_sock_file_path()
     {
         return $this->sock_dir."/jaxl_".$this->pid.".sock";

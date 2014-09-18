@@ -102,7 +102,7 @@ abstract class XMPPStream extends JAXLFsm
     //
 
     /**
-     * @param string $transport
+     * @param JAXLSocketClient|XEP_0206 $transport
      * @param XMPPJid|null $jid
      * @param string $pass
      * @param string $resource

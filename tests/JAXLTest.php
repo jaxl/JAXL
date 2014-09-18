@@ -54,5 +54,6 @@ class JAXLTest extends PHPUnit_Framework_TestCase
         );
         $jaxl = new JAXL($config);
         $this->assertEquals('tcp://domain.tld:5223', $jaxl->get_socket_path());
+        $this->assertInstanceOf('JAXLSocketClient', $jaxl->getTransport());
     }
 }
