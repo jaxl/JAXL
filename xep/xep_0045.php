@@ -41,20 +41,20 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_MUC', 'http://jabber.org/protocol/muc');
 
 class XEP_0045 extends XMPPXep {
-	
+
 	//
 	// abstract method
 	//
-	
+
 	public function init() {
 		return array();
 	}
-	
+
 	public function send_groupchat($room_jid, $body, $thread=null, $subject=null) {
 		$msg = new XMPPMsg(
 			array(
-				'type'=>'groupchat', 
-				'to'=>(($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid), 
+				'type'=>'groupchat',
+				'to'=>(($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid),
 				'from'=>$this->jaxl->full_jid->to_string()
 			),
 			$body,
@@ -63,48 +63,51 @@ class XEP_0045 extends XMPPXep {
 		);
 		$this->jaxl->send($msg);
 	}
-	
+
 	//
 	// api methods (occupant use case)
 	//
-	
+
 	// room_full_jid simply means room jid with nick name as resource
 	public function get_join_room_pkt($room_full_jid, $options) {
 		$pkt = $this->jaxl->get_pres_pkt(
 			array(
-				'from'=>$this->jaxl->full_jid->to_string(), 
+				'from'=>$this->jaxl->full_jid->to_string(),
 				'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
 			)
 		);
 		$x = $pkt->c('x', NS_MUC);
 		if (isset($options['no_history'])) {
-			$x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0));
+			$x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0))->up();
+		}
+		if (isset($options['password'])) {
+			$x->c('password')->t($options['password'])->up();
 		}
 		return $x;
 	}
-	
+
 	public function join_room($room_full_jid, $options = array()) {
 		$pkt = $this->get_join_room_pkt($room_full_jid, $options);
 		$this->jaxl->send($pkt);
 	}
-	
+
 	public function get_leave_room_pkt($room_full_jid) {
 		return $this->jaxl->get_pres_pkt(
 			array('type'=>'unavailable', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid))
 		);
 	}
-	
+
 	public function leave_room($room_full_jid) {
 		$pkt = $this->get_leave_room_pkt($room_full_jid);
 		$this->jaxl->send($pkt);
 	}
-	
+
 	//
 	// api methods (moderator use case)
 	//
-	
-	
-	
+
+
+
 	//
 	// event callbacks
 	//
