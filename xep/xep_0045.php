@@ -78,10 +78,10 @@ class XEP_0045 extends XMPPXep {
 		);
 		$x = $pkt->c('x', NS_MUC);
 		if (isset($options['no_history'])) {
-			$x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0));
+			$x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0))->up();
 		}
 		if (isset($options['password'])) {
-			$x->c('password')->t($options['password']);
+			$x->c('password')->t($options['password'])->up();
 		}
 		return $x;
 	}
