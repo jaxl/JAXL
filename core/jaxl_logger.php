@@ -58,6 +58,7 @@ function _colorize($msg, $verbosity) { error_log(JAXLLogger::colorize($msg, $ver
 
 class JAXLLogger {
 	
+	public static $colorize = true;
 	public static $level = JAXL_DEBUG;
 	public static $path = null;
 	public static $max_log_size = 1000;
@@ -84,6 +85,10 @@ class JAXLLogger {
 	}
 	
 	public static function colorize($msg, $verbosity) {
+		if (self::$colorize) {
+			return $msg;
+		}
+
 		return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
 	}
 	
