@@ -89,10 +89,6 @@ class JAXL extends XMPPStream {
 	
 	// path variables
 	public $log_level = JAXL_INFO;
-	public $priv_dir;
-	public $tmp_dir;
-	public $log_dir;
-	public $pid_dir;
 	public $sock_dir;
 	
 	// ipc utils
@@ -126,7 +122,6 @@ class JAXL extends XMPPStream {
 		
 		// setup logger
 		if(isset($this->cfg['log_path'])) JAXLLogger::$path = $this->cfg['log_path'];
-		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
 		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
 		else JAXLLogger::$level = $this->log_level;
 		
@@ -150,23 +145,9 @@ class JAXL extends XMPPStream {
 		// create .jaxl directory in JAXL_CWD
 		// for our /tmp, /run and /log folders
 		// overwrite these using jaxl config array
-		$this->priv_dir = @$this->cfg['priv_dir'] ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
-		$this->tmp_dir = $this->priv_dir."/tmp";
-		$this->pid_dir = $this->priv_dir."/run";
-		$this->log_dir = $this->priv_dir."/log";
-		$this->sock_dir = $this->priv_dir."/sock";
-		if(!is_dir($this->priv_dir)) mkdir($this->priv_dir);
-		if(!is_dir($this->tmp_dir)) mkdir($this->tmp_dir);
-		if(!is_dir($this->pid_dir)) mkdir($this->pid_dir);
-		if(!is_dir($this->log_dir)) mkdir($this->log_dir);
+		$this->sock_dir = @$this->cfg['sock_dir'] ? $this->cfg['sock_dir'] : JAXL_CWD."/.jaxl/sock";
 		if(!is_dir($this->sock_dir)) mkdir($this->sock_dir);
-		
-		// touch pid file
-		if($this->mode == "cli") {
-			touch($this->get_pid_file_path());
-			_info("created pid file ".$this->get_pid_file_path());
-		}
-		
+
 		// include mandatory xmpp xeps
 		// service discovery and entity caps
 		// are recommended for every xmpp entity
@@ -212,7 +193,6 @@ class JAXL extends XMPPStream {
 	public function __destruct() {
 		// delete pid file
 		_info("cleaning up pid and unix sock files");
-		@unlink($this->get_pid_file_path());
 		@unlink($this->get_sock_file_path());
 		
 		parent::__destruct();
@@ -223,10 +203,6 @@ class JAXL extends XMPPStream {
 		set_error_handler(array('JAXLException', 'error_handler'));
 		set_exception_handler(array('JAXLException', 'exception_handler'));
 		register_shutdown_function(array('JAXLException', 'shutdown_handler'));
-	}
-	
-	public function get_pid_file_path() {
-		return $this->pid_dir."/jaxl_".$this->pid.".pid";
 	}
 	
 	public function get_sock_file_path() {
