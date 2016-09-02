@@ -1,5 +1,5 @@
 {
-    "name":        "abhinavsingh/jaxl",
+    "name":        "jaxl/jaxl",
     "type":        "library",
     "description": "Jaxl - Async, Non-Blocking, Event based Networking Library in PHP.",
     "keywords":    ["xmpp", "jabber", "http", "asynchronous", "non blocking", "event loop", "php", "jaxl", "abhinavsingh"],
@@ -7,12 +7,12 @@
     "license":     "MIT",
     "support": {
         "forum":   "https://groups.google.com/forum/#!forum/jaxl",
-        "issues":  "https://github.com/abhinavsingh/JAXL/issues",
-        "source":  "https://github.com/abhinavsingh/JAXL"
+        "issues":  "https://github.com/jaxl/JAXL/issues",
+        "source":  "https://github.com/jaxl/JAXL"
     },
     "authors": [
         {
-            "name":     "Abhinavsingh",
+            "name": "Abhinavsingh",
             "homepage": "https://abhinavsingh.com/"
         }
     ],
