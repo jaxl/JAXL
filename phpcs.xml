@@ -2,9 +2,21 @@
 <ruleset name="JAXL">
  <description>The JAXL coding standard (based on PSR-2 excluding some rules).</description>
 
+ <file>core</file>
+ <file>examples</file>
+ <file>http</file>
+ <file>tests</file>
+ <file>xep</file>
+ <file>xmpp</file>
+ <file>jaxl.php</file>
+ <file>jaxlctl</file>
+
+ <arg value="p"/>
+ <arg name="encoding" value="utf-8"/>
+
  <!-- Include the whole PSR-2 standard -->
  <rule ref="PSR2"/>
- 
+
  <rule ref="Generic.Files.LineLength">
   <properties>
    <property name="lineLimit" value="120"/>

@@ -27,7 +27,7 @@
         "ext-sockets": "*"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "1.*",
+        "squizlabs/php_codesniffer": "*",
         "sebastianbergmann/phpunit": "3.6.*"
     },
     "autoload": {
