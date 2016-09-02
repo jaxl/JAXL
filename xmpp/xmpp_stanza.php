@@ -52,139 +52,139 @@ require_once JAXL_CWD.'/core/jaxl_xml.php';
 class XMPPStanza
 {
 
-	private $xml;
+    private $xml;
 
-	public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT)
-	{
-		if ($name instanceof JAXLXml) {
-		    $this->xml = $name;
-		} else {
-		    $this->xml = new JAXLXml($name, $ns, $attrs);
-		}
-	}
+    public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT)
+    {
+        if ($name instanceof JAXLXml) {
+            $this->xml = $name;
+        } else {
+            $this->xml = new JAXLXml($name, $ns, $attrs);
+        }
+    }
 
-	public function __call($method, $args)
-	{
-		return call_user_func_array(array($this->xml, $method), $args);
-	}
+    public function __call($method, $args)
+    {
+        return call_user_func_array(array($this->xml, $method), $args);
+    }
 
-	public function __get($prop)
-	{
-		switch ($prop) {
-			// access to jaxl xml properties
-			case 'name':
-			case 'ns':
-			case 'text':
-			case 'attrs':
-			case 'childrens':
-				return $this->xml->$prop;
-				break;
+    public function __get($prop)
+    {
+        switch ($prop) {
+            // access to jaxl xml properties
+            case 'name':
+            case 'ns':
+            case 'text':
+            case 'attrs':
+            case 'childrens':
+                return $this->xml->$prop;
+                break;
 
-			// access to common xml attributes
-			case 'to':
-			case 'from':
-			case 'id':
-			case 'type':
-				return @$this->xml->attrs[$prop] ? $this->xml->attrs[$prop] : null;
-				break;
+            // access to common xml attributes
+            case 'to':
+            case 'from':
+            case 'id':
+            case 'type':
+                return @$this->xml->attrs[$prop] ? $this->xml->attrs[$prop] : null;
+                break;
 
-			// access to parts of common xml attributes
-			case 'to_node':
-			case 'to_domain':
-			case 'to_resource':
-			case 'from_node':
-			case 'from_domain':
-			case 'from_resource':
-				list($attr, $key) = explode('_', $prop);
-				$val = @$this->xml->attrs[$attr] ? $this->xml->attrs[$attr] : null;
-				if (!$val) {
-				    return null;
-				}
+            // access to parts of common xml attributes
+            case 'to_node':
+            case 'to_domain':
+            case 'to_resource':
+            case 'from_node':
+            case 'from_domain':
+            case 'from_resource':
+                list($attr, $key) = explode('_', $prop);
+                $val = @$this->xml->attrs[$attr] ? $this->xml->attrs[$attr] : null;
+                if (!$val) {
+                    return null;
+                }
 
-				$val = new XMPPJid($val);
-				return $val->$key;
-				break;
+                $val = new XMPPJid($val);
+                return $val->$key;
+                break;
 
-			// access to first child element text
-			case 'status':
-			case 'show':
-			case 'priority':
-			case 'body':
-			case 'thread':
-			case 'subject':
-				$val = $this->xml->exists($prop);
-				if (!$val) {
-				    return null;
-				}
-				return $val->text;
-				break;
+            // access to first child element text
+            case 'status':
+            case 'show':
+            case 'priority':
+            case 'body':
+            case 'thread':
+            case 'subject':
+                $val = $this->xml->exists($prop);
+                if (!$val) {
+                    return null;
+                }
+                return $val->text;
+                break;
 
-			default:
-				return null;
-				break;
-		}
-	}
+            default:
+                return null;
+                break;
+        }
+    }
 
-	public function __set($prop, $val)
-	{
-		switch ($prop) {
-			// access to jaxl xml properties
-			case 'name':
-			case 'ns':
-			case 'text':
-			case 'attrs':
-			case 'childrens':
-				return $this->xml->$prop = $val;
-				break;
+    public function __set($prop, $val)
+    {
+        switch ($prop) {
+            // access to jaxl xml properties
+            case 'name':
+            case 'ns':
+            case 'text':
+            case 'attrs':
+            case 'childrens':
+                return $this->xml->$prop = $val;
+                break;
 
-			// access to common xml attributes
-			case 'to':
-			case 'from':
-			case 'id':
-			case 'type':
-				$this->xml->attrs[$prop] = $val;
-				return true;
-				break;
+            // access to common xml attributes
+            case 'to':
+            case 'from':
+            case 'id':
+            case 'type':
+                $this->xml->attrs[$prop] = $val;
+                return true;
+                break;
 
-			// access to parts of common xml attributes
-			case 'to_node':
-			case 'to_domain':
-			case 'to_resource':
-			case 'from_node':
-			case 'from_domain':
-			case 'from_resource':
-				list($attr, $key) = explode('_', $prop);
-				$val1 = @$this->xml->attrs[$attr];
-				if (!$val1) {
-				    $val1 = '';
-				}
+            // access to parts of common xml attributes
+            case 'to_node':
+            case 'to_domain':
+            case 'to_resource':
+            case 'from_node':
+            case 'from_domain':
+            case 'from_resource':
+                list($attr, $key) = explode('_', $prop);
+                $val1 = @$this->xml->attrs[$attr];
+                if (!$val1) {
+                    $val1 = '';
+                }
 
-				$val1 = new XMPPJid($val1);
-				$val1->$key = $val;
+                $val1 = new XMPPJid($val1);
+                $val1->$key = $val;
 
-				$this->xml->attrs[$attr] = $val1->to_string();
-				return true;
-				break;
+                $this->xml->attrs[$attr] = $val1->to_string();
+                return true;
+                break;
 
-			// access to first child element text
-			case 'status':
-			case 'show':
-			case 'priority':
-			case 'body':
-			case 'thread':
-			case 'subject':
-				$val1 = $this->xml->exists($prop);
-				if (!$val1) {
-				    $this->xml->c($prop)->t($val)->up();
-				} else {
-				    $this->xml->update($prop, $val1->ns, $val1->attrs, $val);
-				}
-				return true;
-				break;
+            // access to first child element text
+            case 'status':
+            case 'show':
+            case 'priority':
+            case 'body':
+            case 'thread':
+            case 'subject':
+                $val1 = $this->xml->exists($prop);
+                if (!$val1) {
+                    $this->xml->c($prop)->t($val)->up();
+                } else {
+                    $this->xml->update($prop, $val1->ns, $val1->attrs, $val);
+                }
+                return true;
+                break;
 
-			default:
-				return null;
-				break;
-		}
-	}
+            default:
+                return null;
+                break;
+        }
+    }
 }

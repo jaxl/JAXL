@@ -37,8 +37,8 @@
  */
 
 if ($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
-	exit;
+    echo "Usage: $argv[0] jid pass\n";
+    exit;
 }
 
 //
@@ -46,13 +46,13 @@ if ($argc < 3) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	'jid' => $argv[1],
-	'pass' => $argv[2],
-	'log_level' => JAXL_INFO
+    'jid' => $argv[1],
+    'pass' => $argv[2],
+    'log_level' => JAXL_INFO
 ));
 
 $client->require_xep(array(
-	'0060'	// Publish-Subscribe
+    '0060'  // Publish-Subscribe
 ));
 
 //
@@ -82,18 +82,18 @@ $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
 function on_headline_message_callback($stanza)
 {
-	global $client;
-	if (($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
-		_info("got pubsub event");
-	} else {
-		_warning("unknown headline message rcvd");
-	}
+    global $client;
+    if (($event = $stanza->exists('event', NS_PUBSUB.'#event'))) {
+        _info("got pubsub event");
+    } else {
+        _warning("unknown headline message rcvd");
+    }
 }
 $client->add_cb('on_headline_message', 'on_headline_message_callback');
 
 function on_disconnect_callback()
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 

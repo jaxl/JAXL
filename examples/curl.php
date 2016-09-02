@@ -37,8 +37,8 @@
  */
 
 if ($argc < 2) {
-	echo "Usage: $argv[0] url\n";
-	exit;
+    echo "Usage: $argv[0] url\n";
+    exit;
 }
 
 require_once 'jaxl.php';

@@ -37,8 +37,8 @@
  */
 
 if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
-	echo "invalid input";
-	exit;
+    echo "invalid input";
+    exit;
 }
 
 //
@@ -46,10 +46,10 @@ if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
 //
 require_once '../jaxl.php';
 $client = new JAXL(array(
-	'jid' => $_GET['jid'],
-	'pass' => $_GET['pass'],
-	'bosh_url' => 'http://localhost:5280/http-bind',
-	'log_level' => JAXL_DEBUG
+    'jid' => $_GET['jid'],
+    'pass' => $_GET['pass'],
+    'bosh_url' => 'http://localhost:5280/http-bind',
+    'log_level' => JAXL_DEBUG
 ));
 
 function on_auth_success_callback()

@@ -45,11 +45,11 @@ define('JAXL_MULTI_CLIENT', true);
 $accounts = array();
 $add_new = true;
 while ($add_new) {
-	$jid = readline('Enter Jabber Id: ');
-	$pass = readline('Enter Password: ');
-	$accounts[] = array($jid, $pass);
-	$next = readline('Add another account (y/n): ');
-	$add_new = $next == 'y' ? true : false;
+    $jid = readline('Enter Jabber Id: ');
+    $pass = readline('Enter Password: ');
+    $accounts[] = array($jid, $pass);
+    $next = readline('Add another account (y/n): ');
+    $add_new = $next == 'y' ? true : false;
 }
 
 // setup jaxl
@@ -61,49 +61,49 @@ require_once 'jaxl.php';
 
 function on_auth_success($client)
 {
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
-	// fetch roster list
-	$client->get_roster();
+    // fetch roster list
+    $client->get_roster();
 
-	// fetch vcard
-	$client->get_vcard();
+    // fetch vcard
+    $client->get_vcard();
 
-	// set status
-	$client->set_status("available!", "dnd", 10);
+    // set status
+    $client->set_status("available!", "dnd", 10);
 }
 
 function on_auth_failure($client, $reason)
 {
-	_info("got on_auth_failure cb with reason $reason");
-	$client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+    $client->send_end_stream();
 }
 
 function on_chat_message($client, $stanza)
 {
-	// echo back incoming chat message stanza
-	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
-	$client->send($stanza);
+    // echo back incoming chat message stanza
+    $stanza->to = $stanza->from;
+    $stanza->from = $client->full_jid->to_string();
+    $client->send($stanza);
 }
 
 function on_presence_stanza($client, $stanza)
 {
-	global $client;
+    global $client;
 
-	$type = ($stanza->type ? $stanza->type : "available");
-	$show = ($stanza->show ? $stanza->show : "???");
-	_info($stanza->from." is now ".$type." ($show)");
+    $type = ($stanza->type ? $stanza->type : "available");
+    $show = ($stanza->show ? $stanza->show : "???");
+    _info($stanza->from." is now ".$type." ($show)");
 
-	if ($type == "available") {
-		// fetch vcard
-		$client->get_vcard($stanza->from);
-	}
+    if ($type == "available") {
+        // fetch vcard
+        $client->get_vcard($stanza->from);
+    }
 }
 
 function on_disconnect($client)
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 
 //
@@ -111,20 +111,20 @@ function on_disconnect($client)
 //
 
 foreach ($accounts as $account) {
-	$client = new JAXL(array(
-		'jid' => $account[0],
-		'pass' => $account[1],
-		'log_level' => JAXL_DEBUG
-	));
+    $client = new JAXL(array(
+        'jid' => $account[0],
+        'pass' => $account[1],
+        'log_level' => JAXL_DEBUG
+    ));
 
-	$client->add_cb('on_auth_success', 'on_auth_success');
-	$client->add_cb('on_auth_failure', 'on_auth_failure');
-	$client->add_cb('on_chat_message', 'on_chat_message');
-	$client->add_cb('on_presence_stanza', 'on_presence_stanza');
-	$client->add_cb('on_disconnect', 'on_disconnect');
+    $client->add_cb('on_auth_success', 'on_auth_success');
+    $client->add_cb('on_auth_failure', 'on_auth_failure');
+    $client->add_cb('on_chat_message', 'on_chat_message');
+    $client->add_cb('on_presence_stanza', 'on_presence_stanza');
+    $client->add_cb('on_disconnect', 'on_disconnect');
 
-	$client->connect($client->get_socket_path());
-	$client->start_stream();
+    $client->connect($client->get_socket_path());
+    $client->start_stream();
 }
 
 // start core loop

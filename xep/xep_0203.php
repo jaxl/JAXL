@@ -43,20 +43,20 @@ define('NS_DELAYED_DELIVERY', 'urn:xmpp:delay');
 class XEP_0203 extends XMPPXep
 {
 
-	//
-	// abstract method
-	//
+    //
+    // abstract method
+    //
 
-	public function init()
-	{
-		return array();
-	}
+    public function init()
+    {
+        return array();
+    }
 
-	//
-	// api methods
-	//
+    //
+    // api methods
+    //
 
-	//
-	// event callbacks
-	//
+    //
+    // event callbacks
+    //
 }

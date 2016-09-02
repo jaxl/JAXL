@@ -68,132 +68,132 @@ define('HTTP_503', 'Service Unavailable');
 class HTTPServer
 {
 
-	private $server = null;
-	public $cb = null;
+    private $server = null;
+    public $cb = null;
 
-	private $dispatcher = null;
-	private $requests = array();
+    private $dispatcher = null;
+    private $requests = array();
 
-	public function __construct($port = 9699, $address = "127.0.0.1")
-	{
-		$path = 'tcp://'.$address.':'.$port;
+    public function __construct($port = 9699, $address = "127.0.0.1")
+    {
+        $path = 'tcp://'.$address.':'.$port;
 
-		$this->server = new JAXLSocketServer(
-			$path,
-			array(&$this, 'on_accept'),
-			array(&$this, 'on_request')
-		);
+        $this->server = new JAXLSocketServer(
+            $path,
+            array(&$this, 'on_accept'),
+            array(&$this, 'on_request')
+        );
 
-		$this->dispatcher = new HTTPDispatcher();
-	}
+        $this->dispatcher = new HTTPDispatcher();
+    }
 
-	public function __destruct()
-	{
-		$this->server = null;
-	}
+    public function __destruct()
+    {
+        $this->server = null;
+    }
 
-	public function dispatch($rules)
-	{
-		foreach ($rules as $rule) {
-			$this->dispatcher->add_rule($rule);
-		}
-	}
+    public function dispatch($rules)
+    {
+        foreach ($rules as $rule) {
+            $this->dispatcher->add_rule($rule);
+        }
+    }
 
-	public function start($cb = null)
-	{
-		$this->cb = $cb;
-		JAXLLoop::run();
-	}
+    public function start($cb = null)
+    {
+        $this->cb = $cb;
+        JAXLLoop::run();
+    }
 
-	public function on_accept($sock, $addr)
-	{
-		_debug("on_accept for client#$sock, addr:$addr");
+    public function on_accept($sock, $addr)
+    {
+        _debug("on_accept for client#$sock, addr:$addr");
 
-		// initialize new request obj
-		$request = new HTTPRequest($sock, $addr);
+        // initialize new request obj
+        $request = new HTTPRequest($sock, $addr);
 
-		// setup sock cb
-		$request->set_sock_cb(
-			array(&$this->server, 'send'),
-			array(&$this->server, 'read'),
-			array(&$this->server, 'close')
-		);
+        // setup sock cb
+        $request->set_sock_cb(
+            array(&$this->server, 'send'),
+            array(&$this->server, 'read'),
+            array(&$this->server, 'close')
+        );
 
-		// cache request object
-		$this->requests[$sock] = &$request;
+        // cache request object
+        $this->requests[$sock] = &$request;
 
-		// reactive client for further read
-		$this->server->read($sock);
-	}
+        // reactive client for further read
+        $this->server->read($sock);
+    }
 
-	public function on_request($sock, $raw)
-	{
-		_debug("on_request for client#$sock");
-		$request = $this->requests[$sock];
+    public function on_request($sock, $raw)
+    {
+        _debug("on_request for client#$sock");
+        $request = $this->requests[$sock];
 
-		// 'wait_for_body' state is reached when ever
-		// application calls recv_body() method
-		// on received $request object
-		if ($request->state() == 'wait_for_body') {
-			$request->body($raw);
-		} else {
-			// break on crlf
-			$lines = explode(HTTP_CRLF, $raw);
+        // 'wait_for_body' state is reached when ever
+        // application calls recv_body() method
+        // on received $request object
+        if ($request->state() == 'wait_for_body') {
+            $request->body($raw);
+        } else {
+            // break on crlf
+            $lines = explode(HTTP_CRLF, $raw);
 
-			// parse request line
-			if ($request->state() == 'wait_for_request_line') {
-				list($method, $resource, $version) = explode(" ", $lines[0]);
-				$request->line($method, $resource, $version);
-				unset($lines[0]);
-				_info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
-			}
+            // parse request line
+            if ($request->state() == 'wait_for_request_line') {
+                list($method, $resource, $version) = explode(" ", $lines[0]);
+                $request->line($method, $resource, $version);
+                unset($lines[0]);
+                _info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
+            }
 
-			// parse headers
-			foreach ($lines as $line) {
-				$line_parts = explode(":", $line);
+            // parse headers
+            foreach ($lines as $line) {
+                $line_parts = explode(":", $line);
 
-				if (sizeof($line_parts) > 1) {
-					if (strlen($line_parts[0]) > 0) {
-						$k = $line_parts[0];
-						unset($line_parts[0]);
-						$v = implode(":", $line_parts);
-						$request->set_header($k, $v);
-					}
-				} elseif (strlen(trim($line_parts[0])) == 0) {
-					$request->empty_line();
-				} else {
-				    // if exploded line array size is 1
-				    // and there is something in $line_parts[0]
-				    // must be request body
+                if (sizeof($line_parts) > 1) {
+                    if (strlen($line_parts[0]) > 0) {
+                        $k = $line_parts[0];
+                        unset($line_parts[0]);
+                        $v = implode(":", $line_parts);
+                        $request->set_header($k, $v);
+                    }
+                } elseif (strlen(trim($line_parts[0])) == 0) {
+                    $request->empty_line();
+                } else {
+                    // if exploded line array size is 1
+                    // and there is something in $line_parts[0]
+                    // must be request body
 
-					$request->body($line);
-				}
-			}
-		}
+                    $request->body($line);
+                }
+            }
+        }
 
-		// if request has reached 'headers_received' state?
-		if ($request->state() == 'headers_received') {
-			// dispatch to any matching rule found
-			_debug("delegating to dispatcher for further routing");
-			$dispatched = $this->dispatcher->dispatch($request);
+        // if request has reached 'headers_received' state?
+        if ($request->state() == 'headers_received') {
+            // dispatch to any matching rule found
+            _debug("delegating to dispatcher for further routing");
+            $dispatched = $this->dispatcher->dispatch($request);
 
-			// if no dispatch rule matched call generic callback
-			if (!$dispatched && $this->cb) {
-				_debug("no dispatch rule matched, sending to generic callback");
-				call_user_func($this->cb, $request);
-			} elseif (!$dispatched) {
-			    // elseif not dispatched and not generic callbacked
-			    // send 404 not_found
+            // if no dispatch rule matched call generic callback
+            if (!$dispatched && $this->cb) {
+                _debug("no dispatch rule matched, sending to generic callback");
+                call_user_func($this->cb, $request);
+            } elseif (!$dispatched) {
+                // elseif not dispatched and not generic callbacked
+                // send 404 not_found
 
-				// TODO: send 404 if no callback is registered for this request
-				_debug("dropping request since no matching dispatch rule or generic callback was specified");
-				$request->not_found('404 Not Found');
-			}
-		} else {
-		    // if state is not 'headers_received'
-		    // reactivate client socket for read event
+                // TODO: send 404 if no callback is registered for this request
+                _debug("dropping request since no matching dispatch rule or generic callback was specified");
+                $request->not_found('404 Not Found');
+            }
+        } else {
+            // if state is not 'headers_received'
+            // reactivate client socket for read event
 
-			$this->server->read($sock);
-		}
-	}
+            $this->server->read($sock);
+        }
+    }
 }

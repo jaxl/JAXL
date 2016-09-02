@@ -39,16 +39,16 @@
 // View explanation for this example here:
 // https://groups.google.com/d/msg/jaxl/QaGjZP4A2gY/n6SYutrBVxsJ
 if ($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
-	exit;
+    echo "Usage: $argv[0] jid pass\n";
+    exit;
 }
 
 // initialize xmpp client
 require_once 'jaxl.php';
 $xmpp = new JAXL(array(
-	'jid' => $argv[1],
-	'pass' => $argv[2],
-	'log_level' => JAXL_INFO
+    'jid' => $argv[1],
+    'pass' => $argv[2],
+    'log_level' => JAXL_INFO
 ));
 
 // register callbacks on required xmpp events

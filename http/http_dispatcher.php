@@ -51,85 +51,85 @@
 class HTTPDispatchRule
 {
 
-	// match callback
-	public $cb = null;
+    // match callback
+    public $cb = null;
 
-	// regexp to match on request path
-	public $pattern = null;
+    // regexp to match on request path
+    public $pattern = null;
 
-	// methods to match upon
-	// add atleast 1 method for this rule to work
-	public $methods = null;
+    // methods to match upon
+    // add atleast 1 method for this rule to work
+    public $methods = null;
 
-	// other matching rules
-	public $extra = array();
+    // other matching rules
+    public $extra = array();
 
-	public function __construct($cb, $pattern, $methods = array('GET'), $extra = array())
-	{
-		$this->cb = $cb;
-		$this->pattern = $pattern;
-		$this->methods = $methods;
-		$this->extra = $extra;
-	}
+    public function __construct($cb, $pattern, $methods = array('GET'), $extra = array())
+    {
+        $this->cb = $cb;
+        $this->pattern = $pattern;
+        $this->methods = $methods;
+        $this->extra = $extra;
+    }
 
-	public function match($path, $method)
-	{
-		if (preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path, $matches)) {
-			if (in_array($method, $this->methods)) {
-				return $matches;
-			}
-		}
-		return false;
-	}
+    public function match($path, $method)
+    {
+        if (preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path, $matches)) {
+            if (in_array($method, $this->methods)) {
+                return $matches;
+            }
+        }
+        return false;
+    }
 }
 
 class HTTPDispatcher
 {
 
-	protected $rules = array();
+    protected $rules = array();
 
-	public function __construct()
-	{
-		$this->rules = array();
-	}
+    public function __construct()
+    {
+        $this->rules = array();
+    }
 
-	public function add_rule($rule)
-	{
-		$s = sizeof($rule);
-		if ($s > 4) {
-		    _debug("invalid rule");
-		    return;
-		}
+    public function add_rule($rule)
+    {
+        $s = sizeof($rule);
+        if ($s > 4) {
+            _debug("invalid rule");
+            return;
+        }
 
-		// fill up defaults
-		if ($s == 3) {
-		    $rule[] = array();
-		} elseif ($s == 2) {
-		    $rule[] = array('GET');
-		    $rule[] = array();
-		} else {
-		    _debug("invalid rule");
-		    return;
-		}
+        // fill up defaults
+        if ($s == 3) {
+            $rule[] = array();
+        } elseif ($s == 2) {
+            $rule[] = array('GET');
+            $rule[] = array();
+        } else {
+            _debug("invalid rule");
+            return;
+        }
 
-		$this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);
-	}
+        $this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);
+    }
 
-	public function dispatch($request)
-	{
-		foreach ($this->rules as $rule) {
-			//_debug("matching $request->path with pattern $rule->pattern");
-			if (($matches = $rule->match($request->path, $request->method)) !== false) {
-				_debug("matching rule found, dispatching");
-				$params = array($request);
-				// TODO: a bad way to restrict on 'pk', fix me for generalization
-				if (@isset($matches['pk'])) {
-				    $params[] = $matches['pk'];
-				}
-				call_user_func_array($rule->cb, $params);
-				return true;
-			}
-		}
-		return false;
-	}
+    public function dispatch($request)
+    {
+        foreach ($this->rules as $rule) {
+            //_debug("matching $request->path with pattern $rule->pattern");
+            if (($matches = $rule->match($request->path, $request->method)) !== false) {
+                _debug("matching rule found, dispatching");
+                $params = array($request);
+                // TODO: a bad way to restrict on 'pk', fix me for generalization
+                if (@isset($matches['pk'])) {
+                    $params[] = $matches['pk'];
+                }
+                call_user_func_array($rule->cb, $params);
+                return true;
+            }
+        }
+        return false;
+    }
 }

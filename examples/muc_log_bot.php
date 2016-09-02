@@ -37,8 +37,8 @@
  */
 
 if ($argc < 5) {
-	echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
-	exit;
+    echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
+    exit;
 }
 
 //
@@ -46,17 +46,17 @@ if ($argc < 5) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[2],
-	'pass' => $argv[3],
-	'host' => $argv[1],
-	'log_level' => JAXL_INFO
+    // (required) credentials
+    'jid' => $argv[2],
+    'pass' => $argv[3],
+    'host' => $argv[1],
+    'log_level' => JAXL_INFO
 ));
 
 $client->require_xep(array(
-	'0045',	// MUC
-	'0203',	// Delayed Delivery
-	'0199'  // XMPP Ping
+    '0045',     // MUC
+    '0203',     // Delayed Delivery
+    '0199'  // XMPP Ping
 ));
 
 //
@@ -93,9 +93,9 @@ function on_groupchat_message_callback($stanza)
 
     if ($from->resource) {
         echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
-	} else {
+    } else {
         $subject = $stanza->exists('subject');
-		if ($subject) {
+        if ($subject) {
             echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
         }
     }
@@ -104,40 +104,40 @@ $client->add_cb('on_groupchat_message', 'on_chat_message_callback');
 
 function on_presence_stanza_callback($stanza)
 {
-	global $client, $room_full_jid;
+    global $client, $room_full_jid;
 
-	$from = new XMPPJid($stanza->from);
+    $from = new XMPPJid($stanza->from);
 
-	// self-stanza received, we now have complete room roster
-	if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
-		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
-			if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
-				$item = $x->exists('item');
-				_info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
-			} else {
-				_info("xmlns #user have no x child element");
-			}
-		} else {
-			_warning("=======> odd case 1");
-		}
-	} elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
-	    // stanza from other users received
+    // self-stanza received, we now have complete room roster
+    if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
+        if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+            if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
+                $item = $x->exists('item');
+                _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
+            } else {
+                _info("xmlns #user have no x child element");
+            }
+        } else {
+            _warning("=======> odd case 1");
+        }
+    } elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
+        // stanza from other users received
 
-		if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
-			$item = $x->exists('item');
-			echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
-		} else {
-			_warning("=======> odd case 2");
-		}
-	} else {
-		_warning("=======> odd case 3");
-	}
+        if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+            $item = $x->exists('item');
+            echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
+        } else {
+            _warning("=======> odd case 2");
+        }
+    } else {
+        _warning("=======> odd case 3");
+    }
 }
 $client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 
 function on_disconnect_callback()
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 

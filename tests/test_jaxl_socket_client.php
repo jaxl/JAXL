@@ -46,14 +46,14 @@ JAXL::dummy();
 class JAXLSocketClientTest extends PHPUnit_Framework_TestCase
 {
 
-	public function test_jaxl_socket_client()
-	{
-		$sock = new JAXLSocketClient();
-		$sock->connect('tcp://127.0.0.1:5222');
+    public function test_jaxl_socket_client()
+    {
+        $sock = new JAXLSocketClient();
+        $sock->connect('tcp://127.0.0.1:5222');
 
-		$sock->send("<stream:stream>");
-		while ($sock->fd) {
-			$sock->recv();
-		}
-	}
+        $sock->send("<stream:stream>");
+        while ($sock->fd) {
+            $sock->recv();
+        }
+    }
 }

@@ -41,8 +41,8 @@
 // php examples/echo_bot.php root@localhost password DIGEST-MD5
 // php examples/echo_bot.php localhost "" ANONYMOUS
 if ($argc < 3) {
-	echo "Usage: $argv[0] jid pass auth_type\n";
-	exit;
+    echo "Usage: $argv[0] jid pass auth_type\n";
+    exit;
 }
 
 //
@@ -50,33 +50,33 @@ if ($argc < 3) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[1],
-	'pass' => $argv[2],
+    // (required) credentials
+    'jid' => $argv[1],
+    'pass' => $argv[2],
 
-	// (optional) srv lookup is done if not provided
-	//'host' => 'xmpp.domain.tld',
+    // (optional) srv lookup is done if not provided
+    //'host' => 'xmpp.domain.tld',
 
-	// (optional) result from srv lookup used by default
-	//'port' => 5222,
+    // (optional) result from srv lookup used by default
+    //'port' => 5222,
 
-	// (optional) defaults to false
-	//'force_tls' => true,
+    // (optional) defaults to false
+    //'force_tls' => true,
 
-	// (optional)
-	//'resource' => 'resource',
+    // (optional)
+    //'resource' => 'resource',
 
-	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
+    // (optional) defaults to PLAIN if supported, else other methods will be automatically tried
+    'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
 
-	'log_level' => JAXL_INFO
+    'log_level' => JAXL_INFO
 ));
 
 //
 // required XEP's
 //
 $client->require_xep(array(
-	'0199'	// XMPP Ping
+    '0199'  // XMPP Ping
 ));
 
 //
@@ -103,8 +103,8 @@ $client->add_cb('on_auth_success', 'on_auth_success_callback');
 // roster list is parsed/cached and an event 'on_roster_update' is emitted
 function on_roster_update_callback()
 {
-	//global $client;
-	//print_r($client->roster);
+    //global $client;
+    //print_r($client->roster);
 }
 $client->add_cb('on_roster_update', 'on_roster_update_callback');
 
@@ -129,22 +129,22 @@ $client->add_cb('on_chat_message', 'on_chat_message_callback');
 
 function on_presence_stanza_callback($stanza)
 {
-	global $client;
+    global $client;
 
-	$type = ($stanza->type ? $stanza->type : "available");
-	$show = ($stanza->show ? $stanza->show : "???");
-	_info($stanza->from." is now ".$type." ($show)");
+    $type = ($stanza->type ? $stanza->type : "available");
+    $show = ($stanza->show ? $stanza->show : "???");
+    _info($stanza->from." is now ".$type." ($show)");
 
-	if ($type == "available") {
-		// fetch vcard
-		$client->get_vcard($stanza->from);
-	}
+    if ($type == "available") {
+        // fetch vcard
+        $client->get_vcard($stanza->from);
+    }
 }
 $client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 
 function on_disconnect_callback()
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -153,7 +153,7 @@ $client->add_cb('on_disconnect', 'on_disconnect_callback');
 //
 
 $client->start(array(
-	'--with-debug-shell' => true,
-	'--with-unix-sock' => true
+    '--with-debug-shell' => true,
+    '--with-unix-sock' => true
 ));
 echo "done\n";

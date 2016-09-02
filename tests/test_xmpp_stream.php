@@ -46,16 +46,16 @@ JAXL::dummy();
 class XMPPStreamTest extends PHPUnit_Framework_TestCase
 {
 
-	public function test_xmpp_stream()
-	{
+    public function test_xmpp_stream()
+    {
         $this->markTestSkipped('Need help!');
 
-		$xmpp = new XMPPStream("test@localhost", "password");
-		$xmpp->connect();
+        $xmpp = new XMPPStream("test@localhost", "password");
+        $xmpp->connect();
 
-		$xmpp->start_stream();
-		while ($xmpp->sock->fd) {
-			$xmpp->sock->recv();
-		}
-	}
+        $xmpp->start_stream();
+        while ($xmpp->sock->fd) {
+            $xmpp->sock->recv();
+        }
+    }
 }

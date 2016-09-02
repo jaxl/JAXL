@@ -37,8 +37,8 @@
  */
 
 if ($argc < 2) {
-	echo "Usage: $argv[0] /path/to/server.sock\n";
-	exit;
+    echo "Usage: $argv[0] /path/to/server.sock\n";
+    exit;
 }
 
 require_once 'jaxl.php';
@@ -48,9 +48,9 @@ $server = null;
 
 function on_request($client, $raw)
 {
-	global $server;
-	$server->send($client, $raw);
-	_info("got client callback ".$raw);
+    global $server;
+    $server->send($client, $raw);
+    _info("got client callback ".$raw);
 }
 
 @unlink($argv[1]);

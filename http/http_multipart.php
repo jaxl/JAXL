@@ -41,131 +41,131 @@ require_once JAXL_CWD.'/core/jaxl_fsm.php';
 class HTTPMultiPart extends JAXLFsm
 {
 
-	public $boundary = null;
-	public $form_data = array();
-	public $index = -1;
+    public $boundary = null;
+    public $form_data = array();
+    public $index = -1;
 
-	public function handle_invalid_state($r)
-	{
-		_error("got invalid event $r");
-	}
+    public function handle_invalid_state($r)
+    {
+        _error("got invalid event $r");
+    }
 
-	public function __construct($boundary)
-	{
-		$this->boundary = $boundary;
-		parent::__construct('wait_for_boundary_start');
-	}
+    public function __construct($boundary)
+    {
+        $this->boundary = $boundary;
+        parent::__construct('wait_for_boundary_start');
+    }
 
-	public function state()
-	{
-		return $this->state;
-	}
+    public function state()
+    {
+        return $this->state;
+    }
 
-	public function wait_for_boundary_start($event, $data)
-	{
-		if ($event == 'process') {
-			if ($data[0] == '--'.$this->boundary) {
-				$this->index += 1;
-				$this->form_data[$this->index] = array(
-					'meta' => array(),
-					'headers' => array(),
-					'body' => ''
-				);
-				return array('wait_for_content_disposition', true);
-			} else {
-				_warning("invalid boundary start $data[0] while expecting $this->boundary");
-				return array('wait_for_boundary_start', false);
-			}
-		} else {
-			_warning("invalid $event rcvd");
-			return array('wait_for_boundary_start', false);
-		}
-	}
+    public function wait_for_boundary_start($event, $data)
+    {
+        if ($event == 'process') {
+            if ($data[0] == '--'.$this->boundary) {
+                $this->index += 1;
+                $this->form_data[$this->index] = array(
+                    'meta' => array(),
+                    'headers' => array(),
+                    'body' => ''
+                );
+                return array('wait_for_content_disposition', true);
+            } else {
+                _warning("invalid boundary start $data[0] while expecting $this->boundary");
+                return array('wait_for_boundary_start', false);
+            }
+        } else {
+            _warning("invalid $event rcvd");
+            return array('wait_for_boundary_start', false);
+        }
+    }
 
-	public function wait_for_content_disposition($event, $data)
-	{
-		if ($event == 'process') {
-			$disposition = explode(":", $data[0]);
+    public function wait_for_content_disposition($event, $data)
+    {
+        if ($event == 'process') {
+            $disposition = explode(":", $data[0]);
 
-			if (strtolower(trim($disposition[0])) == 'content-disposition') {
-				$this->form_data[$this->index]['headers'][$disposition[0]] = trim($disposition[1]);
-				$meta = explode(";", $disposition[1]);
-				if (trim(array_shift($meta)) == 'form-data') {
-					foreach ($meta as $k) {
-						list($k, $v) = explode("=", $k);
-						$this->form_data[$this->index]['meta'][$k] = $v;
-					}
+            if (strtolower(trim($disposition[0])) == 'content-disposition') {
+                $this->form_data[$this->index]['headers'][$disposition[0]] = trim($disposition[1]);
+                $meta = explode(";", $disposition[1]);
+                if (trim(array_shift($meta)) == 'form-data') {
+                    foreach ($meta as $k) {
+                        list($k, $v) = explode("=", $k);
+                        $this->form_data[$this->index]['meta'][$k] = $v;
+                    }
 
-					return array('wait_for_content_type', true);
-				} else {
-					_warning("first part of meta is not form-data");
-					return array('wait_for_content_disposition', false);
-				}
-			} else {
-				_warning("not a valid content-disposition line");
-				return array('wait_for_content_disposition', false);
-			}
-		} else {
-			_warning("invalid $event rcvd");
-			return array('wait_for_content_disposition', false);
-		}
-	}
+                    return array('wait_for_content_type', true);
+                } else {
+                    _warning("first part of meta is not form-data");
+                    return array('wait_for_content_disposition', false);
+                }
+            } else {
+                _warning("not a valid content-disposition line");
+                return array('wait_for_content_disposition', false);
+            }
+        } else {
+            _warning("invalid $event rcvd");
+            return array('wait_for_content_disposition', false);
+        }
+    }
 
-	public function wait_for_content_type($event, $data)
-	{
-		if ($event == 'process') {
-			$type = explode(":", $data[0]);
-			if (strtolower(trim($type[0])) == 'content-type') {
-				$this->form_data[$this->index]['headers'][$type[0]] = trim($type[1]);
-				$this->form_data[$this->index]['meta']['type'] = $type[1];
-				return array('wait_for_content_body', true);
-			} else {
-				_debug("not a valid content-type line");
-				return array('wait_for_content_type', false);
-			}
-		} else {
-			_warning("invalid $event rcvd");
-			return array('wait_for_content_type', false);
-		}
-	}
+    public function wait_for_content_type($event, $data)
+    {
+        if ($event == 'process') {
+            $type = explode(":", $data[0]);
+            if (strtolower(trim($type[0])) == 'content-type') {
+                $this->form_data[$this->index]['headers'][$type[0]] = trim($type[1]);
+                $this->form_data[$this->index]['meta']['type'] = $type[1];
+                return array('wait_for_content_body', true);
+            } else {
+                _debug("not a valid content-type line");
+                return array('wait_for_content_type', false);
+            }
+        } else {
+            _warning("invalid $event rcvd");
+            return array('wait_for_content_type', false);
+        }
+    }
 
-	public function wait_for_content_body($event, $data)
-	{
-		if ($event == 'process') {
-			if ($data[0] == '--'.$this->boundary) {
-				_debug("start of new multipart/form-data detected");
-				return array('wait_for_content_disposition', true);
-			} elseif ($data[0] == '--'.$this->boundary.'--') {
-				_debug("end of multipart form data detected");
-				return array('wait_for_empty_line', true);
-			} else {
-				$this->form_data[$this->index]['body'] .= $data[0];
-				return array('wait_for_content_body', true);
-			}
-		} else {
-			_warning("invalid $event rcvd");
-			return array('wait_for_content_body', false);
-		}
-	}
+    public function wait_for_content_body($event, $data)
+    {
+        if ($event == 'process') {
+            if ($data[0] == '--'.$this->boundary) {
+                _debug("start of new multipart/form-data detected");
+                return array('wait_for_content_disposition', true);
+            } elseif ($data[0] == '--'.$this->boundary.'--') {
+                _debug("end of multipart form data detected");
+                return array('wait_for_empty_line', true);
+            } else {
+                $this->form_data[$this->index]['body'] .= $data[0];
+                return array('wait_for_content_body', true);
+            }
+        } else {
+            _warning("invalid $event rcvd");
+            return array('wait_for_content_body', false);
+        }
+    }
 
-	public function wait_for_empty_line($event, $data)
-	{
-		if ($event == 'process') {
-			if ($data[0] == '') {
-				return array('done', true);
-			} else {
-				_warning("invalid empty line $data[0] received");
-				return array('wait_for_empty_line', false);
-			}
-		} else {
-			_warning("got $event in done state with data $data[0]");
-			return array('wait_for_empty_line', false);
-		}
-	}
+    public function wait_for_empty_line($event, $data)
+    {
+        if ($event == 'process') {
+            if ($data[0] == '') {
+                return array('done', true);
+            } else {
+                _warning("invalid empty line $data[0] received");
+                return array('wait_for_empty_line', false);
+            }
+        } else {
+            _warning("got $event in done state with data $data[0]");
+            return array('wait_for_empty_line', false);
+        }
+    }
 
-	public function done($event, $data)
-	{
-		_warning("got unhandled event $event with data $data[0]");
-		return array('done', false);
-	}
+    public function done($event, $data)
+    {
+        _warning("got unhandled event $event with data $data[0]");
+        return array('done', false);
+    }
 }

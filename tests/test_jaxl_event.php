@@ -46,26 +46,26 @@ JAXL::dummy();
 class JAXLEventTest extends PHPUnit_Framework_TestCase
 {
 
-	public function test_jaxl_event()
-	{
-		$ev = new JAXLEvent(array());
+    public function test_jaxl_event()
+    {
+        $ev = new JAXLEvent(array());
 
-		$ref1 = $ev->add('on_connect', 'some_func', 0);
-		$ref2 = $ev->add('on_connect', 'some_func1', 0);
-		$ref3 = $ev->add('on_connect', 'some_func2', 1);
-		$ref4 = $ev->add('on_connect', 'some_func3', 4);
-		$ref5 = $ev->add('on_disconnect', 'some_func', 1);
-		$ref6 = $ev->add('on_disconnect', 'some_func1', 1);
+        $ref1 = $ev->add('on_connect', 'some_func', 0);
+        $ref2 = $ev->add('on_connect', 'some_func1', 0);
+        $ref3 = $ev->add('on_connect', 'some_func2', 1);
+        $ref4 = $ev->add('on_connect', 'some_func3', 4);
+        $ref5 = $ev->add('on_disconnect', 'some_func', 1);
+        $ref6 = $ev->add('on_disconnect', 'some_func1', 1);
 
-		//$ev->emit('on_connect', null);
+        //$ev->emit('on_connect', null);
 
-		$ev->del($ref2);
-		$ev->del($ref1);
-		$ev->del($ref6);
-		$ev->del($ref5);
-		$ev->del($ref4);
-		$ev->del($ref3);
+        $ev->del($ref2);
+        $ev->del($ref1);
+        $ev->del($ref6);
+        $ev->del($ref5);
+        $ev->del($ref4);
+        $ev->del($ref3);
 
-		//print_r($ev->reg);
-	}
+        //print_r($ev->reg);
+    }
 }

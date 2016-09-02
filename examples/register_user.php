@@ -37,8 +37,8 @@
  */
 
 if ($argc < 2) {
-	echo "Usage: $argv[0] domain\n";
-	exit;
+    echo "Usage: $argv[0] domain\n";
+    exit;
 }
 
 //
@@ -46,12 +46,12 @@ if ($argc < 2) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	'jid' => $argv[1],
-	'log_level' => JAXL_DEBUG
+    'jid' => $argv[1],
+    'log_level' => JAXL_DEBUG
 ));
 
 $client->require_xep(array(
-	'0077'	// InBand Registration
+    '0077'  // InBand Registration
 ));
 
 //
@@ -70,54 +70,54 @@ $form = array();
 
 function wait_for_register_response($event, $args)
 {
-	global $client, $form;
+    global $client, $form;
 
-	if ($event == 'stanza_cb') {
-		$stanza = $args[0];
-		if ($stanza->name == 'iq') {
-			$form['type'] = $stanza->attrs['type'];
-			if ($stanza->attrs['type'] == 'result') {
-				echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
-				$client->send_end_stream();
-				return "logged_out";
-			} elseif ($stanza->attrs['type'] == 'error') {
-				$error = $stanza->exists('error');
-				echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
-				echo "error text: ".$error->exists('text')->text.PHP_EOL;
-				echo "shutting down...".PHP_EOL;
-				$client->send_end_stream();
-				return "logged_out";
-			}
-		}
-	} else {
-		_notice("unhandled event $event rcvd");
-	}
+    if ($event == 'stanza_cb') {
+        $stanza = $args[0];
+        if ($stanza->name == 'iq') {
+            $form['type'] = $stanza->attrs['type'];
+            if ($stanza->attrs['type'] == 'result') {
+                echo "registration successful".PHP_EOL."shutting down...".PHP_EOL;
+                $client->send_end_stream();
+                return "logged_out";
+            } elseif ($stanza->attrs['type'] == 'error') {
+                $error = $stanza->exists('error');
+                echo "registration failed with error code: ".$error->attrs['code']." and type: ".$error->attrs['type'].PHP_EOL;
+                echo "error text: ".$error->exists('text')->text.PHP_EOL;
+                echo "shutting down...".PHP_EOL;
+                $client->send_end_stream();
+                return "logged_out";
+            }
+        }
+    } else {
+        _notice("unhandled event $event rcvd");
+    }
 }
 
 function wait_for_register_form($event, $args)
 {
-	global $client, $form;
+    global $client, $form;
 
-	$stanza = $args[0];
-	$query = $stanza->exists('query', NS_INBAND_REGISTER);
-	if ($query) {
-		$instructions = $query->exists('instructions');
-		if ($instructions) {
-			echo $instructions->text.PHP_EOL;
-		}
+    $stanza = $args[0];
+    $query = $stanza->exists('query', NS_INBAND_REGISTER);
+    if ($query) {
+        $instructions = $query->exists('instructions');
+        if ($instructions) {
+            echo $instructions->text.PHP_EOL;
+        }
 
-		foreach ($query->childrens as $k => $child) {
-			if ($child->name != 'instructions') {
-				$form[$child->name] = readline($child->name.":");
-			}
-		}
+        foreach ($query->childrens as $k => $child) {
+            if ($child->name != 'instructions') {
+                $form[$child->name] = readline($child->name.":");
+            }
+        }
 
-		$client->xeps['0077']->set_form($stanza->attrs['from'], $form);
-		return "wait_for_register_response";
-	} else {
-		$client->end_stream();
-		return "logged_out";
-	}
+        $client->xeps['0077']->set_form($stanza->attrs['from'], $form);
+        return "wait_for_register_response";
+    } else {
+        $client->end_stream();
+        return "logged_out";
+    }
 }
 
 //
@@ -126,16 +126,16 @@ function wait_for_register_form($event, $args)
 
 function on_stream_features_callback($stanza)
 {
-	global $client, $argv;
-	$client->xeps['0077']->get_form($argv[1]);
-	return "wait_for_register_form";
+    global $client, $argv;
+    $client->xeps['0077']->get_form($argv[1]);
+    return "wait_for_register_form";
 }
 $client->add_cb('on_stream_features', 'on_stream_features_callback');
 
 function on_disconnect_callback()
 {
-	global $form;
-	_info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
+    global $form;
+    _info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 

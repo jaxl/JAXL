@@ -37,8 +37,8 @@
  */
 
 if ($argc != 3) {
-	echo "Usage: $argv[0] jid access_token\n";
-	exit;
+    echo "Usage: $argv[0] jid access_token\n";
+    exit;
 }
 
 //
@@ -46,19 +46,19 @@ if ($argc != 3) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[1],
-	'pass' => $argv[2],
+    // (required) credentials
+    'jid' => $argv[1],
+    'pass' => $argv[2],
 
-	// force tls
-	'force_tls' => true,
-	// (required) perform X-OAUTH2
-	'auth_type' => 'X-OAUTH2',
+    // force tls
+    'force_tls' => true,
+    // (required) perform X-OAUTH2
+    'auth_type' => 'X-OAUTH2',
 
-	// (optional)
-	//'resource' => 'resource',
+    // (optional)
+    //'resource' => 'resource',
 
-	'log_level' => JAXL_DEBUG
+    'log_level' => JAXL_DEBUG
 ));
 
 //
@@ -94,7 +94,7 @@ $client->add_cb('on_chat_message', 'on_chat_message_callback');
 
 function on_disconnect_callback()
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 

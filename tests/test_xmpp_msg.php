@@ -47,41 +47,41 @@ class XMPPMsgTest extends PHPUnit_Framework_TestCase
 {
 
     public function test_xmpp_msg()
-	{
-		$msg = new XMPPMsg(array('to' => '2@w.c', 'from' => '-0@q.p/~', 'type' => 'chat'), 'hi', 'thread1');
+    {
+        $msg = new XMPPMsg(array('to' => '2@w.c', 'from' => '-0@q.p/~', 'type' => 'chat'), 'hi', 'thread1');
 
-		$this->assertEquals(
-		    array(
-		        'from' => '-0@q.p/~',
-		        'to' => '2@w.c',
-		        'to_node' => '2',
-		        'to_string' => '<message xmlns="jabber:client" to="2@w.c" from="-0@q.p/~" type="chat"><body>hi</body><thread>thread1</thread></message>',
-		    ),
-		    array(
-		        'from' => $msg->from,
-		        'to' => $msg->to,
-		        'to_node' => $msg->to_node,
-		        'to_string' => $msg->to_string(),
-		    )
-		);
+        $this->assertEquals(
+            array(
+                'from' => '-0@q.p/~',
+                'to' => '2@w.c',
+                'to_node' => '2',
+                'to_string' => '<message xmlns="jabber:client" to="2@w.c" from="-0@q.p/~" type="chat"><body>hi</body><thread>thread1</thread></message>',
+            ),
+            array(
+                'from' => $msg->from,
+                'to' => $msg->to,
+                'to_node' => $msg->to_node,
+                'to_string' => $msg->to_string(),
+            )
+        );
 
-		$msg->to = '4@w.c/sp';
-		$msg->body = 'hello world';
-		$msg->subject = 'some subject';
+        $msg->to = '4@w.c/sp';
+        $msg->body = 'hello world';
+        $msg->subject = 'some subject';
 
-		$this->assertEquals(
-		    array(
-		        'from' => '-0@q.p/~',
-		        'to' => '4@w.c/sp',
-		        'to_node' => '4',
-		        'to_string' => '<message xmlns="jabber:client" to="4@w.c/sp" from="-0@q.p/~" type="chat"><body>hello world</body><thread>thread1</thread><subject>some subject</subject></message>',
-		    ),
-		    array(
-		        'from' => $msg->from,
-		        'to' => $msg->to,
-		        'to_node' => $msg->to_node,
-		        'to_string' => $msg->to_string(),
-		    )
-		);
-	}
+        $this->assertEquals(
+            array(
+                'from' => '-0@q.p/~',
+                'to' => '4@w.c/sp',
+                'to_node' => '4',
+                'to_string' => '<message xmlns="jabber:client" to="4@w.c/sp" from="-0@q.p/~" type="chat"><body>hello world</body><thread>thread1</thread><subject>some subject</subject></message>',
+            ),
+            array(
+                'from' => $msg->from,
+                'to' => $msg->to,
+                'to_node' => $msg->to_node,
+                'to_string' => $msg->to_string(),
+            )
+        );
+    }
 }

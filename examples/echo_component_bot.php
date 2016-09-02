@@ -37,8 +37,8 @@
  */
 
 if ($argc != 5) {
-	echo "Usage: $argv[0] jid pass host port\n";
-	exit;
+    echo "Usage: $argv[0] jid pass host port\n";
+    exit;
 }
 
 //
@@ -46,22 +46,22 @@ if ($argc != 5) {
 //
 require_once 'jaxl.php';
 $comp = new JAXL(array(
-	// (required) component host and secret
-	'jid' => $argv[1],
-	'pass' => $argv[2],
+    // (required) component host and secret
+    'jid' => $argv[1],
+    'pass' => $argv[2],
 
-	// (required)
-	'host' => @$argv[3],
-	'port' => $argv[4],
+    // (required)
+    'host' => @$argv[3],
+    'port' => $argv[4],
 
-	'log_level' => JAXL_INFO
+    'log_level' => JAXL_INFO
 ));
 
 //
 // XEP's required (required)
 //
 $comp->require_xep(array(
-	'0114' // jabber component protocol
+    '0114' // jabber component protocol
 ));
 
 //
@@ -95,7 +95,7 @@ $comp->add_cb('on_chat_message', 'on_chat_message_callback');
 
 function on_disconnect_callback()
 {
-	_info("got on_disconnect cb");
+    _info("got on_disconnect cb");
 }
 $comp->add_cb('on_disconnect', 'on_disconnect_callback');
 

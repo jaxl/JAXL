@@ -46,32 +46,32 @@ JAXL::dummy();
 class JAXLXmlStreamTest extends PHPUnit_Framework_TestCase
 {
 
-	public function xml_start_cb($node)
-	{
-		$this->assertEquals('stream', $node->name);
-		$this->assertEquals(NS_XMPP, $node->ns);
-	}
+    public function xml_start_cb($node)
+    {
+        $this->assertEquals('stream', $node->name);
+        $this->assertEquals(NS_XMPP, $node->ns);
+    }
 
-	public function xml_end_cb($node)
-	{
-		$this->assertEquals('stream', $node->name);
-	}
+    public function xml_end_cb($node)
+    {
+        $this->assertEquals('stream', $node->name);
+    }
 
-	public function xml_stanza_cb($node)
-	{
-		$this->assertEquals('features', $node->name);
-		$this->assertEquals(1, sizeof($node->childrens));
-	}
+    public function xml_stanza_cb($node)
+    {
+        $this->assertEquals('features', $node->name);
+        $this->assertEquals(1, sizeof($node->childrens));
+    }
 
-	public function test_xml_stream_callbacks()
-	{
-		$xml = new JAXLXmlStream();
-		$xml->set_callback(array(&$this, "xml_start_cb"), array(&$this, "xml_end_cb"), array(&$this, "xml_stanza_cb"));
-		$xml->parse('<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">');
-		$xml->parse('<features>');
-		$xml->parse('<mechanisms>');
-		$xml->parse('</mechanisms>');
-		$xml->parse('</features>');
-		$xml->parse('</stream:stream>');
-	}
+    public function test_xml_stream_callbacks()
+    {
+        $xml = new JAXLXmlStream();
+        $xml->set_callback(array(&$this, "xml_start_cb"), array(&$this, "xml_end_cb"), array(&$this, "xml_stanza_cb"));
+        $xml->parse('<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">');
+        $xml->parse('<features>');
+        $xml->parse('<mechanisms>');
+        $xml->parse('</mechanisms>');
+        $xml->parse('</features>');
+        $xml->parse('</stream:stream>');
+    }
 }

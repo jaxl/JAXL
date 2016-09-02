@@ -42,8 +42,8 @@ $body = new SimpleXMLElement($body);
 $attrs = $body->attributes();
 
 if (!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
-	echo "invalid input";
-	exit;
+    echo "invalid input";
+    exit;
 }
 
 //
@@ -58,15 +58,15 @@ $hold = (int)$attrs['hold'];
 list($host, $port) = JAXLUtil::get_dns_srv($to);
 
 $client = new JAXL(array(
-	'domain' => $to,
-	'host' => $host,
-	'port' => $port,
-	'bosh_url' => 'http://localhost:5280/http-bind',
-	'bosh_rid' => $rid,
-	'bosh_wait' => $wait,
-	'bosh_hold' => $hold,
-	'auth_type' => 'ANONYMOUS',
-	'log_level' => JAXL_INFO
+    'domain' => $to,
+    'host' => $host,
+    'port' => $port,
+    'bosh_url' => 'http://localhost:5280/http-bind',
+    'bosh_rid' => $rid,
+    'bosh_wait' => $wait,
+    'bosh_hold' => $hold,
+    'auth_type' => 'ANONYMOUS',
+    'log_level' => JAXL_INFO
 ));
 
 function on_auth_success_callback()

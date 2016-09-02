@@ -41,18 +41,18 @@ require_once JAXL_CWD.'/xmpp/xmpp_stanza.php';
 class XMPPMsg extends XMPPStanza
 {
 
-	public function __construct($attrs, $body = null, $thread = null, $subject = null)
-	{
-		parent::__construct('message', $attrs);
+    public function __construct($attrs, $body = null, $thread = null, $subject = null)
+    {
+        parent::__construct('message', $attrs);
 
-		if ($body) {
-		    $this->c('body')->t($body)->up();
-		}
-		if ($thread) {
-		    $this->c('thread')->t($thread)->up();
-		}
-		if ($subject) {
-		    $this->c('subject')->t($subject)->up();
-		}
-	}
+        if ($body) {
+            $this->c('body')->t($body)->up();
+        }
+        if ($thread) {
+            $this->c('thread')->t($thread)->up();
+        }
+        if ($subject) {
+            $this->c('subject')->t($subject)->up();
+        }
+    }
 }
