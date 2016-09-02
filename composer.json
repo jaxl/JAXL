@@ -27,11 +27,17 @@
         "ext-sockets": "*"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "*",
-        "sebastianbergmann/phpunit": "3.6.*"
+        "phpunit/phpunit": "^3.7.0",
+        "squizlabs/php_codesniffer": "*"
     },
     "autoload": {
-        "files": ["jaxl.php"]
+        "classmap": [
+            "core",
+            "http",
+            "xep",
+            "xmpp",
+            "jaxl.php"
+        ]
     },
     "bin": ["jaxlctl"]
 }

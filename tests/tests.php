@@ -36,9 +36,7 @@
  *
  */
 
-// TODO: support for php unit and add more tests
-error_reporting(E_ALL);
-require_once "jaxl.php";
+JAXL::dummy();
 
 /**
  *

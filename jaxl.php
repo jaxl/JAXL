@@ -875,4 +875,12 @@ class JAXL extends XMPPStream
 			}
 		}
 	}
+
+    /**
+     * Used to define JAXL_CWD in tests.
+     */
+    public static function dummy()
+    {
+        // Do nothing.
+    }
 }

@@ -13,8 +13,6 @@
     <testsuites>
         <testsuite name="JAXL">
             <directory suffix=".php">tests/</directory>
-            <exclude>tests/test_jaxl_socket_client.php</exclude>
-            <exclude>tests/test_xmpp_stream.php</exclude>
         </testsuite>
     </testsuites>
 </phpunit>
