@@ -60,7 +60,6 @@ class JAXLEvent
 
 	public function __destruct()
 	{
-
 	}
 
 	// add callback on a event

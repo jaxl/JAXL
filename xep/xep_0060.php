@@ -74,22 +74,18 @@ class XEP_0060 extends XMPPXep
 
 	public function unsubscribe()
 	{
-
 	}
 
 	public function get_subscription_options()
 	{
-
 	}
 
 	public function set_subscription_options()
 	{
-
 	}
 
 	public function get_node_items()
 	{
-
 	}
 
 	//
@@ -111,7 +107,6 @@ class XEP_0060 extends XMPPXep
 
 	public function delete_item()
 	{
-
 	}
 
 	//

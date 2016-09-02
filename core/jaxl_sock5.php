@@ -62,7 +62,6 @@ class JAXLSock5
 
 	public function __destruct()
 	{
-
 	}
 
 	public function connect($ip, $port = 1080)
@@ -110,7 +109,6 @@ class JAXLSock5
 
 	public function send_data()
 	{
-
 	}
 
 	//

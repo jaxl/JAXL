@@ -90,7 +90,6 @@ class JAXLClock
 	// calculate execution time of callback
 	public function tc($callback, $args = null)
 	{
-
 	}
 
 	// callback after $time microseconds

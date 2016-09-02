@@ -132,7 +132,6 @@ function on_presence_stanza_callback($stanza)
 	} else {
 		_warning("=======> odd case 3");
 	}
-
 }
 $client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 

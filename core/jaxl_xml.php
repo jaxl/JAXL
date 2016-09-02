@@ -98,7 +98,6 @@ class JAXLXml
 
 	public function __destruct()
 	{
-
 	}
 
 	public function attrs($attrs)

@@ -109,7 +109,6 @@ function wait_for_register_form($event, $args)
 		foreach ($query->childrens as $k => $child) {
 			if ($child->name != 'instructions') {
 				$form[$child->name] = readline($child->name.":");
-
 			}
 		}
 
