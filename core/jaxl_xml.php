@@ -63,7 +63,7 @@ class JAXLXml
 
 		$this->name = $argv[0];
 
-		switch($argc) {
+		switch ($argc) {
 			case 4:
 				$this->ns = $argv[1];
 				$this->attrs = $argv[2];

@@ -167,7 +167,7 @@ abstract class XMPPStream extends JAXLFsm
 	{
 		$stanza = new JAXLXml('auth', NS_SASL, array('mechanism' => $mechanism));
 
-		switch($mechanism) {
+		switch ($mechanism) {
 			case 'PLAIN':
 			case 'X-OAUTH2':
 				$stanza->t(base64_encode("\x00".$user."\x00".$pass));
@@ -410,7 +410,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function setup($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "connect":
 				return $this->do_connect($args);
 				break;
@@ -431,7 +431,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function connected($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "start_stream":
 				$this->send_start_stream($this->jid);
 				return array("wait_for_stream_start", 1);
@@ -453,7 +453,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function disconnected($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "connect":
 				return $this->do_connect($args);
 				break;
@@ -471,7 +471,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_stream_start($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "start_cb":
 				// TODO: save stream id and other meta info
 				//_debug("stream started");
@@ -488,7 +488,7 @@ abstract class XMPPStream extends JAXLFsm
 	// XEP-0170: Recommended Order of Stream Feature Negotiation
 	public function wait_for_stream_features($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -537,7 +537,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_tls_result($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -565,7 +565,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_compression_result($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -587,7 +587,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_sasl_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -620,7 +620,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_bind_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -644,7 +644,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function wait_for_session_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$this->handle_auth_success();
 				return "logged_in";
@@ -659,7 +659,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function logged_in($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -698,7 +698,7 @@ abstract class XMPPStream extends JAXLFsm
 
 	public function logged_out($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "end_cb":
 				$this->trans->disconnect();
 				return "disconnected";

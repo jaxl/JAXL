@@ -70,7 +70,7 @@ class XMPPStanza
 
 	public function __get($prop)
 	{
-		switch($prop) {
+		switch ($prop) {
 			// access to jaxl xml properties
 			case 'name':
 			case 'ns':
@@ -127,7 +127,7 @@ class XMPPStanza
 
 	public function __set($prop, $val)
 	{
-		switch($prop) {
+		switch ($prop) {
 			// access to jaxl xml properties
 			case 'name':
 			case 'ns':

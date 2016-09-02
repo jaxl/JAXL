@@ -478,7 +478,7 @@ class JAXL extends XMPPStream
 		$this->disconnect();
 		$this->ev->emit('on_disconnect');
 
-		switch($sig) {
+		switch ($sig) {
 			// terminal line hangup
 			case SIGHUP:
 				_debug("got sighup");
@@ -570,7 +570,7 @@ class JAXL extends XMPPStream
 
 	public function wait_for_fb_sasl_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -593,7 +593,7 @@ class JAXL extends XMPPStream
 	// someday this needs to go inside xmpp stream
 	public function wait_for_cram_md5_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 
@@ -646,7 +646,7 @@ class JAXL extends XMPPStream
 
 	public function wait_for_scram_sha1_response($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case "stanza_cb":
 				$stanza = $args[0];
 

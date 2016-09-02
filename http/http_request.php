@@ -147,7 +147,7 @@ class HTTPRequest extends JAXLFsm
 
 	public function setup($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'set_sock_cb':
 				$this->_send_cb = $args[0];
 				$this->_read_cb = $args[1];
@@ -162,7 +162,7 @@ class HTTPRequest extends JAXLFsm
 
 	public function wait_for_request_line($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'line':
 				$this->_line($args[0], $args[1], $args[2]);
 				return 'wait_for_headers';
@@ -175,7 +175,7 @@ class HTTPRequest extends JAXLFsm
 
 	public function wait_for_headers($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'set_header':
 				$this->set_header($args[0], $args[1]);
 				return 'wait_for_headers';
@@ -190,7 +190,7 @@ class HTTPRequest extends JAXLFsm
 
 	public function maybe_headers_received($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'set_header':
 				$this->set_header($args[0], $args[1]);
 				return 'wait_for_headers';
@@ -209,7 +209,7 @@ class HTTPRequest extends JAXLFsm
 
 	public function wait_for_body($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'body':
 				$content_length = $this->headers['Content-Length'];
 				$rcvd = $args[0];
@@ -290,7 +290,7 @@ class HTTPRequest extends JAXLFsm
 	// headers and may be body received
 	public function headers_received($event, $args)
 	{
-		switch($event) {
+		switch ($event) {
 			case 'empty_line':
 				return 'headers_received';
 				break;
@@ -349,7 +349,7 @@ class HTTPRequest extends JAXLFsm
 	protected function handle_shortcut($event, $args)
 	{
 		_debug("executing shortcut '$event'");
-		switch($event) {
+		switch ($event) {
 			// http status code shortcuts
 			case 'ok':
 			case 'redirect':
