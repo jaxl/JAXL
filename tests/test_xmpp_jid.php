@@ -75,6 +75,7 @@ class XMPPJidTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider jidNegativeProvider
      * @expectedException InvalidArgumentException
+     * @requires function XEP_0029::validateJID
      */
     public function testJidNegative($jidText)
     {
