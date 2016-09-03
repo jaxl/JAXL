@@ -37,12 +37,15 @@
 */
 
 /**
- * following kind of events are possible:
- * 1) hook i.e. if a callback for such an event is registered, calling function is responsible for the workflow from their on
- * 2) filter i.e. calling function will manipulate passed arguments and modified arguments will be passed to next chain of filter
+ * Following kind of events are possible:
+ * 1) hook i.e. if a callback for such an event is registered, calling function
+ *    is responsible for the workflow from their on
+ * 2) filter i.e. calling function will manipulate passed arguments
+ *    and modified arguments will be passed to next chain of filter
  *
- * As a rule of thumb, only 1 hook can be registered for an event, while more than 1 filter is allowed for an event
- * hook and filter both cannot be applied on an event
+ * As a rule of thumb, only 1 hook can be registered for an event, while more
+ * than 1 filter is allowed for an event hook and filter both cannot be applied
+ * on an event.
  *
  * @author abhinavsingh
  *
@@ -99,11 +102,12 @@ class JAXLEvent
         foreach ($cbs as $pri => $cb) {
             foreach ($cb as $c) {
                 $ret = call_user_func_array($c, $data);
-                // this line is for fixing situation where callback function doesn't return an array type
-                // in such cases next call of call_user_func_array will report error since $data is not an array type as expected
-                // things will change in future, atleast put the callback inside a try/catch block
-                // here we only check if there was a return, if yes we update $data with return value
-                // this is bad design, need more thoughts, should work as of now
+                // This line is for fixing situation where callback function doesn't return an array type.
+                // In such cases next call of call_user_func_array will report error since $data is not
+                // an array type as expected.
+                // Things will change in future, atleast put the callback inside a try/catch block.
+                // Here we only check if there was a return, if yes we update $data with return value.
+                // This is bad design, need more thoughts, should work as of now.
                 if ($ret) {
                     $data = $ret;
                 }

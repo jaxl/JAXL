@@ -347,7 +347,15 @@ abstract class XMPPStream extends JAXLFsm
         }
 
         $a2 = 'AUTHENTICATE:'.$data['digest-uri'];
-        return md5(sprintf('%s:%s:%s:%s:%s:%s', md5($a1), $data['nonce'], $data['nc'], $data['cnonce'], $data['qop'], md5($a2)));
+        return md5(sprintf(
+            '%s:%s:%s:%s:%s:%s',
+            md5($a1),
+            $data['nonce'],
+            $data['nc'],
+            $data['cnonce'],
+            $data['qop'],
+            md5($a2)
+        ));
     }
 
     //
@@ -494,7 +502,15 @@ abstract class XMPPStream extends JAXLFsm
 
                 // get starttls requirements
                 $starttls = $stanza->exists('starttls', NS_TLS);
-                $required = $starttls ? ($this->force_tls ? true : ($starttls->exists('required') ? true : false)) : false;
+                if ($starttls) {
+                    if ($this->force_tls) {
+                        $required = true;
+                    } else {
+                        $required = $starttls->exists('required') ? true : false;
+                    }
+                } else {
+                    $required = false;
+                }
 
                 if ($starttls && $required) {
                     $this->send_starttls_pkt();

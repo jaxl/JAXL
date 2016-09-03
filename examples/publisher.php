@@ -73,7 +73,11 @@ function on_auth_success_callback()
 
     $item->c('title')->t('Soliloquy')->up();
     $item->c('summary')->t('To be, or not to be: that is the question')->up();
-    $item->c('link', null, array('rel' => 'alternate', 'type' => 'text/html', 'href' => 'http://denmark.lit/2003/12/13/atom03'))->up();
+    $item->c(
+        'link',
+        null,
+        array('rel' => 'alternate', 'type' => 'text/html', 'href' => 'http://denmark.lit/2003/12/13/atom03')
+    )->up();
     $item->c('id')->t('tag:denmark.lit,2003:entry-32397')->up();
     $item->c('published')->t('2003-12-13T18:30:02Z')->up();
     $item->c('updated')->t('2003-12-13T18:30:02Z')->up();

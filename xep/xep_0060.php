@@ -63,7 +63,11 @@ class XEP_0060 extends XMPPXep
     public function get_subscribe_pkt($service, $node, $jid = null)
     {
         $child = new JAXLXml('pubsub', NS_PUBSUB);
-        $child->c('subscribe', null, array('node' => $node, 'jid' => ($jid ? $jid : $this->jaxl->full_jid->to_string())));
+        $child->c(
+            'subscribe',
+            null,
+            array('node' => $node, 'jid' => ($jid ? $jid : $this->jaxl->full_jid->to_string()))
+        );
         return $this->get_iq_pkt($service, $child);
     }
 

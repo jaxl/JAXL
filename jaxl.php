@@ -239,7 +239,8 @@ class JAXL extends XMPPStream
 
     public function add_exception_handlers()
     {
-        _info("strict mode enabled, adding exception handlers. Set 'strict' => TRUE inside JAXL config to disable this");
+        _info("strict mode enabled, adding exception handlers. ' .
+            'Set 'strict' => TRUE inside JAXL config to disable this");
         set_error_handler(array('JAXLException', 'error_handler'));
         set_exception_handler(array('JAXLException', 'exception_handler'));
         register_shutdown_function(array('JAXLException', 'shutdown_handler'));
@@ -633,7 +634,8 @@ class JAXL extends XMPPStream
         $client_key = hash_hmac('sha1', $salted, "Client Key", true);
         // StoredKey       := H(ClientKey)
         $stored_key = hash('sha1', $client_key, true);
-        // AuthMessage     := client-first-message-bare + "," + server-first-message + "," + client-final-message-without-proof
+        // AuthMessage     := client-first-message-bare + "," + server-first-message + "," +
+        //                    client-final-message-without-proof
         $auth_message = '';
         // ClientSignature := HMAC(StoredKey, AuthMessage)
         $signature = hash_hmac('sha1', $stored_key, $auth_message, true);
@@ -857,7 +859,8 @@ class JAXL extends XMPPStream
         $query = $stanza->exists('query', NS_DISCO_INFO);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'identity') {
-                //echo 'identity category:'.@$child->attrs['category'].', type:'.@$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
+                //echo 'identity category:'.@$child->attrs['category'].', type:'.
+                //    @$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
             } elseif ($child->name == 'x') {
                 //echo 'x ns:'.$child->ns.PHP_EOL;
             } elseif ($child->name == 'feature') {
@@ -871,7 +874,8 @@ class JAXL extends XMPPStream
         $query = $stanza->exists('query', NS_DISCO_ITEMS);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'item') {
-                //echo 'item jid:'.@$child->attrs['jid'].', name:'.@$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
+                //echo 'item jid:'.@$child->attrs['jid'].', name:'.
+                //    @$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
             }
         }
     }

@@ -56,8 +56,14 @@ class XEP_0249 extends XMPPXep
     // api methods
     //
 
-    public function get_invite_pkt($to_bare_jid, $room_jid, $password = null, $reason = null, $thread = null, $continue = null)
-    {
+    public function get_invite_pkt(
+        $to_bare_jid,
+        $room_jid,
+        $password = null,
+        $reason = null,
+        $thread = null,
+        $continue = null
+    ) {
         $xattrs = array('jid' => $room_jid);
         if ($password) {
             $xattrs['password'] = $password;

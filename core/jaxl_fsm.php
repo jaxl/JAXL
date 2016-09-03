@@ -61,8 +61,16 @@ abstract class JAXLFsm
     {
         if ($this->state) {
             // call state method
-            _debug("calling state handler '".(is_array($this->state) ? $this->state[1] : $this->state)."' for incoming event '".$event."'");
-            $call = is_callable($this->state) ? $this->state : (method_exists($this, $this->state) ? array(&$this, $this->state): $this->state);
+            _debug(sprintf(
+                "calling state handler '%s' for incoming event '%s'",
+                is_array($this->state) ? $this->state[1] : $this->state,
+                $event
+            ));
+            if (is_callable($this->state)) {
+                $call = $this->state;
+            } else {
+                $call = method_exists($this, $this->state) ? array(&$this, $this->state): $this->state;
+            }
             $r = call_user_func($call, $event, $args);
 
             // 4 cases of possible return value

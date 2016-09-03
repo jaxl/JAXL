@@ -92,11 +92,17 @@ function on_groupchat_message_callback($stanza)
     $delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
 
     if ($from->resource) {
-        echo "message stanza rcvd from ".$from->resource." saying... ".$stanza->body.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+        echo sprintf(
+            "message stanza rcvd from %s saying... %s, %s".PHP_EOL,
+            $from->resource,
+            $stanza->body,
+            $delay ? "delay timestamp ".$delay->attrs['stamp'] : "timestamp ".gmdate("Y-m-dTH:i:sZ")
+        );
     } else {
         $subject = $stanza->exists('subject');
         if ($subject) {
-            echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".$delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
+            echo "room subject: ".$subject->text.($delay ? ", delay timestamp ".
+                $delay->attrs['stamp'] : ", timestamp ".gmdate("Y-m-dTH:i:sZ")).PHP_EOL;
         }
     }
 }
@@ -113,7 +119,8 @@ function on_presence_stanza_callback($stanza)
         if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
             if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
                 $item = $x->exists('item');
-                _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
+                _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
+                    ", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
             } else {
                 _info("xmlns #user have no x child element");
             }
@@ -125,7 +132,8 @@ function on_presence_stanza_callback($stanza)
 
         if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
             $item = $x->exists('item');
-            echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".$from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
+            echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".
+                $from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
         } else {
             _warning("=======> odd case 2");
         }

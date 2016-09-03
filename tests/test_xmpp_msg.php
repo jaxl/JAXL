@@ -55,7 +55,8 @@ class XMPPMsgTest extends PHPUnit_Framework_TestCase
                 'from' => '-0@q.p/~',
                 'to' => '2@w.c',
                 'to_node' => '2',
-                'to_string' => '<message xmlns="jabber:client" to="2@w.c" from="-0@q.p/~" type="chat"><body>hi</body><thread>thread1</thread></message>',
+                'to_string' => '<message xmlns="jabber:client" to="2@w.c" from="-0@q.p/~" type="chat">' .
+                    '<body>hi</body><thread>thread1</thread></message>',
             ),
             array(
                 'from' => $msg->from,
@@ -74,7 +75,8 @@ class XMPPMsgTest extends PHPUnit_Framework_TestCase
                 'from' => '-0@q.p/~',
                 'to' => '4@w.c/sp',
                 'to_node' => '4',
-                'to_string' => '<message xmlns="jabber:client" to="4@w.c/sp" from="-0@q.p/~" type="chat"><body>hello world</body><thread>thread1</thread><subject>some subject</subject></message>',
+                'to_string' => '<message xmlns="jabber:client" to="4@w.c/sp" from="-0@q.p/~" type="chat">' .
+                    '<body>hello world</body><thread>thread1</thread><subject>some subject</subject></message>',
             ),
             array(
                 'from' => $msg->from,

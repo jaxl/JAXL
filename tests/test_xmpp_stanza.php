@@ -59,7 +59,8 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
         ->c('c')->attrs(array('hash' => '84jsdmnskd'));
 
         $this->assertEquals(
-            '<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested><nest>nest1</nest><nest>nest2</nest><nest>nest3</nest></nested><c hash="84jsdmnskd"></c></message>',
+            '<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested>' .
+            '<nest>nest1</nest><nest>nest2</nest><nest>nest3</nest></nested><c hash="84jsdmnskd"></c></message>',
             $stanza->to_string()
         );
     }

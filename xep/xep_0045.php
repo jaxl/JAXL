@@ -95,9 +95,11 @@ class XEP_0045 extends XMPPXep
 
     public function get_leave_room_pkt($room_full_jid)
     {
-        return $this->jaxl->get_pres_pkt(
-            array('type' => 'unavailable', 'from' => $this->jaxl->full_jid->to_string(), 'to' => (($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid))
-        );
+        return $this->jaxl->get_pres_pkt(array(
+            'type' => 'unavailable',
+            'from' => $this->jaxl->full_jid->to_string(),
+            'to' => ($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid
+        ));
     }
 
     public function leave_room($room_full_jid)

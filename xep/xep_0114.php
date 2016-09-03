@@ -63,7 +63,12 @@ class XEP_0114 extends XMPPXep
 
     public function start_stream()
     {
-        $xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" to="'.$this->jaxl->jid->to_string().'" xmlns="'.NS_JABBER_COMPONENT_ACCEPT.'">';
+        $xml = sprintf(
+            '<stream:stream xmlns:stream="%s" to="%s" xmlns="%s">',
+            NS_XMPP,
+            $this->jaxl->jid->to_string(),
+            NS_JABBER_COMPONENT_ACCEPT
+        );
         $this->jaxl->send_raw($xml);
     }
 
