@@ -117,7 +117,7 @@ class JAXLLoop {
 		}
 	}
 	
-	private static function select() {
+	public static function select() {
 		$read = self::$read_fds;
 		$write = self::$write_fds;
 		$except = null;
