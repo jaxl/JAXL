@@ -52,6 +52,7 @@ class JAXLXml
     public $attrs = array();
     public $text = null;
 
+    /** @var JAXLXml[] */
     public $childrens = array();
     public $parent = null;
     public $rover = null;
@@ -162,6 +163,12 @@ class JAXLXml
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @param string $ns
+     * @param array $attrs
+     * @return JAXLXml|bool
+     */
     public function exists($name, $ns = null, $attrs = array())
     {
         foreach ($this->childrens as $child) {

@@ -36,7 +36,6 @@
 *
 */
 
-date_default_timezone_set("UTC");
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
@@ -71,7 +70,11 @@ class JAXL extends XMPPStream
     // cached init config array
     public $cfg = array();
 
-    // event callback engine for xmpp stream lifecycle
+
+    /**
+     * Event callback engine for XMPP stream lifecycle.
+     * @var JAXLEvent
+     */
     protected $ev = null;
 
     // reference to various xep instance objects
@@ -122,7 +125,10 @@ class JAXL extends XMPPStream
     private $retry_attempt = 0;
     private $retry_max_interval = 32; // 2^5 seconds (means 5 max tries)
 
-    public function __construct($config)
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config)
     {
         $this->cfg = $config;
 
@@ -256,7 +262,10 @@ class JAXL extends XMPPStream
         return $this->sock_dir."/jaxl_".$this->pid.".sock";
     }
 
-    public function require_xep($xeps)
+    /**
+     * @param array $xeps
+     */
+    public function require_xep(array $xeps)
     {
         if (!is_array($xeps)) {
             $xeps = array($xeps);
@@ -277,6 +286,16 @@ class JAXL extends XMPPStream
         }
     }
 
+    /**
+     * Add callback.
+     *
+     * @see JAXLEvent::add
+     *
+     * @param string $ev Event to subscribe.
+     * @param callable? $cb
+     * @param number $pri
+     * @return string
+     */
     public function add_cb($ev, $cb, $pri = 1)
     {
         return $this->ev->add($ev, $cb, $pri);

@@ -37,6 +37,9 @@
  *
  */
 
+error_reporting(E_ALL | E_STRICT);
+date_default_timezone_set('UTC');
+
 $params = $argv;
 $exe = array_shift($params);
 $command = array_shift($params);
