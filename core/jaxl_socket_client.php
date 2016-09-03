@@ -120,7 +120,12 @@ class JAXLSocketClient
 
 			return true;
 		} else {
-			_error("unable to connect ".$socket_path." with error no: ".$this->errno.", error str: ".$this->errstr."");
+            _error(sprintf(
+                "unable to connect %s with error no: %s, error str: %s",
+                is_null($socket_path) ? 'NULL' : $socket_path,
+                is_null($this->errno) ? 'NULL' : $this->errno,
+                is_null($this->errstr) ? 'NULL' : $this->errstr
+            ));
 			$this->disconnect();
 			return false;
 		}
