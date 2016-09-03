@@ -340,7 +340,7 @@ class JAXL extends XMPPStream {
 	
 	public function get_socket_path() {
 		$protocol = ($this->cfg['port'] == 5223 ? "ssl" : "tcp");
-		if ($this->cfg['protocol'])
+		if (@$this->cfg['protocol'])
 			$protocol = $this->cfg['protocol'];
 		return $protocol."://".$this->cfg['host'].":".$this->cfg['port'];
 	}
@@ -772,7 +772,7 @@ class JAXL extends XMPPStream {
 	// unhandled event and arguments bubbled up
 	// TODO: in a lot of cases this will be called, need more checks
 	public function handle_other($event, $args) {
-		$stanza = $args[0];
+		$stanza = @$args[0];
 		$stanza = new XMPPStanza($stanza);
 		$ev = 'on_'.$stanza->name.'_stanza';
 		if($this->ev->exists($ev)) {
