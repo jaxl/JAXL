@@ -1,5 +1,5 @@
 {
-    "name":        "abhinavsingh/jaxl",
+    "name":        "ngsru/jaxl",
     "type":        "library",
     "description": "Jaxl - Async, Non-Blocking, Event based Networking Library in PHP.",
     "keywords":    ["xmpp", "jabber", "http", "asynchronous", "non blocking", "event loop", "php", "jaxl", "abhinavsingh"],

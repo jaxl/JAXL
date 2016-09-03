@@ -36,7 +36,6 @@
 *
 */
 
-date_default_timezone_set("UTC");
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
