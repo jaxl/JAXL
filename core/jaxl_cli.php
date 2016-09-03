@@ -63,7 +63,9 @@ class JAXLCli
 
 	public function __destruct()
 	{
-		@fclose($this->in);
+        if (is_resource($this->in)) {
+            fclose($this->in);
+        }
 	}
 
 	public function stop()

@@ -126,7 +126,9 @@ class JAXLSocketServer
 			    // if no accept callback is registered
 			    // close the accepted connection
 
-				@fclose($client);
+                if (is_resource($client)) {
+                    fclose($client);
+                }
 				$this->clients[$client_id]['closed'] = true;
 				unset($this->clients[$client_id]);
 			}
@@ -154,7 +156,9 @@ class JAXLSocketServer
 				_debug("socket eof client#".$client_id.", closing");
 				$this->del_read_cb($client_id);
 
-				@fclose($client);
+                if (is_resource($client)) {
+                    fclose($client);
+                }
 				unset($this->clients[$client_id]);
 				return;
 			}
@@ -197,7 +201,9 @@ class JAXLSocketServer
 
 				// if scheduled for close and not closed do it and clean up
 				if ($this->clients[$client_id]['close'] && !$this->clients[$client_id]['closed']) {
-					@fclose($client);
+                    if (is_resource($client)) {
+                        fclose($client);
+                    }
 					$this->clients[$client_id]['closed'] = true;
 					unset($this->clients[$client_id]);
 

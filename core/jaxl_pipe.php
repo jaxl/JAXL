@@ -95,7 +95,9 @@ class JAXLPipe
 
 	public function __destruct()
 	{
-		@fclose($this->fd);
+        if (is_resource($this->fd)) {
+            fclose($this->fd);
+        }
 		@unlink($this->get_pipe_file_path());
 		_debug("unlinking pipe file");
 	}

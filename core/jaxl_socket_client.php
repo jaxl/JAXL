@@ -132,7 +132,9 @@ class JAXLSocketClient
 			'read' => true,
 			'write' => true
 		));
-		@fclose($this->fd);
+        if (is_resource($this->fd)) {
+            fclose($this->fd);
+        }
 		$this->fd = null;
 	}
 
