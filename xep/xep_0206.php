@@ -131,40 +131,46 @@ class XEP_0206 extends XMPPXep {
 		
 		_debug("recving for $this->rid");
 		do {
-			$ret = curl_multi_exec($this->mch, $running);
-			$changed = curl_multi_select($this->mch, 0.1);
-			
-			if($changed == 0 && $running == 0) {
-				$ch = @$this->chs[$this->rid];
-				if($ch) {
-					$data = curl_multi_getcontent($ch);
-					
-					curl_multi_remove_handle($this->mch, $ch);
-					unset($this->chs[$this->rid]);
-					_debug("recvd for $this->rid ".$data);
-				
-					list($body, $stanza) = $this->unwrap($data);
-					$body = new SimpleXMLElement($body);
-					$attrs = $body->attributes();
-					
-					if(@$attrs['type'] == 'terminate') {
-						// fool me again
-						if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
-					}
-					else {
-						if(!$this->sid) {
-							$this->sid = $attrs['sid'];
-						}
-						
-						if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
-					}
-				}
-				else {
-					_error("no ch found");
-					exit;
-				}
+			$mrc = curl_multi_exec($this->mch, $running);
+			_debug("mrc=$mrc running=$running");
+		} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+		while ($running && $mrc == CURLM_OK) {
+			$ms = curl_multi_select($this->mch, 0.1);
+			if ($ms != -1) {
+				do {
+					$mrc = curl_multi_exec($this->mch, $running);
+				} while ($mrc == CURLM_CALL_MULTI_PERFORM);
 			}
-		} while($running);
+		}
+		
+		$ch = @$this->chs[$this->rid];
+		if($ch) {
+			$data = curl_multi_getcontent($ch);
+			
+			curl_multi_remove_handle($this->mch, $ch);
+			unset($this->chs[$this->rid]);
+			_debug("recvd for $this->rid ".$data);
+		
+			list($body, $stanza) = $this->unwrap($data);
+			$body = new SimpleXMLElement($body);
+			$attrs = $body->attributes();
+			
+			if(@$attrs['type'] == 'terminate') {
+				// fool me again
+				if($this->recv_cb) call_user_func($this->recv_cb, $this->jaxl->get_end_stream());
+			}
+			else {
+				if(!$this->sid) {
+					$this->sid = $attrs['sid'];
+				}
+				
+				if($this->recv_cb) call_user_func($this->recv_cb, $stanza);
+			}
+		}
+		else {
+			_error("no ch found");
+			exit;
+		}
 	}
 	
 	public function set_callback($recv_cb) {
