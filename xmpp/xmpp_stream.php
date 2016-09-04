@@ -110,7 +110,7 @@ abstract class XMPPStream extends JAXLFsm
      */
     public function __construct(
         $transport,
-        XMPPJid $jid,
+        $jid,
         $pass = null,
         $resource = null,
         $force_tls = false
@@ -427,7 +427,7 @@ abstract class XMPPStream extends JAXLFsm
 
     private function do_connect($args)
     {
-        $socket_path = @$args[0];
+        $socket_path = isset($args[0]) ? $args[0] : null;
         if ($this->trans->connect($socket_path)) {
             return array("connected", 1);
         } else {
@@ -641,7 +641,7 @@ abstract class XMPPStream extends JAXLFsm
                     return "wait_for_sasl_response";
                 } elseif ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
                     $this->xml->reset_parser();
-                    $this->send_start_stream(@$this->jid);
+                    $this->send_start_stream($this->jid);
                     return "wait_for_stream_start";
                 } else {
                     _debug("got unhandled sasl response");

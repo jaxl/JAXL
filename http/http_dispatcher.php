@@ -123,7 +123,7 @@ class HTTPDispatcher
                 _debug("matching rule found, dispatching");
                 $params = array($request);
                 // TODO: a bad way to restrict on 'pk', fix me for generalization
-                if (@isset($matches['pk'])) {
+                if (isset($matches['pk'])) {
                     $params[] = $matches['pk'];
                 }
                 call_user_func_array($rule->cb, $params);

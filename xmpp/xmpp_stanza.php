@@ -88,7 +88,7 @@ class XMPPStanza
             case 'from':
             case 'id':
             case 'type':
-                return @$this->xml->attrs[$prop] ? $this->xml->attrs[$prop] : null;
+                return isset($this->xml->attrs[$prop]) ? $this->xml->attrs[$prop] : null;
                 break;
 
             // access to parts of common xml attributes
@@ -99,7 +99,7 @@ class XMPPStanza
             case 'from_domain':
             case 'from_resource':
                 list($attr, $key) = explode('_', $prop);
-                $val = @$this->xml->attrs[$attr] ? $this->xml->attrs[$attr] : null;
+                $val = isset($this->xml->attrs[$attr]) ? $this->xml->attrs[$attr] : null;
                 if (!$val) {
                     return null;
                 }
@@ -157,7 +157,7 @@ class XMPPStanza
             case 'from_domain':
             case 'from_resource':
                 list($attr, $key) = explode('_', $prop);
-                $val1 = @$this->xml->attrs[$attr];
+                $val1 = isset($this->xml->attrs[$attr]) ? $this->xml->attrs[$attr] : null;
                 if (!$val1) {
                     $val1 = '';
                 }

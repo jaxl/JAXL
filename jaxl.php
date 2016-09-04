@@ -163,7 +163,7 @@ class JAXL extends XMPPStream
         $this->pid = getmypid();
         
         // jid object
-        $jid = @$this->cfg['jid'] ? new XMPPJid($this->cfg['jid']) : null;
+        $jid = isset($this->cfg['jid']) ? new XMPPJid($this->cfg['jid']) : null;
         
         // handle signals
         if (extension_loaded('pcntl')) {
@@ -175,7 +175,7 @@ class JAXL extends XMPPStream
         // create .jaxl directory in JAXL_CWD
         // for our /tmp, /run and /log folders
         // overwrite these using jaxl config array
-        $this->priv_dir = @$this->cfg['priv_dir'] ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
+        $this->priv_dir = isset($this->cfg['priv_dir']) ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
         $this->tmp_dir = $this->priv_dir."/tmp";
         $this->pid_dir = $this->priv_dir."/run";
         $this->log_dir = $this->priv_dir."/log";
@@ -208,25 +208,25 @@ class JAXL extends XMPPStream
         $this->require_xep(array('0030', '0115'));
         
         // do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
-        $host = @$this->cfg['host'];
-        $port = @$this->cfg['port'];
+        $host = isset($this->cfg['host']) ? $this->cfg['host'] : null;
+        $port = isset($this->cfg['port']) ? $this->cfg['port'] : null;
         if ((!$host || !$port) && $jid) {
             // this dns lookup is blocking
             _info("dns srv lookup for ".$jid->domain);
             list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
         }
-        $this->cfg['host'] = @$this->cfg['host'] ? $this->cfg['host'] : $host;
-        $this->cfg['port'] = @$this->cfg['port'] ? $this->cfg['port'] : $port;
+        $this->cfg['host'] = isset($this->cfg['host']) ? $this->cfg['host'] : $host;
+        $this->cfg['port'] = isset($this->cfg['port']) ? $this->cfg['port'] : $port;
         
         // choose appropriate transport
         // if 'bosh_url' cfg is defined include 0206
-        if (@$this->cfg['bosh_url']) {
+        if (isset($this->cfg['bosh_url'])) {
             _debug("including bosh xep");
             $this->require_xep('0206');
             $transport = $this->xeps['0206'];
         } else {
             //list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
-            $stream_context = @$this->cfg['stream_context'];
+            $stream_context = isset($this->cfg['stream_context']) ? $this->cfg['stream_context'] : null;
             $transport = new JAXLSocketClient($stream_context);
         }
         
@@ -237,9 +237,9 @@ class JAXL extends XMPPStream
         parent::__construct(
             $transport,
             $jid,
-            @$this->cfg['pass'],
-            @$this->cfg['resource'] ? 'jaxl#'.$this->cfg['resource'] : 'jaxl#'.md5(time()),
-            @$this->cfg['force_tls']
+            isset($this->cfg['pass']) ? $this->cfg['pass'] : false,
+            isset($this->cfg['resource']) ? 'jaxl#'.$this->cfg['resource'] : 'jaxl#'.md5(time()),
+            isset($this->cfg['force_tls']) ? $this->cfg['force_tls'] : false
         );
     }
     
@@ -247,8 +247,12 @@ class JAXL extends XMPPStream
     {
         // delete pid file
         _info("cleaning up pid and unix sock files");
-        @unlink($this->get_pid_file_path());
-        @unlink($this->get_sock_file_path());
+        if (file_exists($this->get_pid_file_path())) {
+            unlink($this->get_pid_file_path());
+        }
+        if (file_exists($this->get_sock_file_path())) {
+            unlink($this->get_sock_file_path());
+        }
         
         parent::__destruct();
     }
@@ -430,7 +434,7 @@ class JAXL extends XMPPStream
     public function start($opts = array())
     {
         // is bosh bot?
-        if (@$this->cfg['bosh_url']) {
+        if (isset($this->cfg['bosh_url'])) {
             $this->trans->session_start();
             
             for (;;) {
@@ -466,10 +470,10 @@ class JAXL extends XMPPStream
             $this->ev->emit('on_connect');
             
             // parse opts
-            if (@$opts['--with-debug-shell']) {
+            if (isset($opts['--with-debug-shell'])) {
                 $this->enable_debug_shell();
             }
-            if (@$opts['--with-unix-sock']) {
+            if (isset($opts['--with-unix-sock'])) {
                 $this->enable_unix_sock();
             }
             
@@ -716,7 +720,7 @@ class JAXL extends XMPPStream
         }
         
         // check if preferred auth type exists in available mechanisms
-        $pref_auth = @$this->cfg['auth_type'] ? $this->cfg['auth_type'] : 'PLAIN';
+        $pref_auth = isset($this->cfg['auth_type']) ? $this->cfg['auth_type'] : 'PLAIN';
         $pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
         _debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
         
@@ -729,7 +733,7 @@ class JAXL extends XMPPStream
             foreach ($mechs as $mech => $any) {
                 // choose X-FACEBOOK-PLATFORM only if fb_access_token config value is available
                 if ($mech == 'X-FACEBOOK-PLATFORM') {
-                    if (@$this->cfg['fb_access_token']) {
+                    if (isset($this->cfg['fb_access_token'])) {
                         break;
                     }
                 } else {
@@ -741,7 +745,11 @@ class JAXL extends XMPPStream
             _error("preferred auth type not supported, trying $mech");
         }
         
-        $this->send_auth_pkt($mech, @$this->jid ? $this->jid->to_string() : null, @$this->pass);
+        $this->send_auth_pkt(
+            $mech,
+            isset($this->jid) ? $this->jid->to_string() : null,
+            $this->pass
+        );
         
         if ($pref_auth == 'X-FACEBOOK-PLATFORM') {
             return "wait_for_fb_sasl_response";
@@ -755,10 +763,10 @@ class JAXL extends XMPPStream
     public function handle_auth_success()
     {
         // if not a component
-        /*if(!@$this->xeps['0114']) {
-                        $this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
-                        $this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
-                }*/
+        /*if(!isset($this->xeps['0114'])) {
+			$this->xeps['0030']->get_info($this->full_jid->domain, array(&$this, 'handle_domain_info'));
+			$this->xeps['0030']->get_items($this->full_jid->domain, array(&$this, 'handle_domain_items'));
+		}*/
         
         $this->ev->emit('on_auth_success');
     }
@@ -775,7 +783,7 @@ class JAXL extends XMPPStream
         $stanza = new XMPPStanza($stanza);
         
         $this->ev->emit('on_stream_start', array($stanza));
-        return array(@$this->cfg['bosh_url'] ? 'wait_for_stream_features' : 'connected', 1);
+        return array(isset($this->cfg['bosh_url']) ? 'wait_for_stream_features' : 'connected', 1);
     }
     
     public function handle_iq($stanza)
@@ -817,7 +825,7 @@ class JAXL extends XMPPStream
         // if managing roster
         // catch contact vcard results
         if ($this->manage_roster && $stanza->type == 'result' && ($query = $stanza->exists('vCard', 'vcard-temp'))) {
-            if (@$this->roster[$stanza->from]) {
+            if (isset($this->roster[$stanza->from])) {
                 $this->roster[$stanza->from]->vcard = $query;
             }
         }
@@ -844,7 +852,7 @@ class JAXL extends XMPPStream
             if ($type == 'available') {
                 $this->roster[$jid->bare]->resources[$jid->resource] = $stanza;
             } elseif ($type == 'unavailable') {
-                if (@$this->roster[$jid->bare] && @$this->roster[$jid->bare]->resources[$jid->resource]) {
+                if (isset($this->roster[$jid->bare]) && isset($this->roster[$jid->bare]->resources[$jid->resource])) {
                     unset($this->roster[$jid->bare]->resources[$jid->resource]);
                 }
             }
@@ -865,7 +873,7 @@ class JAXL extends XMPPStream
     public function handle_message($stanza)
     {
         $stanza = new XMPPStanza($stanza);
-        $stanza->type = (@$stanza->type ? $stanza->type : 'normal');
+        $stanza->type = ($stanza->type ? $stanza->type : 'normal');
         $this->ev->emit('on_'.$stanza->type.'_message', array($stanza));
     }
     
@@ -873,7 +881,7 @@ class JAXL extends XMPPStream
     // TODO: in a lot of cases this will be called, need more checks
     public function handle_other($event, $args)
     {
-        $stanza = @$args[0];
+        $stanza = isset($args[0]) ? $args[0] : null;
         $stanza = new XMPPStanza($stanza);
         $ev = 'on_'.$stanza->name.'_stanza';
         if ($this->ev->exists($ev)) {
@@ -888,8 +896,10 @@ class JAXL extends XMPPStream
         $query = $stanza->exists('query', NS_DISCO_INFO);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'identity') {
-                //echo 'identity category:'.@$child->attrs['category'].', type:'.
-                //    @$child->attrs['type'].', name:'.@$child->attrs['name'].PHP_EOL;
+                //echo 'identity '.
+                //    'category:' . (isset($child->attrs['category']) ? $child->attrs['category'] : 'NULL').
+                //    ', type:'.(isset($child->attrs['type']) ? $child->attrs['type'] : 'NULL').
+                //    ', name:'.(isset($child->attrs['name']) ? $child->attrs['name'] : 'NULL').PHP_EOL;
             } elseif ($child->name == 'x') {
                 //echo 'x ns:'.$child->ns.PHP_EOL;
             } elseif ($child->name == 'feature') {
@@ -903,8 +913,10 @@ class JAXL extends XMPPStream
         $query = $stanza->exists('query', NS_DISCO_ITEMS);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'item') {
-                //echo 'item jid:'.@$child->attrs['jid'].', name:'.
-                //    @$child->attrs['name'].', node:'.@$child->attrs['node'].PHP_EOL;
+                //echo 'item '.
+                //    'jid:'.(isset($child->attrs['jid']) ? $child->attrs['jid'] : 'NULL').
+                //    ', name:'.(isset($child->attrs['name']) ? $child->attrs['name'] : 'NULL').
+                //    ', node:'.(isset($child->attrs['node']) ? $child->attrs['node'] : 'NULL').PHP_EOL;
             }
         }
     }

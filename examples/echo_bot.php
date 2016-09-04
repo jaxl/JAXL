@@ -67,7 +67,7 @@ $client = new JAXL(array(
     //'resource' => 'resource',
 
     // (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-    'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
+    'auth_type' => isset($argv[3]) ? $argv[3] : 'PLAIN',
 
     'log_level' => JAXL_INFO
 ));

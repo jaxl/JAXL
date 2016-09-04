@@ -53,7 +53,9 @@ function on_request($client, $raw)
     _info("got client callback ".$raw);
 }
 
-@unlink($argv[1]);
+if (file_exists($argv[1])) {
+    unlink($argv[1]);
+}
 $server = new JAXLSocketServer('unix://'.$argv[1], null, 'on_request');
 
 JAXLLoop::run();

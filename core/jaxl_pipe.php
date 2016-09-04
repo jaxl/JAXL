@@ -98,7 +98,9 @@ class JAXLPipe
         if (is_resource($this->fd)) {
             fclose($this->fd);
         }
-        @unlink($this->get_pipe_file_path());
+        if (file_exists($this->get_pipe_file_path())) {
+            unlink($this->get_pipe_file_path());
+        }
         _debug("unlinking pipe file");
     }
 

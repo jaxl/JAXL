@@ -304,7 +304,7 @@ class HTTPRequest extends JAXLFsm
                         _debug("non-existant method $event called");
                         return 'headers_received';
                     }
-                } elseif (@isset($this->shortcuts[$event])) {
+                } elseif (isset($this->shortcuts[$event])) {
                     return $this->handle_shortcut($event, $args);
                 } else {
                     _warning("uncatched $event ".$args[0]);

@@ -133,16 +133,16 @@ class HTTPClient
 
     private function _port()
     {
-        return @$this->parts['port'] ? $this->parts['port'] : 80;
+        return isset($this->parts['port']) ? $this->parts['port'] : 80;
     }
 
     private function _uri()
     {
         $uri = $this->parts['path'];
-        if (@$this->parts['query']) {
+        if (isset($this->parts['query'])) {
             $uri .= '?'.$this->parts['query'];
         }
-        if (@$this->parts['fragment']) {
+        if (isset($this->parts['fragment'])) {
             $uri .= '#'.$this->parts['fragment'];
         }
         return $uri;
