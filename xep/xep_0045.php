@@ -77,7 +77,8 @@ class XEP_0045 extends XMPPXep
         $pkt = $this->jaxl->get_pres_pkt(
             array(
                 'from'=>$this->jaxl->full_jid->to_string(),
-                'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
+                'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid),
+                'id' => (isset($options['id'])) ? $options['id'] : uniqid()
             )
         );
         $x = $pkt->c('x', NS_MUC);
