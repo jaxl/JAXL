@@ -40,24 +40,23 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_DELAYED_DELIVERY', 'urn:xmpp:delay');
 
-class XEP_0203 extends XMPPXep {
-	
-	//
-	// abstract method
-	//
-	
-	public function init() {
-		return array();
-	}
-	
-	//
-	// api methods
-	//
-	
-	//
-	// event callbacks
-	//
-	
-}
+class XEP_0203 extends XMPPXep
+{
 
-?>
+    //
+    // abstract method
+    //
+
+    public function init()
+    {
+        return array();
+    }
+
+    //
+    // api methods
+    //
+
+    //
+    // event callbacks
+    //
+}

@@ -36,9 +36,9 @@
  *
  */
 
-if($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
-	exit;
+if ($argc < 3) {
+    echo "Usage: $argv[0] jid pass\n";
+    exit;
 }
 
 //
@@ -46,63 +46,69 @@ if($argc < 3) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[1],
-	'pass' => $argv[2],
+    // (required) credentials
+    'jid' => $argv[1],
+    'pass' => $argv[2],
 
-	// (required)
-	'bosh_url' => 'http://localhost:5280/http-bind',
+    // (required)
+    'bosh_url' => 'http://localhost:5280/http-bind',
 
-	// (optional) srv lookup is done if not provided
-	// for bosh client 'host' value is used for 'route' attribute
-	//'host' => 'xmpp.domain.tld',
+    // (optional) srv lookup is done if not provided
+    // for bosh client 'host' value is used for 'route' attribute
+    //'host' => 'xmpp.domain.tld',
 
-	// (optional) result from srv lookup used by default
-	// for bosh client 'port' value is used for 'route' attribute
-	//'port' => 5222,
+    // (optional) result from srv lookup used by default
+    // for bosh client 'port' value is used for 'route' attribute
+    //'port' => 5222,
 
-	// (optional)
-	//'resource' => 'resource',
-	
-	// (optional) defaults to PLAIN if supported, else other methods will be automatically tried
-	'auth_type' => @$argv[3] ? $argv[3] : 'PLAIN',
-	
-	'log_level' => JAXL_INFO
+    // (optional)
+    //'resource' => 'resource',
+
+    // (optional) defaults to PLAIN if supported, else other methods will be automatically tried
+    'auth_type' => isset($argv[3]) ? $argv[3] : 'PLAIN',
+
+    'log_level' => JAXL_INFO
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	$client->set_status("available!", "dnd", 10);
-});
+function on_auth_success_callback()
+{
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    $client->set_status("available!", "dnd", 10);
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+function on_auth_failure_callback($reason)
+{
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-$client->add_cb('on_chat_message', function($stanza) {
-	global $client;
-	
-	// echo back incoming message stanza
-	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
-	$client->send($stanza);
-});
+function on_chat_message_callback($stanza)
+{
+    global $client;
 
-$client->add_cb('on_disconnect', function() {
-	_info("got on_disconnect cb");
-});
+    // echo back incoming message stanza
+    $stanza->to = $stanza->from;
+    $stanza->from = $client->full_jid->to_string();
+    $client->send($stanza);
+}
+$client->add_cb('on_chat_message', 'on_chat_message_callback');
+
+function on_disconnect_callback()
+{
+    _info("got on_disconnect cb");
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
 //
 $client->start();
 echo "done\n";
-
-?>

@@ -111,11 +111,11 @@ Following methods are available on initialized ``JAXL`` instance object:
     
         returns path to ``JAXL`` ipc unix socket domain
     
-    #. ``require_xep($xeps=array())``
+    #. ``require_xep($xeps = array())``
     
         autoload and initialize passed XEP's
     
-    #. ``add_cb($ev, $cb, $pri=1)``
+    #. ``add_cb($ev, $cb, $pri = 1)``
     
         add a callback to function ``$cb`` on event ``$ev``, returns a reference of added callback
     
@@ -127,19 +127,19 @@ Following methods are available on initialized ``JAXL`` instance object:
     
         send a presence status stanza
     
-    #. ``send_chat_msg($to, $body, $thread=null, $subject=null)``
+    #. ``send_chat_msg($to, $body, $thread = null, $subject = null)``
     
         send a message stanza of type chat
     
-    #. ``get_vcard($jid=null, $cb=null)``
+    #. ``get_vcard($jid = null, $cb = null)``
     
         fetch vcard for bare ``$jid``, passed ``$cb`` will be called with received vcard stanza
     
-    #. ``get_roster($cb=null)``
+    #. ``get_roster($cb = null)``
     
         fetch roster list of connected jabber client, passed ``$cb`` will be called with received roster stanza
     
-    #. ``start($opts=array())``
+    #. ``start($opts = array())``
 
         start configured ``JAXL`` instance, optionally accepts two options specified below:
 
@@ -159,8 +159,8 @@ Following methods are available on initialized ``JAXL`` instance object:
     
         send raw payload over connected socket
         
-    #. ``get_msg_pkt($attrs, $body=null, $thread=null, $subject=null, $payload=null)``
+    #. ``get_msg_pkt($attrs, $body = null, $thread = null, $subject = null, $payload = null)``
     
-    #. ``get_pres_pkt($attrs, $status=null, $show=null, $priority=null, $payload=null)``
+    #. ``get_pres_pkt($attrs, $status = null, $show = null, $priority = null, $payload = null)``
     
     #. ``get_iq_pkt($attrs, $payload)``

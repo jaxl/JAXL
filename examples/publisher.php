@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -36,9 +36,9 @@
  *
  */
 
-if($argc < 3) {
-	echo "Usage: $argv[0] jid pass\n";
-	exit;
+if ($argc < 3) {
+    echo "Usage: $argv[0] jid pass\n";
+    exit;
 }
 
 //
@@ -46,54 +46,62 @@ if($argc < 3) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	'jid' => $argv[1],
-	'pass' => $argv[2],
-	'log_level' => JAXL_INFO
+    'jid' => $argv[1],
+    'pass' => $argv[2],
+    'log_level' => JAXL_INFO
 ));
 
 $client->require_xep(array(
-	'0060'	// Publish-Subscribe
+    '0060'  // Publish-Subscribe
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	
-	// create node
-	//$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
-	
-	// publish
-	$item = new JAXLXml('item', null, array('id'=>time()));
-	$item->c('entry', 'http://www.w3.org/2005/Atom');
-	
-	$item->c('title')->t('Soliloquy')->up();
-	$item->c('summary')->t('To be, or not to be: that is the question')->up();
-	$item->c('link', null, array('rel'=>'alternate', 'type'=>'text/html', 'href'=>'http://denmark.lit/2003/12/13/atom03'))->up();
-	$item->c('id')->t('tag:denmark.lit,2003:entry-32397')->up();
-	$item->c('published')->t('2003-12-13T18:30:02Z')->up();
-	$item->c('updated')->t('2003-12-13T18:30:02Z')->up();
-	
-	$client->xeps['0060']->publish_item('pubsub.localhost', 'dummy_node', $item);
-});
+function on_auth_success_callback()
+{
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+    // create node
+    //$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
 
-$client->add_cb('on_disconnect', function() {
-	_info("got on_disconnect cb");
-});
+    // publish
+    $item = new JAXLXml('item', null, array('id' => time()));
+    $item->c('entry', 'http://www.w3.org/2005/Atom');
+
+    $item->c('title')->t('Soliloquy')->up();
+    $item->c('summary')->t('To be, or not to be: that is the question')->up();
+    $item->c(
+        'link',
+        null,
+        array('rel' => 'alternate', 'type' => 'text/html', 'href' => 'http://denmark.lit/2003/12/13/atom03')
+    )->up();
+    $item->c('id')->t('tag:denmark.lit,2003:entry-32397')->up();
+    $item->c('published')->t('2003-12-13T18:30:02Z')->up();
+    $item->c('updated')->t('2003-12-13T18:30:02Z')->up();
+
+    $client->xeps['0060']->publish_item('pubsub.localhost', 'dummy_node', $item);
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
+
+function on_auth_failure_callback($reason)
+{
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
+
+function on_disconnect_callback()
+{
+    _info("got on_disconnect cb");
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
 //
 $client->start();
 echo "done\n";
-
-?>

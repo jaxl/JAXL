@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -41,43 +41,47 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_FEATURE_REGISTER', 'http://jabber.org/features/iq-register');
 define('NS_INBAND_REGISTER', 'jabber:iq:register');
 
-class XEP_0077 extends XMPPXep {
-	
-	//
-	// abstract method
-	//
-	
-	public function init() {
-		return array(
-					
-		);
-	}
-	
-	//
-	// api methods
-	//
-	
-	public function get_form_pkt($domain) {
-		return $this->jaxl->get_iq_pkt(
-			array('to'=>$domain, 'type'=>'get'), 
-			new JAXLXml('query', NS_INBAND_REGISTER)
-		);
-	}
-	
-	public function get_form($domain) {
-		$this->jaxl->send($this->get_form_pkt($domain));
-	}
-	
-	public function set_form($domain, $form) {
-		$query = new JAXLXml('query', NS_INBAND_REGISTER);
-		foreach($form as $k=>$v) $query->c($k, null, array(), $v)->up();
-		$pkt = $this->jaxl->get_iq_pkt(
-			array('to'=>$domain, 'type'=>'set'),
-			$query
-		);
-		$this->jaxl->send($pkt);
-	}
-	
-}
+class XEP_0077 extends XMPPXep
+{
 
-?>
+    //
+    // abstract method
+    //
+
+    public function init()
+    {
+        return array(
+
+        );
+    }
+
+    //
+    // api methods
+    //
+
+    public function get_form_pkt($domain)
+    {
+        return $this->jaxl->get_iq_pkt(
+            array('to' => $domain, 'type' => 'get'),
+            new JAXLXml('query', NS_INBAND_REGISTER)
+        );
+    }
+
+    public function get_form($domain)
+    {
+        $this->jaxl->send($this->get_form_pkt($domain));
+    }
+
+    public function set_form($domain, $form)
+    {
+        $query = new JAXLXml('query', NS_INBAND_REGISTER);
+        foreach ($form as $k => $v) {
+            $query->c($k, null, array(), $v)->up();
+        }
+        $pkt = $this->jaxl->get_iq_pkt(
+            array('to' => $domain, 'type' => 'set'),
+            $query
+        );
+        $this->jaxl->send($pkt);
+    }
+}

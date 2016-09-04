@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -45,115 +45,124 @@ require_once JAXL_CWD.'/core/jaxl_clock.php';
  * @author abhinavsingh
  *
  */
-class JAXLLoop {
-	
-	public static $clock = null;
-	
-	private static $is_running = false;
-	private static $active_read_fds = 0;
-	private static $active_write_fds = 0;
-	
-	private static $read_fds = array();
-	private static $read_cbs = array();
-	private static $write_fds = array();
-	private static $write_cbs = array();
-	
-	private static $secs = 0;
-	private static $usecs = 30000;
-	
-	private function __construct() {}
-	private function __clone() {}
-	
-	public static function watch($fd, $opts) {
-		if(isset($opts['read'])) {
-			$fdid = (int) $fd;
-			self::$read_fds[$fdid] = $fd;
-			self::$read_cbs[$fdid] = $opts['read'];
-			++self::$active_read_fds;
-		}
-		
-		if(isset($opts['write'])) {
-			$fdid = (int) $fd;
-			self::$write_fds[$fdid] = $fd;
-			self::$write_cbs[$fdid] = $opts['write'];
-			++self::$active_write_fds;
-		}
-		
-		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
-	}
-	
-	public static function unwatch($fd, $opts) {
-		if(isset($opts['read'])) {
-			$fdid = (int) $fd;
-			if(isset(self::$read_fds[$fdid])) {
-				unset(self::$read_fds[$fdid]);
-				unset(self::$read_cbs[$fdid]);
-				--self::$active_read_fds;
-			}
-		}
-		
-		if(isset($opts['write'])) {
-			$fdid = (int) $fd;
-			if(isset(self::$write_fds[$fdid])) {
-				unset(self::$write_fds[$fdid]);
-				unset(self::$write_cbs[$fdid]);
-				--self::$active_write_fds;
-			}
-		}
-		
-		_debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
-	}
-	
-	public static function run() {
-		if(!self::$is_running) {
-			self::$is_running = true;
-			self::$clock = new JAXLClock();
-			
-			while((self::$active_read_fds + self::$active_write_fds) > 0)
-				self::select();
-			
-			_debug("no more active fd's to select");
-			self::$is_running = false;
-		}
-	}
-	
-	private static function select() {
-		$read = self::$read_fds;
-		$write = self::$write_fds;
-		$except = null;
-		
-		$changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
-		if($changed === false) {
-			_error("error in the event loop, shutting down...");
-			/*foreach(self::$read_fds as $fd) {
-				if(is_resource($fd)) 
-					print_r(stream_get_meta_data($fd));
-			}*/
-			exit;
-		}
-		else if($changed > 0) {
-			// read callback
-			foreach($read as $r) {
-				$fdid = array_search($r, self::$read_fds);
-				if(isset(self::$read_fds[$fdid]))
-					call_user_func(self::$read_cbs[$fdid], self::$read_fds[$fdid]);
-			}
-			
-			// write callback
-			foreach($write as $w) {
-				$fdid = array_search($w, self::$write_fds);
-				if(isset(self::$write_fds[$fdid]))
-					call_user_func(self::$write_cbs[$fdid], self::$write_fds[$fdid]);
-			}
-			
-			self::$clock->tick();
-		}
-		else if($changed === 0) {
-			//_debug("nothing changed while selecting for read");
-			self::$clock->tick((self::$secs * pow(10,6)) + self::$usecs);
-		}
-	}
-	
-}
+class JAXLLoop
+{
 
-?>
+    public static $clock = null;
+
+    private static $is_running = false;
+    private static $active_read_fds = 0;
+    private static $active_write_fds = 0;
+
+    private static $read_fds = array();
+    private static $read_cbs = array();
+    private static $write_fds = array();
+    private static $write_cbs = array();
+
+    private static $secs = 0;
+    private static $usecs = 30000;
+
+    private function __construct()
+    {
+    }
+
+    private function __clone()
+    {
+    }
+
+    public static function watch($fd, $opts)
+    {
+        if (isset($opts['read'])) {
+            $fdid = (int) $fd;
+            self::$read_fds[$fdid] = $fd;
+            self::$read_cbs[$fdid] = $opts['read'];
+            ++self::$active_read_fds;
+        }
+
+        if (isset($opts['write'])) {
+            $fdid = (int) $fd;
+            self::$write_fds[$fdid] = $fd;
+            self::$write_cbs[$fdid] = $opts['write'];
+            ++self::$active_write_fds;
+        }
+
+        _debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+    }
+
+    public static function unwatch($fd, $opts)
+    {
+        if (isset($opts['read'])) {
+            $fdid = (int) $fd;
+            if (isset(self::$read_fds[$fdid])) {
+                unset(self::$read_fds[$fdid]);
+                unset(self::$read_cbs[$fdid]);
+                --self::$active_read_fds;
+            }
+        }
+
+        if (isset($opts['write'])) {
+            $fdid = (int) $fd;
+            if (isset(self::$write_fds[$fdid])) {
+                unset(self::$write_fds[$fdid]);
+                unset(self::$write_cbs[$fdid]);
+                --self::$active_write_fds;
+            }
+        }
+
+        _debug("active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+    }
+
+    public static function run()
+    {
+        if (!self::$is_running) {
+            self::$is_running = true;
+            self::$clock = new JAXLClock();
+
+            while ((self::$active_read_fds + self::$active_write_fds) > 0) {
+                self::select();
+            }
+
+            _debug("no more active fd's to select");
+            self::$is_running = false;
+        }
+    }
+
+    private static function select()
+    {
+        $read = self::$read_fds;
+        $write = self::$write_fds;
+        $except = null;
+
+        $changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
+        if ($changed === false) {
+            _error("error in the event loop, shutting down...");
+            /*foreach (self::$read_fds as $fd) {
+                                if (is_resource($fd)) {
+                                        print_r(stream_get_meta_data($fd));
+                                }
+                        }*/
+            exit;
+        } elseif ($changed > 0) {
+            // read callback
+            foreach ($read as $r) {
+                $fdid = array_search($r, self::$read_fds);
+                if (isset(self::$read_fds[$fdid])) {
+                    call_user_func(self::$read_cbs[$fdid], self::$read_fds[$fdid]);
+                }
+            }
+
+            // write callback
+            foreach ($write as $w) {
+                $fdid = array_search($w, self::$write_fds);
+                if (isset(self::$write_fds[$fdid])) {
+                    call_user_func(self::$write_cbs[$fdid], self::$write_fds[$fdid]);
+                }
+            }
+
+            self::$clock->tick();
+        } elseif ($changed === 0) {
+            //_debug("nothing changed while selecting for read");
+            self::$clock->tick((self::$secs * pow(10, 6)) + self::$usecs);
+        }
+    }
+}

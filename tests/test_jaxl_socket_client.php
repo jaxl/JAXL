@@ -36,25 +36,24 @@
  *
  */
 
-// TODO: support for php unit and add more tests
-error_reporting(E_ALL);
-require_once "jaxl.php";
+JAXL::dummy();
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
-class JAXLSocketClientTest extends PHPUnit_Framework_TestCase {
-	
-	function test_jaxl_socket_client() {
-		$sock = new JAXLSocketClient("127.0.0.1", 5222);
-		$sock->connect();
-		
-		$sock->send("<stream:stream>");
-		while($sock->fd) {
-			$sock->recv();
-		}
-	}
-	
+class JAXLSocketClientTest extends PHPUnit_Framework_TestCase
+{
+
+    public function test_jaxl_socket_client()
+    {
+        $sock = new JAXLSocketClient();
+        $sock->connect('tcp://127.0.0.1:5222');
+
+        $sock->send("<stream:stream>");
+        while ($sock->fd) {
+            $sock->recv();
+        }
+    }
 }

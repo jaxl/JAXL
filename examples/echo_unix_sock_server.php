@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -36,9 +36,9 @@
  *
  */
 
-if($argc < 2) {
-	echo "Usage: $argv[0] /path/to/server.sock\n";
-	exit;
+if ($argc < 2) {
+    echo "Usage: $argv[0] /path/to/server.sock\n";
+    exit;
 }
 
 require_once 'jaxl.php';
@@ -46,16 +46,17 @@ JAXLLogger::$level = JAXL_INFO;
 
 $server = null;
 
-function on_request($client, $raw) {
-	global $server;
-	$server->send($client, $raw);
-	_info("got client callback ".$raw);
+function on_request($client, $raw)
+{
+    global $server;
+    $server->send($client, $raw);
+    _info("got client callback ".$raw);
 }
 
-@unlink($argv[1]);
-$server = new JAXLSocketServer('unix://'.$argv[1], NULL, 'on_request');
+if (file_exists($argv[1])) {
+    unlink($argv[1]);
+}
+$server = new JAXLSocketServer('unix://'.$argv[1], null, 'on_request');
 
 JAXLLoop::run();
 echo "done\n";
-
-?>

@@ -36,9 +36,9 @@
  *
  */
 
-if(!isset($_GET['jid']) || !isset($_GET['pass'])) {
-	echo "invalid input";
-	exit;
+if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
+    echo "invalid input";
+    exit;
 }
 
 //
@@ -46,21 +46,21 @@ if(!isset($_GET['jid']) || !isset($_GET['pass'])) {
 //
 require_once '../jaxl.php';
 $client = new JAXL(array(
-	'jid' => $_GET['jid'],
-	'pass' => $_GET['pass'],
-	'bosh_url' => 'http://localhost:5280/http-bind',
-	'log_level' => JAXL_DEBUG
+    'jid' => $_GET['jid'],
+    'pass' => $_GET['pass'],
+    'bosh_url' => 'http://localhost:5280/http-bind',
+    'log_level' => JAXL_DEBUG
 ));
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-});
+function on_auth_success_callback()
+{
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
 //
 // finally start configured xmpp stream
 //
 $client->start();
 echo "done\n";
-
-?>

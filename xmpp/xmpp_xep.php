@@ -37,30 +37,31 @@
  */
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
-abstract class XMPPXep {
-	
-	// init() method defines various callbacks
-	// required by this xep extension
-	abstract public function init();
-	//abstract public $description;
-	//abstract public $dependencies;
-	
-	// reference to jaxl instance
-	// which required me
-	protected $jaxl = null;
-	
-	public function __construct($jaxl) {
-		$this->jaxl = $jaxl;
-	}
-	
-	public function __destruct() {
-		
-	}
-	
-}
+abstract class XMPPXep
+{
 
-?>
+    // init() method defines various callbacks
+    // required by this xep extension
+    abstract public function init();
+    //abstract public $description;
+    //abstract public $dependencies;
+
+    /**
+     * Reference to JAXL instance which required me.
+     * @var JAXL
+     */
+    protected $jaxl = null;
+
+    public function __construct(JAXL $jaxl)
+    {
+        $this->jaxl = $jaxl;
+    }
+
+    public function __destruct()
+    {
+    }
+}

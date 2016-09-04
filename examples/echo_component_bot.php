@@ -36,9 +36,9 @@
  *
  */
 
-if($argc != 5) {
-	echo "Usage: $argv[0] jid pass host port\n";
-	exit;
+if ($argc != 5) {
+    echo "Usage: $argv[0] jid pass host port\n";
+    exit;
 }
 
 //
@@ -46,55 +46,61 @@ if($argc != 5) {
 //
 require_once 'jaxl.php';
 $comp = new JAXL(array(
-	// (required) component host and secret
-	'jid' => $argv[1],
-	'pass' => $argv[2],
-	
-	// (required)
-	'host' => @$argv[3],
-	'port' => $argv[4],
-	
-	'log_level' => JAXL_INFO
+    // (required) component host and secret
+    'jid' => $argv[1],
+    'pass' => $argv[2],
+
+    // (required)
+    'host' => $argv[3],
+    'port' => $argv[4],
+
+    'log_level' => JAXL_INFO
 ));
 
 //
 // XEP's required (required)
 //
 $comp->require_xep(array(
-	'0114' // jabber component protocol
+    '0114' // jabber component protocol
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$comp->add_cb('on_auth_success', function() {
-	_info("got on_auth_success cb");
-});
+function on_auth_success_callback()
+{
+    _info("got on_auth_success cb");
+}
+$comp->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$comp->add_cb('on_auth_failure', function($reason) {
-	global $comp;
-	$comp->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+function on_auth_failure_callback($reason)
+{
+    global $comp;
+    $comp->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$comp->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-$comp->add_cb('on_chat_message', function($stanza) {
-	global $comp;
-	
-	// echo back incoming message stanza
-	$stanza->to = $stanza->from;
-	$stanza->from = $comp->jid->to_string();
-	$comp->send($stanza);
-});
+function on_chat_message_callback($stanza)
+{
+    global $comp;
 
-$comp->add_cb('on_disconnect', function() {
-	_info("got on_disconnect cb");
-});
+    // echo back incoming message stanza
+    $stanza->to = $stanza->from;
+    $stanza->from = $comp->jid->to_string();
+    $comp->send($stanza);
+}
+$comp->add_cb('on_chat_message', 'on_chat_message_callback');
+
+function on_disconnect_callback()
+{
+    _info("got on_disconnect cb");
+}
+$comp->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
 //
 $comp->start();
 echo "done\n";
-
-?>

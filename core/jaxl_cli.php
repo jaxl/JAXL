@@ -38,60 +38,70 @@
 
 require_once JAXL_CWD.'/core/jaxl_loop.php';
 
-class JAXLCli {
-	
-	public static $counter = 0;
-	private $in = null;
-	
-	private $quit_cb = null;
-	private $recv_cb = null;
-	private $recv_chunk_size = 1024;
-	
-	public function __construct($recv_cb=null, $quit_cb=null) {
-		$this->recv_cb = $recv_cb;
-		$this->quit_cb = $quit_cb;
-		
-		// catch read event on stdin
-		$this->in = fopen('php://stdin', 'r');
-		stream_set_blocking($this->in, false);
-		JAXLLoop::watch($this->in, array(
-			'read' => array(&$this, 'on_read_ready')
-		));
-	}
-	
-	public function __destruct() {
-		@fclose($this->in);
-	}
-	
-	public function stop() {
-		JAXLLoop::unwatch($this->in, array(
-			'read' => true
-		));
-	}
-	
-	public function on_read_ready($in) {
-		$raw = @fread($in, $this->recv_chunk_size);
-		
-		if(ord($raw) == 10) {
-			// enter key
-			JAXLCli::prompt(false);
-			return;
-		}
-		else if(trim($raw) == 'quit') {
-			$this->stop();
-			$this->in = null;
-			if($this->quit_cb) call_user_func($this->quit_cb);
-			return;
-		}
-		
-		if($this->recv_cb) call_user_func($this->recv_cb, $raw);
-	}
-	
-	public static function prompt($inc=true) {
-		if($inc) ++self::$counter;
-		echo "jaxl ".self::$counter."> ";
-	}
-	
-}
+class JAXLCli
+{
 
-?>
+    public static $counter = 0;
+    private $in = null;
+
+    private $quit_cb = null;
+    private $recv_cb = null;
+    private $recv_chunk_size = 1024;
+
+    public function __construct($recv_cb = null, $quit_cb = null)
+    {
+        $this->recv_cb = $recv_cb;
+        $this->quit_cb = $quit_cb;
+
+        // catch read event on stdin
+        $this->in = fopen('php://stdin', 'r');
+        stream_set_blocking($this->in, false);
+        JAXLLoop::watch($this->in, array(
+            'read' => array(&$this, 'on_read_ready')
+        ));
+    }
+
+    public function __destruct()
+    {
+        if (is_resource($this->in)) {
+            fclose($this->in);
+        }
+    }
+
+    public function stop()
+    {
+        JAXLLoop::unwatch($this->in, array(
+            'read' => true
+        ));
+    }
+
+    public function on_read_ready($in)
+    {
+        $raw = @fread($in, $this->recv_chunk_size);
+
+        if (ord($raw) == 10) {
+            // enter key
+            JAXLCli::prompt(false);
+            return;
+        } elseif (trim($raw) == 'quit') {
+            $this->stop();
+            $this->in = null;
+            if ($this->quit_cb) {
+                call_user_func($this->quit_cb);
+            }
+            return;
+        }
+
+        if ($this->recv_cb) {
+            call_user_func($this->recv_cb, $raw);
+        }
+    }
+
+    public static function prompt($inc = true)
+    {
+        if ($inc) {
+            ++self::$counter;
+        }
+        echo "jaxl ".self::$counter."> ";
+    }
+}

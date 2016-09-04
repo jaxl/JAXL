@@ -40,56 +40,63 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_JABBER_COMPONENT_ACCEPT', 'jabber:component:accept');
 
-class XEP_0114 extends XMPPXep {
-	
-	//
-	// abstract method
-	//
-	
-	public function init() {
-		return array(
-			'on_connect' => 'start_stream',
-			'on_stream_start' => 'start_handshake',
-			'on_handshake_stanza' => 'logged_in',
-			'on_error_stanza' => 'logged_out'
-		);
-	}
-	
-	//
-	// event callbacks
-	//
-	
-	public function start_stream() {
-		$xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" to="'.$this->jaxl->jid->to_string().'" xmlns="'.NS_JABBER_COMPONENT_ACCEPT.'">';
-		$this->jaxl->send_raw($xml);
-	}
-	
-	public function start_handshake($stanza) {
-		_debug("starting component handshake");
-		$id = $stanza->id;
-		$hash = strtolower(sha1($id.$this->jaxl->pass));
-		$stanza = new JAXLXml('handshake', null, $hash);
-		$this->jaxl->send($stanza);
-	}
-	
-	public function logged_in($stanza) {
-		_debug("component handshake complete");
-		$this->jaxl->handle_auth_success();
-		return array("logged_in", 1);
-	}
-	
-	public function logged_out($stanza) {
-		if($stanza->name == "error" && $stanza->ns == NS_XMPP) {
-			$reason = $stanza->childrens[0]->name;
-			$this->jaxl->handle_auth_failure($reason);
-			$this->jaxl->send_end_stream();
-			return array("logged_out", 0);
-		}
-		else {
-			_debug("uncatched stanza received in logged_out");
-		}
-	}
-	
-}
+class XEP_0114 extends XMPPXep
+{
 
-?>
+    //
+    // abstract method
+    //
+
+    public function init()
+    {
+        return array(
+            'on_connect' => 'start_stream',
+            'on_stream_start' => 'start_handshake',
+            'on_handshake_stanza' => 'logged_in',
+            'on_error_stanza' => 'logged_out'
+        );
+    }
+
+    //
+    // event callbacks
+    //
+
+    public function start_stream()
+    {
+        $xml = sprintf(
+            '<stream:stream xmlns:stream="%s" to="%s" xmlns="%s">',
+            NS_XMPP,
+            $this->jaxl->jid->to_string(),
+            NS_JABBER_COMPONENT_ACCEPT
+        );
+        $this->jaxl->send_raw($xml);
+    }
+
+    public function start_handshake($stanza)
+    {
+        _debug("starting component handshake");
+        $id = $stanza->id;
+        $hash = strtolower(sha1($id.$this->jaxl->pass));
+        $stanza = new JAXLXml('handshake', null, $hash);
+        $this->jaxl->send($stanza);
+    }
+
+    public function logged_in($stanza)
+    {
+        _debug("component handshake complete");
+        $this->jaxl->handle_auth_success();
+        return array("logged_in", 1);
+    }
+
+    public function logged_out($stanza)
+    {
+        if ($stanza->name == "error" && $stanza->ns == NS_XMPP) {
+            $reason = $stanza->childrens[0]->name;
+            $this->jaxl->handle_auth_failure($reason);
+            $this->jaxl->send_end_stream();
+            return array("logged_out", 0);
+        } else {
+            _debug("uncatched stanza received in logged_out");
+        }
+    }
+}

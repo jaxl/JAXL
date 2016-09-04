@@ -36,17 +36,23 @@
  *
  */
 
-// TODO: support for php unit and add more tests
-error_reporting(E_ALL);
-require_once "jaxl.php";
+JAXL::dummy();
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
-class JAXLTest extends PHPUnit_Framework_TestCase {
-
+class JAXLTest extends PHPUnit_Framework_TestCase
+{
+    public function testProtocolOption()
+    {
+        $config = array(
+            'host' => 'domain.tld',
+            'port' => 5223,
+            'protocol' => 'tcp'
+        );
+        $jaxl = new JAXL($config);
+        $this->assertEquals('tcp://domain.tld:5223', $jaxl->get_socket_path());
+    }
 }
-
-?>

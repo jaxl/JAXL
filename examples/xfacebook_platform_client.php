@@ -36,9 +36,9 @@
  *
  */
 
-if($argc != 4) {
-	echo "Usage: $argv[0] fb_user_id_or_username fb_app_key fb_access_token\n";
-	exit;
+if ($argc != 4) {
+    echo "Usage: $argv[0] fb_user_id_or_username fb_app_key fb_access_token\n";
+    exit;
 }
 
 //
@@ -46,55 +46,61 @@ if($argc != 4) {
 //
 require_once 'jaxl.php';
 $client = new JAXL(array(
-	// (required) credentials
-	'jid' => $argv[1].'@chat.facebook.com',
-	'fb_app_key' => $argv[2],
-	'fb_access_token' => $argv[3],
+    // (required) credentials
+    'jid' => $argv[1].'@chat.facebook.com',
+    'fb_app_key' => $argv[2],
+    'fb_access_token' => $argv[3],
 
-	// force tls (facebook require this now)
-	'force_tls' => true,
-	// (required) force facebook oauth
-	'auth_type' => 'X-FACEBOOK-PLATFORM',
-	
-	// (optional)
-	//'resource' => 'resource',
-	
-	'log_level' => JAXL_INFO
+    // force tls (facebook require this now)
+    'force_tls' => true,
+    // (required) force facebook oauth
+    'auth_type' => 'X-FACEBOOK-PLATFORM',
+
+    // (optional)
+    //'resource' => 'resource',
+
+    'log_level' => JAXL_INFO
 ));
 
 //
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	$client->set_status("available!", "dnd", 10);
-});
+function on_auth_success_callback()
+{
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    $client->set_status("available!", "dnd", 10);
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	$client->send_end_stream();
-	_info("got on_auth_failure cb with reason $reason");
-});
+function on_auth_failure_callback($reason)
+{
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
-$client->add_cb('on_chat_message', function($stanza) {
-	global $client;
-	
-	// echo back incoming message stanza
-	$stanza->to = $stanza->from;
-	$stanza->from = $client->full_jid->to_string();
-	$client->send($stanza);
-});
+function on_chat_message_callback($stanza)
+{
+    global $client;
 
-$client->add_cb('on_disconnect', function() {
-	_info("got on_disconnect cb");
-});
+    // echo back incoming message stanza
+    $stanza->to = $stanza->from;
+    $stanza->from = $client->full_jid->to_string();
+    $client->send($stanza);
+}
+$client->add_cb('on_chat_message', 'on_chat_message_callback');
+
+function on_disconnect_callback()
+{
+    _info("got on_disconnect cb");
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
 //
 $client->start();
 echo "done\n";
-
-?>

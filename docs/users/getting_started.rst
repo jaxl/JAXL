@@ -8,15 +8,15 @@ You simply need a standard PHP installation to work with Jaxl.
 
 Library has been developed and tested extensively on 
 linux operating systems. But there is no reason why it should
-not work on other OS. File an `issue <https://github.com/abhinavsingh/JAXL/issues/new>`_ if you face any glitches.
+not work on other OS. File an `issue <https://github.com/jaxl/JAXL/issues/new>`_ if you face any glitches.
 
 Download & Install
 ------------------
-Download a stable tagged v3.x release from `https://github.com/abhinavsingh/JAXL/tags <https://github.com/abhinavsingh/JAXL/tags>`_
+Download a stable tagged v3.x release from `https://github.com/jaxl/JAXL/tags <https://github.com/jaxl/JAXL/tags>`_
 
 You can also checkout git branch and switch to a tag of your choice:
 
-    >>> git clone git://github.com/abhinavsingh/JAXL.git
+    >>> git clone https://github.com/jaxl/JAXL.git
     >>> cd JAXL/
     >>> git tag -l
     >>> git checkout some-tag-name

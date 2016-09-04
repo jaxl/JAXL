@@ -40,34 +40,36 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
 define('NS_CAPS', 'http://jabber.org/protocol/caps');
 
-class XEP_0115 extends XMPPXep {
-	
-	//
-	// abstract method
-	//
-	
-	public function init() {
-		return array();
-	}
-	
-	//
-	// api methods
-	//
-	
-	public function get_caps_pkt($cat, $type, $lang, $name, $node, $features) {
-		asort($features);
-		$S = $cat.'/'.$type.'/'.$lang.'/'.$name.'<';
-		foreach($features as $feature) $S .= $feature.'<';
-		$ver = base64_encode(sha1($S, true));
-		
-		$stanza = new JAXLXml('c', NS_CAPS, array('hash'=>'sha1', 'node'=>$node, 'ver'=>$ver));
-		return $stanza;
-	}
-	
-	//
-	// event callbacks
-	//
-	
-}
+class XEP_0115 extends XMPPXep
+{
 
-?>
+    //
+    // abstract method
+    //
+
+    public function init()
+    {
+        return array();
+    }
+
+    //
+    // api methods
+    //
+
+    public function get_caps_pkt($cat, $type, $lang, $name, $node, $features)
+    {
+        asort($features);
+        $S = $cat.'/'.$type.'/'.$lang.'/'.$name.'<';
+        foreach ($features as $feature) {
+            $S .= $feature.'<';
+        }
+        $ver = base64_encode(sha1($S, true));
+
+        $stanza = new JAXLXml('c', NS_CAPS, array('hash' => 'sha1', 'node' => $node, 'ver' => $ver));
+        return $stanza;
+    }
+
+    //
+    // event callbacks
+    //
+}

@@ -41,9 +41,13 @@ $body = file_get_contents("php://input");
 $body = new SimpleXMLElement($body);
 $attrs = $body->attributes();
 
-if(!@$attrs['to'] && !@$attrs['rid'] && !@$attrs['wait'] && !@$attrs['hold']) {
-	echo "invalid input";
-	exit;
+if (!isset($attrs['to']) &&
+    !isset($attrs['rid']) &&
+    !isset($attrs['wait']) &&
+    !isset($attrs['hold'])
+) {
+    echo "invalid input";
+    exit;
 }
 
 //
@@ -58,34 +62,42 @@ $hold = (int)$attrs['hold'];
 list($host, $port) = JAXLUtil::get_dns_srv($to);
 
 $client = new JAXL(array(
-	'domain' => $to,
-	'host' => $host,
-	'port' => $port,
-	'bosh_url' => 'http://localhost:5280/http-bind',
-	'bosh_rid' => $rid,
-	'bosh_wait' => $wait,
-	'bosh_hold' => $hold,
-	'auth_type' => 'ANONYMOUS',
-	'log_level' => JAXL_INFO
+    'domain' => $to,
+    'host' => $host,
+    'port' => $port,
+    'bosh_url' => 'http://localhost:5280/http-bind',
+    'bosh_rid' => $rid,
+    'bosh_wait' => $wait,
+    'bosh_hold' => $hold,
+    'auth_type' => 'ANONYMOUS',
+    'log_level' => JAXL_INFO
 ));
 
-$client->add_cb('on_auth_success', function() {
-	global $client;
-	_info("got on_auth_success cb, jid ".$client->full_jid->to_string());
-	echo '<body xmlns="'.NS_HTTP_BIND.'" sid="'.$client->xeps['0206']->sid.'" rid="'.$client->xeps['0206']->rid.'" jid="'.$client->full_jid->to_string().'"/>';
-	exit;
-});
+function on_auth_success_callback()
+{
+    global $client;
+    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    echo sprintf(
+        '<body xmlns="%s" sid="%s" rid="%s" jid="%s"/>',
+        NS_HTTP_BIND,
+        $client->xeps['0206']->sid,
+        $client->xeps['0206']->rid,
+        $client->full_jid->to_string()
+    );
+    exit;
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function($reason) {
-	global $client;
-	_info("got on_auth_failure cb with reason $reason");
-	$client->send_end_stream();
-});
+function on_auth_failure_callback($reason)
+{
+    global $client;
+    $client->send_end_stream();
+    _info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
 //
 // finally start configured xmpp stream
 //
 $client->start();
 echo "done\n";
-
-?>

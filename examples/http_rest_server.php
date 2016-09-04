@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -49,33 +49,39 @@ require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
 // callback method for dispatch rule (see below)
-function index($request) {
-	$request->send_response(
-		200, array('Content-Type'=>'text/html'), 
-		'<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
-	);
-	$request->close();
+function index($request)
+{
+    $request->send_response(
+        200,
+        array('Content-Type' => 'text/html'),
+        '<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
+    );
+    $request->close();
 }
 
 // callback method for dispatch rule (see below)
-function upload($request) {
-	if($request->method == 'GET') {
-		$request->ok(array(
-			'Content-Type'=>'text/html'),
-			'<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action="http://127.0.0.1:9699/upload/"><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
-		);
-	}
-	else if($request->method == 'POST') {
-		if($request->body === null && $request->expect) {
-			$request->recv_body();
-		}
-		else {
-			// got upload body, save it
-			_info("file upload complete, got ".strlen($request->body)." bytes of data");
-			$upload_data = $request->multipart->form_data[0]['body'];
-			$request->ok($upload_data, array('Content-Type'=>$request->multipart->form_data[0]['headers']['Content-Type']));
-		}
-	}
+function upload($request)
+{
+    if ($request->method == 'GET') {
+        $request->ok(
+            array('Content-Type' => 'text/html'),
+            '<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" ' .
+            'action="http://127.0.0.1:9699/upload/"><input type="file" name="file"/><input type="submit" ' .
+            'value="upload"/></form></body></html>'
+        );
+    } elseif ($request->method == 'POST') {
+        if ($request->body === null && $request->expect) {
+            $request->recv_body();
+        } else {
+            // got upload body, save it
+            _info("file upload complete, got ".strlen($request->body)." bytes of data");
+            $upload_data = $request->multipart->form_data[0]['body'];
+            $request->ok(
+                $upload_data,
+                array('Content-Type' => $request->multipart->form_data[0]['headers']['Content-Type'])
+            );
+        }
+    }
 }
 
 // add dispatch rules with callback method as first argument
@@ -84,24 +90,28 @@ $upload = array('upload', '^/upload', array('GET', 'POST'));
 
 // some REST CRUD style callback methods
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
-function create_event($request) {
-	_info("got event create request");
-	$request->close();
+function create_event($request)
+{
+    _info("got event create request");
+    $request->close();
 }
 
-function read_event($request, $pk) {
-	_info("got event read request for $pk");
-	$request->close();
+function read_event($request, $pk)
+{
+    _info("got event read request for $pk");
+    $request->close();
 }
 
-function update_event($request, $pk) {
-	_info("got event update request for $pk");
-	$request->close();
+function update_event($request, $pk)
+{
+    _info("got event update request for $pk");
+    $request->close();
 }
 
-function delete_event($request, $pk) {
-	_info("got event delete request for $pk");
-	$request->close();
+function delete_event($request, $pk)
+{
+    _info("got event delete request for $pk");
+    $request->close();
 }
 
 $event_create = array('create_event', '^/event/create/$', array('PUT'));

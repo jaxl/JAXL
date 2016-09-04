@@ -36,28 +36,66 @@
  *
  */
 
-// TODO: support for php unit and add more tests
-error_reporting(E_ALL);
-require_once "jaxl.php";
+JAXL::dummy();
 
 /**
- * 
+ *
  * @author abhinavsingh
  *
  */
-class XMPPJidTest extends PHPUnit_Framework_TestCase {
-	
-	function test_xmpp_jid_construct() {
-		$jid = new XMPPJid("1@domain.tld/res");
-		$this->assertEquals('1@domain.tld/res', $jid->to_string());
-		
-		$jid = new XMPPJid("domain.tld/res");
-		$this->assertEquals('domain.tld/res', $jid->to_string());
-		
-		$jid = new XMPPJid("component.domain.tld");
-		$this->assertEquals('component.domain.tld', $jid->to_string());
-		
-		$jid = new XMPPJid("1@domain.tld");
-		$this->assertEquals('1@domain.tld', $jid->to_string());
-	}
+class XMPPJidTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * @dataProvider jidPositiveProvider
+     */
+    public function test_xmpp_jid_construct($jidText)
+    {
+        $jid = new XMPPJid($jidText);
+        $this->assertEquals($jidText, $jid->to_string());
+    }
+
+    public function jidPositiveProvider()
+    {
+        return array(
+            array('domain'),
+            array('domain.tld'),
+            array('1@domain'),
+            array('1@domain.tld'),
+            array('domain/res'),
+            array('domain.tld/res'),
+            array('1@domain/res'),
+            array('1@domain.tld/res'),
+            array('component.domain.tld'),
+            array('1@domain-2.tld/res'),
+            array('1@domain-2.tld/@res'),
+            array('1@domain-2.tld//res')
+        );
+    }
+
+    /**
+     * @dataProvider jidNegativeProvider
+     * @expectedException InvalidArgumentException
+     * @requires function XEP_0029::validateJID
+     */
+    public function testJidNegative($jidText)
+    {
+        $jid = new XMPPJid($jidText);
+    }
+
+    public function jidNegativeProvider()
+    {
+        return array(
+            array('"@domain'),
+            array('&@domain'),
+            array("'@domain"),
+            array('/@domain'),
+            array(':@domain'),
+            array('<@domain'),
+            array('>@domain'),
+            array('@@domain'),
+            array("\x7F" . '@domain'),
+            array("\xFF\xFE" . '@domain'),
+            array("\xFF\xFF" . '@domain')
+        );
+    }
 }

@@ -17,12 +17,12 @@ Define a callback method that will accept all incoming ``HTTPRequest`` objects
 
 .. code-block:: ruby
 
-    function on_request($request) {
-        if($request->method == 'GET') {
+    function on_request($request)
+    {
+        if ($request->method == 'GET') {
             $body = json_encode($request);
-            $request->ok($body, array('Content-Type'=>'application:json'));
-        }
-        else {
+            $request->ok($body, array('Content-Type' => 'application:json'));
+        } else {
             $request->not_found();
         }
     }
@@ -56,26 +56,26 @@ Define our REST resources callback methods:
 
 .. code-block:: ruby
 
-    function index($request) {
+    function index($request)
+    {
         $request->send_response(
-            200, array('Content-Type'=>'text/html'), 
+            200, array('Content-Type' => 'text/html'), 
             '<html><head/><body><h1>Jaxl Http Server</h1><a href="/upload">upload a file</a></body></html>'
         );
         $request->close();
     }
     
-    function upload($request) {
-        if($request->method == 'GET') {
+    function upload($request)
+    {
+        if ($request->method == 'GET') {
             $request->send_response(
-                200, array('Content-Type'=>'text/html'),
+                200, array('Content-Type' => 'text/html'),
                 '<html><head/><body><h1>Jaxl Http Server</h1><form enctype="multipart/form-data" method="POST" action=""><input type="file" name="file"/><input type="submit" value="upload"/></form></body></html>'
             );
-        }
-        else if($request->method == 'POST') {
-            if($request->body === null && $request->expect) {
+        } elseif ($request->method == 'POST') {
+            if ($request->body === null && $request->expect) {
                 $request->recv_body();
-            }
-            else {
+            } else {
                 // got upload body, save it
                 _debug("file upload complete, got ".strlen($request->body)." bytes of data");
                 $request->close();

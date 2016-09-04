@@ -41,52 +41,59 @@ require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 define('NS_DISCO_INFO', 'http://jabber.org/protocol/disco#info');
 define('NS_DISCO_ITEMS', 'http://jabber.org/protocol/disco#items');
 
-class XEP_0030 extends XMPPXep {
-	
-	//
-	// abstract method
-	//
-	
-	public function init() {
-		return array(
-			
-		);
-	}
-	
-	//
-	// api methods
-	//
-	
-	public function get_info_pkt($entity_jid) {
-		return $this->jaxl->get_iq_pkt(
-			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
-			new JAXLXml('query', NS_DISCO_INFO)	
-		);
-	}
-	
-	public function get_info($entity_jid, $callback=null) {
-		$pkt = $this->get_info_pkt($entity_jid);
-		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
-		$this->jaxl->send($pkt);
-	}
-	
-	public function get_items_pkt($entity_jid) {
-		return $this->jaxl->get_iq_pkt(
-			array('type'=>'get', 'from'=>$this->jaxl->full_jid->to_string(), 'to'=>$entity_jid),
-			new JAXLXml('query', NS_DISCO_ITEMS)
-		);
-	}
-	
-	public function get_items($entity_jid, $callback=null) {
-		$pkt = $this->get_items_pkt($entity_jid);
-		if($callback) $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
-		$this->jaxl->send($pkt);
-	}
-	
-	//
-	// event callbacks
-	//
-	
-}
+class XEP_0030 extends XMPPXep
+{
 
-?>
+    //
+    // abstract method
+    //
+
+    public function init()
+    {
+        return array(
+
+        );
+    }
+
+    //
+    // api methods
+    //
+
+    public function get_info_pkt($entity_jid)
+    {
+        return $this->jaxl->get_iq_pkt(
+            array('type' => 'get', 'from' => $this->jaxl->full_jid->to_string(), 'to' => $entity_jid),
+            new JAXLXml('query', NS_DISCO_INFO)
+        );
+    }
+
+    public function get_info($entity_jid, $callback = null)
+    {
+        $pkt = $this->get_info_pkt($entity_jid);
+        if ($callback) {
+            $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+        }
+        $this->jaxl->send($pkt);
+    }
+
+    public function get_items_pkt($entity_jid)
+    {
+        return $this->jaxl->get_iq_pkt(
+            array('type' => 'get', 'from' => $this->jaxl->full_jid->to_string(), 'to' => $entity_jid),
+            new JAXLXml('query', NS_DISCO_ITEMS)
+        );
+    }
+
+    public function get_items($entity_jid, $callback = null)
+    {
+        $pkt = $this->get_items_pkt($entity_jid);
+        if ($callback) {
+            $this->jaxl->add_cb('on_stanza_id_'.$pkt->id, $callback);
+        }
+        $this->jaxl->send($pkt);
+    }
+
+    //
+    // event callbacks
+    //
+}
