@@ -1,0 +1,43 @@
+{
+    "name":        "jaxl/jaxl",
+    "type":        "library",
+    "description": "Jaxl - Async, Non-Blocking, Event based Networking Library in PHP.",
+    "keywords":    ["xmpp", "jabber", "http", "asynchronous", "non blocking", "event loop", "php", "jaxl", "abhinavsingh"],
+    "homepage":    "http://jaxl.readthedocs.org/en/latest/index.html",
+    "license":     "MIT",
+    "support": {
+        "forum":   "https://groups.google.com/forum/#!forum/jaxl",
+        "issues":  "https://github.com/jaxl/JAXL/issues",
+        "source":  "https://github.com/jaxl/JAXL"
+    },
+    "authors": [
+        {
+            "name": "Abhinavsingh",
+            "homepage": "https://abhinavsingh.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.4",
+        "ext-curl": "*",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-openssl": "*",
+        "ext-pcre": "*",
+        "ext-sockets": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^3.7.0",
+        "squizlabs/php_codesniffer": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "core",
+            "http",
+            "xep",
+            "xmpp",
+            "jaxl.php"
+        ]
+    },
+    "bin": ["jaxlctl"]
+}

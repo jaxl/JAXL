@@ -1,69 +1,46 @@
-# JAXL (Jabber XMPP Client and Component Library in PHP)
+Jaxl v3.0.1
+-----------
 
-[Jaxl v3.x](https://github.com/abhinavsingh/JAXL/tree/v3.x) is out. It's fast, modular, clean, flexible, oops, event based. [Read More](https://github.com/abhinavsingh/JAXL/tree/v3.x)
+Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
+carrying a lot of code from v2.x while throwing away the ugly parts.
+A lot of components have been re-written keeping in mind the feedback from
+the developer community over the last 4 years. Also Jaxl shares a few
+philosophies from my experience with erlang and python languages.
 
-Jaxl 2.x is an object oriented XMPP framework in PHP for developing real time applications
-for browsers, desktops and hand held devices. Jaxl 2.x is a robust, flexible and easy to use
-version of Jaxl 1.x series which was hosted at google code.
+Jaxl is an asynchronous, non-blocking I/O, event based PHP library 
+for writing custom TCP/IP client and server implementations. 
+From it's previous versions, library inherits a full blown stable support 
+for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.1/xmpp). 
+In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.1/http) 
+has also been added.
 
-* More robust, flexible, scalable and easy to use with event mechanism for registering callbacks for xmpp events
-* Integrated support for Real Time Web (XMPP over Bosh) application development
-* Support for DIGEST-MD5, PLAIN, ANONYMOUS, X-FACEBOOK-PLATFORM authentication mechanisms
-* 51 implemented XMPP extensions [(XEP's)](http://xmpp.org/extensions/) including MUC, PubSub, PEP, Jingle, File Transfer
-* Setup dynamic number of parallel XMPP instance on the fly
-* Monitoring, usage stat collection, rate limiting and production ready goodies
+At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.0.1/core).
+It contains all the building blocks for everything that we aim to do with Jaxl library. 
+Both XMPP and HTTP protocol stacks are written on top of the Core stack. 
+Infact the source code of protocol implementations knows nothing 
+about the standard (inbuilt) PHP socket and stream methods.
 
-## Download
+[Examples](https://github.com/jaxl/JAXL/tree/v3.0.1/examples/)
 
-* For better experience download [latest stable tarball](http://code.google.com/p/jaxl/downloads/list) from *google code*
-* The development version of Jaxl is hosted here at *Github*, have fun cloning the source code with Git
+[Documentation](http://jaxl.readthedocs.org/)
 
-Warning: The development source code at Github is only intended for people that want to develop Jaxl or absolutely need the latest features still not available on the stable releases.
+[Group and Mailing List](https://groups.google.com/forum/#!forum/jaxl)
 
-## Writing XMPP apps using JAXL library
+[Create a bug/issue](https://github.com/jaxl/JAXL/issues/new)
 
-* Download and extract inside `/path/to/jaxl`
-* Jaxl library provide an event based mechanism exposing hooks like `jaxl_post_auth`
-* Register callback(s) inside your app code for required events (see example below)
-* Write your app logic inside callback'd methods
+[Author](http://abhinavsingh.com/)
 
-Here is how a simple send chat message app looks like using Jaxl library:
+## Contributing
 
-    // Include and initialize Jaxl core
-    require_once '/path/to/jaxl/core/jaxl.class.php';
-    $jaxl = new JAXL(array(
-        'user'=>'username',
-        'pass'=>'password',
-        'host'=>'talk.google.com',
-        'domain'=>'gmail.com',
-        'authType'=>'PLAIN',
-        'logLevel'=>5
-    ));
+JAXL v3.0.1 adopt [PSR-2](http://www.php-fig.org/psr/psr-2/).
+To make it easier to maintain the code contribute your changes after they have
+passed [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+and [PHPUnit](https://github.com/sebastianbergmann/phpunit). If possible, add
+a unit tests for your changes into the *tests* folder.
 
-    // Send message after successful authentication
-    function postAuth($payload, $jaxl) {
-        global $argv;
-        $jaxl->sendMessage($argv[1], $argv[2]);
-        $jaxl->shutdown();
-    }
+To know current errors and failed tests, run:
 
-    // Register callback on required hook (callback'd method will always receive 2 params)
-    $jaxl->addPlugin('jaxl_post_auth', 'postAuth');
-
-    // Start Jaxl core
-    $jaxl->startCore('stream');
-
-Run from command line:
-
-    php sendMessage.php "anotherUser@gmail.com" "This is a test message"
-
-## Useful Links
-
-* [PHP Documentation](http://jaxl.net/)
-* [Developer Mailing List](http://groups.google.com/group/jaxl/)
-* [Issue Tracker](http://code.google.com/p/jaxl/issues/list?can=1&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&cells=tiles)
-
-Generate Jaxl documentation on your system for quick reference:
-    
-    phpdoc -o HTML:Smarty:PHP -ti "JAXL Documentation" -t /var/www/ -d xmpp/,xep/,env/,core/
-
+```ShellSession
+./vendor/bin/phpcs
+./vendor/bin/phpunit
+```
