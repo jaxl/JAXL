@@ -50,11 +50,13 @@ abstract class XMPPXep
     //abstract public $description;
     //abstract public $dependencies;
 
-    // reference to jaxl instance
-    // which required me
+    /**
+     * Reference to JAXL instance which required me.
+     * @var JAXL
+     */
     protected $jaxl = null;
 
-    public function __construct($jaxl)
+    public function __construct(JAXL $jaxl)
     {
         $this->jaxl = $jaxl;
     }

@@ -52,6 +52,9 @@ require_once JAXL_CWD.'/core/jaxl_xml.php';
 class XMPPStanza
 {
 
+    /**
+     * @var JAXLXml
+     */
     private $xml;
 
     public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT)

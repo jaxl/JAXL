@@ -50,6 +50,7 @@ class JAXLSocketClient
     private $host = null;
     private $port = null;
     private $transport = null;
+    /** @var resource */
     private $stream_context = null;
     private $blocking = false;
 
@@ -70,6 +71,9 @@ class JAXLSocketClient
     private $recv_chunk_size = 1024;
     private $writing = false;
 
+    /**
+     * @param resource $stream_context  Resource created with stream_context_create().
+     */
     public function __construct($stream_context = null)
     {
         $this->stream_context = $stream_context;
@@ -112,8 +116,10 @@ class JAXLSocketClient
             } else {
                 $this->fd = @stream_socket_client($socket_path, $this->errno, $this->errstr, $this->timeout);
             }
-        } else {
+        } elseif (is_resource($socket_path)) {
             $this->fd = &$socket_path;
+        } else {
+            // Some error occurred.
         }
 
         if ($this->fd) {

@@ -61,13 +61,24 @@ abstract class XMPPStream extends JAXLFsm
     public $full_jid = null;
 
     // input parameters
+    /**
+     * @var XMPPJid
+     */
     public $jid = null;
     public $pass = null;
     public $resource = null;
     public $force_tls = false;
 
-    // underlying socket/bosh and xml stream ref
+    /**
+     * Socket/BOSH reference.
+     * @var JAXLSocketClient|XEP_0206
+     */
     protected $trans = null;
+
+    /**
+     * XML stream reference.
+     * @var JAXLXmlStream
+     */
     protected $xml = null;
 
     // stanza id
@@ -90,8 +101,20 @@ abstract class XMPPStream extends JAXLFsm
     // public api
     //
 
-    public function __construct($transport, $jid, $pass = null, $resource = null, $force_tls = false)
-    {
+    /**
+     * @param string $transport
+     * @param XMPPJid|null $jid
+     * @param string $pass
+     * @param string $resource
+     * @param bool $force_tls
+     */
+    public function __construct(
+        $transport,
+        XMPPJid $jid,
+        $pass = null,
+        $resource = null,
+        $force_tls = false
+    ) {
         $this->jid = $jid;
         $this->pass = $pass;
         $this->resource = $resource ? $resource : md5(time());
@@ -133,7 +156,7 @@ abstract class XMPPStream extends JAXLFsm
     // pkt creation utilities
     //
 
-    public function get_start_stream($jid)
+    public function get_start_stream(XMPPJid $jid)
     {
         $xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" ';
         //if (isset($jid->bare)) { $xml .= 'from="'.$jid->bare.'" '; }
@@ -362,7 +385,7 @@ abstract class XMPPStream extends JAXLFsm
     // socket senders
     //
 
-    protected function send_start_stream($jid)
+    protected function send_start_stream(XMPPJid $jid)
     {
         $this->send_raw($this->get_start_stream($jid));
     }
