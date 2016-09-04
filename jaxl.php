@@ -89,6 +89,7 @@ class JAXL extends XMPPStream {
 	
 	// path variables
 	public $log_level = JAXL_INFO;
+	public $log_colorize = true;
 	public $priv_dir;
 	public $tmp_dir;
 	public $log_dir;
@@ -129,6 +130,8 @@ class JAXL extends XMPPStream {
 		//else JAXLLogger::$path = $this->log_dir."/jaxl.log";
 		if(isset($this->cfg['log_level'])) JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
 		else JAXLLogger::$level = $this->log_level;
+		if(isset($this->cfg['log_colorize'])) JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
+		else JAXLLogger::$colorize = $this->log_colorize;
 		
 		// env
 		$strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : TRUE;
