@@ -137,10 +137,10 @@ class JAXLLoop
         if ($changed === false) {
             _error("error in the event loop, shutting down...");
             /*foreach (self::$read_fds as $fd) {
-				if (is_resource($fd)) {
-					print_r(stream_get_meta_data($fd));
-				}
-			}*/
+                                if (is_resource($fd)) {
+                                        print_r(stream_get_meta_data($fd));
+                                }
+                        }*/
             exit;
         } elseif ($changed > 0) {
             // read callback

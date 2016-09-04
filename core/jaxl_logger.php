@@ -76,11 +76,12 @@ function _colorize($msg, $verbosity)
 
 class JAXLLogger
 {
-
+    
+    public static $colorize = true;
     public static $level = JAXL_DEBUG;
     public static $path = null;
     public static $max_log_size = 1000;
-
+    
     protected static $colors = array(
         1 => 31,    // error: red
         2 => 34,    // warning: blue
@@ -88,7 +89,7 @@ class JAXLLogger
         4 => 32,    // info: green
         5 => 37         // debug: white
     );
-
+    
     public static function log($msg, $verbosity = 1)
     {
         if ($verbosity <= self::$level) {
@@ -96,12 +97,12 @@ class JAXLLogger
             array_shift($bt);
             $callee = array_shift($bt);
             $msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
-
+            
             $size = strlen($msg);
             if ($size > self::$max_log_size) {
                 $msg = substr($msg, 0, self::$max_log_size) . ' ...';
             }
-
+            
             if (isset(self::$path)) {
                 error_log($msg . PHP_EOL, 3, self::$path);
             } else {
@@ -109,9 +110,13 @@ class JAXLLogger
             }
         }
     }
-
+    
     public static function colorize($msg, $verbosity)
     {
-        return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
+        if (self::$colorize) {
+            return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
+        } else {
+            return $msg;
+        }
     }
 }

@@ -56,9 +56,9 @@ class XEP_0045 extends XMPPXep
     {
         $msg = new XMPPMsg(
             array(
-                'type' => 'groupchat',
-                'to' => (($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid),
-                'from' => $this->jaxl->full_jid->to_string()
+                'type'=>'groupchat',
+                'to'=>(($room_jid instanceof XMPPJid) ? $room_jid->to_string() : $room_jid),
+                'from'=>$this->jaxl->full_jid->to_string()
             ),
             $body,
             $thread,
@@ -76,13 +76,17 @@ class XEP_0045 extends XMPPXep
     {
         $pkt = $this->jaxl->get_pres_pkt(
             array(
-                'from' => $this->jaxl->full_jid->to_string(),
-                'to' => (($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid)
+                'from'=>$this->jaxl->full_jid->to_string(),
+                'to'=>(($room_full_jid instanceof XMPPJid) ? $room_full_jid->to_string() : $room_full_jid),
+                'id' => (isset($options['id'])) ? $options['id'] : uniqid()
             )
         );
         $x = $pkt->c('x', NS_MUC);
         if (isset($options['no_history'])) {
-            $x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0));
+            $x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0))->up();
+        }
+        if (isset($options['password'])) {
+            $x->c('password')->t($options['password'])->up();
         }
         return $x;
     }
