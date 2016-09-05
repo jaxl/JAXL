@@ -50,6 +50,7 @@ class JAXLXml
     public $name;
     public $ns = null;
     public $attrs = array();
+    public $xml = null;
     public $text = null;
 
     /** @var JAXLXml[] */
@@ -117,6 +118,19 @@ class JAXLXml
             }
         }
         return $matches;
+    }
+
+    public function x($xml, $append = false)
+    {
+        if (!$append) {
+            $this->rover->xml = $xml;
+        } else {
+            if ($this->rover->xml === null) {
+                $this->rover->xml = '';
+            }
+            $this->rover->xml .= $xml;
+        }
+        return $this;
     }
 
     public function t($text, $append = false)
@@ -215,7 +229,11 @@ class JAXLXml
             $xml .= $child->to_string($this->ns);
         }
 
-        if ($this->text) {
+        if ($this->xml !== null) {
+            $xml .= $this->xml;
+        }
+
+        if ($this->text !== null) {
             $xml .= htmlspecialchars($this->text);
         }
         $xml .= '</'.$this->name.'>';
