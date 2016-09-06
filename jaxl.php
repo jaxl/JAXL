@@ -503,13 +503,18 @@ class JAXL extends XMPPStream
     //
     // callback methods
     //
-    
-    // signals callback handler
-    // not for public api consumption
+
+    /**
+     * Signals callback handler.
+     *
+     * Not for public API consumption.
+     *
+     * @param int $sig
+     */
     public function signal_handler($sig)
     {
         $this->end_stream();
-        $this->disconnect();
+        $this->trans->disconnect();
         $this->ev->emit('on_disconnect');
         
         switch ($sig) {
