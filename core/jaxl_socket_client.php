@@ -67,6 +67,7 @@ class JAXLSocketClient
     private $recv_bytes = 0;
     private $send_bytes = 0;
 
+    /** @var callable */
     private $recv_cb = null;
     private $recv_chunk_size = 1024;
     private $writing = false;
@@ -85,6 +86,11 @@ class JAXLSocketClient
         $this->disconnect();
     }
 
+    /**
+     * Emit on on_read_ready.
+     *
+     * @param callable $recv_cb
+     */
     public function set_callback($recv_cb)
     {
         $this->recv_cb = $recv_cb;
@@ -184,6 +190,9 @@ class JAXLSocketClient
         return $ret;
     }
 
+    /**
+     * @param string $data
+     */
     public function send($data)
     {
         $this->obuffer .= $data;

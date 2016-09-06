@@ -83,6 +83,10 @@ class JAXLSocketServer
         $this->add_read_cb($client_id);
     }
 
+    /**
+     * @param int $client_id
+     * @param string $data
+     */
     public function send($client_id, $data)
     {
         $this->clients[$client_id]['obuffer'] .= $data;

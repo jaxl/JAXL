@@ -68,7 +68,9 @@ define('HTTP_503', 'Service Unavailable');
 class HTTPServer
 {
 
+    /** @var JAXLSocketServer */
     private $server = null;
+    /** @var callable */
     public $cb = null;
 
     private $dispatcher = null;
@@ -99,6 +101,9 @@ class HTTPServer
         }
     }
 
+    /**
+     * @param callable $cb
+     */
     public function start($cb = null)
     {
         $this->cb = $cb;

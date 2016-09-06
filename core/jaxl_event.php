@@ -92,7 +92,7 @@ class JAXLEvent
      *
      * TODO: Is a pqueue required here for performance enhancement in case we
      * have too many cbs on a specific event?
-     * 
+     *
      * @param string $ev
      * @param array $data
      * @return array

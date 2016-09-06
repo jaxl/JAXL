@@ -57,12 +57,19 @@ class JAXLPipe
 
     protected $perm = 0600;
 
+    /** @var callable */
     protected $recv_cb = null;
     protected $fd = null;
+    /** @var JAXLSocketClient */
     protected $client = null;
 
+    /** @var string */
     public $name = null;
 
+    /**
+     * @param string $name
+     * @param callable $read_cb TODO: Currently not used
+     */
     public function __construct($name, $read_cb = null)
     {
         $pipes_folder = JAXL_CWD.'/.jaxl/pipes';
@@ -72,6 +79,8 @@ class JAXLPipe
 
         $this->ev = new JAXLEvent();
         $this->name = $name;
+        // TODO: If someone's need the read callback and extends the JAXLPipe
+        // to obtain it, one can't because this property is private.
         $this->read_cb = $read_cb;
 
         $pipe_path = $this->get_pipe_file_path();
@@ -109,6 +118,9 @@ class JAXLPipe
         return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
     }
 
+    /**
+     * @param callable $recv_cb
+     */
     public function set_callback($recv_cb)
     {
         $this->recv_cb = $recv_cb;

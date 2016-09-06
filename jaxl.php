@@ -430,8 +430,8 @@ class JAXL extends XMPPStream
         sleep($retry_after);
         $this->start();
     }
-    
-    public function start($opts = array())
+
+    public function start(array $opts = array())
     {
         // is bosh bot?
         if (isset($this->cfg['bosh_url'])) {
@@ -771,11 +771,12 @@ class JAXL extends XMPPStream
         $this->ev->emit('on_auth_success');
     }
     
+    /**
+     * @param string $reason
+     */
     public function handle_auth_failure($reason)
     {
-        $this->ev->emit('on_auth_failure', array(
-            $reason
-        ));
+        $this->ev->emit('on_auth_failure', array($reason));
     }
     
     public function handle_stream_start($stanza)

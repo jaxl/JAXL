@@ -447,7 +447,7 @@ class HTTPRequest extends JAXLFsm
         $this->_send($body);
     }
 
-    protected function _send_response($code, $headers = array(), $body = null)
+    protected function _send_response($code, array $headers = array(), $body = null)
     {
         // send out response line
         $this->_send_line($code);

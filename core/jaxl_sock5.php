@@ -46,13 +46,19 @@ require_once JAXL_CWD.'/core/jaxl_socket_client.php';
  */
 class JAXLSock5
 {
-
+    /** @var JAXLSocketClient */
     private $client = null;
 
+    /** @var string */
     protected $transport = null;
+    /** @var string */
     protected $ip = null;
+    /** @var string|int */
     protected $port = null;
 
+    /**
+     * @param string $transport
+     */
     public function __construct($transport = 'tcp')
     {
         $this->transport = $transport;
@@ -64,6 +70,11 @@ class JAXLSock5
     {
     }
 
+    /**
+     * @param string $ip
+     * @param int $port
+     * @return bool
+     */
     public function connect($ip, $port = 1080)
     {
         $this->ip = $ip;

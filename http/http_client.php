@@ -47,6 +47,7 @@ require_once JAXL_CWD.'/core/jaxl_socket_client.php';
 class HTTPClient
 {
 
+    /** @var string */
     private $url = null;
     private $parts = array();
 
@@ -54,9 +55,15 @@ class HTTPClient
     private $data = null;
     public $method = null;
 
+    /** @var JAXLSocketClient */
     private $client = null;
 
-    public function __construct($url, $headers = array(), $data = null)
+    /**
+     * @param string $url
+     * @param array $headers TODO: Currently not used.
+     * @param unknown $data TODO: Currently not used.
+     */
+    public function __construct($url, array $headers = array(), $data = null)
     {
         $this->url = $url;
         $this->headers = $headers;

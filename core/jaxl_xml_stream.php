@@ -104,7 +104,7 @@ class JAXLXmlStream
         xml_parse($this->parser, $str, true);
     }
 
-    protected function handle_start_tag($parser, $name, $attrs)
+    protected function handle_start_tag($parser, $name, array $attrs)
     {
         $name = $this->explode($name);
         //echo "start of tag ".$name[1]." with ns ".$name[0].PHP_EOL;

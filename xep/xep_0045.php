@@ -72,7 +72,7 @@ class XEP_0045 extends XMPPXep
     //
 
     // room_full_jid simply means room jid with nick name as resource
-    public function get_join_room_pkt($room_full_jid, $options)
+    public function get_join_room_pkt($room_full_jid, array $options)
     {
         $pkt = $this->jaxl->get_pres_pkt(
             array(
@@ -91,7 +91,7 @@ class XEP_0045 extends XMPPXep
         return $x;
     }
 
-    public function join_room($room_full_jid, $options = array())
+    public function join_room($room_full_jid, array $options = array())
     {
         $pkt = $this->get_join_room_pkt($room_full_jid, $options);
         $this->jaxl->send($pkt);
