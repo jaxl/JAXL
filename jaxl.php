@@ -306,13 +306,13 @@ class JAXL extends XMPPStream
      * @see JAXLEvent::add
      *
      * @param string $ev Event to subscribe.
-     * @param callable? $cb
-     * @param number $pri
+     * @param callable $cb
+     * @param int $priority
      * @return string
      */
-    public function add_cb($ev, $cb, $pri = 1)
+    public function add_cb($ev, $cb, $priority = 1)
     {
-        return $this->ev->add($ev, $cb, $pri);
+        return $this->ev->add($ev, $cb, $priority);
     }
     
     public function del_cb($ref)
