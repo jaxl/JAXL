@@ -82,7 +82,7 @@ class JAXLEvent
             $this->reg[$ev] = array();
         }
 
-        $ref = sizeof($this->reg[$ev]);
+        $ref = count($this->reg[$ev]);
         $this->reg[$ev][] = array($priority, $cb);
         return $ev."-".$ref;
     }

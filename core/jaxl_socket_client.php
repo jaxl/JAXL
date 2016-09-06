@@ -105,7 +105,7 @@ class JAXLSocketClient
             $path_parts = explode(":", $socket_path);
             $this->transport =  $path_parts[0];
             $this->host = substr($path_parts[1], 2, strlen($path_parts[1]));
-            if (sizeof($path_parts) == 3) {
+            if (count($path_parts) == 3) {
                 $this->port = $path_parts[2];
             }
 

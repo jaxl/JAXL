@@ -95,7 +95,7 @@ class HTTPDispatcher
 
     public function add_rule($rule)
     {
-        $s = sizeof($rule);
+        $s = count($rule);
         if ($s > 4) {
             _debug("invalid rule");
             return;

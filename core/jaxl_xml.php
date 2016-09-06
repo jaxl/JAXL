@@ -76,7 +76,7 @@ class JAXLXml
     public function __construct()
     {
         $argv = func_get_args();
-        $argc = sizeof($argv);
+        $argc = count($argv);
 
         $this->name = $argv[0];
 

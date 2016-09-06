@@ -440,7 +440,7 @@ class JAXL extends XMPPStream
             for (;;) {
                 // while any of the curl request is pending
                 // keep receiving response
-                while (sizeof($this->trans->chs) != 0) {
+                while (count($this->trans->chs) != 0) {
                     $this->trans->recv();
                 }
                 

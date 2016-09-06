@@ -157,7 +157,7 @@ class HTTPServer
             foreach ($lines as $line) {
                 $line_parts = explode(":", $line);
 
-                if (sizeof($line_parts) > 1) {
+                if (count($line_parts) > 1) {
                     if (strlen($line_parts[0]) > 0) {
                         $k = $line_parts[0];
                         unset($line_parts[0]);
