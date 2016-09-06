@@ -470,10 +470,10 @@ class JAXL extends XMPPStream
             $this->ev->emit('on_connect');
             
             // parse opts
-            if (isset($opts['--with-debug-shell'])) {
+            if (isset($opts['--with-debug-shell']) && $opts['--with-debug-shell']) {
                 $this->enable_debug_shell();
             }
-            if (isset($opts['--with-unix-sock'])) {
+            if (isset($opts['--with-unix-sock']) && $opts['--with-unix-sock']) {
                 $this->enable_unix_sock();
             }
             
