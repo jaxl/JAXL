@@ -76,9 +76,9 @@ abstract class JAXLFsm
             // 4 cases of possible return value
             if (is_callable($r)) {
                 $this->state = $r;
-            } elseif (is_array($r) && sizeof($r) == 2) {
+            } elseif (is_array($r) && count($r) == 2) {
                 list($this->state, $ret) = $r;
-            } elseif (is_array($r) && sizeof($r) == 1) {
+            } elseif (is_array($r) && count($r) == 1) {
                 $this->state = $r[0];
             } elseif (is_string($r)) {
                 $this->state = $r;
@@ -88,7 +88,7 @@ abstract class JAXLFsm
             _debug("current state '".(is_array($this->state) ? $this->state[1] : $this->state)."'");
 
             // return case
-            if (!is_callable($r) && is_array($r) && sizeof($r) == 2) {
+            if (!is_callable($r) && is_array($r) && count($r) == 2) {
                 return $ret;
             }
         } else {

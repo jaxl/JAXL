@@ -57,10 +57,26 @@ class JAXLXml
     public $parent = null;
     public $rover = null;
 
+    /**
+     * Accepts any of the following constructors:
+     *
+     * * JAXLXml($name, $ns, $attrs, $text)
+     * * JAXLXml($name, $ns, $attrs)
+     * * JAXLXml($name, $ns, $text)
+     * * JAXLXml($name, $attrs, $text)
+     * * JAXLXml($name, $attrs)
+     * * JAXLXml($name, $ns)
+     * * JAXLXml($name)
+     *
+     * @param string $name
+     * @param string $ns
+     * @param array $attrs
+     * @param string $text
+     */
     public function __construct()
     {
         $argv = func_get_args();
-        $argc = sizeof($argv);
+        $argc = count($argv);
 
         $this->name = $argv[0];
 
@@ -101,13 +117,21 @@ class JAXLXml
     {
     }
 
-    public function attrs($attrs)
+    /**
+     * @param array $attrs
+     * @return JAXLXml
+     */
+    public function attrs(array $attrs)
     {
         $this->rover->attrs = array_merge($this->rover->attrs, $attrs);
         return $this;
     }
 
-    public function match_attrs($attrs)
+    /**
+     * @param array $attrs
+     * @return bool
+     */
+    public function match_attrs(array $attrs)
     {
         $matches = true;
         foreach ($attrs as $k => $v) {
@@ -119,6 +143,13 @@ class JAXLXml
         return $matches;
     }
 
+    /**
+     * Set or append text.
+     *
+     * @param string $text
+     * @param bool $append
+     * @return JAXLXml
+     */
     public function t($text, $append = false)
     {
         if (!$append) {
@@ -132,7 +163,16 @@ class JAXLXml
         return $this;
     }
 
-    public function c($name, $ns = null, $attrs = array(), $text = null)
+    /**
+     * Create child.
+     *
+     * @param string $name
+     * @param string $ns
+     * @param array $attrs
+     * @param string $text
+     * @return JAXLXml
+     */
+    public function c($name, $ns = null, array $attrs = array(), $text = null)
     {
         $node = new JAXLXml($name, $ns, $attrs, $text);
         $node->parent = &$this->rover;
@@ -141,6 +181,12 @@ class JAXLXml
         return $this;
     }
 
+    /**
+     * Append child node.
+     *
+     * @param JAXLXml $node
+     * @return JAXLXml
+     */
     public function cnode($node)
     {
         $node->parent = &$this->rover;
@@ -169,7 +215,7 @@ class JAXLXml
      * @param array $attrs
      * @return JAXLXml|bool
      */
-    public function exists($name, $ns = null, $attrs = array())
+    public function exists($name, $ns = null, array $attrs = array())
     {
         foreach ($this->childrens as $child) {
             if ($ns) {
@@ -183,7 +229,15 @@ class JAXLXml
         return false;
     }
 
-    public function update($name, $ns = null, $attrs = array(), $text = null)
+    /**
+     * Update child with name ``$name``.
+     *
+     * @param string $name
+     * @param string $ns
+     * @param array $attrs
+     * @param string $text
+     */
+    public function update($name, $ns = null, array $attrs = array(), $text = null)
     {
         foreach ($this->childrens as $k => $child) {
             if ($child->name == $name) {
@@ -196,6 +250,10 @@ class JAXLXml
         }
     }
 
+    /**
+     * @param string $parent_ns
+     * @return string
+     */
     public function to_string($parent_ns = null)
     {
         $xml = '';

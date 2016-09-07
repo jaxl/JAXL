@@ -68,7 +68,7 @@ class JAXLCtl
 
         if (method_exists($this, $command)) {
             $r = call_user_func_array(array(&$this, $command), $params);
-            if (sizeof($r) == 2) {
+            if (count($r) == 2) {
                 list($buffer_cb, $quit_cb) = $r;
                 $this->buffer_cb = $buffer_cb;
                 $this->cli = new JAXLCli(array(&$this, 'on_terminal_input'), $quit_cb);

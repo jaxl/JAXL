@@ -115,7 +115,7 @@ Following methods are available on initialized ``JAXL`` instance object:
     
         autoload and initialize passed XEP's
     
-    #. ``add_cb($ev, $cb, $pri = 1)``
+    #. ``add_cb($ev, $cb, $priority = 1)``
     
         add a callback to function ``$cb`` on event ``$ev``, returns a reference of added callback
     

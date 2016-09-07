@@ -142,11 +142,17 @@ abstract class XMPPStream extends JAXLFsm
         _notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
     }
 
+    /**
+     * @param JAXLXml|XMPPStanza $stanza
+     */
     public function send($stanza)
     {
         $this->trans->send($stanza->to_string());
     }
 
+    /**
+     * @param string $data
+     */
     public function send_raw($data)
     {
         $this->trans->send($data);

@@ -77,6 +77,9 @@ class XEP_0206 extends XMPPXep
     // event callbacks
     //
     
+    /**
+     * @param JAXLXml|XMPPStanza|string $body
+     */
     public function send($body)
     {
         if (is_object($body)) {

@@ -72,7 +72,7 @@ class XEP_0077 extends XMPPXep
         $this->jaxl->send($this->get_form_pkt($domain));
     }
 
-    public function set_form($domain, $form)
+    public function set_form($domain, array $form)
     {
         $query = new JAXLXml('query', NS_INBAND_REGISTER);
         foreach ($form as $k => $v) {

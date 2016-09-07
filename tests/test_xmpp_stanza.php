@@ -48,15 +48,15 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
 
     public function test_xmpp_stanza_nested()
     {
-        $stanza = new JAXLXml('message', array('to' => '1@a.z', 'from' => '2@b.c'));
-        $stanza
-        ->c('body')->attrs(array('xml:lang' => 'en'))->t('hello')->up()
-        ->c('thread')->t('1234')->up()
-        ->c('nested')
-        ->c('nest')->t('nest1')->up()
-        ->c('nest')->t('nest2')->up()
-        ->c('nest')->t('nest3')->up()->up()
-        ->c('c')->attrs(array('hash' => '84jsdmnskd'));
+        $xml = new JAXLXml('message', array('to' => '1@a.z', 'from' => '2@b.c'));
+        $xml->c('body')->attrs(array('xml:lang' => 'en'))->t('hello')->up()
+            ->c('thread')->t('1234')->up()
+            ->c('nested')
+            ->c('nest')->t('nest1')->up()
+            ->c('nest')->t('nest2')->up()
+            ->c('nest')->t('nest3')->up()->up()
+            ->c('c')->attrs(array('hash' => '84jsdmnskd'));
+        $stanza = new XMPPStanza($xml);
 
         $this->assertEquals(
             '<message to="1@a.z" from="2@b.c"><body xml:lang="en">hello</body><thread>1234</thread><nested>' .
@@ -71,7 +71,13 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
         $xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to' => '2@3.com', 'from' => '4@r.p/q'));
         $stanza = new XMPPStanza($xml);
         $stanza->c('body')->t('hello world');
-        echo $stanza->to."\n";
-        echo $stanza->to_string()."\n";
+        $this->assertEquals('XMPPStanza', get_class($stanza));
+        $this->assertEquals('JAXLXml', get_class($stanza->exists('body')));
+        $this->assertEquals('2@3.com', $stanza->to);
+        $this->assertEquals(
+            '<message xmlns="jabber:client" to="2@3.com" from="4@r.p/q">' .
+            '<body>hello world</body></message>',
+            $stanza->to_string()
+        );
     }
 }

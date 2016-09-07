@@ -1,4 +1,4 @@
-Jaxl v3.0.1
+Jaxl v3.0.2
 -----------
 
 Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
@@ -10,17 +10,17 @@ philosophies from my experience with erlang and python languages.
 Jaxl is an asynchronous, non-blocking I/O, event based PHP library 
 for writing custom TCP/IP client and server implementations. 
 From it's previous versions, library inherits a full blown stable support 
-for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.1/xmpp). 
-In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.1/http) 
+for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.2/xmpp). 
+In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.2/http) 
 has also been added.
 
-At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.0.1/core).
+At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.0.2/core).
 It contains all the building blocks for everything that we aim to do with Jaxl library. 
 Both XMPP and HTTP protocol stacks are written on top of the Core stack. 
 Infact the source code of protocol implementations knows nothing 
 about the standard (inbuilt) PHP socket and stream methods.
 
-[Examples](https://github.com/jaxl/JAXL/tree/v3.0.1/examples/)
+[Examples](https://github.com/jaxl/JAXL/tree/v3.0.2/examples/)
 
 [Documentation](http://jaxl.readthedocs.org/)
 
@@ -32,7 +32,7 @@ about the standard (inbuilt) PHP socket and stream methods.
 
 ## Contributing
 
-JAXL v3.0.1 adopt [PSR-2](http://www.php-fig.org/psr/psr-2/).
+JAXL since v3.0.1 adopt [PSR-2](http://www.php-fig.org/psr/psr-2/).
 To make it easier to maintain the code contribute your changes after they have
 passed [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
 and [PHPUnit](https://github.com/sebastianbergmann/phpunit). If possible, add
@@ -44,3 +44,8 @@ To know current errors and failed tests, run:
 ./vendor/bin/phpcs
 ./vendor/bin/phpunit
 ```
+
+## License
+
+The product licensed under the BSD 3-Clause license.
+See [LICENSE](https://github.com/jaxl/JAXL/blob/master/LICENSE).

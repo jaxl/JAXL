@@ -64,7 +64,7 @@ class JAXL extends XMPPStream
 {
     
     // lib meta info
-    const version = '3.0.1';
+    const version = '3.0.2';
     const name = 'JAXL :: Jabber XMPP Library';
     
     // cached init config array
@@ -306,13 +306,13 @@ class JAXL extends XMPPStream
      * @see JAXLEvent::add
      *
      * @param string $ev Event to subscribe.
-     * @param callable? $cb
-     * @param number $pri
+     * @param callable $cb
+     * @param int $priority
      * @return string
      */
-    public function add_cb($ev, $cb, $pri = 1)
+    public function add_cb($ev, $cb, $priority = 1)
     {
-        return $this->ev->add($ev, $cb, $pri);
+        return $this->ev->add($ev, $cb, $priority);
     }
     
     public function del_cb($ref)
@@ -430,8 +430,8 @@ class JAXL extends XMPPStream
         sleep($retry_after);
         $this->start();
     }
-    
-    public function start($opts = array())
+
+    public function start(array $opts = array())
     {
         // is bosh bot?
         if (isset($this->cfg['bosh_url'])) {
@@ -440,7 +440,7 @@ class JAXL extends XMPPStream
             for (;;) {
                 // while any of the curl request is pending
                 // keep receiving response
-                while (sizeof($this->trans->chs) != 0) {
+                while (count($this->trans->chs) != 0) {
                     $this->trans->recv();
                 }
                 
@@ -470,10 +470,10 @@ class JAXL extends XMPPStream
             $this->ev->emit('on_connect');
             
             // parse opts
-            if (isset($opts['--with-debug-shell'])) {
+            if (isset($opts['--with-debug-shell']) && $opts['--with-debug-shell']) {
                 $this->enable_debug_shell();
             }
-            if (isset($opts['--with-unix-sock'])) {
+            if (isset($opts['--with-unix-sock']) && $opts['--with-unix-sock']) {
                 $this->enable_unix_sock();
             }
             
@@ -503,13 +503,18 @@ class JAXL extends XMPPStream
     //
     // callback methods
     //
-    
-    // signals callback handler
-    // not for public api consumption
+
+    /**
+     * Signals callback handler.
+     *
+     * Not for public API consumption.
+     *
+     * @param int $sig
+     */
     public function signal_handler($sig)
     {
         $this->end_stream();
-        $this->disconnect();
+        $this->trans->disconnect();
         $this->ev->emit('on_disconnect');
         
         switch ($sig) {
@@ -771,11 +776,12 @@ class JAXL extends XMPPStream
         $this->ev->emit('on_auth_success');
     }
     
+    /**
+     * @param string $reason
+     */
     public function handle_auth_failure($reason)
     {
-        $this->ev->emit('on_auth_failure', array(
-            $reason
-        ));
+        $this->ev->emit('on_auth_failure', array($reason));
     }
     
     public function handle_stream_start($stanza)

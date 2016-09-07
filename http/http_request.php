@@ -114,7 +114,7 @@ class HTTPRequest extends JAXLFsm
 
         $addr = explode(":", $addr);
         $this->ip = $addr[0];
-        if (sizeof($addr) == 2) {
+        if (count($addr) == 2) {
             $this->port = $addr[1];
         }
 
@@ -333,7 +333,7 @@ class HTTPRequest extends JAXLFsm
         // is multipart form data?
         if (strtolower($k) == 'content-type') {
             $ctype = explode(';', $v);
-            if (sizeof($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
+            if (count($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
                 $boundary = explode('=', trim($ctype[1]));
                 if (strtolower(trim($boundary[0])) == 'boundary') {
                     _debug("multipart with boundary $boundary[1] detected");
@@ -387,11 +387,11 @@ class HTTPRequest extends JAXLFsm
 
     private function parse_shortcut_args($args)
     {
-        if (sizeof($args) == 0) {
+        if (count($args) == 0) {
             $body = null;
             $headers = array();
         }
-        if (sizeof($args) == 1) {
+        if (count($args) == 1) {
             // http headers or body only received
             if (is_array($args[0])) {
                 // http headers only
@@ -402,7 +402,7 @@ class HTTPRequest extends JAXLFsm
                 $body = $args[0];
                 $headers = array();
             }
-        } elseif (sizeof($args) == 2) {
+        } elseif (count($args) == 2) {
             // body and http headers both received
             if (is_array($args[0])) {
                 // header first
@@ -447,7 +447,7 @@ class HTTPRequest extends JAXLFsm
         $this->_send($body);
     }
 
-    protected function _send_response($code, $headers = array(), $body = null)
+    protected function _send_response($code, array $headers = array(), $body = null)
     {
         // send out response line
         $this->_send_line($code);
@@ -480,12 +480,12 @@ class HTTPRequest extends JAXLFsm
 
         $resource = explode("?", $resource);
         $this->path = $resource[0];
-        if (sizeof($resource) == 2) {
+        if (count($resource) == 2) {
             $query = $resource[1];
             $query = explode("&", $query);
             foreach ($query as $q) {
                 $q = explode("=", $q);
-                if (sizeof($q) == 1) {
+                if (count($q) == 1) {
                     $q[1] = "";
                 }
                 $this->query[$q[0]] = $q[1];

@@ -30,6 +30,9 @@
         "phpunit/phpunit": "^3.7.0",
         "squizlabs/php_codesniffer": "*"
     },
+    "suggest": {
+        "ext-pcntl": "Interrupt JAXL with signals"
+    },
     "autoload": {
         "classmap": [
             "core",
