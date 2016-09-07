@@ -58,10 +58,10 @@ class JAXLUtil
     {
         $rec = dns_get_record("_xmpp-client._tcp.".$domain, DNS_SRV);
         if (is_array($rec)) {
-            if (sizeof($rec) == 0) {
+            if (count($rec) == 0) {
                 return array($domain, 5222);
             }
-            if (sizeof($rec) > 0) {
+            if (count($rec) > 0) {
                 return array($rec[0]['target'], $rec[0]['port']);
             }
         }

@@ -65,25 +65,39 @@ class JAXLEvent
     {
     }
 
-    // add callback on a event
-    // returns a reference to be used while deleting callback
-    // callback'd method must return TRUE to be persistent
-    // if none returned or FALSE, callback will be removed automatically
-    public function add($ev, $cb, $pri)
+    /**
+     * Add callback on a event.
+     *
+     * Callback'd method must return `true` to be persistent, otherwise
+     * if returned `null` or `false`, callback will be removed automatically.
+     *
+     * @param string $ev
+     * @param callable $cb
+     * @param int $priority
+     * @return string Reference to be used while deleting callback.
+     */
+    public function add($ev, $cb, $priority)
     {
         if (!isset($this->reg[$ev])) {
             $this->reg[$ev] = array();
         }
 
-        $ref = sizeof($this->reg[$ev]);
-        $this->reg[$ev][] = array($pri, $cb);
+        $ref = count($this->reg[$ev]);
+        $this->reg[$ev][] = array($priority, $cb);
         return $ev."-".$ref;
     }
 
-    // emit event to notify registered callbacks
-    // is a pqueue required here for performance enhancement
-    // in case we have too many cbs on a specific event?
-    public function emit($ev, $data = array())
+    /**
+     * Emit event to notify registered callbacks.
+     *
+     * TODO: Is a pqueue required here for performance enhancement in case we
+     * have too many cbs on a specific event?
+     *
+     * @param string $ev
+     * @param array $data
+     * @return array
+     */
+    public function emit($ev, array $data = array())
     {
         $data = array_merge($this->common, $data);
         $cbs = array();
@@ -118,13 +132,21 @@ class JAXLEvent
         return $data;
     }
 
-    // remove previous registered callback
+    /**
+     * Remove previous registered callback.
+     *
+     * @param string $ref
+     */
     public function del($ref)
     {
         $ref = explode("-", $ref);
         unset($this->reg[$ref[0]][$ref[1]]);
     }
 
+    /**
+     * @param string $ev
+     * @return bool
+     */
     public function exists($ev)
     {
         $ret = isset($this->reg[$ev]);

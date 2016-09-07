@@ -48,6 +48,9 @@ require_once JAXL_CWD.'/core/jaxl_clock.php';
 class JAXLLoop
 {
 
+    /**
+     * @var JAXLClock
+     */
     public static $clock = null;
 
     private static $is_running = false;

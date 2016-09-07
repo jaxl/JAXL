@@ -60,7 +60,7 @@ class JAXLXmlStreamTest extends PHPUnit_Framework_TestCase
     public function xml_stanza_cb($node)
     {
         $this->assertEquals('features', $node->name);
-        $this->assertEquals(1, sizeof($node->childrens));
+        $this->assertEquals(1, count($node->childrens));
     }
 
     public function test_xml_stream_callbacks()

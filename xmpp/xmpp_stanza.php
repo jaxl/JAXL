@@ -57,7 +57,12 @@ class XMPPStanza
      */
     private $xml;
 
-    public function __construct($name, $attrs = array(), $ns = NS_JABBER_CLIENT)
+    /**
+     * @param JAXLXml|string $name
+     * @param array $attrs
+     * @param string $ns
+     */
+    public function __construct($name, array $attrs = array(), $ns = NS_JABBER_CLIENT)
     {
         if ($name instanceof JAXLXml) {
             $this->xml = $name;

@@ -64,7 +64,7 @@ class HTTPDispatchRule
     // other matching rules
     public $extra = array();
 
-    public function __construct($cb, $pattern, $methods = array('GET'), $extra = array())
+    public function __construct($cb, $pattern, array $methods = array('GET'), array $extra = array())
     {
         $this->cb = $cb;
         $this->pattern = $pattern;
@@ -95,7 +95,7 @@ class HTTPDispatcher
 
     public function add_rule($rule)
     {
-        $s = sizeof($rule);
+        $s = count($rule);
         if ($s > 4) {
             _debug("invalid rule");
             return;

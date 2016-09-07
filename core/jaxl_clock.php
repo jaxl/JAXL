@@ -104,7 +104,7 @@ class JAXLClock
             'is_periodic' => false,
             'runs' => 0
         );
-        return sizeof($this->jobs);
+        return count($this->jobs);
     }
 
     // callback periodically after $time microseconds
@@ -118,7 +118,7 @@ class JAXLClock
             'is_periodic' => true,
             'runs' => 0
         );
-        return sizeof($this->jobs);
+        return count($this->jobs);
     }
 
     // cancel a previously scheduled callback
