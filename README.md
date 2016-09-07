@@ -44,3 +44,8 @@ To know current errors and failed tests, run:
 ./vendor/bin/phpcs
 ./vendor/bin/phpunit
 ```
+
+## License
+
+The product licensed under the BSD 3-Clause license.
+See [LICENSE](https://github.com/jaxl/JAXL/blob/master/LICENSE).
