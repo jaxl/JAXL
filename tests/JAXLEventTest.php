@@ -59,13 +59,16 @@ class JAXLEventTest extends PHPUnit_Framework_TestCase
 
         //$ev->emit('on_connect', null);
 
+        $registry = $ev->getRegistry();
+        $this->assertEquals(2, count($registry));
+        $this->assertEquals(4, count($registry['on_connect']));
+        $this->assertEquals(2, count($registry['on_disconnect']));
+
         $ev->del($ref2);
         $ev->del($ref1);
         $ev->del($ref6);
         $ev->del($ref5);
         $ev->del($ref4);
         $ev->del($ref3);
-
-        //print_r($ev->reg);
     }
 }

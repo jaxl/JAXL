@@ -54,7 +54,7 @@ class JAXLEvent
 {
 
     protected $common = array();
-    public $reg = array();
+    protected $reg = array();
 
     public function __construct($common)
     {
@@ -152,5 +152,13 @@ class JAXLEvent
         $ret = isset($this->reg[$ev]);
         //_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
         return $ret;
+    }
+
+    /**
+     * @return array List of registered events.
+     */
+    public function getRegistry()
+    {
+        return $this->reg;
     }
 }
