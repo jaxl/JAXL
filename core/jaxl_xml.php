@@ -74,12 +74,12 @@ class JAXLXml
      * @param array $attrs
      * @param string $text
      */
-    public function __construct()
+    public function __construct($name)
     {
         $argv = func_get_args();
         $argc = count($argv);
 
-        $this->name = $argv[0];
+        $this->name = $name;
 
         switch ($argc) {
             case 4:

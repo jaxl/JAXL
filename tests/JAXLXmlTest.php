@@ -2,24 +2,28 @@
 
 JAXL::dummy();
 
-/**
- *
- * @author abhinavsingh
- *
- */
 class JAXLXmlTest extends PHPUnit_Framework_TestCase
 {
 
     public static $NS = 'SOME_NAMESPACE';
     public static $attrs = array('attr1' => 'value1');
 
+    /**
+     * @expectedException PHPUnit_Framework_Error_Warning
+     */
     public function testJAXLXml_0()
     {
         $xml = new JAXLXml();
         $this->assertEquals('<></>', $xml->to_string());
     }
 
-    public function testJAXLXml_1()
+    public function testJAXLXml_1_1()
+    {
+        $xml = new JAXLXml('');
+        $this->assertEquals('<></>', $xml->to_string());
+    }
+
+    public function testJAXLXml_1_2()
     {
         $xml = new JAXLXml('html');
         $this->assertEquals('<html></html>', $xml->to_string());
