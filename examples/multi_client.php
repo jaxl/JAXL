@@ -114,7 +114,7 @@ foreach ($accounts as $account) {
     $client = new JAXL(array(
         'jid' => $account[0],
         'pass' => $account[1],
-        'log_level' => JAXL_DEBUG
+        'log_level' => JAXLLogger::DEBUG
     ));
 
     $client->add_cb('on_auth_success', 'on_auth_success');

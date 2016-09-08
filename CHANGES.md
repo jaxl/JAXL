@@ -10,6 +10,7 @@ v3.1.0
 * All constants now in upper case format (i.e. JAXL::version => JAXL::VERSION).
 * Renaming of methods that starts with _ prefix, they only used in private API
   and shouldn't affect you.
+* JAXL_ERROR and other log levels goes to JAXLLogger::ERROR constant and so on.
 * JAXLEvent->reg is not public property anymore, but you can get
   it with JAXLEvent->getRegistry()
 * In JAXLXml::construct first argument $name is required.

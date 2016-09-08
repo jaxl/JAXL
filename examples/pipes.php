@@ -38,7 +38,7 @@
 
 // include and configure logger
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+JAXLLogger::$level = JAXLLogger::INFO;
 
 // include jaxl pipes
 require_once JAXL_CWD.'/core/jaxl_pipe.php';

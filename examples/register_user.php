@@ -47,7 +47,7 @@ if ($argc < 2) {
 require_once 'jaxl.php';
 $client = new JAXL(array(
     'jid' => $argv[1],
-    'log_level' => JAXL_DEBUG
+    'log_level' => JAXLLogger::DEBUG
 ));
 
 $client->require_xep(array(
@@ -153,7 +153,7 @@ if ($form['type'] == 'result') {
     $client = new JAXL(array(
         'jid' => $form['username'].'@'.$argv[1],
         'pass' => $form['password'],
-        'log_level' => JAXL_DEBUG
+        'log_level' => JAXLLogger::DEBUG
     ));
 
     $client->add_cb('on_auth_success', function () {

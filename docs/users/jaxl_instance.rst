@@ -2,6 +2,7 @@
 
 JAXL Instance
 =============
+
 ``JAXL`` instance configure/manage other :ref:`sub-packages <jaxl-instance>`.
 It provides an event based callback methodology on various underlying object. Whenever required
 ``JAXL`` instance will itself perform the configured defaults.
@@ -25,7 +26,7 @@ Constructor options
     #. ``log_path``
     #. ``log_level``
     
-        ``JAXL_ERROR``, ``JAXL_WARNING``, ``JAXL_NOTICE``, ``JAXL_INFO`` (default), ``JAXL_DEBUG``
+        ``ERROR``, ``WARNING``, ``NOTICE``, ``INFO`` (default), ``DEBUG``
         
     #. ``fb_access_token``
     

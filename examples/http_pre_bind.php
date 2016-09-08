@@ -70,7 +70,7 @@ $client = new JAXL(array(
     'bosh_wait' => $wait,
     'bosh_hold' => $hold,
     'auth_type' => 'ANONYMOUS',
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 $client->add_cb('on_auth_success', function () {

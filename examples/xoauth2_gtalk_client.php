@@ -58,7 +58,7 @@ $client = new JAXL(array(
     // (optional)
     //'resource' => 'resource',
 
-    'log_level' => JAXL_DEBUG
+    'log_level' => JAXLLogger::DEBUG
 ));
 
 //

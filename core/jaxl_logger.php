@@ -36,33 +36,26 @@
  *
  */
 
-// log level
-define('JAXL_ERROR', 1);
-define('JAXL_WARNING', 2);
-define('JAXL_NOTICE', 3);
-define('JAXL_INFO', 4);
-define('JAXL_DEBUG', 5);
-
 // generic global logging shortcuts for different level of verbosity
 function _error($msg)
 {
-    JAXLLogger::log($msg, JAXL_ERROR);
+    JAXLLogger::log($msg, JAXLLogger::ERROR);
 }
 function _warning($msg)
 {
-    JAXLLogger::log($msg, JAXL_WARNING);
+    JAXLLogger::log($msg, JAXLLogger::WARNING);
 }
 function _notice($msg)
 {
-    JAXLLogger::log($msg, JAXL_NOTICE);
+    JAXLLogger::log($msg, JAXLLogger::NOTICE);
 }
 function _info($msg)
 {
-    JAXLLogger::log($msg, JAXL_INFO);
+    JAXLLogger::log($msg, JAXLLogger::INFO);
 }
 function _debug($msg)
 {
-    JAXLLogger::log($msg, JAXL_DEBUG);
+    JAXLLogger::log($msg, JAXLLogger::DEBUG);
 }
 
 // generic global terminal output colorize method
@@ -76,21 +69,28 @@ function _colorize($msg, $verbosity)
 
 class JAXLLogger
 {
-    
+
+    // Log levels.
+    const ERROR = 1;
+    const WARNING = 2;
+    const NOTICE = 3;
+    const INFO = 4;
+    const DEBUG = 5;
+
     public static $colorize = true;
-    public static $level = JAXL_DEBUG;
+    public static $level = self::DEBUG;
     public static $path = null;
     public static $max_log_size = 1000;
-    
+
     protected static $colors = array(
-        1 => 31,    // error: red
-        2 => 34,    // warning: blue
-        3 => 33,    // notice: yellow
-        4 => 32,    // info: green
-        5 => 37         // debug: white
+        self::ERROR => 31,  // red
+        self::WARNING => 34,  // blue
+        self::NOTICE => 33,  // yellow
+        self::INFO => 32,  // green
+        self::DEBUG => 37  // white
     );
-    
-    public static function log($msg, $verbosity = 1)
+
+    public static function log($msg, $verbosity = self::ERROR)
     {
         if ($verbosity <= self::$level) {
             $bt = debug_backtrace();
@@ -110,7 +110,7 @@ class JAXLLogger
             }
         }
     }
-    
+
     public static function colorize($msg, $verbosity)
     {
         if (self::$colorize) {

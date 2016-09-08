@@ -50,7 +50,7 @@ $client = new JAXL(array(
     'jid' => $argv[2],
     'pass' => $argv[3],
     'host' => $argv[1],
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 $client->require_xep(array(

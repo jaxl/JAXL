@@ -42,7 +42,7 @@ if ($argc < 2) {
 }
 
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_DEBUG;
+JAXLLogger::$level = JAXLLogger::DEBUG;
 require_once JAXL_CWD.'/http/http_client.php';
 
 $request = new HTTPClient($argv[1]);

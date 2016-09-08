@@ -38,10 +38,10 @@
 
 // include and configure logger
 require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+JAXLLogger::$level = JAXLLogger::INFO;
 
 // print usage notice and parse addr/port parameters if passed
-_colorize("Usage: $argv[0] port (default: 9699)", JAXL_NOTICE);
+_colorize("Usage: $argv[0] port (default: 9699)", JAXLLogger::NOTICE);
 $port = ($argc == 2 ? $argv[1] : 9699);
 
 // initialize http server

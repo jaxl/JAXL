@@ -49,7 +49,7 @@ $client = new JAXL(array(
     'jid' => $_GET['jid'],
     'pass' => $_GET['pass'],
     'bosh_url' => 'http://localhost:5280/http-bind',
-    'log_level' => JAXL_DEBUG
+    'log_level' => JAXLLogger::DEBUG
 ));
 
 $client->add_cb('on_auth_success', function () {
