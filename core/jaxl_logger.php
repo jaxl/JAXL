@@ -111,12 +111,27 @@ class JAXLLogger
         }
     }
 
+    /**
+     * @param string $msg
+     * @param int $verbosity
+     * @return string
+     */
     public static function colorize($msg, $verbosity)
     {
         if (self::$colorize) {
             return "\033[".self::$colors[$verbosity]."m".$msg."\033[0m";
         } else {
             return $msg;
+        }
+    }
+
+    /**
+     * @param array $colors
+     */
+    public static function setColors(array $colors)
+    {
+        foreach ($colors as $k => $v) {
+            self::$colors[$k] = $v;
         }
     }
 }
