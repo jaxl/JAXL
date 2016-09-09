@@ -40,33 +40,32 @@ require_once JAXL_CWD.'/core/jaxl_logger.php';
 require_once JAXL_CWD.'/http/http_dispatcher.php';
 require_once JAXL_CWD.'/http/http_request.php';
 
-// carriage return and line feed
-define('HTTP_CRLF', "\r\n");
-
-// 1xx informational
-define('HTTP_100', "Continue");
-define('HTTP_101', "Switching Protocols");
-
-// 2xx success
-define('HTTP_200', "OK");
-
-// 3xx redirection
-define('HTTP_301', 'Moved Permanently');
-define('HTTP_304', 'Not Modified');
-
-// 4xx client error
-define('HTTP_400', 'Bad Request');
-define('HTTP_403', 'Forbidden');
-define('HTTP_404', 'Not Found');
-define('HTTP_405', 'Method Not Allowed');
-define('HTTP_499', 'Client Closed Request'); // Nginx
-
-// 5xx server error
-define('HTTP_500', 'Internal Server Error');
-define('HTTP_503', 'Service Unavailable');
-
 class HTTPServer
 {
+    // Carriage return and line feed.
+    const HTTP_CRLF = "\r\n";
+
+    // 1xx informational
+    const HTTP_100 = 'Continue';
+    const HTTP_101 = 'Switching Protocols';
+    
+    // 2xx success
+    const HTTP_200 = 'OK';
+    
+    // 3xx redirection
+    const HTTP_301 = 'Moved Permanently';
+    const HTTP_304 = 'Not Modified';
+    
+    // 4xx client error
+    const HTTP_400 = 'Bad Request';
+    const HTTP_403 = 'Forbidden';
+    const HTTP_404 = 'Not Found';
+    const HTTP_405 = 'Method Not Allowed';
+    const HTTP_499 = 'Client Closed Request'; // Nginx
+    
+    // 5xx server error
+    const HTTP_500 = 'Internal Server Error';
+    const HTTP_503 = 'Service Unavailable';
 
     /** @var JAXLSocketServer */
     private $server = null;

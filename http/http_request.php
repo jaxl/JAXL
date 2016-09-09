@@ -425,13 +425,13 @@ class HTTPRequest extends JAXLFsm
 
     protected function send_line($code)
     {
-        $raw = $this->version." ".$code." ".constant('HTTP_'.$code).HTTP_CRLF;
+        $raw = $this->version." ".$code." ".constant('HTTP_'.$code).HTTPServer::HTTP_CRLF;
         $this->send($raw);
     }
 
     protected function send_header($k, $v)
     {
-        $raw = $k.': '.$v.HTTP_CRLF;
+        $raw = $k.': '.$v.HTTPServer::HTTP_CRLF;
         $this->send($raw);
     }
 
@@ -464,7 +464,7 @@ class HTTPRequest extends JAXLFsm
         // prefixed with an empty line
         _debug("sending out HTTP_CRLF prefixed body");
         if ($body) {
-            $this->send_body(HTTP_CRLF.$body);
+            $this->send_body(HTTPServer::HTTP_CRLF.$body);
         }
     }
 

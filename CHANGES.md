@@ -11,6 +11,7 @@ v3.1.0
 * Renaming of methods that starts with _ prefix, they only used in private API
   and shouldn't affect you.
 * JAXL_ERROR and other log levels goes to JAXLLogger::ERROR constant and so on.
+* HTTP_CRLF and other HTTP_* codes goes to HTTPServer::HTTP_* constants.
 * JAXLEvent->reg is not public property anymore, but you can get
   it with JAXLEvent->getRegistry()
 * In JAXLXml::construct first argument $name is required.
