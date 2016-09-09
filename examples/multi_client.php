@@ -36,11 +36,6 @@
  *
  */
 
-// enable multi client support
-// this will force 1st parameter of callbacks
-// as connected client instance
-define('JAXL_MULTI_CLIENT', true);
-
 // input multiple account credentials
 $accounts = array();
 $add_new = true;
@@ -114,7 +109,10 @@ foreach ($accounts as $account) {
     $client = new JAXL(array(
         'jid' => $account[0],
         'pass' => $account[1],
-        'log_level' => JAXLLogger::DEBUG
+        'log_level' => JAXLLogger::DEBUG,
+        // Enable multi client support.
+        // This will force 1st parameter of callbacks as connected client instance.
+        'multi_client' => true
     ));
 
     $client->add_cb('on_auth_success', 'on_auth_success');

@@ -229,10 +229,11 @@ class JAXL extends XMPPStream
             $stream_context = isset($this->cfg['stream_context']) ? $this->cfg['stream_context'] : null;
             $transport = new JAXLSocketClient($stream_context);
         }
-        
+
+        $this->cfg['multi_client'] = isset($this->cfg['multi_client']) ? $this->cfg['multi_client'] : false;
         // lifecycle events callback
-        $this->ev = new JAXLEvent(defined('JAXL_MULTI_CLIENT') ? array(&$this) : array());
-        
+        $this->ev = new JAXLEvent($this->cfg['multi_client'] ? array(&$this) : array());
+
         // initialize xmpp stream with configured transport
         parent::__construct(
             $transport,

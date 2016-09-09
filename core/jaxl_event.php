@@ -56,7 +56,10 @@ class JAXLEvent
     protected $common = array();
     protected $reg = array();
 
-    public function __construct($common)
+    /**
+     * @param array $common
+     */
+    public function __construct(array $common = array())
     {
         $this->common = $common;
     }
