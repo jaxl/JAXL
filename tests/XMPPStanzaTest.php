@@ -68,7 +68,7 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
     public function test_xmpp_stanza_from_jaxl_xml()
     {
         // xml to stanza test
-        $xml = new JAXLXml('message', NS_JABBER_CLIENT, array('to' => '2@3.com', 'from' => '4@r.p/q'));
+        $xml = new JAXLXml('message', XMPP::NS_JABBER_CLIENT, array('to' => '2@3.com', 'from' => '4@r.p/q'));
         $stanza = new XMPPStanza($xml);
         $stanza->c('body')->t('hello world');
         $this->assertEquals('XMPPStanza', get_class($stanza));

@@ -592,16 +592,16 @@ class JAXL extends XMPPStream
     {
         $this->send($this->get_fb_challenge_response_pkt($challenge));
     }
-    
+
     // refer https://developers.facebook.com/docs/chat/#jabber
     public function get_fb_challenge_response_pkt($challenge)
     {
-        $stanza = new JAXLXml('response', NS_SASL);
+        $stanza = new JAXLXml('response', XMPP::NS_SASL);
         
         $challenge = base64_decode($challenge);
         $challenge = urldecode($challenge);
         parse_str($challenge, $challenge_arr);
-        
+
         $response = http_build_query(array(
             'method' => $challenge_arr['method'],
             'nonce' => $challenge_arr['nonce'],
@@ -614,14 +614,14 @@ class JAXL extends XMPPStream
         $stanza->t(base64_encode($response));
         return $stanza;
     }
-    
+
     public function wait_for_fb_sasl_response($event, $args)
     {
         switch ($event) {
             case "stanza_cb":
                 $stanza = $args[0];
                 
-                if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+                if ($stanza->name == 'challenge' && $stanza->ns == XMPP::NS_SASL) {
                     $challenge = $stanza->text;
                     $this->send_fb_challenge_response($challenge);
                     return "wait_for_sasl_response";
@@ -644,9 +644,9 @@ class JAXL extends XMPPStream
             case "stanza_cb":
                 $stanza = $args[0];
         
-                if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+                if ($stanza->name == 'challenge' && $stanza->ns == XMPP::NS_SASL) {
                     $challenge = base64_decode($stanza->text);
-                    $resp = new JAXLXml('response', NS_SASL);
+                    $resp = new JAXLXml('response', XMPP::NS_SASL);
                     $resp->t(base64_encode($this->jid->to_string().' '.hash_hmac('md5', $challenge, $this->pass)));
                     $this->send($resp);
                     return "wait_for_sasl_response";
@@ -698,10 +698,10 @@ class JAXL extends XMPPStream
             case "stanza_cb":
                 $stanza = $args[0];
                 
-                if ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+                if ($stanza->name == 'challenge' && $stanza->ns == XMPP::NS_SASL) {
                     $challenge = $stanza->text;
                     
-                    $resp = new JAXLXml('response', NS_SASL);
+                    $resp = new JAXLXml('response', XMPP::NS_SASL);
                     $resp->t($this->get_scram_sha1_response($this->pass, $challenge));
                     $this->send($resp);
                     

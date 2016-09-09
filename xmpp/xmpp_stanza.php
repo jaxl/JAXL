@@ -36,7 +36,7 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
+require_once JAXL_CWD.'/xmpp/xmpp.php';
 require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
 require_once JAXL_CWD.'/core/jaxl_xml.php';
 
@@ -62,7 +62,7 @@ class XMPPStanza
      * @param array $attrs
      * @param string $ns
      */
-    public function __construct($name, array $attrs = array(), $ns = NS_JABBER_CLIENT)
+    public function __construct($name, array $attrs = array(), $ns = XMPP::NS_JABBER_CLIENT)
     {
         if ($name instanceof JAXLXml) {
             $this->xml = $name;

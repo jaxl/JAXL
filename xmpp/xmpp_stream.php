@@ -42,7 +42,7 @@ require_once JAXL_CWD.'/core/jaxl_xml_stream.php';
 require_once JAXL_CWD.'/core/jaxl_util.php';
 require_once JAXL_CWD.'/core/jaxl_socket_client.php';
 
-require_once JAXL_CWD.'/xmpp/xmpp_nss.php';
+require_once JAXL_CWD.'/xmpp/xmpp.php';
 require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
 require_once JAXL_CWD.'/xmpp/xmpp_msg.php';
 require_once JAXL_CWD.'/xmpp/xmpp_pres.php';
@@ -164,12 +164,12 @@ abstract class XMPPStream extends JAXLFsm
 
     public function get_start_stream(XMPPJid $jid)
     {
-        $xml = '<stream:stream xmlns:stream="'.NS_XMPP.'" version="1.0" ';
+        $xml = '<stream:stream xmlns:stream="'.XMPP::NS_XMPP.'" version="1.0" ';
         //if (isset($jid->bare)) { $xml .= 'from="'.$jid->bare.'" '; }
         if (isset($jid->domain)) {
             $xml .= 'to="'.$jid->domain.'" ';
         }
-        $xml .= 'xmlns="'.NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.NS_XML.'">';
+        $xml .= 'xmlns="'.XMPP::NS_JABBER_CLIENT.'" xml:lang="en" xmlns:xml="'.XMPP::NS_XML.'">';
         return $xml;
     }
 
@@ -180,13 +180,13 @@ abstract class XMPPStream extends JAXLFsm
 
     public function get_starttls_pkt()
     {
-        $stanza = new JAXLXml('starttls', NS_TLS);
+        $stanza = new JAXLXml('starttls', XMPP::NS_TLS);
         return $stanza;
     }
 
     public function get_compress_pkt($method)
     {
-        $stanza = new JAXLXml('compress', NS_COMPRESSION_PROTOCOL);
+        $stanza = new JAXLXml('compress', XMPP::NS_COMPRESSION_PROTOCOL);
         $stanza->c('method')->t($method);
         return $stanza;
     }
@@ -194,7 +194,7 @@ abstract class XMPPStream extends JAXLFsm
     // someday this all needs to go inside jaxl_sasl_auth
     public function get_auth_pkt($mechanism, $user, $pass)
     {
-        $stanza = new JAXLXml('auth', NS_SASL, array('mechanism' => $mechanism));
+        $stanza = new JAXLXml('auth', XMPP::NS_SASL, array('mechanism' => $mechanism));
 
         switch ($mechanism) {
             case 'PLAIN':
@@ -226,7 +226,7 @@ abstract class XMPPStream extends JAXLFsm
 
     public function get_challenge_response_pkt($challenge)
     {
-        $stanza = new JAXLXml('response', NS_SASL);
+        $stanza = new JAXLXml('response', XMPP::NS_SASL);
         $decoded = $this->explode_data(base64_decode($challenge));
 
         if (!isset($decoded['rspauth'])) {
@@ -273,7 +273,7 @@ abstract class XMPPStream extends JAXLFsm
 
     public function get_bind_pkt($resource)
     {
-        $stanza = new JAXLXml('bind', NS_BIND);
+        $stanza = new JAXLXml('bind', XMPP::NS_BIND);
         $stanza->c('resource')->t($resource);
         return $this->get_iq_pkt(array(
             'type' => 'set'
@@ -282,7 +282,7 @@ abstract class XMPPStream extends JAXLFsm
 
     public function get_session_pkt()
     {
-        $stanza = new JAXLXml('session', NS_SESSION);
+        $stanza = new JAXLXml('session', XMPP::NS_SESSION);
         return $this->get_iq_pkt(array(
             'type' => 'set'
         ), $stanza);
@@ -530,7 +530,7 @@ abstract class XMPPStream extends JAXLFsm
                 $stanza = $args[0];
 
                 // get starttls requirements
-                $starttls = $stanza->exists('starttls', NS_TLS);
+                $starttls = $stanza->exists('starttls', XMPP::NS_TLS);
                 if ($starttls) {
                     if ($this->force_tls) {
                         $required = true;
@@ -547,16 +547,16 @@ abstract class XMPPStream extends JAXLFsm
                 }
 
                 // handle auth mech
-                $mechs = $stanza->exists('mechanisms', NS_SASL);
+                $mechs = $stanza->exists('mechanisms', XMPP::NS_SASL);
                 if ($mechs) {
                     $new_state = $this->handle_auth_mechs($stanza, $mechs);
                     return $new_state ? $new_state : "wait_for_sasl_response";
                 }
 
                 // post auth
-                $bind = $stanza->exists('bind', NS_BIND) ? true : false;
-                $sess = $stanza->exists('session', NS_SESSION) ? true : false;
-                $comp = $stanza->exists('compression', NS_COMPRESSION_FEATURE) ? true : false;
+                $bind = $stanza->exists('bind', XMPP::NS_BIND) ? true : false;
+                $sess = $stanza->exists('session', XMPP::NS_SESSION) ? true : false;
+                $comp = $stanza->exists('compression', XMPP::NS_COMPRESSION_FEATURE) ? true : false;
 
                 if ($bind) {
                     $this->send_bind_pkt($this->resource);
@@ -586,7 +586,7 @@ abstract class XMPPStream extends JAXLFsm
             case "stanza_cb":
                 $stanza = $args[0];
 
-                if ($stanza->name == 'proceed' && $stanza->ns == NS_TLS) {
+                if ($stanza->name == 'proceed' && $stanza->ns == XMPP::NS_TLS) {
                     if ($this->trans->crypt()) {
                         $this->xml->reset_parser();
                         $this->send_start_stream($this->jid);
@@ -614,7 +614,7 @@ abstract class XMPPStream extends JAXLFsm
             case "stanza_cb":
                 $stanza = $args[0];
 
-                if ($stanza->name == 'compressed' && $stanza->ns == NS_COMPRESSION_PROTOCOL) {
+                if ($stanza->name == 'compressed' && $stanza->ns == XMPP::NS_COMPRESSION_PROTOCOL) {
                     $this->xml->reset_parser();
                     $this->trans->compress();
                     $this->send_start_stream($this->jid);
@@ -636,16 +636,16 @@ abstract class XMPPStream extends JAXLFsm
             case "stanza_cb":
                 $stanza = $args[0];
 
-                if ($stanza->name == 'failure' && $stanza->ns == NS_SASL) {
+                if ($stanza->name == 'failure' && $stanza->ns == XMPP::NS_SASL) {
                     $reason = $stanza->childrens[0]->name;
                     //_debug("sasl failed with reason ".$reason."");
                     $this->handle_auth_failure($reason);
                     return "logged_out";
-                } elseif ($stanza->name == 'challenge' && $stanza->ns == NS_SASL) {
+                } elseif ($stanza->name == 'challenge' && $stanza->ns == XMPP::NS_SASL) {
                     $challenge = $stanza->text;
                     $this->send_challenge_response($challenge);
                     return "wait_for_sasl_response";
-                } elseif ($stanza->name == 'success' && $stanza->ns == NS_SASL) {
+                } elseif ($stanza->name == 'success' && $stanza->ns == XMPP::NS_SASL) {
                     $this->xml->reset_parser();
                     $this->send_start_stream($this->jid);
                     return "wait_for_stream_start";
@@ -671,7 +671,7 @@ abstract class XMPPStream extends JAXLFsm
 
                 // TODO: chk on id
                 if ($stanza->name == 'iq' && $stanza->attrs['type'] == 'result'
-                && ($jid = $stanza->exists('bind', NS_BIND)->exists('jid'))) {
+                && ($jid = $stanza->exists('bind', XMPP::NS_BIND)->exists('jid'))) {
                     $this->full_jid = new XMPPJid($jid->text);
                     $this->send_session_pkt();
                     return "wait_for_session_response";

@@ -116,9 +116,8 @@ class JAXLXmlStream
             // no ns specified
             if ($k[0] == null) {
                 $attrs[$k[1]] = $v;
-            } elseif ($k[0] == NS_XML) {
+            } elseif ($k[0] == XMPP::NS_XML) {
                 // xml ns
-
                 unset($attrs[$key]);
                 $attrs['xml:'.$k[1]] = $v;
             } else {

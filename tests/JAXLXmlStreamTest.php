@@ -49,7 +49,7 @@ class JAXLXmlStreamTest extends PHPUnit_Framework_TestCase
     public function xml_start_cb($node)
     {
         $this->assertEquals('stream', $node->name);
-        $this->assertEquals(NS_XMPP, $node->ns);
+        $this->assertEquals(XMPP::NS_XMPP, $node->ns);
     }
 
     public function xml_end_cb($node)
