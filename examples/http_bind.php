@@ -36,6 +36,8 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
     echo "invalid input";
     exit;
@@ -44,7 +46,6 @@ if (!isset($_GET['jid']) || !isset($_GET['pass'])) {
 //
 // initialize JAXL object with initial config
 //
-require_once '../jaxl.php';
 $client = new JAXL(array(
     'jid' => $_GET['jid'],
     'pass' => $_GET['pass'],
@@ -61,4 +62,4 @@ $client->add_cb('on_auth_success', function () {
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

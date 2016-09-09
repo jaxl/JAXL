@@ -36,12 +36,10 @@
  *
  */
 
-// include and configure logger
-require_once 'jaxl.php';
-JAXLLogger::$level = JAXLLogger::INFO;
+require dirname(__FILE__) . '/_bootstrap.php';
 
-// include jaxl pipes
-require_once JAXL_CWD.'/core/jaxl_pipe.php';
+// configure logger
+JAXLLogger::$level = JAXLLogger::INFO;
 
 // initialize
 $pipe_name = getmypid();
@@ -54,4 +52,4 @@ $pipe->set_callback(function ($data) {
 });
 
 JAXLLoop::run();
-echo "done\n";
+echo "done".PHP_EOL;

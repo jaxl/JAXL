@@ -36,15 +36,16 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc != 5) {
-    echo "Usage: $argv[0] jid pass host port\n";
+    echo "Usage: $argv[0] jid pass host port".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $comp = new JAXL(array(
     // (required) component host and secret
     'jid' => $argv[1],
@@ -95,4 +96,4 @@ $comp->add_cb('on_disconnect', function () {
 // finally start configured xmpp stream
 //
 $comp->start();
-echo "done\n";
+echo "done".PHP_EOL;

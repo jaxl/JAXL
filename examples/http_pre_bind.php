@@ -36,6 +36,8 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 // http pre bind php script
 $body = file_get_contents("php://input");
 $body = new SimpleXMLElement($body);
@@ -53,8 +55,6 @@ if (!isset($attrs['to']) &&
 //
 // initialize JAXL object with initial config
 //
-require_once '../jaxl.php';
-
 $to = (string)$attrs['to'];
 $rid = (int)$attrs['rid'];
 $wait = (int)$attrs['wait'];
@@ -96,4 +96,4 @@ $client->add_cb('on_auth_failure', function ($reason) {
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

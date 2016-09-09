@@ -36,15 +36,16 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 2) {
-    echo "Usage: $argv[0] domain\n";
+    echo "Usage: $argv[0] domain".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     'jid' => $argv[1],
     'log_level' => JAXLLogger::DEBUG
@@ -164,4 +165,4 @@ if ($form['type'] == 'result') {
     $client->start();
 }
 
-echo "done\n";
+echo "done".PHP_EOL;

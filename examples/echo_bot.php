@@ -36,19 +36,20 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 // Run as:
 // php examples/echo_bot.php root@localhost password
 // php examples/echo_bot.php root@localhost password DIGEST-MD5
 // php examples/echo_bot.php localhost "" ANONYMOUS
 if ($argc < 3) {
-    echo "Usage: $argv[0] jid pass auth_type\n";
+    echo "Usage: $argv[0] jid pass auth_type".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     // (required) credentials
     'jid' => $argv[1],
@@ -144,4 +145,4 @@ $client->start(array(
     '--with-debug-shell' => true,
     '--with-unix-sock' => true
 ));
-echo "done\n";
+echo "done".PHP_EOL;

@@ -36,15 +36,16 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 5) {
-    echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
+    echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     // (required) credentials
     'jid' => $argv[2],
@@ -143,4 +144,4 @@ $client->add_cb('on_disconnect', function () {
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

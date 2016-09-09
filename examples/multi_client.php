@@ -36,6 +36,8 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 // input multiple account credentials
 $accounts = array();
 $add_new = true;
@@ -46,9 +48,6 @@ while ($add_new) {
     $next = readline('Add another account (y/n): ');
     $add_new = $next == 'y' ? true : false;
 }
-
-// setup jaxl
-require_once 'jaxl.php';
 
 //
 // common callbacks
@@ -127,4 +126,4 @@ foreach ($accounts as $account) {
 
 // start core loop
 JAXLLoop::run();
-echo "done\n";
+echo "done".PHP_EOL;

@@ -36,8 +36,9 @@
  *
  */
 
-// include and configure logger
-require_once 'jaxl.php';
+require dirname(__FILE__) . '/_bootstrap.php';
+
+// configure logger
 JAXLLogger::$level = JAXLLogger::INFO;
 
 // print usage notice and parse addr/port parameters if passed
@@ -45,7 +46,6 @@ _colorize("Usage: $argv[0] port (default: 9699)", JAXLLogger::NOTICE);
 $port = ($argc == 2 ? $argv[1] : 9699);
 
 // initialize http server
-require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
 // callback method for dispatch rule (see below)
