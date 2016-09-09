@@ -40,6 +40,9 @@
             "xep",
             "xmpp",
             "jaxl.php"
+        ],
+        "exclude-from-classmap": [
+            "/tests/"
         ]
     },
     "bin": ["jaxlctl"]
