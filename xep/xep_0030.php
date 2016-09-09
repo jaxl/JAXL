@@ -38,11 +38,10 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_DISCO_INFO', 'http://jabber.org/protocol/disco#info');
-define('NS_DISCO_ITEMS', 'http://jabber.org/protocol/disco#items');
-
 class XEP_0030 extends XMPPXep
 {
+    const NS_DISCO_INFO = 'http://jabber.org/protocol/disco#info';
+    const NS_DISCO_ITEMS = 'http://jabber.org/protocol/disco#items';
 
     //
     // abstract method
@@ -63,7 +62,7 @@ class XEP_0030 extends XMPPXep
     {
         return $this->jaxl->get_iq_pkt(
             array('type' => 'get', 'from' => $this->jaxl->full_jid->to_string(), 'to' => $entity_jid),
-            new JAXLXml('query', NS_DISCO_INFO)
+            new JAXLXml('query', self::NS_DISCO_INFO)
         );
     }
 
@@ -80,7 +79,7 @@ class XEP_0030 extends XMPPXep
     {
         return $this->jaxl->get_iq_pkt(
             array('type' => 'get', 'from' => $this->jaxl->full_jid->to_string(), 'to' => $entity_jid),
-            new JAXLXml('query', NS_DISCO_ITEMS)
+            new JAXLXml('query', self::NS_DISCO_ITEMS)
         );
     }
 

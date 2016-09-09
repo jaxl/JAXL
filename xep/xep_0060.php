@@ -38,10 +38,9 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_PUBSUB', 'http://jabber.org/protocol/pubsub');
-
 class XEP_0060 extends XMPPXep
 {
+    const NS_PUBSUB = 'http://jabber.org/protocol/pubsub';
 
     //
     // abstract method
@@ -62,7 +61,7 @@ class XEP_0060 extends XMPPXep
 
     public function get_subscribe_pkt($service, $node, $jid = null)
     {
-        $child = new JAXLXml('pubsub', NS_PUBSUB);
+        $child = new JAXLXml('pubsub', self::NS_PUBSUB);
         $child->c(
             'subscribe',
             null,
@@ -98,7 +97,7 @@ class XEP_0060 extends XMPPXep
 
     public function get_publish_item_pkt($service, $node, $item)
     {
-        $child = new JAXLXml('pubsub', NS_PUBSUB);
+        $child = new JAXLXml('pubsub', self::NS_PUBSUB);
         $child->c('publish', null, array('node' => $node));
         $child->cnode($item);
         return $this->get_iq_pkt($service, $child);
@@ -119,7 +118,7 @@ class XEP_0060 extends XMPPXep
 
     public function get_create_node_pkt($service, $node)
     {
-        $child = new JAXLXml('pubsub', NS_PUBSUB);
+        $child = new JAXLXml('pubsub', self::NS_PUBSUB);
         $child->c('create', null, array('node' => $node));
         return $this->get_iq_pkt($service, $child);
     }

@@ -78,7 +78,7 @@ $client->add_cb('on_auth_success', function () {
     _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     echo sprintf(
         '<body xmlns="%s" sid="%s" rid="%s" jid="%s"/>',
-        NS_HTTP_BIND,
+        XEP_0206::NS_HTTP_BIND,
         $client->xeps['0206']->sid,
         $client->xeps['0206']->rid,
         $client->full_jid->to_string()

@@ -38,10 +38,9 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_CAPS', 'http://jabber.org/protocol/caps');
-
 class XEP_0115 extends XMPPXep
 {
+    const NS_CAPS = 'http://jabber.org/protocol/caps';
 
     //
     // abstract method
@@ -65,7 +64,7 @@ class XEP_0115 extends XMPPXep
         }
         $ver = base64_encode(sha1($S, true));
 
-        $stanza = new JAXLXml('c', NS_CAPS, array('hash' => 'sha1', 'node' => $node, 'ver' => $ver));
+        $stanza = new JAXLXml('c', self::NS_CAPS, array('hash' => 'sha1', 'node' => $node, 'ver' => $ver));
         return $stanza;
     }
 

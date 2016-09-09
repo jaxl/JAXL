@@ -38,10 +38,9 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_JABBER_COMPONENT_ACCEPT', 'jabber:component:accept');
-
 class XEP_0114 extends XMPPXep
 {
+    const NS_JABBER_COMPONENT_ACCEPT = 'jabber:component:accept';
 
     //
     // abstract method
@@ -67,7 +66,7 @@ class XEP_0114 extends XMPPXep
             '<stream:stream xmlns:stream="%s" to="%s" xmlns="%s">',
             NS_XMPP,
             $this->jaxl->jid->to_string(),
-            NS_JABBER_COMPONENT_ACCEPT
+            self::NS_JABBER_COMPONENT_ACCEPT
         );
         $this->jaxl->send_raw($xml);
     }

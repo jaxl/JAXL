@@ -103,7 +103,7 @@ function wait_for_register_form($event, $args)
     global $client, $form;
 
     $stanza = $args[0];
-    $query = $stanza->exists('query', NS_INBAND_REGISTER);
+    $query = $stanza->exists('query', XEP_0077::NS_INBAND_REGISTER);
     if ($query) {
         $instructions = $query->exists('instructions');
         if ($instructions) {

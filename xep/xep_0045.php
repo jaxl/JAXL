@@ -38,10 +38,9 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_MUC', 'http://jabber.org/protocol/muc');
-
 class XEP_0045 extends XMPPXep
 {
+    const NS_MUC = 'http://jabber.org/protocol/muc';
 
     //
     // abstract method
@@ -81,7 +80,7 @@ class XEP_0045 extends XMPPXep
                 'id' => (isset($options['id'])) ? $options['id'] : uniqid()
             )
         );
-        $x = $pkt->c('x', NS_MUC);
+        $x = $pkt->c('x', self::NS_MUC);
         if (isset($options['no_history'])) {
             $x->c('history')->attrs(array('maxstanzas' => 0, 'seconds' => 0))->up();
         }

@@ -904,10 +904,10 @@ class JAXL extends XMPPStream
             _warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
         }
     }
-    
+
     public function handle_domain_info($stanza)
     {
-        $query = $stanza->exists('query', NS_DISCO_INFO);
+        $query = $stanza->exists('query', XEP_0030::NS_DISCO_INFO);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'identity') {
                 //echo 'identity '.
@@ -921,10 +921,10 @@ class JAXL extends XMPPStream
             }
         }
     }
-    
+
     public function handle_domain_items($stanza)
     {
-        $query = $stanza->exists('query', NS_DISCO_ITEMS);
+        $query = $stanza->exists('query', XEP_0030::NS_DISCO_ITEMS);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'item') {
                 //echo 'item '.

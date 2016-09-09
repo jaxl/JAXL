@@ -38,12 +38,11 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_HTTP_BIND', 'http://jabber.org/protocol/httpbind');
-define('NS_BOSH', 'urn:xmpp:xbosh');
-
 class XEP_0206 extends XMPPXep
 {
-    
+    const NS_HTTP_BIND = 'http://jabber.org/protocol/httpbind';
+    const NS_BOSH = 'urn:xmpp:xbosh';
+
     private $mch = null;
     public $chs = array();
     private $recv_cb = null;
@@ -88,19 +87,19 @@ class XEP_0206 extends XMPPXep
             if (substr($body, 0, 15) == '<stream:stream ') {
                 $this->restarted = true;
                 
-                $body = new JAXLXml('body', NS_HTTP_BIND, array(
+                $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
                     'sid' => $this->sid,
                     'rid' => ++$this->rid,
                     'to' => (($this->jaxl && $this->jaxl->jid)
                              ? $this->jaxl->jid->domain
                              : $this->jaxl->cfg['domain']),
                     'xmpp:restart' => 'true',
-                    'xmlns:xmpp' => NS_BOSH
+                    'xmlns:xmpp' => self::NS_BOSH
                 ));
                 
                 $body = $body->to_string();
             } elseif (substr($body, 0, 16) == '</stream:stream>') {
-                $body = new JAXLXml('body', NS_HTTP_BIND, array(
+                $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
                     'sid' => $this->sid,
                     'rid' => ++$this->rid,
                     'type' => 'terminate'
@@ -190,7 +189,8 @@ class XEP_0206 extends XMPPXep
     
     public function wrap($stanza)
     {
-        return '<body sid="'.$this->sid.'" rid="'.++$this->rid.'" xmlns="'.NS_HTTP_BIND.'">'.$stanza.'</body>';
+        return '<body sid="'.$this->sid.'" rid="'.++$this->rid.'" xmlns="'.
+            self::NS_HTTP_BIND.'">'.$stanza.'</body>';
     }
     
     public function unwrap($body)
@@ -238,7 +238,7 @@ class XEP_0206 extends XMPPXep
             'secure' => 'true',
             'xml:lang' => 'en',
             'xmpp:version' => '1.0',
-            'xmlns:xmpp' => NS_BOSH,
+            'xmlns:xmpp' => self::NS_BOSH,
             'hold' => $this->hold,
             'wait' => $this->wait,
             'rid' => $this->rid,
@@ -248,13 +248,13 @@ class XEP_0206 extends XMPPXep
         if (isset($this->jaxl->cfg['jid'])) {
             $attrs['from'] = $this->jaxl->cfg['jid'];
         }
-        $body = new JAXLXml('body', NS_HTTP_BIND, $attrs);
+        $body = new JAXLXml('body', self::NS_HTTP_BIND, $attrs);
         $this->send($body);
     }
     
     public function ping()
     {
-        $body = new JAXLXml('body', NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
+        $body = new JAXLXml('body', self::NS_HTTP_BIND, array('sid' => $this->sid, 'rid' => ++$this->rid));
         $this->send($body);
     }
     

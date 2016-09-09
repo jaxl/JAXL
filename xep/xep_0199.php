@@ -2,10 +2,9 @@
 
 require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
 
-define('NS_XMPP_PING', 'urn:xmpp:ping');
-
 class XEP_0199 extends XMPPXep
 {
+    const NS_XMPP_PING = 'urn:xmpp:ping';
 
     //
     // abstract method
@@ -33,7 +32,7 @@ class XEP_0199 extends XMPPXep
 
         return $this->jaxl->get_iq_pkt(
             $attrs,
-            new JAXLXml('ping', NS_XMPP_PING)
+            new JAXLXml('ping', self::NS_XMPP_PING)
         );
     }
 
@@ -53,7 +52,7 @@ class XEP_0199 extends XMPPXep
 
     public function on_xmpp_ping($stanza)
     {
-        if ($stanza->exists('ping', NS_XMPP_PING)) {
+        if ($stanza->exists('ping', self::NS_XMPP_PING)) {
             $stanza->type = "result";
             $stanza->to = $stanza->from;
             $stanza->from = $this->jaxl->full_jid->to_string();
