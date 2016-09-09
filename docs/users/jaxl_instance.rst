@@ -18,7 +18,7 @@ Constructor options
         
     #. ``auth_type``
     
-        DIGEST-MD5, PLAIN (default), CRAM-MD5, ANONYMOUS, X-FACEBOOK-PLATFORM
+        DIGEST-MD5, PLAIN (default), CRAM-MD5, ANONYMOUS
     
     #. ``host``
     #. ``port``
@@ -27,14 +27,6 @@ Constructor options
     #. ``log_level``
     
         ``ERROR``, ``WARNING``, ``NOTICE``, ``INFO`` (default), ``DEBUG``
-        
-    #. ``fb_access_token``
-    
-        required when using X-FACEBOOK-PLATFORM auth mechanism
-        
-    #. ``fb_app_key``
-    
-        required when using X-FACEBOOK-PLATFORM auth mechanism
         
     #. ``force_tls``
     #. ``stream_context``
