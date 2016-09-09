@@ -36,10 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp.php';
-require_once JAXL_CWD.'/xmpp/xmpp_jid.php';
-require_once JAXL_CWD.'/core/jaxl_xml.php';
-
 /**
  * Generic xmpp stanza object which provide convinient access pattern over xml objects
  * Also to be able to convert an existing xml object into stanza object (to get access patterns going)

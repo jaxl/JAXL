@@ -7,7 +7,6 @@ include ``jaxl.php`` and initialize a new ``JAXL`` instance:
 
 .. code-block:: ruby
 
-    require 'jaxl.php';
     $client = new JAXL(array(
         'jid' => 'user@domain.tld',
         'pass' => 'password'
@@ -79,7 +78,6 @@ pass additional parameters to ``JAXL`` constructor:
 
 .. code-block:: ruby
 
-    require 'jaxl.php';
     $client = new JAXL(array(
         'jid' => 'user@domain.tld',
         'pass' => 'password',
@@ -97,7 +95,6 @@ parameter as shown below:
 
 .. code-block:: ruby
 
-    require_once 'jaxl.php';
     $comp = new JAXL(array(
         // (required) component host and secret
         'jid' => $argv[1],

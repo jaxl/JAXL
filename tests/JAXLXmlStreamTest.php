@@ -36,8 +36,6 @@
  *
  */
 
-JAXL::dummy();
-
 /**
  *
  * @author abhinavsingh

@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_fsm.php';
-
 class HTTPMultiPart extends JAXLFsm
 {
 

@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0114 extends XMPPXep
 {
     const NS_JABBER_COMPONENT_ACCEPT = 'jabber:component:accept';

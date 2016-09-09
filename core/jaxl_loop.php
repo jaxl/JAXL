@@ -36,9 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_logger.php';
-require_once JAXL_CWD.'/core/jaxl_clock.php';
-
 /**
  *
  * Enter description here ...

@@ -36,10 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_logger.php';
-require_once JAXL_CWD.'/http/http_dispatcher.php';
-require_once JAXL_CWD.'/http/http_request.php';
-
 class HTTPServer
 {
     // Carriage return and line feed.

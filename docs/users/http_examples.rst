@@ -7,8 +7,6 @@ Intialize an ``HTTPServer`` instance
 
 .. code-block:: ruby
 
-    require_once 'jaxl.php';
-    require_once JAXL_CWD.'/http/http_server.php';
     $http = new HTTPServer();
 
 By default ``HTTPServer`` will listen on port 9699. You can pass a port number as first parameter to change this.
@@ -46,8 +44,6 @@ Intialize an ``HTTPServer`` instance
 
 .. code-block:: ruby
 
-    require_once 'jaxl.php';
-    require_once JAXL_CWD.'/http/http_server.php';
     $http = new HTTPServer();
 
 By default ``HTTPServer`` will listen on port 9699. You can pass a port number as first parameter to change this.

@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0203 extends XMPPXep
 {
     const NS_DELAYED_DELIVERY = 'urn:xmpp:delay';

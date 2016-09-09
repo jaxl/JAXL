@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0077 extends XMPPXep
 {
     const NS_FEATURE_REGISTER = 'http://jabber.org/features/iq-register';

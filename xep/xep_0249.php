@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0249 extends XMPPXep
 {
     const NS_DIRECT_MUC_INVITATION = 'jabber:x:conference';

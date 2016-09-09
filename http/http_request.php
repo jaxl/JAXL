@@ -36,9 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_fsm.php';
-require_once JAXL_CWD.'/http/http_multipart.php';
-
 //
 // These methods are available only once
 // $request FSM has reached 'headers_received' state

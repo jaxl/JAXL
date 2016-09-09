@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_stanza.php';
-
 class XMPPMsg extends XMPPStanza
 {
 

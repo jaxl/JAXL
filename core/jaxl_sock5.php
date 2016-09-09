@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_socket_client.php';
-
 /**
  * TODO: convert into a finite state machine
  *

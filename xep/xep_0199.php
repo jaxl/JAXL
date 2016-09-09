@@ -1,7 +1,5 @@
 <?php
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0199 extends XMPPXep
 {
     const NS_XMPP_PING = 'urn:xmpp:ping';

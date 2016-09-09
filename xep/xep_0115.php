@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0115 extends XMPPXep
 {
     const NS_CAPS = 'http://jabber.org/protocol/caps';

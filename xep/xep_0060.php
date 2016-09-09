@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0060 extends XMPPXep
 {
     const NS_PUBSUB = 'http://jabber.org/protocol/pubsub';

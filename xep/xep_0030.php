@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0030 extends XMPPXep
 {
     const NS_DISCO_INFO = 'http://jabber.org/protocol/disco#info';

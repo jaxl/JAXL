@@ -39,15 +39,6 @@
 declare(ticks = 1);
 define('JAXL_CWD', dirname(__FILE__));
 
-require_once JAXL_CWD.'/core/jaxl_exception.php';
-require_once JAXL_CWD.'/core/jaxl_cli.php';
-require_once JAXL_CWD.'/core/jaxl_loop.php';
-require_once JAXL_CWD.'/xmpp/xmpp_stream.php';
-require_once JAXL_CWD.'/xmpp/xmpp_roster_item.php';
-require_once JAXL_CWD.'/core/jaxl_event.php';
-require_once JAXL_CWD.'/core/jaxl_logger.php';
-require_once JAXL_CWD.'/core/jaxl_socket_server.php';
-
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
  * 1) Adds an event based wrapper over xmpp stream lifecycle
@@ -295,13 +286,9 @@ class JAXL extends XMPPStream
         }
         
         foreach ($xeps as $xep) {
-            $filename = 'xep_'.$xep.'.php';
             $classname = 'XEP_'.$xep;
-            
-            // include xep
-            require_once JAXL_CWD.'/xep/'.$filename;
             $this->xeps[$xep] = new $classname($this);
-            
+
             // add necessary requested callback on events
             foreach ($this->xeps[$xep]->init() as $ev => $cb) {
                 $this->add_cb($ev, array($this->xeps[$xep], $cb));
@@ -869,13 +856,5 @@ class JAXL extends XMPPStream
                 //    ', node:'.(isset($child->attrs['node']) ? $child->attrs['node'] : 'NULL').PHP_EOL;
             }
         }
-    }
-
-    /**
-     * Used to define JAXL_CWD in tests.
-     */
-    public static function dummy()
-    {
-        // Do nothing.
     }
 }

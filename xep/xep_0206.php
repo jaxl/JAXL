@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0206 extends XMPPXep
 {
     const NS_HTTP_BIND = 'http://jabber.org/protocol/httpbind';

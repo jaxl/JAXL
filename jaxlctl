@@ -38,13 +38,34 @@
  */
 
 error_reporting(E_ALL | E_STRICT);
-date_default_timezone_set('UTC');
+
+if (PHP_SAPI !== 'cli') {
+    echo 'Warning: script should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
+
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
+foreach (array(
+    // Run from ./JAXL-source/jaxlctl
+    dirname(__FILE__) . '/vendor/autoload.php',
+    // Run from /some-project/bin/jaxlctl
+    dirname(__FILE__) . '/../vendor/autoload.php',
+    // Run from /some-project/vendor/jaxl/jaxl/jaxlctl
+    dirname(__FILE__) . '/../../../vendor/autoload.php'
+) as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+unset($file);
 
 $params = $argv;
 $exe = array_shift($params);
 $command = array_shift($params);
 
-require_once 'jaxl.php';
 JAXLLogger::$level = JAXLLogger::INFO;
 
 // TODO: an abstract JAXLCtlCommand class

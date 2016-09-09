@@ -36,8 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/xmpp/xmpp_xep.php';
-
 class XEP_0045 extends XMPPXep
 {
     const NS_MUC = 'http://jabber.org/protocol/muc';

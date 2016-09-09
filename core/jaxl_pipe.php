@@ -36,9 +36,6 @@
  *
  */
 
-require_once JAXL_CWD.'/core/jaxl_event.php';
-require_once JAXL_CWD.'/core/jaxl_loop.php';
-
 /**
  * bidirectional communication pipes for processes
  *

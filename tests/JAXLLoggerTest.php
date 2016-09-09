@@ -1,7 +1,5 @@
 <?php
 
-JAXL::dummy();
-
 class JAXLLoggerTest extends PHPUnit_Framework_TestCase
 {
 
