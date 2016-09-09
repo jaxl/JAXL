@@ -225,7 +225,7 @@ class HTTPRequest extends JAXLFsm
                 if ($this->multipart) {
                     // boundary start, content_disposition, form data, boundary start, ....., boundary end
                     // these define various states of a multipart/form-data
-                    $form_data = explode("\r\n", $rcvd);
+                    $form_data = explode(HTTPServer::HTTP_CRLF, $rcvd);
                     foreach ($form_data as $data) {
                         //_debug("passing $data to multipart fsm");
                         if (!$this->multipart->process($data)) {

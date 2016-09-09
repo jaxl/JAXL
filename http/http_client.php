@@ -103,10 +103,10 @@ class HTTPClient
 
     protected function send_request()
     {
-        $this->client->send($this->line()."\r\n");
-        $this->client->send($this->ua()."\r\n");
-        $this->client->send($this->host()."\r\n");
-        $this->client->send("\r\n");
+        $this->client->send($this->line().HTTPServer::HTTP_CRLF);
+        $this->client->send($this->ua().HTTPServer::HTTP_CRLF);
+        $this->client->send($this->host().HTTPServer::HTTP_CRLF);
+        $this->client->send(HTTPServer::HTTP_CRLF);
     }
 
     //
