@@ -2,13 +2,8 @@
 <ruleset name="JAXL">
  <description>The JAXL coding standard (based on PSR-2 excluding some rules).</description>
 
- <file>core</file>
  <file>examples</file>
- <file>http</file>
- <file>tests</file>
- <file>xep</file>
- <file>xmpp</file>
- <file>jaxl.php</file>
+ <file>src/JAXL</file>
  <file>jaxlctl</file>
 
  <arg value="p"/>
@@ -28,9 +23,8 @@
   <severity>0</severity>
  </rule>
 
- <!-- TODO: Register autoload (spl_autoload_register), remove include and require everywhere then remove this rule. -->
  <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-  <severity>0</severity>
+  <exclude-pattern>examples</exclude-pattern>
  </rule>
 
  <!-- TODO: Rename all methods then remove this rule. -->

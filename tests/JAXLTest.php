@@ -48,7 +48,8 @@ class JAXLTest extends PHPUnit_Framework_TestCase
         $config = array(
             'host' => 'domain.tld',
             'port' => 5223,
-            'protocol' => 'tcp'
+            'protocol' => 'tcp',
+            'strict' => false
         );
         $jaxl = new JAXL($config);
         $this->assertEquals('tcp://domain.tld:5223', $jaxl->get_socket_path());
@@ -57,7 +58,7 @@ class JAXLTest extends PHPUnit_Framework_TestCase
 
     public function testConfig()
     {
-        $config = array();
+        $config = array('strict' => false);
         $jaxl = new JAXL($config);
 
         $this->assertEquals('PLAIN', $jaxl->cfg['auth_type']);
@@ -79,6 +80,6 @@ class JAXLTest extends PHPUnit_Framework_TestCase
         $this->assertNull($jaxl->cfg['protocol']);
         $this->assertNull($jaxl->cfg['resource']);
         $this->assertNull($jaxl->cfg['stream_context']);
-        $this->assertTrue($jaxl->cfg['strict']);
+        $this->assertFalse($jaxl->cfg['strict']);
     }
 }

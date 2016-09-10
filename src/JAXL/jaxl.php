@@ -479,11 +479,10 @@ class JAXL extends XMPPStream
             // emit
             $this->ev->emit('on_disconnect');
         } else {
-            // if connection to the destination fails
-
-            if ($this->trans->errno == 61
-            || $this->trans->errno == 110
-            || $this->trans->errno == 111
+            // If connection to the destination fails.
+            if ($this->trans->errno == 61 ||
+                $this->trans->errno == 110 ||
+                $this->trans->errno == 111
             ) {
                 JAXLLogger::debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
                 $this->retry();

@@ -35,11 +35,7 @@
     },
     "autoload": {
         "classmap": [
-            "core",
-            "http",
-            "xep",
-            "xmpp",
-            "jaxl.php"
+            "src/JAXL"
         ],
         "exclude-from-classmap": [
             "/tests/"

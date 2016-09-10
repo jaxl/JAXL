@@ -7,6 +7,7 @@ class JAXLXmlTest extends PHPUnit_Framework_TestCase
     public static $attrs = array('attr1' => 'value1');
 
     /**
+     * @runInSeparateProcess-
      * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testJAXLXml_0()
