@@ -33,7 +33,7 @@ Constructor options
     #. ``priv_dir``
     
         Jaxl creates 4 directories names ``log``, ``tmp``, ``run`` and ``sock`` inside a private directory
-        which defaults to ``JAXL_CWD.'/.jaxl'``. If this option is passed, it will overwrite default private
+        which defaults to ``getcwd().'/.jaxl'``. If this option is passed, it will overwrite default private
         directory.
         
         .. note::

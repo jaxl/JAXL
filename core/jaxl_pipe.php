@@ -63,15 +63,19 @@ class JAXLPipe
     /** @var string */
     public $name = null;
 
+    /** @var string */
+    private $pipes_folder = null;
+
     /**
      * @param string $name
      * @param callable $read_cb TODO: Currently not used
      */
     public function __construct($name, $read_cb = null)
     {
-        $pipes_folder = JAXL_CWD.'/.jaxl/pipes';
-        if (!is_dir($pipes_folder)) {
-            mkdir($pipes_folder);
+        // TODO: see JAXL->cfg['priv_dir']
+        $this->pipes_folder = getcwd().'/.jaxl/pipes';
+        if (!is_dir($this->pipes_folder)) {
+            mkdir($this->pipes_folder, 0777, true);
         }
 
         $this->ev = new JAXLEvent();
@@ -110,9 +114,12 @@ class JAXLPipe
         _debug("unlinking pipe file");
     }
 
+    /**
+     * @return string
+     */
     public function get_pipe_file_path()
     {
-        return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';
+        return $this->pipes_folder.'/jaxl_'.$this->name.'.pipe';
     }
 
     /**

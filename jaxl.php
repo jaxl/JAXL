@@ -37,7 +37,6 @@
 */
 
 declare(ticks = 1);
-define('JAXL_CWD', dirname(__FILE__));
 
 /**
  * Jaxl class extends base XMPPStream class with following functionalities:
@@ -162,11 +161,10 @@ class JAXL extends XMPPStream
             pcntl_signal(SIGINT, array($this, 'signal_handler'));
             pcntl_signal(SIGTERM, array($this, 'signal_handler'));
         }
-        
-        // create .jaxl directory in JAXL_CWD
-        // for our /tmp, /run and /log folders
+
+        // Create .jaxl directory for our /tmp, /run and /log folders
         // overwrite these using jaxl config array
-        $this->priv_dir = isset($this->cfg['priv_dir']) ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
+        $this->priv_dir = isset($this->cfg['priv_dir']) ? $this->cfg['priv_dir'] : getcwd()."/.jaxl";
         $this->tmp_dir = $this->priv_dir."/tmp";
         $this->pid_dir = $this->priv_dir."/run";
         $this->log_dir = $this->priv_dir."/log";
