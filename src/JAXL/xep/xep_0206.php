@@ -243,7 +243,7 @@ class XEP0206 extends XMPPXep
             'ver' => '1.10'
         );
         
-        if (isset($this->jaxl->cfg['jid'])) {
+        if ($this->jaxl->cfg['jid'] !== null) {
             $attrs['from'] = $this->jaxl->cfg['jid'];
         }
         $body = new JAXLXml('body', self::NS_HTTP_BIND, $attrs);

@@ -54,4 +54,31 @@ class JAXLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('tcp://domain.tld:5223', $jaxl->get_socket_path());
         $this->assertInstanceOf('JAXLSocketClient', $jaxl->getTransport());
     }
+
+    public function testConfig()
+    {
+        $config = array();
+        $jaxl = new JAXL($config);
+
+        $this->assertEquals('PLAIN', $jaxl->cfg['auth_type']);
+        $this->assertNull($jaxl->cfg['bosh_hold']);
+        $this->assertNull($jaxl->cfg['bosh_rid']);
+        $this->assertNull($jaxl->cfg['bosh_url']);
+        $this->assertNull($jaxl->cfg['bosh_wait']);
+        $this->assertNull($jaxl->cfg['domain']);
+        $this->assertEquals($jaxl->force_tls, $jaxl->cfg['force_tls']);
+        $this->assertNull($jaxl->cfg['host']);
+        $this->assertNull($jaxl->cfg['jid']);
+        $this->assertEquals($jaxl->log_colorize, $jaxl->cfg['log_colorize']);
+        $this->assertEquals($jaxl->log_level, $jaxl->cfg['log_level']);
+        $this->assertEquals(JAXLLogger::$path, $jaxl->cfg['log_path']);
+        $this->assertFalse($jaxl->cfg['multi_client']);
+        $this->assertFalse($jaxl->cfg['pass']);
+        $this->assertNull($jaxl->cfg['port']);
+        $this->assertContains('.jaxl', $jaxl->cfg['priv_dir']);
+        $this->assertNull($jaxl->cfg['protocol']);
+        $this->assertNull($jaxl->cfg['resource']);
+        $this->assertNull($jaxl->cfg['stream_context']);
+        $this->assertTrue($jaxl->cfg['strict']);
+    }
 }

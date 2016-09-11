@@ -125,36 +125,46 @@ class JAXL extends XMPPStream
      */
     public function __construct(array $config)
     {
-        $this->cfg = $config;
-        
+        $cfg_defaults = array(
+            'auth_type' => 'PLAIN',
+            'bosh_hold' => null,
+            'bosh_rid' => null,
+            'bosh_url' => null,
+            'bosh_wait' => null,
+            'domain' => null,
+            'force_tls' => false,
+            'host' => null,
+            'jid' => null,
+            'log_colorize' => $this->log_colorize,
+            'log_level' => $this->log_level,
+            'log_path' => JAXLLogger::$path,
+            'multi_client' => false,
+            'pass' => false,
+            'port' => null,
+            'priv_dir' => getcwd().'/.jaxl',
+            'protocol' => null,
+            'resource' => null,
+            'stream_context' => null,
+            'strict' => true
+        );
+        $this->cfg = array_merge($cfg_defaults, $config);
+
         // setup logger
-        if (isset($this->cfg['log_path'])) {
-            JAXLLogger::$path = $this->cfg['log_path'];
-        }
-        //else { JAXLLogger::$path = $this->log_dir."/jaxl.log"; }
-        if (isset($this->cfg['log_level'])) {
-            JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
-        } else {
-            JAXLLogger::$level = $this->log_level;
-        }
-        if (isset($this->cfg['log_colorize'])) {
-            JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
-        } else {
-            JAXLLogger::$colorize = $this->log_colorize;
-        }
-        
+        JAXLLogger::$path = $this->cfg['log_path'];
+        JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
+        JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
+
         // env
-        $strict = isset($this->cfg['strict']) ? $this->cfg['strict'] : true;
-        if ($strict) {
+        if ($this->cfg['strict']) {
             $this->add_exception_handlers();
         }
         $this->mode = PHP_SAPI;
         $this->local_ip = gethostbyname(php_uname('n'));
         $this->pid = getmypid();
-        
+
         // jid object
-        $jid = isset($this->cfg['jid']) ? new XMPPJid($this->cfg['jid']) : null;
-        
+        $jid = ($this->cfg['jid'] !== null) ? new XMPPJid($this->cfg['jid']) : null;
+
         // handle signals
         if (extension_loaded('pcntl')) {
             pcntl_signal(SIGHUP, array($this, 'signal_handler'));
@@ -164,7 +174,7 @@ class JAXL extends XMPPStream
 
         // Create .jaxl directory for our /tmp, /run and /log folders
         // overwrite these using jaxl config array
-        $this->priv_dir = isset($this->cfg['priv_dir']) ? $this->cfg['priv_dir'] : getcwd()."/.jaxl";
+        $this->priv_dir = $this->cfg['priv_dir'];
         $this->tmp_dir = $this->priv_dir."/tmp";
         $this->pid_dir = $this->priv_dir."/run";
         $this->log_dir = $this->priv_dir."/log";
@@ -184,7 +194,7 @@ class JAXL extends XMPPStream
         if (!is_dir($this->sock_dir)) {
             mkdir($this->sock_dir);
         }
-        
+
         // touch pid file
         if ($this->mode == "cli") {
             touch($this->get_pid_file_path());
@@ -195,18 +205,20 @@ class JAXL extends XMPPStream
         // service discovery and entity caps
         // are recommended for every xmpp entity
         $this->require_xep(array('0030', '0115'));
-        
+
         // do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
-        $host = isset($this->cfg['host']) ? $this->cfg['host'] : null;
-        $port = isset($this->cfg['port']) ? $this->cfg['port'] : null;
-        if ((!$host || !$port) && $jid) {
+        if (($this->cfg['host'] === null || $this->cfg['port'] === null) && $jid) {
             // this dns lookup is blocking
             _info("dns srv lookup for ".$jid->domain);
             list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
+            if ($this->cfg['host'] === null) {
+                $this->cfg['host'] = $host;
+            }
+            if ($this->cfg['port'] === null) {
+                $this->cfg['port'] = $port;
+            }
         }
-        $this->cfg['host'] = isset($this->cfg['host']) ? $this->cfg['host'] : $host;
-        $this->cfg['port'] = isset($this->cfg['port']) ? $this->cfg['port'] : $port;
-        
+
         // choose appropriate transport
         // if 'bosh_url' cfg is defined include 0206
         if (isset($this->cfg['bosh_url'])) {
@@ -214,12 +226,9 @@ class JAXL extends XMPPStream
             $this->require_xep('0206');
             $transport = $this->xeps['0206'];
         } else {
-            //list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
-            $stream_context = isset($this->cfg['stream_context']) ? $this->cfg['stream_context'] : null;
-            $transport = new JAXLSocketClient($stream_context);
+            $transport = new JAXLSocketClient($this->cfg['stream_context']);
         }
 
-        $this->cfg['multi_client'] = isset($this->cfg['multi_client']) ? $this->cfg['multi_client'] : false;
         // lifecycle events callback
         $this->ev = new JAXLEvent($this->cfg['multi_client'] ? array(&$this) : array());
 
@@ -227,12 +236,12 @@ class JAXL extends XMPPStream
         parent::__construct(
             $transport,
             $jid,
-            isset($this->cfg['pass']) ? $this->cfg['pass'] : false,
-            isset($this->cfg['resource']) ? 'jaxl#'.$this->cfg['resource'] : 'jaxl#'.md5(time()),
-            isset($this->cfg['force_tls']) ? $this->cfg['force_tls'] : false
+            $this->cfg['pass'],
+            $this->cfg['resource'] !== null ? 'jaxl#'.$this->cfg['resource'] : 'jaxl#'.md5(time()),
+            $this->cfg['force_tls']
         );
     }
-    
+
     public function __destruct()
     {
         // delete pid file
@@ -246,16 +255,16 @@ class JAXL extends XMPPStream
         
         parent::__destruct();
     }
-    
+
     public function add_exception_handlers()
     {
         _info("strict mode enabled, adding exception handlers. ' .
-            'Set 'strict' => TRUE inside JAXL config to disable this");
+            'Set 'strict' => false inside JAXL config to disable this");
         set_error_handler(array('JAXLException', 'error_handler'));
         set_exception_handler(array('JAXLException', 'exception_handler'));
         register_shutdown_function(array('JAXLException', 'shutdown_handler'));
     }
-    
+
     public function get_pid_file_path()
     {
         return $this->pid_dir."/jaxl_".$this->pid.".pid";
@@ -406,7 +415,7 @@ class JAXL extends XMPPStream
     
     public function get_socket_path()
     {
-        if (isset($this->cfg['protocol'])) {
+        if ($this->cfg['protocol'] !== null) {
             $protocol = $this->cfg['protocol'];
         } else {
             $protocol = ($this->cfg['port'] == 5223 ? "ssl" : "tcp");
@@ -670,7 +679,7 @@ class JAXL extends XMPPStream
         }
         
         // check if preferred auth type exists in available mechanisms
-        $pref_auth = isset($this->cfg['auth_type']) ? $this->cfg['auth_type'] : 'PLAIN';
+        $pref_auth = $this->cfg['auth_type'];
         $pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
         _debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
         
