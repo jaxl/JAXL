@@ -36,51 +36,47 @@
  *
  */
 
-class HTTPDispatcher
+//
+// (optionally) set an array of url dispatch rules
+// each dispatch rule is defined by an array of size 4 like:
+// array($callback, $pattern, $methods, $extra), where
+//     $callback    the method which will be called if this rule matches
+//     $pattern     regular expression to match request path
+//     $methods     list of allowed methods for this rule
+//                  pass boolean true to allow all http methods
+//                  if omitted or an empty array() is passed (which actually doesnt make sense)
+//                  by default 'GET' will be the method allowed on this rule
+//     $extra       reserved for future (you can totally omit this as of now)
+//
+class HTTPDispatchRule
 {
 
-    protected $rules = array();
+    // match callback
+    public $cb = null;
 
-    public function __construct()
+    // regexp to match on request path
+    public $pattern = null;
+
+    // methods to match upon
+    // add atleast 1 method for this rule to work
+    public $methods = null;
+
+    // other matching rules
+    public $extra = array();
+
+    public function __construct($cb, $pattern, array $methods = array('GET'), array $extra = array())
     {
-        $this->rules = array();
+        $this->cb = $cb;
+        $this->pattern = $pattern;
+        $this->methods = $methods;
+        $this->extra = $extra;
     }
 
-    public function add_rule($rule)
+    public function match($path, $method)
     {
-        $s = count($rule);
-        if ($s > 4) {
-            _debug("invalid rule");
-            return;
-        }
-
-        // fill up defaults
-        if ($s == 3) {
-            $rule[] = array();
-        } elseif ($s == 2) {
-            $rule[] = array('GET');
-            $rule[] = array();
-        } else {
-            _debug("invalid rule");
-            return;
-        }
-
-        $this->rules[] = new HTTPDispatchRule($rule[0], $rule[1], $rule[2], $rule[3]);
-    }
-
-    public function dispatch($request)
-    {
-        foreach ($this->rules as $rule) {
-            //_debug("matching $request->path with pattern $rule->pattern");
-            if (($matches = $rule->match($request->path, $request->method)) !== false) {
-                _debug("matching rule found, dispatching");
-                $params = array($request);
-                // TODO: a bad way to restrict on 'pk', fix me for generalization
-                if (isset($matches['pk'])) {
-                    $params[] = $matches['pk'];
-                }
-                call_user_func_array($rule->cb, $params);
-                return true;
+        if (preg_match("/".str_replace("/", "\/", $this->pattern)."/", $path, $matches)) {
+            if (in_array($method, $this->methods)) {
+                return $matches;
             }
         }
         return false;
