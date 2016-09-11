@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0077 extends XMPPXep
+class XEP0077 extends XMPPXep
 {
     const NS_FEATURE_REGISTER = 'http://jabber.org/features/iq-register';
     const NS_INBAND_REGISTER = 'jabber:iq:register';

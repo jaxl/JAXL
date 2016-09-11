@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0114 extends XMPPXep
+class XEP0114 extends XMPPXep
 {
     const NS_JABBER_COMPONENT_ACCEPT = 'jabber:component:accept';
 

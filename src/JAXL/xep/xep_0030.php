@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0030 extends XMPPXep
+class XEP0030 extends XMPPXep
 {
     const NS_DISCO_INFO = 'http://jabber.org/protocol/disco#info';
     const NS_DISCO_ITEMS = 'http://jabber.org/protocol/disco#items';

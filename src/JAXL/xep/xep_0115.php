@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0115 extends XMPPXep
+class XEP0115 extends XMPPXep
 {
     const NS_CAPS = 'http://jabber.org/protocol/caps';
 

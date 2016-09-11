@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0045 extends XMPPXep
+class XEP0045 extends XMPPXep
 {
     const NS_MUC = 'http://jabber.org/protocol/muc';
 

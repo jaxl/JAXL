@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0203 extends XMPPXep
+class XEP0203 extends XMPPXep
 {
     const NS_DELAYED_DELIVERY = 'urn:xmpp:delay';
 

@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0249 extends XMPPXep
+class XEP0249 extends XMPPXep
 {
     const NS_DIRECT_MUC_INVITATION = 'jabber:x:conference';
 

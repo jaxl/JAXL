@@ -85,7 +85,7 @@ $client->add_cb('on_groupchat_message', function ($stanza) {
     global $client;
 
     $from = new XMPPJid($stanza->from);
-    $delay = $stanza->exists('delay', XEP_0203::NS_DELAYED_DELIVERY);
+    $delay = $stanza->exists('delay', XEP0203::NS_DELAYED_DELIVERY);
 
     if ($from->resource) {
         echo sprintf(
@@ -110,7 +110,7 @@ $client->add_cb('on_presence_stanza', function ($stanza) {
 
     // self-stanza received, we now have complete room roster
     if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
-        if (($x = $stanza->exists('x', XEP_0045::NS_MUC.'#user')) !== false) {
+        if (($x = $stanza->exists('x', XEP0045::NS_MUC.'#user')) !== false) {
             if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
                 $item = $x->exists('item');
                 _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
@@ -124,7 +124,7 @@ $client->add_cb('on_presence_stanza', function ($stanza) {
     } elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
         // stanza from other users received
 
-        if (($x = $stanza->exists('x', XEP_0045::NS_MUC.'#user')) !== false) {
+        if (($x = $stanza->exists('x', XEP0045::NS_MUC.'#user')) !== false) {
             $item = $x->exists('item');
             echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".
                 $from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;

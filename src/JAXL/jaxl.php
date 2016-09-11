@@ -262,7 +262,7 @@ class JAXL extends XMPPStream
     }
 
     /**
-     * @return JAXLSocketClient|XEP_0206
+     * @return JAXLSocketClient|XEP0206
      */
     public function getTransport()
     {
@@ -284,7 +284,7 @@ class JAXL extends XMPPStream
         }
         
         foreach ($xeps as $xep) {
-            $classname = 'XEP_'.$xep;
+            $classname = 'XEP'.$xep;
             $this->xeps[$xep] = new $classname($this);
 
             // add necessary requested callback on events
@@ -828,7 +828,7 @@ class JAXL extends XMPPStream
 
     public function handle_domain_info($stanza)
     {
-        $query = $stanza->exists('query', XEP_0030::NS_DISCO_INFO);
+        $query = $stanza->exists('query', XEP0030::NS_DISCO_INFO);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'identity') {
                 //echo 'identity '.
@@ -845,7 +845,7 @@ class JAXL extends XMPPStream
 
     public function handle_domain_items($stanza)
     {
-        $query = $stanza->exists('query', XEP_0030::NS_DISCO_ITEMS);
+        $query = $stanza->exists('query', XEP0030::NS_DISCO_ITEMS);
         foreach ($query->childrens as $k => $child) {
             if ($child->name == 'item') {
                 //echo 'item '.

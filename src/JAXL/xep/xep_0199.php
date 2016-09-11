@@ -1,6 +1,6 @@
 <?php
 
-class XEP_0199 extends XMPPXep
+class XEP0199 extends XMPPXep
 {
     const NS_XMPP_PING = 'urn:xmpp:ping';
 

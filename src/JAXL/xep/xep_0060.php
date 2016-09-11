@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0060 extends XMPPXep
+class XEP0060 extends XMPPXep
 {
     const NS_PUBSUB = 'http://jabber.org/protocol/pubsub';
 

@@ -79,7 +79,7 @@ $client->add_cb('on_auth_failure', function ($reason) {
 
 $client->add_cb('on_headline_message', function ($stanza) {
     global $client;
-    if (($event = $stanza->exists('event', XEP_0060::NS_PUBSUB.'#event'))) {
+    if (($event = $stanza->exists('event', XEP0060::NS_PUBSUB.'#event'))) {
         _info("got pubsub event");
     } else {
         _warning("unknown headline message rcvd");

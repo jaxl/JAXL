@@ -36,7 +36,7 @@
  *
  */
 
-class XEP_0206 extends XMPPXep
+class XEP0206 extends XMPPXep
 {
     const NS_HTTP_BIND = 'http://jabber.org/protocol/httpbind';
     const NS_BOSH = 'urn:xmpp:xbosh';

@@ -23,11 +23,6 @@
   </properties>
  </rule>
 
- <!-- TODO: Rename XEP_NNNN classes then remove this rule. -->
- <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
-  <severity>0</severity>
- </rule>
-
  <!-- TODO: Move to PHP 5.3+ with namespaces then remove this rule. -->
  <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
   <severity>0</severity>
