@@ -677,21 +677,19 @@ class JAXL extends XMPPStream
                 $mechs[$mechanism->text] = true;
             }
         }
-        
-        // check if preferred auth type exists in available mechanisms
+
         $pref_auth = $this->cfg['auth_type'];
-        $pref_auth_exists = isset($mechs[$pref_auth]) ? true : false;
-        _debug("pref_auth ".$pref_auth." ".($pref_auth_exists ? "exists" : "doesn't exists"));
-        
-        // if pref auth exists, try it
-        if ($pref_auth_exists) {
-            $mech = $pref_auth;
+
+        // check if preferred auth type exists in available mechanisms
+        if (isset($mechs[$pref_auth]) && $mechs[$pref_auth]) {
+            _debug("pref_auth ".$pref_auth." exists");
         } else {
-            _error("preferred auth type not supported, trying $mech");
+            _debug("pref_auth ".$pref_auth." doesn't exists");
+            _error("preferred auth type not supported, trying $pref_auth");
         }
         
         $this->send_auth_pkt(
-            $mech,
+            $pref_auth,
             isset($this->jid) ? $this->jid->to_string() : null,
             $this->pass
         );
