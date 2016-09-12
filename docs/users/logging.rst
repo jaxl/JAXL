@@ -1,8 +1,10 @@
 Logging Interface
 =================
+
 ``JAXLLogger`` provides all the logging facilities that we will ever require.
-When logging to ``STDOUT`` it also colorizes the log message depending upon its severity level.
-When logging to a file it can also do periodic log rotation.
+When logging to ``STDOUT`` it also colorizes the log message depending upon 
+its severity level. When logging to a file it can also do periodic log 
+rotation.
 
 log levels
 ----------
@@ -15,6 +17,7 @@ log levels
 
 global logging methods
 ----------------------
+
 Following global methods for logging are available:
 
     * ``_error($msg)``
@@ -23,7 +26,8 @@ Following global methods for logging are available:
     * ``_info($msg)``
     * ``_debug($msg)``
         
-_colorize/2
------------
-All the above global logging methods internally use ``_colorize($msg, $verbosity)`` to output colored
-log message on the terminal.
+log/2
+-----
+
+All the above global logging methods internally use ``JAXLLogger::log($msg, $verbosity)`` 
+to output colored log message on the terminal.

@@ -118,6 +118,8 @@ class JAXLXml
     }
 
     /**
+     * Set or update attrs of element.
+     *
      * @param array $attrs
      * @return JAXLXml
      */
@@ -128,6 +130,8 @@ class JAXLXml
     }
 
     /**
+     * Check that element matches by attrs.
+     *
      * @param array $attrs
      * @return bool
      */
@@ -195,6 +199,9 @@ class JAXLXml
         return $this;
     }
 
+    /**
+     * @return JAXLXml
+     */
     public function up()
     {
         if ($this->rover->parent) {
@@ -203,6 +210,9 @@ class JAXLXml
         return $this;
     }
 
+    /**
+     * @return JAXLXml
+     */
     public function top()
     {
         $this->rover = &$this;

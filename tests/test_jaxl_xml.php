@@ -13,6 +13,9 @@ class JAXLXmlTest extends PHPUnit_Framework_TestCase
     public static $NS = 'SOME_NAMESPACE';
     public static $attrs = array('attr1' => 'value1');
 
+    /**
+     * @expectedException PHPUnit_Framework_Error_Notice
+     */
     public function testJAXLXml_0()
     {
         $xml = new JAXLXml();

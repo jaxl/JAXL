@@ -10,29 +10,17 @@ Library has been developed and tested extensively on
 linux operating systems. But there is no reason why it should
 not work on other OS. File an `issue <https://github.com/jaxl/JAXL/issues/new>`_ if you face any glitches.
 
-Download & Install
-------------------
-Download a stable tagged v3.x release from `https://github.com/jaxl/JAXL/tags <https://github.com/jaxl/JAXL/tags>`_
+Install
+-------
 
-You can also checkout git branch and switch to a tag of your choice:
+Use `Composer <https://getcomposer.org>`_ to install:
 
-    >>> git clone https://github.com/jaxl/JAXL.git
-    >>> cd JAXL/
-    >>> git tag -l
-    >>> git checkout some-tag-name
+php composer.phar require "jaxl/jaxl=^3.0.3"
+php composer.phar update
 
-To install Jaxl library globally, simply append path of the downloaded ``JAXL`` folder
-to ``include_path`` directive inside your ``php.ini``. This will allow us to use Jaxl 
-library simply by doing:
+Then use autoloader in your application:
 
-``require 'jaxl.php';`` 
-
-Alternately, if you don't want to edit ``php.ini`` or in case you don't have 
-access to the ini file, simply use:
-
-``require '/full/path/to/JAXL/jaxl.php';``
-
-to start using Jaxl library.
+require dirname(__FILE__) . '/vendor/autoload.php';
 
 Library Structure
 -----------------

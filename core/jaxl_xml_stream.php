@@ -118,7 +118,6 @@ class JAXLXmlStream
                 $attrs[$k[1]] = $v;
             } elseif ($k[0] == NS_XML) {
                 // xml ns
-
                 unset($attrs[$key]);
                 $attrs['xml:'.$k[1]] = $v;
             } else {
