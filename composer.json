@@ -4,7 +4,7 @@
     "description": "Jaxl - Async, Non-Blocking, Event based Networking Library in PHP.",
     "keywords":    ["xmpp", "jabber", "http", "asynchronous", "non blocking", "event loop", "php", "jaxl", "abhinavsingh"],
     "homepage":    "http://jaxl.readthedocs.org/en/latest/index.html",
-    "license":     "MIT",
+    "license":     "BSD-3-Clause",
     "support": {
         "forum":   "https://groups.google.com/forum/#!forum/jaxl",
         "issues":  "https://github.com/jaxl/JAXL/issues",

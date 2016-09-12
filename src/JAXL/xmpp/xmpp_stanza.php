@@ -44,6 +44,30 @@
  *
  * @author abhinavsingh
  *
+ * Access to common xml attributes:
+ *
+ * @property string $to
+ * @property string $from
+ * @property string $id
+ * @property string $type
+ *
+ * Access to parts of common xml attributes:
+ *
+ * @property string $to_node
+ * @property string $to_domain
+ * @property string $to_resource
+ * @property string $from_node
+ * @property string $from_domain
+ * @property string $from_resource
+ *
+ * Access to first child element text:
+ *
+ * @property string $status
+ * @property string $show
+ * @property string $priority
+ * @property string $body
+ * @property string $thread
+ * @property string $subject
  */
 class XMPPStanza extends JAXLXmlAccess
 {

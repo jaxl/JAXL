@@ -69,7 +69,7 @@ class XEP0206 extends XMPPXep implements JAXLClientBase
             
         );
     }
-    
+
     //
     // event callbacks
     //

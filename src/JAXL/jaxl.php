@@ -54,7 +54,7 @@ class JAXL extends XMPPStream
 {
     
     // lib meta info
-    const VERSION = '3.0.2';
+    const VERSION = '3.0.3';
     const NAME = 'JAXL :: Jabber XMPP Library';
     
     // cached init config array
@@ -703,7 +703,7 @@ class JAXL extends XMPPStream
         
         $this->ev->emit('on_auth_success');
     }
-    
+
     /**
      * @param string $reason
      */
@@ -711,19 +711,19 @@ class JAXL extends XMPPStream
     {
         $this->ev->emit('on_auth_failure', array($reason));
     }
-    
+
     public function handle_stream_start($stanza)
     {
         $stanza = new XMPPStanza($stanza);
-        
+
         $this->ev->emit('on_stream_start', array($stanza));
         return array(isset($this->cfg['bosh_url']) ? 'wait_for_stream_features' : 'connected', 1);
     }
-    
+
     public function handle_iq($stanza)
     {
         $stanza = new XMPPStanza($stanza);
-        
+
         // emit callback registered on stanza id's
         $emited = false;
         if ($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {

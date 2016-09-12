@@ -15,7 +15,12 @@ Install
 
 Use `Composer <https://getcomposer.org>`_ to install:
 
-composer require "jaxl/jaxl=^3.0.2"
+php composer.phar require "jaxl/jaxl=^3.0.3"
+php composer.phar update
+
+Then use autoloader in your application:
+
+require dirname(__FILE__) . '/vendor/autoload.php';
 
 Library Structure
 -----------------

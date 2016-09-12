@@ -27,7 +27,7 @@ Following global methods for logging are available:
     * ``debug($msg)``
         
 log/2
------------
+-----
 
 All the above global logging methods internally use ``log($msg, $verbosity)`` 
 to output colored log message on the terminal.

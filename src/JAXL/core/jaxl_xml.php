@@ -112,6 +112,8 @@ class JAXLXml extends JAXLXmlAccess
     }
 
     /**
+     * Set or update attrs of element.
+     *
      * @param array $attrs
      * @return JAXLXml
      */
@@ -122,6 +124,8 @@ class JAXLXml extends JAXLXmlAccess
     }
 
     /**
+     * Check that element matches by attrs.
+     *
      * @param array $attrs
      * @return bool
      */
@@ -209,6 +213,9 @@ class JAXLXml extends JAXLXmlAccess
         return $this;
     }
 
+    /**
+     * @return JAXLXml
+     */
     public function up()
     {
         if ($this->rover->parent) {
@@ -217,6 +224,9 @@ class JAXLXml extends JAXLXmlAccess
         return $this;
     }
 
+    /**
+     * @return JAXLXml
+     */
     public function top()
     {
         $this->rover = &$this;
