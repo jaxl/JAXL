@@ -56,15 +56,11 @@ $client->require_xep(array(
 ));
 
 //
-// below are two states which become part of
-// our client's xmpp_stream lifecycle
-// consider as if these methods are directly
-// inside xmpp_stream state machine
+// Below are two states which become part of our client's xmpp_stream lifecycle
+// consider as if these methods are directly inside xmpp_stream state machine.
 //
-// Note: $stanza = $args[0] is an instance of
-// JAXLXml in xmpp_stream state methods,
-// it is yet not ready for easy access
-// patterns available on XMPPStanza instances
+// Note: $stanza = $args[0] is an instance of JAXLXml in xmpp_stream state methods,
+// it is yet not ready for easy access patterns available on XMPPStanza instances.
 //
 
 $form = array();

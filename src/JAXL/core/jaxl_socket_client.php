@@ -42,7 +42,7 @@
  * @author abhinavsingh
  *
  */
-class JAXLSocketClient
+class JAXLSocketClient implements JAXLClientBase
 {
 
     private $host = null;
@@ -85,7 +85,7 @@ class JAXLSocketClient
     }
 
     /**
-     * Emit on on_read_ready.
+     * Emits on on_read_ready.
      *
      * @param callable $recv_cb
      */

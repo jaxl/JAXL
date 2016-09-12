@@ -264,7 +264,7 @@ class JAXL extends XMPPStream
     }
 
     /**
-     * @return JAXLSocketClient|XEP0206
+     * @return JAXLClientBase
      */
     public function getTransport()
     {

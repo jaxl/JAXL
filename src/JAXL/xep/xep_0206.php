@@ -36,7 +36,7 @@
  *
  */
 
-class XEP0206 extends XMPPXep
+class XEP0206 extends XMPPXep implements JAXLClientBase
 {
     const NS_HTTP_BIND = 'http://jabber.org/protocol/httpbind';
     const NS_BOSH = 'urn:xmpp:xbosh';
@@ -73,19 +73,19 @@ class XEP0206 extends XMPPXep
     //
     // event callbacks
     //
-    
+
     /**
-     * @param JAXLXmlAccess|string $body
+     * @param JAXLXmlAccess|string $data
      */
-    public function send($body)
+    public function send($data)
     {
-        if ($body instanceof JAXLXmlAccess) {
-            $body = $body->to_string();
+        if ($data instanceof JAXLXmlAccess) {
+            $data = $data->to_string();
         } else {
-            if (substr($body, 0, 15) == '<stream:stream ') {
+            if (substr($data, 0, 15) == '<stream:stream ') {
                 $this->restarted = true;
 
-                $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
+                $data = new JAXLXml('body', self::NS_HTTP_BIND, array(
                     'sid' => $this->sid,
                     'rid' => ++$this->rid,
                     'to' => (($this->jaxl && $this->jaxl->jid)
@@ -95,20 +95,20 @@ class XEP0206 extends XMPPXep
                     'xmlns:xmpp' => self::NS_BOSH
                 ));
 
-                $body = $body->to_string();
-            } elseif (substr($body, 0, 16) == '</stream:stream>') {
-                $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
+                $data = $data->to_string();
+            } elseif (substr($data, 0, 16) == '</stream:stream>') {
+                $data = new JAXLXml('body', self::NS_HTTP_BIND, array(
                     'sid' => $this->sid,
                     'rid' => ++$this->rid,
                     'type' => 'terminate'
                 ));
 
-                $body = $body->to_string();
+                $data = $data->to_string();
             } else {
-                $body = $this->wrap($body);
+                $data = $this->wrap($data);
             }
         }
-        JAXLLogger::debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$body);
+        JAXLLogger::debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$data);
         
         $this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
         curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
@@ -117,7 +117,7 @@ class XEP0206 extends XMPPXep
         curl_setopt($this->chs[$this->rid], CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->chs[$this->rid], CURLOPT_VERBOSE, false);
         curl_setopt($this->chs[$this->rid], CURLOPT_POST, 1);
-        curl_setopt($this->chs[$this->rid], CURLOPT_POSTFIELDS, $body);
+        curl_setopt($this->chs[$this->rid], CURLOPT_POSTFIELDS, $data);
         
         curl_multi_add_handle($this->mch, $this->chs[$this->rid]);
     }
@@ -179,7 +179,12 @@ class XEP0206 extends XMPPXep
             exit;
         }
     }
-    
+
+    /**
+     * Emits on recv and session_start.
+     *
+     * @param callable $recv_cb
+     */
     public function set_callback($recv_cb)
     {
         $this->recv_cb = $recv_cb;

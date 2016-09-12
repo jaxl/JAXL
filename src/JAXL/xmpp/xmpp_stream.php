@@ -59,7 +59,7 @@ abstract class XMPPStream extends JAXLFsm
 
     /**
      * Socket/BOSH reference.
-     * @var JAXLSocketClient|XEP0206
+     * @var JAXLClientBase
      */
     protected $trans = null;
 
@@ -90,7 +90,7 @@ abstract class XMPPStream extends JAXLFsm
     //
 
     /**
-     * @param JAXLSocketClient|XEP0206 $transport
+     * @param JAXLClientBase $transport
      * @param XMPPJid|null $jid
      * @param string $pass
      * @param string $resource
