@@ -171,9 +171,8 @@ class JAXL extends XMPPStream
             pcntl_signal(SIGINT, array($this, 'signal_handler'));
             pcntl_signal(SIGTERM, array($this, 'signal_handler'));
         }
-        
-        // create .jaxl directory in JAXL_CWD
-        // for our /tmp, /run and /log folders
+
+        // Create .jaxl directory in JAXL_CWD for our /tmp, /run and /log folders
         // overwrite these using jaxl config array
         $this->priv_dir = isset($this->cfg['priv_dir']) ? $this->cfg['priv_dir'] : JAXL_CWD."/.jaxl";
         $this->tmp_dir = $this->priv_dir."/tmp";
@@ -195,7 +194,7 @@ class JAXL extends XMPPStream
         if (!is_dir($this->sock_dir)) {
             mkdir($this->sock_dir);
         }
-        
+
         // touch pid file
         if ($this->mode == "cli") {
             touch($this->get_pid_file_path());
@@ -206,7 +205,7 @@ class JAXL extends XMPPStream
         // service discovery and entity caps
         // are recommended for every xmpp entity
         $this->require_xep(array('0030', '0115'));
-        
+
         // do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
         $host = isset($this->cfg['host']) ? $this->cfg['host'] : null;
         $port = isset($this->cfg['port']) ? $this->cfg['port'] : null;
@@ -217,7 +216,7 @@ class JAXL extends XMPPStream
         }
         $this->cfg['host'] = isset($this->cfg['host']) ? $this->cfg['host'] : $host;
         $this->cfg['port'] = isset($this->cfg['port']) ? $this->cfg['port'] : $port;
-        
+
         // choose appropriate transport
         // if 'bosh_url' cfg is defined include 0206
         if (isset($this->cfg['bosh_url'])) {
@@ -229,10 +228,10 @@ class JAXL extends XMPPStream
             $stream_context = isset($this->cfg['stream_context']) ? $this->cfg['stream_context'] : null;
             $transport = new JAXLSocketClient($stream_context);
         }
-        
+
         // lifecycle events callback
         $this->ev = new JAXLEvent(defined('JAXL_MULTI_CLIENT') ? array(&$this) : array());
-        
+
         // initialize xmpp stream with configured transport
         parent::__construct(
             $transport,
@@ -288,11 +287,11 @@ class JAXL extends XMPPStream
         foreach ($xeps as $xep) {
             $filename = 'xep_'.$xep.'.php';
             $classname = 'XEP_'.$xep;
-            
+
             // include xep
             require_once JAXL_CWD.'/xep/'.$filename;
             $this->xeps[$xep] = new $classname($this);
-            
+
             // add necessary requested callback on events
             foreach ($this->xeps[$xep]->init() as $ev => $cb) {
                 $this->add_cb($ev, array($this->xeps[$xep], $cb));
@@ -483,11 +482,10 @@ class JAXL extends XMPPStream
             // emit
             $this->ev->emit('on_disconnect');
         } else {
-            // if connection to the destination fails
-
-            if ($this->trans->errno == 61
-            || $this->trans->errno == 110
-            || $this->trans->errno == 111
+            // If connection to the destination fails.
+            if ($this->trans->errno == 61 ||
+                $this->trans->errno == 110 ||
+                $this->trans->errno == 111
             ) {
                 _debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
                 $this->retry();
@@ -684,6 +682,7 @@ class JAXL extends XMPPStream
         if ($pref_auth_exists) {
             $mech = $pref_auth;
         } else {
+            $mech = $pref_auth;
             _error("preferred auth type not supported, trying $mech");
         }
         
@@ -710,7 +709,7 @@ class JAXL extends XMPPStream
         
         $this->ev->emit('on_auth_success');
     }
-    
+
     /**
      * @param string $reason
      */
@@ -718,19 +717,19 @@ class JAXL extends XMPPStream
     {
         $this->ev->emit('on_auth_failure', array($reason));
     }
-    
+
     public function handle_stream_start($stanza)
     {
         $stanza = new XMPPStanza($stanza);
-        
+
         $this->ev->emit('on_stream_start', array($stanza));
         return array(isset($this->cfg['bosh_url']) ? 'wait_for_stream_features' : 'connected', 1);
     }
-    
+
     public function handle_iq($stanza)
     {
         $stanza = new XMPPStanza($stanza);
-        
+
         // emit callback registered on stanza id's
         $emited = false;
         if ($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
@@ -831,7 +830,7 @@ class JAXL extends XMPPStream
             _warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
         }
     }
-    
+
     public function handle_domain_info($stanza)
     {
         $query = $stanza->exists('query', NS_DISCO_INFO);
@@ -848,7 +847,7 @@ class JAXL extends XMPPStream
             }
         }
     }
-    
+
     public function handle_domain_items($stanza)
     {
         $query = $stanza->exists('query', NS_DISCO_ITEMS);

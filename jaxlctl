@@ -38,7 +38,14 @@
  */
 
 error_reporting(E_ALL | E_STRICT);
-date_default_timezone_set('UTC');
+
+if (PHP_SAPI !== 'cli') {
+    echo 'Warning: script should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
+
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
 
 $params = $argv;
 $exe = array_shift($params);
@@ -197,4 +204,4 @@ if ($argc < 2) {
 }
 
 $ctl = new JAXLCtl($command, $params);
-echo "done\n";
+echo "done".PHP_EOL;

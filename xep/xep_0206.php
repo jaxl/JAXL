@@ -72,11 +72,11 @@ class XEP_0206 extends XMPPXep
             
         );
     }
-    
+
     //
     // event callbacks
     //
-    
+
     /**
      * @param JAXLXml|XMPPStanza|string $body
      */
