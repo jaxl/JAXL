@@ -156,7 +156,9 @@ class JAXL extends XMPPStream
 
         // env
         if ($this->cfg['strict']) {
-            $this->add_exception_handlers();
+            _info("strict mode enabled, adding exception handlers. ' .
+                'Set 'strict' => false inside JAXL config to disable this");
+            JAXLException::addHandlers();
         }
         $this->mode = PHP_SAPI;
         $this->local_ip = gethostbyname(php_uname('n'));
@@ -254,15 +256,6 @@ class JAXL extends XMPPStream
         }
         
         parent::__destruct();
-    }
-
-    public function add_exception_handlers()
-    {
-        _info("strict mode enabled, adding exception handlers. ' .
-            'Set 'strict' => false inside JAXL config to disable this");
-        set_error_handler(array('JAXLException', 'error_handler'));
-        set_exception_handler(array('JAXLException', 'exception_handler'));
-        register_shutdown_function(array('JAXLException', 'shutdown_handler'));
     }
 
     public function get_pid_file_path()

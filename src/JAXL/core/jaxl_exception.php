@@ -61,6 +61,13 @@ class JAXLException extends Exception
         }
     }
 
+    public static function addHandlers()
+    {
+        set_error_handler(array('JAXLException', 'error_handler'));
+        set_exception_handler(array('JAXLException', 'exception_handler'));
+        register_shutdown_function(array('JAXLException', 'shutdown_handler'));
+    }
+
     public static function error_handler($errno, $error, $file, $line, $vars)
     {
         _debug("error handler called with $errno, $error, $file, $line");
