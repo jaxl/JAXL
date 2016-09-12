@@ -45,7 +45,7 @@
  * @author abhinavsingh
  *
  */
-class XMPPStanza
+class XMPPStanza extends JAXLXmlAccess
 {
 
     /**
@@ -60,6 +60,19 @@ class XMPPStanza
      */
     public function __construct($name, array $attrs = array(), $ns = XMPP::NS_JABBER_CLIENT)
     {
+        // TRICKY: Remove JAXLXmlAccess properties, so magic method __get will
+        // be called for them. This needed to use JAXLXmlAccess as a type hint.
+        $this->name = null;
+        unset($this->name);
+        $this->ns = null;
+        unset($this->ns);
+        $this->attrs = null;
+        unset($this->attrs);
+        $this->text = null;
+        unset($this->text);
+        $this->childrens = null;
+        unset($this->childrens);
+
         if ($name instanceof JAXLXml) {
             $this->xml = $name;
         } else {

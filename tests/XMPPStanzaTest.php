@@ -78,4 +78,28 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
             $stanza->to_string()
         );
     }
+
+    public function testXMPPStanzaAndJAXLXmlAreInterchangeable()
+    {
+        $test_data = array(
+            'name' => 'msg',
+            'ns' => 'NAMESPACE',
+            'attrs' => array('a' => '1', 'b' => '2'),
+            'text' => 'Test message'
+        );
+        $xml = new JAXLXml($test_data['name'], $test_data['ns'], $test_data['attrs'], $test_data['text']);
+        $stanza = new XMPPStanza($xml);
+        $this->checkJAXLXmlAccess($xml, $test_data);
+        $this->checkJAXLXmlAccess($stanza, $test_data);
+    }
+
+    protected function checkJAXLXmlAccess(JAXLXmlAccess $xml_or_stanza, $test_data)
+    {
+        $this->assertEquals($test_data['name'], $xml_or_stanza->name);
+        $this->assertEquals($test_data['ns'], $xml_or_stanza->ns);
+        $this->assertEquals($test_data['attrs'], $xml_or_stanza->attrs);
+        $this->assertEquals($test_data['text'], $xml_or_stanza->text);
+        $this->assertEquals(array(), $xml_or_stanza->childrens);
+        return true;
+    }
 }

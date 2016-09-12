@@ -75,16 +75,16 @@ class XEP0206 extends XMPPXep
     //
     
     /**
-     * @param JAXLXml|XMPPStanza|string $body
+     * @param JAXLXmlAccess|string $body
      */
     public function send($body)
     {
-        if (is_object($body)) {
+        if ($body instanceof JAXLXmlAccess) {
             $body = $body->to_string();
         } else {
             if (substr($body, 0, 15) == '<stream:stream ') {
                 $this->restarted = true;
-                
+
                 $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
                     'sid' => $this->sid,
                     'rid' => ++$this->rid,
@@ -94,7 +94,7 @@ class XEP0206 extends XMPPXep
                     'xmpp:restart' => 'true',
                     'xmlns:xmpp' => self::NS_BOSH
                 ));
-                
+
                 $body = $body->to_string();
             } elseif (substr($body, 0, 16) == '</stream:stream>') {
                 $body = new JAXLXml('body', self::NS_HTTP_BIND, array(
@@ -102,7 +102,7 @@ class XEP0206 extends XMPPXep
                     'rid' => ++$this->rid,
                     'type' => 'terminate'
                 ));
-                
+
                 $body = $body->to_string();
             } else {
                 $body = $this->wrap($body);

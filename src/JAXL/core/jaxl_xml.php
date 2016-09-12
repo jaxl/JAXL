@@ -44,19 +44,12 @@
  * @author abhinavsingh
  *
  */
-class JAXLXml
+class JAXLXml extends JAXLXmlAccess
 {
 
-    public $name;
-    public $ns = null;
-    public $attrs = array();
-    public $xml = null;
-    public $text = null;
-
-    /** @var JAXLXml[] */
-    public $childrens = array();
     public $parent = null;
     public $rover = null;
+    public $xml = null;
 
     /**
      * Accepts any of the following constructors:
@@ -147,11 +140,11 @@ class JAXLXml
     /**
      * Set or append XML.
      *
-     * @param unknown $xml
+     * @param JAXLXmlAccess $xml
      * @param bool $append
      * @return JAXLXml
      */
-    public function x($xml, $append = false)
+    public function x(JAXLXmlAccess $xml, $append = false)
     {
         if (!$append) {
             $this->rover->xml = $xml;

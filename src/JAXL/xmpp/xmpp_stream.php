@@ -138,9 +138,9 @@ abstract class XMPPStream extends JAXLFsm
     }
 
     /**
-     * @param JAXLXml|XMPPStanza $stanza
+     * @param JAXLXmlAccess $stanza
      */
-    public function send($stanza)
+    public function send(JAXLXmlAccess $stanza)
     {
         $this->trans->send($stanza->to_string());
     }
