@@ -80,10 +80,10 @@ class JAXLSock5
         $sock_path = $this->sock_path();
 
         if ($this->client->connect($sock_path)) {
-            _debug("established connection to $sock_path");
+            JAXLLogger::debug("established connection to $sock_path");
             return true;
         } else {
-            _error("unable to connect $sock_path");
+            JAXLLogger::error("unable to connect $sock_path");
             return false;
         }
     }
@@ -126,7 +126,7 @@ class JAXLSock5
 
     public function on_response($raw)
     {
-        _debug($raw);
+        JAXLLogger::debug($raw);
     }
 
     //

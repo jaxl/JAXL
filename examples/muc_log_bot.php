@@ -69,7 +69,7 @@ $room_full_jid = new XMPPJid($_room_full_jid);
 
 $client->add_cb('on_auth_success', function () {
     global $client, $room_full_jid;
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
     // join muc room
     $client->xeps['0045']->join_room($room_full_jid);
@@ -78,7 +78,7 @@ $client->add_cb('on_auth_success', function () {
 $client->add_cb('on_auth_failure', function ($reason) {
     global $client;
     $client->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 });
 
 $client->add_cb('on_groupchat_message', function ($stanza) {
@@ -113,13 +113,13 @@ $client->add_cb('on_presence_stanza', function ($stanza) {
         if (($x = $stanza->exists('x', XEP0045::NS_MUC.'#user')) !== false) {
             if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
                 $item = $x->exists('item');
-                _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
+                JAXLLogger::info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
                     ", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
             } else {
-                _info("xmlns #user have no x child element");
+                JAXLLogger::info("xmlns #user have no x child element");
             }
         } else {
-            _warning("=======> odd case 1");
+            JAXLLogger::warning("=======> odd case 1");
         }
     } elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
         // stanza from other users received
@@ -129,15 +129,15 @@ $client->add_cb('on_presence_stanza', function ($stanza) {
             echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".
                 $from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
         } else {
-            _warning("=======> odd case 2");
+            JAXLLogger::warning("=======> odd case 2");
         }
     } else {
-        _warning("=======> odd case 3");
+        JAXLLogger::warning("=======> odd case 3");
     }
 });
 
 $client->add_cb('on_disconnect', function () {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 });
 
 //

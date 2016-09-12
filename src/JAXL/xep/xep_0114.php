@@ -71,7 +71,7 @@ class XEP0114 extends XMPPXep
 
     public function start_handshake($stanza)
     {
-        _debug("starting component handshake");
+        JAXLLogger::debug("starting component handshake");
         $id = $stanza->id;
         $hash = strtolower(sha1($id.$this->jaxl->pass));
         $stanza = new JAXLXml('handshake', null, $hash);
@@ -80,7 +80,7 @@ class XEP0114 extends XMPPXep
 
     public function logged_in($stanza)
     {
-        _debug("component handshake complete");
+        JAXLLogger::debug("component handshake complete");
         $this->jaxl->handle_auth_success();
         return array("logged_in", 1);
     }
@@ -93,7 +93,7 @@ class XEP0114 extends XMPPXep
             $this->jaxl->send_end_stream();
             return array("logged_out", 0);
         } else {
-            _debug("uncatched stanza received in logged_out");
+            JAXLLogger::debug("uncatched stanza received in logged_out");
         }
     }
 }

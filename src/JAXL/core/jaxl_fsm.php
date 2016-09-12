@@ -61,7 +61,7 @@ abstract class JAXLFsm
     {
         if ($this->state) {
             // call state method
-            _debug(sprintf(
+            JAXLLogger::debug(sprintf(
                 "calling state handler '%s' for incoming event '%s'",
                 is_array($this->state) ? $this->state[1] : $this->state,
                 $event
@@ -85,14 +85,14 @@ abstract class JAXLFsm
             } else {
                 $this->handle_invalid_state($r);
             }
-            _debug("current state '".(is_array($this->state) ? $this->state[1] : $this->state)."'");
+            JAXLLogger::debug("current state '".(is_array($this->state) ? $this->state[1] : $this->state)."'");
 
             // return case
             if (!is_callable($r) && is_array($r) && count($r) == 2) {
                 return $ret;
             }
         } else {
-            _debug("invalid state found, nothing called for event ".$event."");
+            JAXLLogger::debug("invalid state found, nothing called for event ".$event."");
         }
     }
 }

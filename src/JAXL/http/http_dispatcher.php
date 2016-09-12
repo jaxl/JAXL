@@ -50,7 +50,7 @@ class HTTPDispatcher
     {
         $s = count($rule);
         if ($s > 4) {
-            _debug("invalid rule");
+            JAXLLogger::debug("invalid rule");
             return;
         }
 
@@ -61,7 +61,7 @@ class HTTPDispatcher
             $rule[] = array('GET');
             $rule[] = array();
         } else {
-            _debug("invalid rule");
+            JAXLLogger::debug("invalid rule");
             return;
         }
 
@@ -71,9 +71,9 @@ class HTTPDispatcher
     public function dispatch($request)
     {
         foreach ($this->rules as $rule) {
-            //_debug("matching $request->path with pattern $rule->pattern");
+            //JAXLLogger::debug("matching $request->path with pattern $rule->pattern");
             if (($matches = $rule->match($request->path, $request->method)) !== false) {
-                _debug("matching rule found, dispatching");
+                JAXLLogger::debug("matching rule found, dispatching");
                 $params = array($request);
                 // TODO: a bad way to restrict on 'pk', fix me for generalization
                 if (isset($matches['pk'])) {

@@ -37,7 +37,7 @@ Next we need to register callbacks on events of interest using ``JAXL::add_cb/2`
     });
     
     $client->add_cb('on_disconnect', function () {
-        _debug("got on_disconnect cb");
+        JAXLLogger::debug("got on_disconnect cb");
     });
 
 We just registered callbacks on ``on_auth_success``, ``on_chat_message`` and ``on_disconnect`` events 

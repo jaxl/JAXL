@@ -86,7 +86,7 @@ class JAXLLoop
             ++self::$active_write_fds;
         }
 
-        _debug("Watch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+        JAXLLogger::debug("Watch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
     }
 
     public static function unwatch($fd, $opts)
@@ -109,7 +109,7 @@ class JAXLLoop
             }
         }
 
-        _debug("Unwatch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
+        JAXLLogger::debug("Unwatch: active read fds: ".self::$active_read_fds.", write fds: ".self::$active_write_fds);
     }
 
     public static function run()
@@ -122,7 +122,7 @@ class JAXLLoop
                 self::select();
             }
 
-            _debug("no more active fd's to select");
+            JAXLLogger::debug("no more active fd's to select");
             self::$is_running = false;
         }
     }
@@ -135,7 +135,7 @@ class JAXLLoop
 
         $changed = @stream_select($read, $write, $except, self::$secs, self::$usecs);
         if ($changed === false) {
-            _error("error in the event loop, shutting down...");
+            JAXLLogger::error("error in the event loop, shutting down...");
             /*foreach (self::$read_fds as $fd) {
                                 if (is_resource($fd)) {
                                         print_r(stream_get_meta_data($fd));
@@ -161,7 +161,7 @@ class JAXLLoop
 
             self::$clock->tick();
         } elseif ($changed === 0) {
-            //_debug("nothing changed while selecting for read");
+            //JAXLLogger::debug("nothing changed while selecting for read");
             self::$clock->tick((self::$secs * pow(10, 6)) + self::$usecs);
         }
     }

@@ -74,7 +74,7 @@ function upload($request)
             $request->recv_body();
         } else {
             // got upload body, save it
-            _info("file upload complete, got ".strlen($request->body)." bytes of data");
+            JAXLLogger::info("file upload complete, got ".strlen($request->body)." bytes of data");
             $upload_data = $request->multipart->form_data[0]['body'];
             $request->ok(
                 $upload_data,
@@ -92,25 +92,25 @@ $upload = array('upload', '^/upload', array('GET', 'POST'));
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
 function create_event($request)
 {
-    _info("got event create request");
+    JAXLLogger::info("got event create request");
     $request->close();
 }
 
 function read_event($request, $pk)
 {
-    _info("got event read request for $pk");
+    JAXLLogger::info("got event read request for $pk");
     $request->close();
 }
 
 function update_event($request, $pk)
 {
-    _info("got event update request for $pk");
+    JAXLLogger::info("got event update request for $pk");
     $request->close();
 }
 
 function delete_event($request, $pk)
 {
-    _info("got event delete request for $pk");
+    JAXLLogger::info("got event delete request for $pk");
     $request->close();
 }
 

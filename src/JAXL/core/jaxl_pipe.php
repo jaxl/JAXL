@@ -89,17 +89,17 @@ class JAXLPipe
             posix_mkfifo($pipe_path, $this->perm);
             $this->fd = fopen($pipe_path, 'r+');
             if (!$this->fd) {
-                _error("unable to open pipe");
+                JAXLLogger::error("unable to open pipe");
             } else {
-                _debug("pipe opened using path $pipe_path");
-                _notice("Usage: $ echo 'Hello World!' > $pipe_path");
+                JAXLLogger::debug("pipe opened using path $pipe_path");
+                JAXLLogger::notice("Usage: $ echo 'Hello World!' > $pipe_path");
 
                 $this->client = new JAXLSocketClient();
                 $this->client->connect($this->fd);
                 $this->client->set_callback(array(&$this, 'on_data'));
             }
         } else {
-            _error("pipe with name $name already exists");
+            JAXLLogger::error("pipe with name $name already exists");
         }
     }
 
@@ -111,7 +111,7 @@ class JAXLPipe
         if (file_exists($this->get_pipe_file_path())) {
             unlink($this->get_pipe_file_path());
         }
-        _debug("unlinking pipe file");
+        JAXLLogger::debug("unlinking pipe file");
     }
 
     /**

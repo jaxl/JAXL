@@ -45,7 +45,7 @@ class HTTPMultiPart extends JAXLFsm
 
     public function handle_invalid_state($r)
     {
-        _error("got invalid event $r");
+        JAXLLogger::error("got invalid event $r");
     }
 
     public function __construct($boundary)
@@ -71,11 +71,11 @@ class HTTPMultiPart extends JAXLFsm
                 );
                 return array('wait_for_content_disposition', true);
             } else {
-                _warning("invalid boundary start $data[0] while expecting $this->boundary");
+                JAXLLogger::warning("invalid boundary start $data[0] while expecting $this->boundary");
                 return array('wait_for_boundary_start', false);
             }
         } else {
-            _warning("invalid $event rcvd");
+            JAXLLogger::warning("invalid $event rcvd");
             return array('wait_for_boundary_start', false);
         }
     }
@@ -96,15 +96,15 @@ class HTTPMultiPart extends JAXLFsm
 
                     return array('wait_for_content_type', true);
                 } else {
-                    _warning("first part of meta is not form-data");
+                    JAXLLogger::warning("first part of meta is not form-data");
                     return array('wait_for_content_disposition', false);
                 }
             } else {
-                _warning("not a valid content-disposition line");
+                JAXLLogger::warning("not a valid content-disposition line");
                 return array('wait_for_content_disposition', false);
             }
         } else {
-            _warning("invalid $event rcvd");
+            JAXLLogger::warning("invalid $event rcvd");
             return array('wait_for_content_disposition', false);
         }
     }
@@ -118,11 +118,11 @@ class HTTPMultiPart extends JAXLFsm
                 $this->form_data[$this->index]['meta']['type'] = $type[1];
                 return array('wait_for_content_body', true);
             } else {
-                _debug("not a valid content-type line");
+                JAXLLogger::debug("not a valid content-type line");
                 return array('wait_for_content_type', false);
             }
         } else {
-            _warning("invalid $event rcvd");
+            JAXLLogger::warning("invalid $event rcvd");
             return array('wait_for_content_type', false);
         }
     }
@@ -131,17 +131,17 @@ class HTTPMultiPart extends JAXLFsm
     {
         if ($event == 'process') {
             if ($data[0] == '--'.$this->boundary) {
-                _debug("start of new multipart/form-data detected");
+                JAXLLogger::debug("start of new multipart/form-data detected");
                 return array('wait_for_content_disposition', true);
             } elseif ($data[0] == '--'.$this->boundary.'--') {
-                _debug("end of multipart form data detected");
+                JAXLLogger::debug("end of multipart form data detected");
                 return array('wait_for_empty_line', true);
             } else {
                 $this->form_data[$this->index]['body'] .= $data[0];
                 return array('wait_for_content_body', true);
             }
         } else {
-            _warning("invalid $event rcvd");
+            JAXLLogger::warning("invalid $event rcvd");
             return array('wait_for_content_body', false);
         }
     }
@@ -152,18 +152,18 @@ class HTTPMultiPart extends JAXLFsm
             if ($data[0] == '') {
                 return array('done', true);
             } else {
-                _warning("invalid empty line $data[0] received");
+                JAXLLogger::warning("invalid empty line $data[0] received");
                 return array('wait_for_empty_line', false);
             }
         } else {
-            _warning("got $event in done state with data $data[0]");
+            JAXLLogger::warning("got $event in done state with data $data[0]");
             return array('wait_for_empty_line', false);
         }
     }
 
     public function done($event, $data)
     {
-        _warning("got unhandled event $event with data $data[0]");
+        JAXLLogger::warning("got unhandled event $event with data $data[0]");
         return array('done', false);
     }
 }

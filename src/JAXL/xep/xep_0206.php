@@ -108,7 +108,7 @@ class XEP0206 extends XMPPXep
                 $body = $this->wrap($body);
             }
         }
-        _debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$body);
+        JAXLLogger::debug("posting to ".$this->jaxl->cfg['bosh_url']." body ".$body);
         
         $this->chs[$this->rid] = curl_init($this->jaxl->cfg['bosh_url']);
         curl_setopt($this->chs[$this->rid], CURLOPT_RETURNTRANSFER, true);
@@ -134,10 +134,10 @@ class XEP0206 extends XMPPXep
             }
         }
         
-        _debug("recving for $this->rid");
+        JAXLLogger::debug("recving for $this->rid");
         do {
             $mrc = curl_multi_exec($this->mch, $running);
-            _debug("mrc=$mrc running=$running");
+            JAXLLogger::debug("mrc=$mrc running=$running");
         } while ($mrc == CURLM_CALL_MULTI_PERFORM);
         while ($running && $mrc == CURLM_OK) {
             $ms = curl_multi_select($this->mch, 0.1);
@@ -154,7 +154,7 @@ class XEP0206 extends XMPPXep
             
             curl_multi_remove_handle($this->mch, $ch);
             unset($this->chs[$this->rid]);
-            _debug("recvd for $this->rid ".$data);
+            JAXLLogger::debug("recvd for $this->rid ".$data);
         
             list($body, $stanza) = $this->unwrap($data);
             $body = new SimpleXMLElement($body);
@@ -175,7 +175,7 @@ class XEP0206 extends XMPPXep
                 }
             }
         } else {
-            _error("no ch found");
+            JAXLLogger::error("no ch found");
             exit;
         }
     }
@@ -263,6 +263,6 @@ class XEP0206 extends XMPPXep
     
     public function disconnect()
     {
-        _debug("disconnecting");
+        JAXLLogger::debug("disconnecting");
     }
 }

@@ -62,7 +62,7 @@ $client->require_xep(array(
 
 $client->add_cb('on_auth_success', function () {
     global $client;
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
     // create node
     //$client->xeps['0060']->create_node('pubsub.localhost', 'dummy_node');
@@ -74,20 +74,20 @@ $client->add_cb('on_auth_success', function () {
 $client->add_cb('on_auth_failure', function ($reason) {
     global $client;
     $client->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 });
 
 $client->add_cb('on_headline_message', function ($stanza) {
     global $client;
     if (($event = $stanza->exists('event', XEP0060::NS_PUBSUB.'#event'))) {
-        _info("got pubsub event");
+        JAXLLogger::info("got pubsub event");
     } else {
-        _warning("unknown headline message rcvd");
+        JAXLLogger::warning("unknown headline message rcvd");
     }
 });
 
 $client->add_cb('on_disconnect', function () {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 });
 
 //

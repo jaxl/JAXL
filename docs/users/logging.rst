@@ -20,11 +20,11 @@ global logging methods
 
 Following global methods for logging are available:
 
-    * ``_error($msg)``
-    * ``_warning($msg)``
-    * ``_notice($msg)``
-    * ``_info($msg)``
-    * ``_debug($msg)``
+    * ``error($msg)``
+    * ``warning($msg)``
+    * ``notice($msg)``
+    * ``info($msg)``
+    * ``debug($msg)``
         
 log/2
 -----------

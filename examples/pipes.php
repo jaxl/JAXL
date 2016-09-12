@@ -48,7 +48,7 @@ $pipe = new JAXLPipe($pipe_name);
 // add read event callback
 $pipe->set_callback(function ($data) {
     global $pipe;
-    _info("read ".trim($data)." from pipe");
+    JAXLLogger::info("read ".trim($data)." from pipe");
 });
 
 JAXLLoop::run();

@@ -73,7 +73,7 @@ Define our REST resources callback methods:
                 $request->recv_body();
             } else {
                 // got upload body, save it
-                _debug("file upload complete, got ".strlen($request->body)." bytes of data");
+                JAXLLogger::debug("file upload complete, got ".strlen($request->body)." bytes of data");
                 $request->close();
             }
         }

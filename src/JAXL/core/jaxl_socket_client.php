@@ -80,7 +80,7 @@ class JAXLSocketClient
 
     public function __destruct()
     {
-        //_debug("cleaning up xmpp socket...");
+        //JAXLLogger::debug("cleaning up xmpp socket...");
         $this->disconnect();
     }
 
@@ -107,7 +107,7 @@ class JAXLSocketClient
                 $this->port = $path_parts[2];
             }
 
-            _info("trying ".$socket_path);
+            JAXLLogger::info("trying ".$socket_path);
             if ($this->stream_context) {
                 $this->fd = @stream_socket_client(
                     $socket_path,
@@ -127,7 +127,7 @@ class JAXLSocketClient
         }
 
         if ($this->fd) {
-            _debug("connected to ".$socket_path."");
+            JAXLLogger::debug("connected to ".$socket_path."");
             stream_set_blocking($this->fd, $this->blocking);
 
             // watch descriptor for read/write events
@@ -137,7 +137,7 @@ class JAXLSocketClient
 
             return true;
         } else {
-            _error(sprintf(
+            JAXLLogger::error(sprintf(
                 "unable to connect %s with error no: %s, error str: %s",
                 is_null($socket_path) ? 'NULL' : $socket_path,
                 is_null($this->errno) ? 'NULL' : $this->errno,
@@ -207,14 +207,14 @@ class JAXLSocketClient
 
     public function on_read_ready($fd)
     {
-        //_debug("on read ready called");
+        //JAXLLogger::debug("on read ready called");
         $raw = @fread($fd, $this->recv_chunk_size);
         $bytes = strlen($raw);
 
         if ($bytes === 0) {
             $meta = stream_get_meta_data($fd);
             if ($meta['eof'] === true) {
-                _warning("socket eof, disconnecting");
+                JAXLLogger::warning("socket eof, disconnecting");
                 JAXLLoop::unwatch($fd, array(
                     'read' => true
                 ));
@@ -227,9 +227,9 @@ class JAXLSocketClient
         $total = $this->ibuffer.$raw;
 
         $this->ibuffer = "";
-        _debug("read ".$bytes."/".$this->recv_bytes." of data");
+        JAXLLogger::debug("read ".$bytes."/".$this->recv_bytes." of data");
         if ($bytes > 0) {
-            _debug($raw);
+            JAXLLogger::debug($raw);
         }
 
         // callback
@@ -240,13 +240,13 @@ class JAXLSocketClient
 
     public function on_write_ready($fd)
     {
-        //_debug("on write ready called");
+        //JAXLLogger::debug("on write ready called");
         $total = strlen($this->obuffer);
         $bytes = @fwrite($fd, $this->obuffer);
         $this->send_bytes += $bytes;
 
-        _debug("sent ".$bytes."/".$this->send_bytes." of data");
-        _debug(substr($this->obuffer, 0, $bytes));
+        JAXLLogger::debug("sent ".$bytes."/".$this->send_bytes." of data");
+        JAXLLogger::debug(substr($this->obuffer, 0, $bytes));
 
         $this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
 
@@ -258,6 +258,6 @@ class JAXLSocketClient
             $this->writing = false;
         }
 
-        //_debug("current obuffer size: ".strlen($this->obuffer)."");
+        //JAXLLogger::debug("current obuffer size: ".strlen($this->obuffer)."");
     }
 }

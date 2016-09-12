@@ -119,15 +119,22 @@ abstract class XMPPStream extends JAXLFsm
 
     public function __destruct()
     {
-        //_debug("cleaning up xmpp stream...");
+        //JAXLLogger::debug("cleaning up xmpp stream...");
     }
 
     public function handle_invalid_state($r)
     {
-        _error("got invalid return value from state handler '".$this->state."', sending end stream...");
+        JAXLLogger::error(sprintf(
+            "got invalid return value from state handler '%s', sending end stream...",
+            $this->state
+        ));
         $this->send_end_stream();
         $this->state = "logged_out";
-        _notice("state handler '".$this->state."' returned ".serialize($r).", kindly report this to developers");
+        JAXLLogger::notice(sprintf(
+            "state handler '%s' returned %s, kindly report this to developers",
+            $this->state,
+            serialize($r)
+        ));
     }
 
     /**
@@ -218,7 +225,7 @@ abstract class XMPPStream extends JAXLFsm
         $decoded = $this->explode_data(base64_decode($challenge));
 
         if (!isset($decoded['rspauth'])) {
-            _debug("calculating response to challenge");
+            JAXLLogger::debug("calculating response to challenge");
             $stanza->t($this->get_challenge_response($decoded));
         }
 
@@ -446,7 +453,7 @@ abstract class XMPPStream extends JAXLFsm
                 return $this->handle_stream_start($stanza);
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 //print_r($args);
                 return $this->handle_other($event, $args);
                 //return array("setup", 0);
@@ -469,7 +476,7 @@ abstract class XMPPStream extends JAXLFsm
                 return $this->handle_stream_start($stanza);
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("connected", 0);
                 break;
@@ -487,7 +494,7 @@ abstract class XMPPStream extends JAXLFsm
                 return "logged_out";
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("disconnected", 0);
                 break;
@@ -499,11 +506,11 @@ abstract class XMPPStream extends JAXLFsm
         switch ($event) {
             case "start_cb":
                 // TODO: save stream id and other meta info
-                //_debug("stream started");
+                //JAXLLogger::debug("stream started");
                 return "wait_for_stream_features";
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_stream_start", 0);
                 break;
@@ -556,12 +563,12 @@ abstract class XMPPStream extends JAXLFsm
 					return "wait_for_compression_result";
 				*/
                 } else {
-                    _debug("no catch");
+                    JAXLLogger::debug("no catch");
                 }
 
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_stream_features", 0);
                 break;
@@ -589,7 +596,7 @@ abstract class XMPPStream extends JAXLFsm
 
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_tls_result", 0);
                 break;
@@ -611,7 +618,7 @@ abstract class XMPPStream extends JAXLFsm
 
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_compression_result", 0);
                 break;
@@ -626,7 +633,7 @@ abstract class XMPPStream extends JAXLFsm
 
                 if ($stanza->name == 'failure' && $stanza->ns == XMPP::NS_SASL) {
                     $reason = $stanza->childrens[0]->name;
-                    //_debug("sasl failed with reason ".$reason."");
+                    //JAXLLogger::debug("sasl failed with reason ".$reason."");
                     $this->handle_auth_failure($reason);
                     return "logged_out";
                 } elseif ($stanza->name == 'challenge' && $stanza->ns == XMPP::NS_SASL) {
@@ -638,13 +645,13 @@ abstract class XMPPStream extends JAXLFsm
                     $this->send_start_stream($this->jid);
                     return "wait_for_stream_start";
                 } else {
-                    _debug("got unhandled sasl response");
+                    JAXLLogger::debug("got unhandled sasl response");
                 }
 
                 return "wait_for_sasl_response";
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_sasl_response", 0);
                 break;
@@ -668,7 +675,7 @@ abstract class XMPPStream extends JAXLFsm
                 }
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_bind_response", 0);
                 break;
@@ -683,7 +690,7 @@ abstract class XMPPStream extends JAXLFsm
                 return "logged_in";
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("wait_for_session_response", 0);
                 break;
@@ -722,7 +729,7 @@ abstract class XMPPStream extends JAXLFsm
                 return "disconnected";
                 break;
             default:
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("logged_in", 0);
                 break;
@@ -748,7 +755,7 @@ abstract class XMPPStream extends JAXLFsm
                 break;
             default:
                 // exit for any other event in logged_out state
-                _debug("uncatched $event");
+                JAXLLogger::debug("uncatched $event");
                 return $this->handle_other($event, $args);
                 //return array("logged_out", 0);
                 break;

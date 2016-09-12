@@ -153,7 +153,7 @@ class JAXLEvent
     public function exists($ev)
     {
         $ret = isset($this->reg[$ev]);
-        //_debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
+        //JAXLLogger::debug("event ".$ev." callback ".($ret ? "exists" : "do not exists"));
         return $ret;
     }
 

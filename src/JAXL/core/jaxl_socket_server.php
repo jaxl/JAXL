@@ -61,23 +61,23 @@ class JAXLSocketServer
                 JAXLLoop::watch($this->fd, array(
                     'read' => array(&$this, 'on_server_accept_ready')
                 ));
-                _info("socket ready to accept on path ".$path);
+                JAXLLogger::info("socket ready to accept on path ".$path);
             } else {
-                _error("unable to set non block flag");
+                JAXLLogger::error("unable to set non block flag");
             }
         } else {
-            _error("unable to establish socket server, errno: ".$errno.", errstr: ".$errstr);
+            JAXLLogger::error("unable to establish socket server, errno: ".$errno.", errstr: ".$errstr);
         }
     }
 
     public function __destruct()
     {
-        _info("shutting down socket server");
+        JAXLLogger::info("shutting down socket server");
     }
 
     public function read($client_id)
     {
-        //_debug("reactivating read on client sock");
+        //JAXLLogger::debug("reactivating read on client sock");
         $this->add_read_cb($client_id);
     }
 
@@ -99,10 +99,10 @@ class JAXLSocketServer
 
     public function on_server_accept_ready($server)
     {
-        //_debug("got server accept");
+        //JAXLLogger::debug("got server accept");
         $client = @stream_socket_accept($server, 0, $addr);
         if (!$client) {
-            _error("unable to accept new client conn");
+            JAXLLogger::error("unable to accept new client conn");
             return;
         }
 
@@ -119,7 +119,7 @@ class JAXLSocketServer
                 'writing' => false
             );
 
-            _debug("accepted connection from client#".$client_id.", addr:".$addr);
+            JAXLLogger::debug("accepted connection from client#".$client_id.", addr:".$addr);
 
             // if accept callback is registered
             // callback and let user land take further control of what to do
@@ -136,7 +136,7 @@ class JAXLSocketServer
                 unset($this->clients[$client_id]);
             }
         } else {
-            _error("unable to set non block flag");
+            JAXLLogger::error("unable to set non block flag");
         }
     }
 
@@ -144,19 +144,19 @@ class JAXLSocketServer
     {
         // deactive socket for read
         $client_id = (int) $client;
-        //_debug("client#$client_id is read ready");
+        //JAXLLogger::debug("client#$client_id is read ready");
         $this->del_read_cb($client_id);
 
         $raw = fread($client, $this->recv_chunk_size);
         $bytes = strlen($raw);
 
-        _debug("recv $bytes bytes from client#$client_id");
-        //_debug($raw);
+        JAXLLogger::debug("recv $bytes bytes from client#$client_id");
+        //JAXLLogger::debug($raw);
 
         if ($bytes === 0) {
             $meta = stream_get_meta_data($client);
             if ($meta['eof'] === true) {
-                _debug("socket eof client#".$client_id.", closing");
+                JAXLLogger::debug("socket eof client#".$client_id.", closing");
                 $this->del_read_cb($client_id);
 
                 if (is_resource($client)) {
@@ -177,7 +177,7 @@ class JAXLSocketServer
     public function on_client_write_ready($client)
     {
         $client_id = (int) $client;
-        _debug("client#$client_id is write ready");
+        JAXLLogger::debug("client#$client_id is write ready");
 
         try {
             // send in chunks
@@ -186,15 +186,15 @@ class JAXLSocketServer
 
             if ($written === false) {
                 // fwrite failed
-                _warning("====> fwrite failed");
+                JAXLLogger::warning("====> fwrite failed");
                 $this->clients[$client_id]['obuffer'] = $total;
             } elseif ($written == strlen($total) || $written == $this->send_chunk_size) {
                 // full chunk written
-                //_debug("full chunk written");
+                //JAXLLogger::debug("full chunk written");
                 $this->clients[$client_id]['obuffer'] = substr($total, $this->send_chunk_size);
             } else {
                 // partial chunk written
-                //_debug("partial chunk $written written");
+                //JAXLLogger::debug("partial chunk $written written");
                 $this->clients[$client_id]['obuffer'] = substr($total, $written);
             }
 
@@ -210,11 +210,11 @@ class JAXLSocketServer
                     $this->clients[$client_id]['closed'] = true;
                     unset($this->clients[$client_id]);
 
-                    _debug("closed client#".$client_id);
+                    JAXLLogger::debug("closed client#".$client_id);
                 }
             }
         } catch (JAXLException $e) {
-            _debug("====> got fwrite exception");
+            JAXLLogger::debug("====> got fwrite exception");
         }
     }
 

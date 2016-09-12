@@ -55,7 +55,7 @@ class JAXLClock
 
     public function __destruct()
     {
-        _info("shutting down clock server...");
+        JAXLLogger::info("shutting down clock server...");
     }
 
     public function tick($by = null)
@@ -74,7 +74,7 @@ class JAXLClock
         // run scheduled jobs
         foreach ($this->jobs as $ref => $job) {
             if ($this->tick >= $job['scheduled_on'] + $job['after']) {
-                //_debug("running job#".($ref+1)." at tick ".$this->tick.", scheduled on ".
+                //JAXLLogger::debug("running job#".($ref+1)." at tick ".$this->tick.", scheduled on ".
                 //    $job['scheduled_on']." after ".$job['after'].", periodic ".$job['is_periodic']);
                 call_user_func($job['cb'], $job['args']);
                 if (!$job['is_periodic']) {

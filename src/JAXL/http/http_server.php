@@ -107,7 +107,7 @@ class HTTPServer
 
     public function on_accept($sock, $addr)
     {
-        _debug("on_accept for client#$sock, addr:$addr");
+        JAXLLogger::debug("on_accept for client#$sock, addr:$addr");
 
         // initialize new request obj
         $request = new HTTPRequest($sock, $addr);
@@ -128,7 +128,7 @@ class HTTPServer
 
     public function on_request($sock, $raw)
     {
-        _debug("on_request for client#$sock");
+        JAXLLogger::debug("on_request for client#$sock");
         $request = $this->requests[$sock];
 
         // 'wait_for_body' state is reached when ever
@@ -145,7 +145,7 @@ class HTTPServer
                 list($method, $resource, $version) = explode(" ", $lines[0]);
                 $request->line($method, $resource, $version);
                 unset($lines[0]);
-                _info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
+                JAXLLogger::info($request->ip." ".$request->method." ".$request->resource." ".$request->version);
             }
 
             // parse headers
@@ -174,19 +174,19 @@ class HTTPServer
         // if request has reached 'headers_received' state?
         if ($request->state() == 'headers_received') {
             // dispatch to any matching rule found
-            _debug("delegating to dispatcher for further routing");
+            JAXLLogger::debug("delegating to dispatcher for further routing");
             $dispatched = $this->dispatcher->dispatch($request);
 
             // if no dispatch rule matched call generic callback
             if (!$dispatched && $this->cb) {
-                _debug("no dispatch rule matched, sending to generic callback");
+                JAXLLogger::debug("no dispatch rule matched, sending to generic callback");
                 call_user_func($this->cb, $request);
             } elseif (!$dispatched) {
                 // elseif not dispatched and not generic callbacked
                 // send 404 not_found
 
                 // TODO: send 404 if no callback is registered for this request
-                _debug("dropping request since no matching dispatch rule or generic callback was specified");
+                JAXLLogger::debug("dropping request since no matching dispatch rule or generic callback was specified");
                 $request->not_found('404 Not Found');
             }
         } else {

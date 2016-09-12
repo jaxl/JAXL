@@ -82,7 +82,7 @@ class HTTPClient
 
         $socket_path = $transport.'://'.$ip.':'.$port;
         if ($this->client->connect($socket_path)) {
-            _debug("connection to $this->url established");
+            JAXLLogger::debug("connection to $this->url established");
 
             // send request data
             $this->send_request();
@@ -90,13 +90,13 @@ class HTTPClient
             // start main loop
             JAXLLoop::run();
         } else {
-            _debug("unable to open $this->url");
+            JAXLLogger::debug("unable to open $this->url");
         }
     }
 
     public function on_response($raw)
     {
-        _info("got http response");
+        JAXLLogger::info("got http response");
     }
 
     protected function send_request()

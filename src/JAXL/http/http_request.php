@@ -120,7 +120,7 @@ class HTTPRequest extends JAXLFsm
 
     public function __destruct()
     {
-        _debug("http request going down in ".$this->state." state");
+        JAXLLogger::debug("http request going down in ".$this->state." state");
     }
 
     public function state()
@@ -134,7 +134,7 @@ class HTTPRequest extends JAXLFsm
 
     public function handle_invalid_state($r)
     {
-        _debug("handle invalid state called with");
+        JAXLLogger::debug("handle invalid state called with");
         var_dump($r);
     }
 
@@ -152,7 +152,7 @@ class HTTPRequest extends JAXLFsm
                 return 'wait_for_request_line';
                 break;
             default:
-                _warning("uncatched $event");
+                JAXLLogger::warning("uncatched $event");
                 return 'setup';
         }
     }
@@ -165,7 +165,7 @@ class HTTPRequest extends JAXLFsm
                 return 'wait_for_headers';
                 break;
             default:
-                _warning("uncatched $event");
+                JAXLLogger::warning("uncatched $event");
                 return 'wait_for_request_line';
         }
     }
@@ -180,7 +180,7 @@ class HTTPRequest extends JAXLFsm
             case 'empty_line':
                 return 'maybe_headers_received';
             default:
-                _warning("uncatched $event");
+                JAXLLogger::warning("uncatched $event");
                 return 'wait_for_headers';
         }
     }
@@ -199,7 +199,7 @@ class HTTPRequest extends JAXLFsm
                 return $this->wait_for_body($event, $args);
                 break;
             default:
-                _warning("uncatched $event");
+                JAXLLogger::warning("uncatched $event");
                 return 'maybe_headers_received';
         }
     }
@@ -224,9 +224,9 @@ class HTTPRequest extends JAXLFsm
                     // these define various states of a multipart/form-data
                     $form_data = explode(HTTPServer::HTTP_CRLF, $rcvd);
                     foreach ($form_data as $data) {
-                        //_debug("passing $data to multipart fsm");
+                        //JAXLLogger::debug("passing $data to multipart fsm");
                         if (!$this->multipart->process($data)) {
-                            _debug("multipart fsm returned false");
+                            JAXLLogger::debug("multipart fsm returned false");
                             $this->close();
                             return array('closed', false);
                         }
@@ -234,10 +234,10 @@ class HTTPRequest extends JAXLFsm
                 }
 
                 if ($this->recvd_body_len < $content_length && $this->multipart->state() != 'done') {
-                    _debug("rcvd body len: $this->recvd_body_len/$content_length");
+                    JAXLLogger::debug("rcvd body len: $this->recvd_body_len/$content_length");
                     return 'wait_for_body';
                 } else {
-                    _debug("all data received, switching state for dispatch");
+                    JAXLLogger::debug("all data received, switching state for dispatch");
                     return 'headers_received';
                 }
                 break;
@@ -248,16 +248,16 @@ class HTTPRequest extends JAXLFsm
                 $this->recvd_body_len += $rcvd_len;
 
                 if (!$this->multipart->process($body)) {
-                    _debug("multipart fsm returned false");
+                    JAXLLogger::debug("multipart fsm returned false");
                     $this->close();
                     return array('closed', false);
                 }
 
                 if ($this->recvd_body_len < $content_length) {
-                    _debug("rcvd body len: $this->recvd_body_len/$content_length");
+                    JAXLLogger::debug("rcvd body len: $this->recvd_body_len/$content_length");
                     return 'wait_for_body';
                 } else {
-                    _debug("all data received, switching state for dispatch");
+                    JAXLLogger::debug("all data received, switching state for dispatch");
                     return 'headers_received';
                 }
                 break;
@@ -265,21 +265,21 @@ class HTTPRequest extends JAXLFsm
                 $content_length = $this->headers['Content-Length'];
 
                 if (!$this->multipart->process('')) {
-                    _debug("multipart fsm returned false");
+                    JAXLLogger::debug("multipart fsm returned false");
                     $this->close();
                     return array('closed', false);
                 }
 
                 if ($this->recvd_body_len < $content_length) {
-                    _debug("rcvd body len: $this->recvd_body_len/$content_length");
+                    JAXLLogger::debug("rcvd body len: $this->recvd_body_len/$content_length");
                     return 'wait_for_body';
                 } else {
-                    _debug("all data received, switching state for dispatch");
+                    JAXLLogger::debug("all data received, switching state for dispatch");
                     return 'headers_received';
                 }
                 break;
             default:
-                _warning("uncatched $event");
+                JAXLLogger::warning("uncatched $event");
                 return 'wait_for_body';
         }
     }
@@ -298,13 +298,13 @@ class HTTPRequest extends JAXLFsm
                         call_user_func_array(array(&$this, $protected), $args);
                         return 'headers_received';
                     } else {
-                        _debug("non-existant method $event called");
+                        JAXLLogger::debug("non-existant method $event called");
                         return 'headers_received';
                     }
                 } elseif (isset($this->shortcuts[$event])) {
                     return $this->handle_shortcut($event, $args);
                 } else {
-                    _warning("uncatched $event ".$args[0]);
+                    JAXLLogger::warning("uncatched $event ".$args[0]);
                     return 'headers_received';
                 }
         }
@@ -312,7 +312,7 @@ class HTTPRequest extends JAXLFsm
 
     public function closed($event, $args)
     {
-        _warning("uncatched $event");
+        JAXLLogger::warning("uncatched $event");
     }
 
     // sets input headers
@@ -333,7 +333,7 @@ class HTTPRequest extends JAXLFsm
             if (count($ctype) == 2 && strtolower(trim($ctype[0])) == 'multipart/form-data') {
                 $boundary = explode('=', trim($ctype[1]));
                 if (strtolower(trim($boundary[0])) == 'boundary') {
-                    _debug("multipart with boundary $boundary[1] detected");
+                    JAXLLogger::debug("multipart with boundary $boundary[1] detected");
                     $this->multipart = new HTTPMultiPart(ltrim($boundary[1]));
                 }
             }
@@ -345,7 +345,7 @@ class HTTPRequest extends JAXLFsm
     // shortcut handler
     protected function handle_shortcut($event, $args)
     {
-        _debug("executing shortcut '$event'");
+        JAXLLogger::debug("executing shortcut '$event'");
         switch ($event) {
             // http status code shortcuts
             case 'ok':
@@ -459,7 +459,7 @@ class HTTPRequest extends JAXLFsm
 
         // send body
         // prefixed with an empty line
-        _debug("sending out HTTP_CRLF prefixed body");
+        JAXLLogger::debug("sending out HTTP_CRLF prefixed body");
         if ($body) {
             $this->send_body(HTTPServer::HTTP_CRLF.$body);
         }

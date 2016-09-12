@@ -51,7 +51,7 @@ function on_request($client, $raw)
 {
     global $server;
     $server->send($client, $raw);
-    _info("got client callback ".$raw);
+    JAXLLogger::info("got client callback ".$raw);
 }
 
 if (file_exists($argv[1])) {

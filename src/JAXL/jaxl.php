@@ -156,7 +156,7 @@ class JAXL extends XMPPStream
 
         // env
         if ($this->cfg['strict']) {
-            _info("strict mode enabled, adding exception handlers. ' .
+            JAXLLogger::info("strict mode enabled, adding exception handlers. ' .
                 'Set 'strict' => false inside JAXL config to disable this");
             JAXLException::addHandlers();
         }
@@ -200,7 +200,7 @@ class JAXL extends XMPPStream
         // touch pid file
         if ($this->mode == "cli") {
             touch($this->get_pid_file_path());
-            _info("created pid file ".$this->get_pid_file_path());
+            JAXLLogger::info("created pid file ".$this->get_pid_file_path());
         }
         
         // include mandatory xmpp xeps
@@ -211,7 +211,7 @@ class JAXL extends XMPPStream
         // do dns lookup, update $cfg['host'] and $cfg['port'] if not already specified
         if (($this->cfg['host'] === null || $this->cfg['port'] === null) && $jid) {
             // this dns lookup is blocking
-            _info("dns srv lookup for ".$jid->domain);
+            JAXLLogger::info("dns srv lookup for ".$jid->domain);
             list($host, $port) = JAXLUtil::get_dns_srv($jid->domain);
             if ($this->cfg['host'] === null) {
                 $this->cfg['host'] = $host;
@@ -224,7 +224,7 @@ class JAXL extends XMPPStream
         // choose appropriate transport
         // if 'bosh_url' cfg is defined include 0206
         if (isset($this->cfg['bosh_url'])) {
-            _debug("including bosh xep");
+            JAXLLogger::debug("including bosh xep");
             $this->require_xep('0206');
             $transport = $this->xeps['0206'];
         } else {
@@ -247,7 +247,7 @@ class JAXL extends XMPPStream
     public function __destruct()
     {
         // delete pid file
-        _info("cleaning up pid and unix sock files");
+        JAXLLogger::info("cleaning up pid and unix sock files");
         if (file_exists($this->get_pid_file_path())) {
             unlink($this->get_pid_file_path());
         }
@@ -420,7 +420,7 @@ class JAXL extends XMPPStream
     {
         $retry_after = pow(2, $this->retry_attempt) * $this->retry_interval;
         $this->retry_attempt++;
-        _info("Will try to restart in ".$retry_after." seconds");
+        JAXLLogger::info("Will try to restart in ".$retry_after." seconds");
         
         // TODO: use jaxl cron if sigalarms cannnot be used
         sleep($retry_after);
@@ -485,7 +485,7 @@ class JAXL extends XMPPStream
             || $this->trans->errno == 110
             || $this->trans->errno == 111
             ) {
-                _debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
+                JAXLLogger::debug("unable to connect with errno ".$this->trans->errno." (".$this->trans->errstr.")");
                 $this->retry();
             } else {
                 $this->ev->emit('on_connect_error', array(
@@ -516,15 +516,15 @@ class JAXL extends XMPPStream
         switch ($sig) {
             // terminal line hangup
             case SIGHUP:
-                _debug("got sighup");
+                JAXLLogger::debug("got sighup");
                 break;
                 // interrupt program
             case SIGINT:
-                _debug("got sigint");
+                JAXLLogger::debug("got sigint");
                 break;
                 // software termination signal
             case SIGTERM:
-                _debug("got sigterm");
+                JAXLLogger::debug("got sigterm");
                 break;
         }
         
@@ -542,7 +542,7 @@ class JAXL extends XMPPStream
     // know what you are doing while in production
     public function on_unix_sock_request($_c, $_raw)
     {
-        _debug("evaling raw string rcvd over unix sock: ".$_raw);
+        JAXLLogger::debug("evaling raw string rcvd over unix sock: ".$_raw);
         $this->sock->send($_c, serialize(eval($_raw)));
         $this->sock->read($_c);
     }
@@ -590,12 +590,12 @@ class JAXL extends XMPPStream
                     $this->send($resp);
                     return "wait_for_sasl_response";
                 } else {
-                    _debug("got unhandled sasl response, should never happen here");
+                    JAXLLogger::debug("got unhandled sasl response, should never happen here");
                     exit;
                 }
                 break;
             default:
-                _debug("not catched $event, should never happen here");
+                JAXLLogger::debug("not catched $event, should never happen here");
                 exit;
                 break;
         }
@@ -646,12 +646,12 @@ class JAXL extends XMPPStream
                     
                     return "wait_for_sasl_response";
                 } else {
-                    _debug("got unhandled sasl response, should never happen here");
+                    JAXLLogger::debug("got unhandled sasl response, should never happen here");
                     exit;
                 }
                 break;
             default:
-                _debug("not catched $event, should never happen here");
+                JAXLLogger::debug("not catched $event, should never happen here");
                 exit;
                 break;
         }
@@ -675,10 +675,10 @@ class JAXL extends XMPPStream
 
         // check if preferred auth type exists in available mechanisms
         if (isset($mechs[$pref_auth]) && $mechs[$pref_auth]) {
-            _debug("pref_auth ".$pref_auth." exists");
+            JAXLLogger::debug("pref_auth ".$pref_auth." exists");
         } else {
-            _debug("pref_auth ".$pref_auth." doesn't exists");
-            _error("preferred auth type not supported, trying $pref_auth");
+            JAXLLogger::debug("pref_auth ".$pref_auth." doesn't exists");
+            JAXLLogger::error("preferred auth type not supported, trying $pref_auth");
         }
         
         $this->send_auth_pkt(
@@ -728,7 +728,7 @@ class JAXL extends XMPPStream
         // emit callback registered on stanza id's
         $emited = false;
         if ($stanza->id && $this->ev->exists('on_stanza_id_'.$stanza->id)) {
-            //_debug("on stanza id callbackd");
+            //JAXLLogger::debug("on stanza id callbackd");
             $emited = true;
             $this->ev->emit('on_stanza_id_'.$stanza->id, array($stanza));
         }
@@ -822,7 +822,7 @@ class JAXL extends XMPPStream
         if ($this->ev->exists($ev)) {
             return $this->ev->emit($ev, array($stanza));
         } else {
-            _warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
+            JAXLLogger::warning("event '".$event."' catched in handle_other with stanza name ".$stanza->name);
         }
     }
 

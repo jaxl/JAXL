@@ -55,7 +55,7 @@ while ($add_new) {
 
 function on_auth_success($client)
 {
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
     // fetch roster list
     $client->get_roster();
@@ -69,7 +69,7 @@ function on_auth_success($client)
 
 function on_auth_failure($client, $reason)
 {
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
     $client->send_end_stream();
 }
 
@@ -87,7 +87,7 @@ function on_presence_stanza($client, $stanza)
 
     $type = ($stanza->type ? $stanza->type : "available");
     $show = ($stanza->show ? $stanza->show : "???");
-    _info($stanza->from." is now ".$type." ($show)");
+    JAXLLogger::info($stanza->from." is now ".$type." ($show)");
 
     if ($type == "available") {
         // fetch vcard
@@ -97,7 +97,7 @@ function on_presence_stanza($client, $stanza)
 
 function on_disconnect($client)
 {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 }
 
 //

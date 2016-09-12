@@ -95,7 +95,7 @@ function wait_for_register_response($event, $args)
             }
         }
     } else {
-        _notice("unhandled event $event rcvd");
+        JAXLLogger::notice("unhandled event $event rcvd");
     }
 }
 
@@ -137,7 +137,7 @@ $client->add_cb('on_stream_features', function ($stanza) {
 
 $client->add_cb('on_disconnect', function () {
     global $form;
-    _info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
+    JAXLLogger::info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
 });
 
 //
@@ -150,7 +150,7 @@ $client->start();
 // try to connect with newly registered account
 //
 if ($form['type'] == 'result') {
-    _info("connecting newly registered user account");
+    JAXLLogger::info("connecting newly registered user account");
     $client = new JAXL(array(
         'jid' => $form['username'].'@'.$argv[1],
         'pass' => $form['password'],

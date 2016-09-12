@@ -75,7 +75,7 @@ class JAXLXmlStream
 
     public function __destruct()
     {
-        //_debug("cleaning up xml parser...");
+        //JAXLLogger::debug("cleaning up xml parser...");
         @xml_parser_free($this->parser);
     }
 
@@ -121,7 +121,7 @@ class JAXLXmlStream
                 unset($attrs[$key]);
                 $attrs['xml:'.$k[1]] = $v;
             } else {
-                _error("==================> unhandled ns prefix on attribute");
+                JAXLLogger::error("==================> unhandled ns prefix on attribute");
                 // remove attribute else will cause error with bad stanza format
                 // report to developer if above error message is ever encountered
                 unset($attrs[$key]);

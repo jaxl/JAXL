@@ -55,7 +55,7 @@ $xmpp = new JAXL(array(
 // register callbacks on required xmpp events
 $xmpp->add_cb('on_auth_success', function () {
     global $xmpp;
-    _info("got on_auth_success cb, jid ".$xmpp->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$xmpp->full_jid->to_string());
 });
 
 // initialize http server

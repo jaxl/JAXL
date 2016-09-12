@@ -70,13 +70,13 @@ $comp->require_xep(array(
 //
 
 $comp->add_cb('on_auth_success', function () {
-    _info("got on_auth_success cb");
+    JAXLLogger::info("got on_auth_success cb");
 });
 
 $comp->add_cb('on_auth_failure', function ($reason) {
     global $comp;
     $comp->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 });
 
 $comp->add_cb('on_chat_message', function ($stanza) {
@@ -89,7 +89,7 @@ $comp->add_cb('on_chat_message', function ($stanza) {
 });
 
 $comp->add_cb('on_disconnect', function () {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 });
 
 //

@@ -36,28 +36,6 @@
  *
  */
 
-// generic global logging shortcuts for different level of verbosity
-function _error($msg)
-{
-    JAXLLogger::log($msg, JAXLLogger::ERROR);
-}
-function _warning($msg)
-{
-    JAXLLogger::log($msg, JAXLLogger::WARNING);
-}
-function _notice($msg)
-{
-    JAXLLogger::log($msg, JAXLLogger::NOTICE);
-}
-function _info($msg)
-{
-    JAXLLogger::log($msg, JAXLLogger::INFO);
-}
-function _debug($msg)
-{
-    JAXLLogger::log($msg, JAXLLogger::DEBUG);
-}
-
 class JAXLLogger
 {
 
@@ -100,6 +78,31 @@ class JAXLLogger
                 error_log(self::colorize($msg, $verbosity));
             }
         }
+    }
+
+    public static function error($msg)
+    {
+        self::log($msg, self::ERROR);
+    }
+
+    public static function warning($msg)
+    {
+        self::log($msg, self::WARNING);
+    }
+
+    public static function notice($msg)
+    {
+        self::log($msg, self::NOTICE);
+    }
+
+    public static function info($msg)
+    {
+        self::log($msg, self::INFO);
+    }
+
+    public static function debug($msg)
+    {
+        self::log($msg, self::DEBUG);
     }
 
     // Generic global terminal output colorize method.
