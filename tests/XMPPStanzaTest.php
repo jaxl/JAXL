@@ -99,7 +99,7 @@ class XMPPStanzaTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($test_data['ns'], $xml_or_stanza->ns);
         $this->assertEquals($test_data['attrs'], $xml_or_stanza->attrs);
         $this->assertEquals($test_data['text'], $xml_or_stanza->text);
-        $this->assertEquals(array(), $xml_or_stanza->childrens);
+        $this->assertEquals(array(), $xml_or_stanza->children);
         return true;
     }
 }

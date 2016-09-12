@@ -107,7 +107,7 @@ function wait_for_register_form($event, $args)
             echo $instructions->text.PHP_EOL;
         }
 
-        foreach ($query->childrens as $k => $child) {
+        foreach ($query->children as $k => $child) {
             if ($child->name != 'instructions') {
                 $form[$child->name] = readline($child->name.":");
             }

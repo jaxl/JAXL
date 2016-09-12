@@ -29,5 +29,5 @@ abstract class JAXLXmlAccess
     public $text = null;
 
     /** @var JAXLXml[] */
-    public $childrens = array();
+    public $children = array();
 }

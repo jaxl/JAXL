@@ -94,8 +94,8 @@ class XMPPStanza extends JAXLXmlAccess
         unset($this->attrs);
         $this->text = null;
         unset($this->text);
-        $this->childrens = null;
-        unset($this->childrens);
+        $this->children = null;
+        unset($this->children);
 
         if ($name instanceof JAXLXml) {
             $this->xml = $name;
@@ -117,7 +117,7 @@ class XMPPStanza extends JAXLXmlAccess
             case 'ns':
             case 'text':
             case 'attrs':
-            case 'childrens':
+            case 'children':
                 return $this->xml->$prop;
                 break;
 
@@ -174,7 +174,7 @@ class XMPPStanza extends JAXLXmlAccess
             case 'ns':
             case 'text':
             case 'attrs':
-            case 'childrens':
+            case 'children':
                 return $this->xml->$prop = $val;
                 break;
 

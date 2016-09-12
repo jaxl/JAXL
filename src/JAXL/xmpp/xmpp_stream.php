@@ -632,7 +632,7 @@ abstract class XMPPStream extends JAXLFsm
                 $stanza = $args[0];
 
                 if ($stanza->name == 'failure' && $stanza->ns == XMPP::NS_SASL) {
-                    $reason = $stanza->childrens[0]->name;
+                    $reason = $stanza->children[0]->name;
                     //JAXLLogger::debug("sasl failed with reason ".$reason."");
                     $this->handle_auth_failure($reason);
                     return "logged_out";

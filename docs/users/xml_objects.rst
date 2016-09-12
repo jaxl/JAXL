@@ -85,7 +85,7 @@ developers can get lost in dirty XML manipulations spreaded all over the applica
 XML structures are not only unreadable for humans but even for machine.
 
 While an instance of ``JAXLXml`` provide direct access to XML ``name``, ``ns`` and ``text``, it can become painful and
-time consuming when trying to retrieve or modify a particular ``attrs`` or ``childrens``. I was fed up of doing
+time consuming when trying to retrieve or modify a particular ``attrs`` or ``children``. I was fed up of doing
 ``getAttributeByName``, ``setAttributeByName``, ``getChild`` etc everytime i had to access common XMPP Stanza attributes.
 
 ``XMPPStanza`` is a wrapper on top of ``JAXLXml`` objects. Preserving all the functionalities of base ``JAXLXml``
@@ -101,7 +101,7 @@ Here is a list of default access patterns:
     #. ``ns``
     #. ``text``
     #. ``attrs``
-    #. ``childrens``
+    #. ``children``
     #. ``to``
     #. ``from``
     #. ``id``

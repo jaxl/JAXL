@@ -194,7 +194,7 @@ class JAXLXml extends JAXLXmlAccess
     {
         $node = new JAXLXml($name, $ns, $attrs, $text);
         $node->parent = &$this->rover;
-        $this->rover->childrens[] = &$node;
+        $this->rover->children[] = &$node;
         $this->rover = &$node;
         return $this;
     }
@@ -208,7 +208,7 @@ class JAXLXml extends JAXLXmlAccess
     public function cnode($node)
     {
         $node->parent = &$this->rover;
-        $this->rover->childrens[] = &$node;
+        $this->rover->children[] = &$node;
         $this->rover = &$node;
         return $this;
     }
@@ -241,7 +241,7 @@ class JAXLXml extends JAXLXmlAccess
      */
     public function exists($name, $ns = null, array $attrs = array())
     {
-        foreach ($this->childrens as $child) {
+        foreach ($this->children as $child) {
             if ($ns) {
                 if ($child->name == $name && $child->ns == $ns && $child->match_attrs($attrs)) {
                     return $child;
@@ -263,12 +263,12 @@ class JAXLXml extends JAXLXmlAccess
      */
     public function update($name, $ns = null, array $attrs = array(), $text = null)
     {
-        foreach ($this->childrens as $k => $child) {
+        foreach ($this->children as $k => $child) {
             if ($child->name == $name) {
                 $child->ns = $ns;
                 $child->attrs($attrs);
                 $child->text = $text;
-                $this->childrens[$k] = $child;
+                $this->children[$k] = $child;
                 break;
             }
         }
@@ -293,7 +293,7 @@ class JAXLXml extends JAXLXmlAccess
         }
         $xml .= '>';
 
-        foreach ($this->childrens as $child) {
+        foreach ($this->children as $child) {
             $xml .= $child->to_string($this->ns);
         }
 

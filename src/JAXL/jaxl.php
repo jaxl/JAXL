@@ -665,7 +665,7 @@ class JAXL extends XMPPStream
         // extract available mechanisms
         $mechs = array();
         if ($mechanisms) {
-            foreach ($mechanisms->childrens as $mechanism) {
+            foreach ($mechanisms->children as $mechanism) {
                 $mechs[$mechanism->text] = true;
             }
         }
@@ -734,13 +734,13 @@ class JAXL extends XMPPStream
         
         // catch roster list
         if ($stanza->type == 'result' && ($query = $stanza->exists('query', 'jabber:iq:roster'))) {
-            foreach ($query->childrens as $child) {
+            foreach ($query->children as $child) {
                 if ($child->name == 'item') {
                     $jid = $child->attrs['jid'];
                     $subscription = $child->attrs['subscription'];
                     
                     $groups = array();
-                    foreach ($child->childrens as $group) {
+                    foreach ($child->children as $group) {
                         if ($group->name == 'group') {
                             $groups[] = $group->text;
                         }
@@ -828,7 +828,7 @@ class JAXL extends XMPPStream
     public function handle_domain_info($stanza)
     {
         $query = $stanza->exists('query', XEP0030::NS_DISCO_INFO);
-        foreach ($query->childrens as $k => $child) {
+        foreach ($query->children as $k => $child) {
             if ($child->name == 'identity') {
                 //echo 'identity '.
                 //    'category:' . (isset($child->attrs['category']) ? $child->attrs['category'] : 'NULL').
@@ -845,7 +845,7 @@ class JAXL extends XMPPStream
     public function handle_domain_items($stanza)
     {
         $query = $stanza->exists('query', XEP0030::NS_DISCO_ITEMS);
-        foreach ($query->childrens as $k => $child) {
+        foreach ($query->children as $k => $child) {
             if ($child->name == 'item') {
                 //echo 'item '.
                 //    'jid:'.(isset($child->attrs['jid']) ? $child->attrs['jid'] : 'NULL').
