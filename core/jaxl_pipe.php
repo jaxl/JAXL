@@ -113,6 +113,9 @@ class JAXLPipe
         _debug("unlinking pipe file");
     }
 
+    /**
+     * @return string
+     */
     public function get_pipe_file_path()
     {
         return JAXL_CWD.'/.jaxl/pipes/jaxl_'.$this->name.'.pipe';

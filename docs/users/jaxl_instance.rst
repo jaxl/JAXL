@@ -2,6 +2,7 @@
 
 JAXL Instance
 =============
+
 ``JAXL`` instance configure/manage other :ref:`sub-packages <jaxl-instance>`.
 It provides an event based callback methodology on various underlying object. Whenever required
 ``JAXL`` instance will itself perform the configured defaults.

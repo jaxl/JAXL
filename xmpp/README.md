@@ -1,5 +1,6 @@
 Jaxl XMPP Stack:
 ----------------
+
 XMPP Stack implementation includes:
 
 * XMPPStream - RFC 6120 and RFC 6121

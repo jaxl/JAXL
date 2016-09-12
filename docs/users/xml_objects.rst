@@ -79,6 +79,7 @@ manipulation is performed.
 
 XMPPStanza
 ----------
+
 In the world of XMPP where everything incoming and outgoing payload is an ``JAXLXml`` instance code can become nasty,
 developers can get lost in dirty XML manipulations spreaded all over the application code base and what not. 
 XML structures are not only unreadable for humans but even for machine.
