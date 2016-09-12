@@ -63,12 +63,12 @@ class JAXLCtl
                 $this->cli = new JAXLCli(array(&$this, 'onTerminalInput'), $quit_cb);
                 $this->run();
             } else {
-                _colorize("oops! internal command error", JAXLLogger::ERROR);
+                JAXLLogger::cliLog("oops! internal command error", JAXLLogger::ERROR);
                 exit;
             }
         } else {
-            _colorize("error: invalid command '$command' received", JAXLLogger::ERROR);
-            _colorize("type '$exe help' for list of available commands", JAXLLogger::NOTICE);
+            JAXLLogger::cliLog("error: invalid command '$command' received", JAXLLogger::ERROR);
+            JAXLLogger::cliLog("type '$exe help' for list of available commands", JAXLLogger::NOTICE);
             exit;
         }
     }
@@ -101,11 +101,11 @@ class JAXLCtl
     public static function printHelp()
     {
         global $exe;
-        _colorize("Usage: $exe command [options...]".PHP_EOL, JAXLLogger::INFO);
-        _colorize("Commands:", JAXLLogger::NOTICE);
-        _colorize("    help      This help text", JAXLLogger::DEBUG);
-        _colorize("    debug     Attach a debug console to a running JAXL daemon", JAXLLogger::DEBUG);
-        _colorize("    shell     Open up Jaxl shell emulator", JAXLLogger::DEBUG);
+        JAXLLogger::cliLog("Usage: $exe command [options...]".PHP_EOL, JAXLLogger::INFO);
+        JAXLLogger::cliLog("Commands:", JAXLLogger::NOTICE);
+        JAXLLogger::cliLog("    help      This help text", JAXLLogger::DEBUG);
+        JAXLLogger::cliLog("    debug     Attach a debug console to a running JAXL daemon", JAXLLogger::DEBUG);
+        JAXLLogger::cliLog("    shell     Open up Jaxl shell emulator", JAXLLogger::DEBUG);
         echo PHP_EOL;
     }
 

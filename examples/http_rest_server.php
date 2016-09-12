@@ -42,7 +42,7 @@ require dirname(__FILE__) . '/_bootstrap.php';
 JAXLLogger::$level = JAXLLogger::INFO;
 
 // print usage notice and parse addr/port parameters if passed
-_colorize("Usage: $argv[0] port (default: 9699)", JAXLLogger::NOTICE);
+JAXLLogger::cliLog("Usage: $argv[0] port (default: 9699)", JAXLLogger::NOTICE);
 $port = ($argc == 2 ? $argv[1] : 9699);
 
 // initialize http server

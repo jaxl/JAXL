@@ -58,15 +58,6 @@ function _debug($msg)
     JAXLLogger::log($msg, JAXLLogger::DEBUG);
 }
 
-// generic global terminal output colorize method
-// finally sends colorized message to terminal using error_log/1
-// this method is mainly to escape $msg from file:line and time
-// prefix done by _debug, _error, ... methods
-function _colorize($msg, $verbosity)
-{
-    error_log(JAXLLogger::colorize($msg, $verbosity));
-}
-
 class JAXLLogger
 {
 
@@ -97,18 +88,27 @@ class JAXLLogger
             array_shift($bt);
             $callee = array_shift($bt);
             $msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
-            
+
             $size = strlen($msg);
             if ($size > self::$max_log_size) {
                 $msg = substr($msg, 0, self::$max_log_size) . ' ...';
             }
-            
+
             if (isset(self::$path)) {
                 error_log($msg . PHP_EOL, 3, self::$path);
             } else {
                 error_log(self::colorize($msg, $verbosity));
             }
         }
+    }
+
+    // Generic global terminal output colorize method.
+    // Finally sends colorized message to terminal using error_log/1
+    // this method is mainly to escape $msg from file:line and time
+    // prefix done by debug, error, ... methods.
+    public static function cliLog($msg, $verbosity)
+    {
+        error_log(self::colorize($msg, $verbosity));
     }
 
     /**
