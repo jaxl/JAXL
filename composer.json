@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3",
+        "php": ">=5.2.4",
         "ext-curl": "*",
         "ext-hash": "*",
         "ext-json": "*",
@@ -41,5 +41,10 @@
             "/tests/"
         ]
     },
-    "bin": ["jaxlctl"]
+    "bin": ["jaxlctl"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1.x-dev"
+        }
+    }
 }

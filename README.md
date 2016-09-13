@@ -1,4 +1,4 @@
-Jaxl v3.0.3
+Jaxl v3.1.0
 -----------
 
 Jaxl v3.x is a successor of v2.x (and is NOT backward compatible), 
@@ -10,17 +10,17 @@ philosophies from my experience with erlang and python languages.
 Jaxl is an asynchronous, non-blocking I/O, event based PHP library 
 for writing custom TCP/IP client and server implementations. 
 From it's previous versions, library inherits a full blown stable support 
-for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.3/xmpp). 
-In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.0.3/http) 
+for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.1.0/xmpp). 
+In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.1.0/http) 
 has also been added.
 
-At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.0.3/core).
+At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.1.0/core).
 It contains all the building blocks for everything that we aim to do with Jaxl library. 
 Both XMPP and HTTP protocol stacks are written on top of the Core stack. 
 Infact the source code of protocol implementations knows nothing 
 about the standard (inbuilt) PHP socket and stream methods.
 
-[Examples](https://github.com/jaxl/JAXL/tree/v3.0.3/examples/)
+[Examples](https://github.com/jaxl/JAXL/tree/v3.1.0/examples/)
 
 [Documentation](http://jaxl.readthedocs.org/)
 
@@ -29,6 +29,12 @@ about the standard (inbuilt) PHP socket and stream methods.
 [Create a bug/issue](https://github.com/jaxl/JAXL/issues/new)
 
 [Author](http://abhinavsingh.com/)
+
+## Installation
+
+```ShellSession
+php composer.phar require "jaxl/jaxl=^3.1.0"
+```
 
 ## Contributing
 
