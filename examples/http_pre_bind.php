@@ -36,6 +36,8 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 // http pre bind php script
 $body = file_get_contents("php://input");
 $body = new SimpleXMLElement($body);
@@ -53,8 +55,6 @@ if (!isset($attrs['to']) &&
 //
 // initialize JAXL object with initial config
 //
-require_once '../jaxl.php';
-
 $to = (string)$attrs['to'];
 $rid = (int)$attrs['rid'];
 $wait = (int)$attrs['wait'];
@@ -70,16 +70,16 @@ $client = new JAXL(array(
     'bosh_wait' => $wait,
     'bosh_hold' => $hold,
     'auth_type' => 'ANONYMOUS',
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 function on_auth_success_callback()
 {
     global $client;
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     echo sprintf(
         '<body xmlns="%s" sid="%s" rid="%s" jid="%s"/>',
-        NS_HTTP_BIND,
+        XEP0206::NS_HTTP_BIND,
         $client->xeps['0206']->sid,
         $client->xeps['0206']->rid,
         $client->full_jid->to_string()
@@ -91,8 +91,9 @@ $client->add_cb('on_auth_success', 'on_auth_success_callback');
 function on_auth_failure_callback($reason)
 {
     global $client;
+
     $client->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
@@ -100,4 +101,4 @@ $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

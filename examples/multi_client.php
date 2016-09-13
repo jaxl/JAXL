@@ -36,10 +36,7 @@
  *
  */
 
-// enable multi client support
-// this will force 1st parameter of callbacks
-// as connected client instance
-define('JAXL_MULTI_CLIENT', true);
+require dirname(__FILE__) . '/_bootstrap.php';
 
 // input multiple account credentials
 $accounts = array();
@@ -52,16 +49,13 @@ while ($add_new) {
     $add_new = $next == 'y' ? true : false;
 }
 
-// setup jaxl
-require_once 'jaxl.php';
-
 //
 // common callbacks
 //
 
 function on_auth_success($client)
 {
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
     // fetch roster list
     $client->get_roster();
@@ -75,7 +69,7 @@ function on_auth_success($client)
 
 function on_auth_failure($client, $reason)
 {
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
     $client->send_end_stream();
 }
 
@@ -93,7 +87,7 @@ function on_presence_stanza($client, $stanza)
 
     $type = ($stanza->type ? $stanza->type : "available");
     $show = ($stanza->show ? $stanza->show : "???");
-    _info($stanza->from." is now ".$type." ($show)");
+    JAXLLogger::info($stanza->from." is now ".$type." ($show)");
 
     if ($type == "available") {
         // fetch vcard
@@ -103,7 +97,7 @@ function on_presence_stanza($client, $stanza)
 
 function on_disconnect($client)
 {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 }
 
 //
@@ -114,7 +108,10 @@ foreach ($accounts as $account) {
     $client = new JAXL(array(
         'jid' => $account[0],
         'pass' => $account[1],
-        'log_level' => JAXL_DEBUG
+        'log_level' => JAXLLogger::DEBUG,
+        // Enable multi client support.
+        // This will force 1st parameter of callbacks as connected client instance.
+        'multi_client' => true
     ));
 
     $client->add_cb('on_auth_success', 'on_auth_success');
@@ -129,4 +126,4 @@ foreach ($accounts as $account) {
 
 // start core loop
 JAXLLoop::run();
-echo "done\n";
+echo "done".PHP_EOL;

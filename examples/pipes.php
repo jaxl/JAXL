@@ -36,12 +36,10 @@
  *
  */
 
-// include and configure logger
-require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+require dirname(__FILE__) . '/_bootstrap.php';
 
-// include jaxl pipes
-require_once JAXL_CWD.'/core/jaxl_pipe.php';
+// configure logger
+JAXLLogger::$level = JAXLLogger::INFO;
 
 // initialize
 $pipe_name = getmypid();
@@ -51,9 +49,9 @@ $pipe = new JAXLPipe($pipe_name);
 function read_event_callback($data)
 {
     global $pipe;
-    _info("read ".trim($data)." from pipe");
+    JAXLLogger::info("read ".trim($data)." from pipe");
 }
 $pipe->set_callback('read_event_callback');
 
 JAXLLoop::run();
-echo "done\n";
+echo "done".PHP_EOL;

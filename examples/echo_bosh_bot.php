@@ -36,15 +36,16 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 3) {
-    echo "Usage: $argv[0] jid pass\n";
+    echo "Usage: $argv[0] jid pass".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     // (required) credentials
     'jid' => $argv[1],
@@ -67,7 +68,7 @@ $client = new JAXL(array(
     // (optional) defaults to PLAIN if supported, else other methods will be automatically tried
     'auth_type' => isset($argv[3]) ? $argv[3] : 'PLAIN',
 
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 //
@@ -77,7 +78,7 @@ $client = new JAXL(array(
 function on_auth_success_callback()
 {
     global $client;
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     $client->set_status("available!", "dnd", 10);
 }
 $client->add_cb('on_auth_success', 'on_auth_success_callback');
@@ -86,7 +87,7 @@ function on_auth_failure_callback($reason)
 {
     global $client;
     $client->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
@@ -103,7 +104,7 @@ $client->add_cb('on_chat_message', 'on_chat_message_callback');
 
 function on_disconnect_callback()
 {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -111,4 +112,4 @@ $client->add_cb('on_disconnect', 'on_disconnect_callback');
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

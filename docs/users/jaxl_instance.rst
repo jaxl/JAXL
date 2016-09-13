@@ -26,14 +26,14 @@ Constructor options
     #. ``log_path``
     #. ``log_level``
     
-        ``JAXL_ERROR``, ``JAXL_WARNING``, ``JAXL_NOTICE``, ``JAXL_INFO`` (default), ``JAXL_DEBUG``
+        ``ERROR``, ``WARNING``, ``NOTICE``, ``INFO`` (default), ``DEBUG``
         
     #. ``force_tls``
     #. ``stream_context``
     #. ``priv_dir``
     
         Jaxl creates 4 directories names ``log``, ``tmp``, ``run`` and ``sock`` inside a private directory
-        which defaults to ``JAXL_CWD.'/.jaxl'``. If this option is passed, it will overwrite default private
+        which defaults to ``getcwd().'/.jaxl'``. If this option is passed, it will overwrite default private
         directory.
         
         .. note::

@@ -36,14 +36,14 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 2) {
-    echo "Usage: $argv[0] url\n";
+    echo "Usage: $argv[0] url".PHP_EOL;
     exit;
 }
 
-require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_DEBUG;
-require_once JAXL_CWD.'/http/http_client.php';
+JAXLLogger::$level = JAXLLogger::DEBUG;
 
 $request = new HTTPClient($argv[1]);
 $request->start();

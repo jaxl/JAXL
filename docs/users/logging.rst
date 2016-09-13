@@ -9,25 +9,25 @@ rotation.
 log levels
 ----------
 
-    * JAXL_ERROR (red)
-    * JAXL_WARNING (blue)
-    * JAXL_NOTICE (yellow)
-    * JAXL_INFO (green)
-    * JAXL_DEBUG (white)
+    * ERROR (red)
+    * WARNING (blue)
+    * NOTICE (yellow)
+    * INFO (green)
+    * DEBUG (white)
 
 global logging methods
 ----------------------
 
 Following global methods for logging are available:
 
-    * ``_error($msg)``
-    * ``_warning($msg)``
-    * ``_notice($msg)``
-    * ``_info($msg)``
-    * ``_debug($msg)``
+    * ``error($msg)``
+    * ``warning($msg)``
+    * ``notice($msg)``
+    * ``info($msg)``
+    * ``debug($msg)``
         
 log/2
 -----
 
-All the above global logging methods internally use ``JAXLLogger::log($msg, $verbosity)`` 
+All the above global logging methods internally use ``log($msg, $verbosity)`` 
 to output colored log message on the terminal.

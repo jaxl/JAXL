@@ -7,7 +7,6 @@ include ``jaxl.php`` and initialize a new ``JAXL`` instance:
 
 .. code-block:: ruby
 
-    require 'jaxl.php';
     $client = new JAXL(array(
         'jid' => 'user@domain.tld',
         'pass' => 'password'
@@ -43,7 +42,7 @@ Next we need to register callbacks on events of interest using ``JAXL::add_cb/2`
     
     function on_disconnect_callback()
     {
-        _debug("got on_disconnect cb");
+        JAXLLogger::debug("got on_disconnect cb");
     }
     $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -85,7 +84,6 @@ pass additional parameters to ``JAXL`` constructor:
 
 .. code-block:: ruby
 
-    require 'jaxl.php';
     $client = new JAXL(array(
         'jid' => 'user@domain.tld',
         'pass' => 'password',
@@ -103,7 +101,6 @@ parameter as shown below:
 
 .. code-block:: ruby
 
-    require_once 'jaxl.php';
     $comp = new JAXL(array(
         // (required) component host and secret
         'jid' => $argv[1],

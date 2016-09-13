@@ -36,21 +36,22 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 5) {
-    echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname\n";
+    echo "Usage: $argv[0] host jid pass room@service.domain.tld nickname".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     // (required) credentials
     'jid' => $argv[2],
     'pass' => $argv[3],
     'host' => $argv[1],
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 $client->require_xep(array(
@@ -69,7 +70,7 @@ $room_full_jid = new XMPPJid($_room_full_jid);
 function on_auth_success_callback()
 {
     global $client, $room_full_jid;
-    _info("got on_auth_success cb, jid ".$client->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
 
     // join muc room
     $client->xeps['0045']->join_room($room_full_jid);
@@ -80,7 +81,7 @@ function on_auth_failure_callback($reason)
 {
     global $client;
     $client->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 }
 $client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
@@ -89,7 +90,7 @@ function on_groupchat_message_callback($stanza)
     global $client;
 
     $from = new XMPPJid($stanza->from);
-    $delay = $stanza->exists('delay', NS_DELAYED_DELIVERY);
+    $delay = $stanza->exists('delay', XEP0203::NS_DELAYED_DELIVERY);
 
     if ($from->resource) {
         echo sprintf(
@@ -116,36 +117,36 @@ function on_presence_stanza_callback($stanza)
 
     // self-stanza received, we now have complete room roster
     if (strtolower($from->to_string()) == strtolower($room_full_jid->to_string())) {
-        if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+        if (($x = $stanza->exists('x', XEP0045::NS_MUC.'#user')) !== false) {
             if (($status = $x->exists('status', null, array('code' => '110'))) !== false) {
                 $item = $x->exists('item');
-                _info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
+                JAXLLogger::info("xmlns #user exists with x ".$x->ns." status ".$status->attrs['code'].
                     ", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role']);
             } else {
-                _info("xmlns #user have no x child element");
+                JAXLLogger::info("xmlns #user have no x child element");
             }
         } else {
-            _warning("=======> odd case 1");
+            JAXLLogger::warning("=======> odd case 1");
         }
     } elseif (strtolower($from->bare) == strtolower($room_full_jid->bare)) {
         // stanza from other users received
 
-        if (($x = $stanza->exists('x', NS_MUC.'#user')) !== false) {
+        if (($x = $stanza->exists('x', XEP0045::NS_MUC.'#user')) !== false) {
             $item = $x->exists('item');
             echo "presence stanza of type ".($stanza->type ? $stanza->type : "available")." received from ".
                 $from->resource.", affiliation:".$item->attrs['affiliation'].", role:".$item->attrs['role'].PHP_EOL;
         } else {
-            _warning("=======> odd case 2");
+            JAXLLogger::warning("=======> odd case 2");
         }
     } else {
-        _warning("=======> odd case 3");
+        JAXLLogger::warning("=======> odd case 3");
     }
 }
 $client->add_cb('on_presence_stanza', 'on_presence_stanza_callback');
 
 function on_disconnect_callback()
 {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -153,4 +154,4 @@ $client->add_cb('on_disconnect', 'on_disconnect_callback');
 // finally start configured xmpp stream
 //
 $client->start();
-echo "done\n";
+echo "done".PHP_EOL;

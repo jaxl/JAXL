@@ -11,8 +11,8 @@
 	stopOnFailure="false"
 >
     <testsuites>
-        <testsuite name="JAXL">
-            <directory suffix=".php">tests/</directory>
+        <testsuite>
+            <directory suffix="Test.php">tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

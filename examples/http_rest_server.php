@@ -36,16 +36,16 @@
  *
  */
 
-// include and configure logger
-require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+require dirname(__FILE__) . '/_bootstrap.php';
+
+// configure logger
+JAXLLogger::$level = JAXLLogger::INFO;
 
 // print usage notice and parse addr/port parameters if passed
-_colorize("Usage: $argv[0] port (default: 9699)", JAXL_NOTICE);
+JAXLLogger::cliLog("Usage: $argv[0] port (default: 9699)", JAXLLogger::NOTICE);
 $port = ($argc == 2 ? $argv[1] : 9699);
 
 // initialize http server
-require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer($port);
 
 // callback method for dispatch rule (see below)
@@ -74,7 +74,7 @@ function upload($request)
             $request->recv_body();
         } else {
             // got upload body, save it
-            _info("file upload complete, got ".strlen($request->body)." bytes of data");
+            JAXLLogger::info("file upload complete, got ".strlen($request->body)." bytes of data");
             $upload_data = $request->multipart->form_data[0]['body'];
             $request->ok(
                 $upload_data,
@@ -92,25 +92,25 @@ $upload = array('upload', '^/upload', array('GET', 'POST'));
 // Refer: http://jaxl.readthedocs.org/en/latest/users/http_extensions.html#dispatch-rules
 function create_event($request)
 {
-    _info("got event create request");
+    JAXLLogger::info("got event create request");
     $request->close();
 }
 
 function read_event($request, $pk)
 {
-    _info("got event read request for $pk");
+    JAXLLogger::info("got event read request for $pk");
     $request->close();
 }
 
 function update_event($request, $pk)
 {
-    _info("got event update request for $pk");
+    JAXLLogger::info("got event update request for $pk");
     $request->close();
 }
 
 function delete_event($request, $pk)
 {
-    _info("got event delete request for $pk");
+    JAXLLogger::info("got event delete request for $pk");
     $request->close();
 }
 

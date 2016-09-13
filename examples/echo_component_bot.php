@@ -36,15 +36,16 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc != 5) {
-    echo "Usage: $argv[0] jid pass host port\n";
+    echo "Usage: $argv[0] jid pass host port".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $comp = new JAXL(array(
     // (required) component host and secret
     'jid' => $argv[1],
@@ -54,7 +55,7 @@ $comp = new JAXL(array(
     'host' => $argv[3],
     'port' => $argv[4],
 
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 //
@@ -70,7 +71,7 @@ $comp->require_xep(array(
 
 function on_auth_success_callback()
 {
-    _info("got on_auth_success cb");
+    JAXLLogger::info("got on_auth_success cb");
 }
 $comp->add_cb('on_auth_success', 'on_auth_success_callback');
 
@@ -78,7 +79,7 @@ function on_auth_failure_callback($reason)
 {
     global $comp;
     $comp->send_end_stream();
-    _info("got on_auth_failure cb with reason $reason");
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
 }
 $comp->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
@@ -95,7 +96,7 @@ $comp->add_cb('on_chat_message', 'on_chat_message_callback');
 
 function on_disconnect_callback()
 {
-    _info("got on_disconnect cb");
+    JAXLLogger::info("got on_disconnect cb");
 }
 $comp->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -103,4 +104,4 @@ $comp->add_cb('on_disconnect', 'on_disconnect_callback');
 // finally start configured xmpp stream
 //
 $comp->start();
-echo "done\n";
+echo "done".PHP_EOL;

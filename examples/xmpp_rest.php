@@ -36,31 +36,31 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 // View explanation for this example here:
 // https://groups.google.com/d/msg/jaxl/QaGjZP4A2gY/n6SYutrBVxsJ
 if ($argc < 3) {
-    echo "Usage: $argv[0] jid pass\n";
+    echo "Usage: $argv[0] jid pass".PHP_EOL;
     exit;
 }
 
 // initialize xmpp client
-require_once 'jaxl.php';
 $xmpp = new JAXL(array(
     'jid' => $argv[1],
     'pass' => $argv[2],
-    'log_level' => JAXL_INFO
+    'log_level' => JAXLLogger::INFO
 ));
 
 // register callbacks on required xmpp events
 function on_auth_success_callback()
 {
     global $xmpp;
-    _info("got on_auth_success cb, jid ".$xmpp->full_jid->to_string());
+    JAXLLogger::info("got on_auth_success cb, jid ".$xmpp->full_jid->to_string());
 }
 $xmpp->add_cb('on_auth_success', 'on_auth_success_callback');
 
 // initialize http server
-require_once JAXL_CWD.'/http/http_server.php';
 $http = new HTTPServer();
 
 // add generic callback

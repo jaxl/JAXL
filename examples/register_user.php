@@ -36,18 +36,19 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 2) {
-    echo "Usage: $argv[0] domain\n";
+    echo "Usage: $argv[0] domain".PHP_EOL;
     exit;
 }
 
 //
 // initialize JAXL object with initial config
 //
-require_once 'jaxl.php';
 $client = new JAXL(array(
     'jid' => $argv[1],
-    'log_level' => JAXL_DEBUG
+    'log_level' => JAXLLogger::DEBUG
 ));
 
 $client->require_xep(array(
@@ -55,15 +56,11 @@ $client->require_xep(array(
 ));
 
 //
-// below are two states which become part of
-// our client's xmpp_stream lifecycle
-// consider as if these methods are directly
-// inside xmpp_stream state machine
+// Below are two states which become part of our client's xmpp_stream lifecycle
+// consider as if these methods are directly inside xmpp_stream state machine.
 //
-// Note: $stanza = $args[0] is an instance of
-// JAXLXml in xmpp_stream state methods,
-// it is yet not ready for easy access
-// patterns available on XMPPStanza instances
+// Note: $stanza = $args[0] is an instance of JAXLXml in xmpp_stream state methods,
+// it is yet not ready for easy access patterns available on XMPPStanza instances.
 //
 
 $form = array();
@@ -94,7 +91,7 @@ function wait_for_register_response($event, $args)
             }
         }
     } else {
-        _notice("unhandled event $event rcvd");
+        JAXLLogger::notice("unhandled event $event rcvd");
     }
 }
 
@@ -103,14 +100,14 @@ function wait_for_register_form($event, $args)
     global $client, $form;
 
     $stanza = $args[0];
-    $query = $stanza->exists('query', NS_INBAND_REGISTER);
+    $query = $stanza->exists('query', XEP0077::NS_INBAND_REGISTER);
     if ($query) {
         $instructions = $query->exists('instructions');
         if ($instructions) {
             echo $instructions->text.PHP_EOL;
         }
 
-        foreach ($query->childrens as $k => $child) {
+        foreach ($query->children as $k => $child) {
             if ($child->name != 'instructions') {
                 $form[$child->name] = readline($child->name.":");
             }
@@ -139,7 +136,7 @@ $client->add_cb('on_stream_features', 'on_stream_features_callback');
 function on_disconnect_callback()
 {
     global $form;
-    _info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
+    JAXLLogger::info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
 }
 $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
@@ -153,11 +150,11 @@ $client->start();
 // try to connect with newly registered account
 //
 if ($form['type'] == 'result') {
-    _info("connecting newly registered user account");
+    JAXLLogger::info("connecting newly registered user account");
     $client = new JAXL(array(
         'jid' => $form['username'].'@'.$argv[1],
         'pass' => $form['password'],
-        'log_level' => JAXL_DEBUG
+        'log_level' => JAXLLogger::DEBUG
     ));
 
     function on_auth_success_callback()
@@ -170,4 +167,4 @@ if ($form['type'] == 'result') {
     $client->start();
 }
 
-echo "done\n";
+echo "done".PHP_EOL;

@@ -36,13 +36,14 @@
  *
  */
 
+require dirname(__FILE__) . '/_bootstrap.php';
+
 if ($argc < 2) {
-    echo "Usage: $argv[0] /path/to/server.sock\n";
+    echo "Usage: $argv[0] /path/to/server.sock".PHP_EOL;
     exit;
 }
 
-require_once 'jaxl.php';
-JAXLLogger::$level = JAXL_INFO;
+JAXLLogger::$level = JAXLLogger::INFO;
 
 $server = null;
 
@@ -50,7 +51,7 @@ function on_request($client, $raw)
 {
     global $server;
     $server->send($client, $raw);
-    _info("got client callback ".$raw);
+    JAXLLogger::info("got client callback ".$raw);
 }
 
 if (file_exists($argv[1])) {
@@ -59,4 +60,4 @@ if (file_exists($argv[1])) {
 $server = new JAXLSocketServer('unix://'.$argv[1], null, 'on_request');
 
 JAXLLoop::run();
-echo "done\n";
+echo "done".PHP_EOL;
