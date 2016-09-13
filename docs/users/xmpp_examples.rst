@@ -20,25 +20,31 @@ Next we need to register callbacks on events of interest using ``JAXL::add_cb/2`
 
 .. code-block:: ruby
 
-    $client->add_cb('on_auth_success', function () {
+    function on_auth_success_callback()
+    {
         global $client;
         $client->set_status("available!");  // set your status
         $client->get_vcard();               // fetch your vcard
         $client->get_roster();              // fetch your roster list
-    });
+    }
+    $client->add_cb('on_auth_success', 'on_auth_success_callback');
     
-    $client->add_cb('on_chat_message', function ($stanza) {
+    function on_chat_message_callback($stanza)
+    {
         global $client;
         
         // echo back
         $stanza->to = $stanza->from;
         $stanza->from = $client->full_jid->to_string();
         $client->send($stanza);
-    });
+    }
+    $client->add_cb('on_chat_message', 'on_chat_message_callback');
     
-    $client->add_cb('on_disconnect', function () {
+    function on_disconnect_callback()
+    {
         JAXLLogger::debug("got on_disconnect cb");
-    });
+    }
+    $client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 We just registered callbacks on ``on_auth_success``, ``on_chat_message`` and ``on_disconnect`` events 
 that will occur inside our configured ``JAXL`` instance lifecycle. 

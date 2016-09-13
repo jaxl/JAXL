@@ -125,16 +125,20 @@ function wait_for_register_form($event, $args)
 // add necessary event callbacks here
 //
 
-$client->add_cb('on_stream_features', function ($stanza) {
+function on_stream_features_callback($stanza)
+{
     global $client, $argv;
     $client->xeps['0077']->get_form($argv[1]);
     return "wait_for_register_form";
-});
+}
+$client->add_cb('on_stream_features', 'on_stream_features_callback');
 
-$client->add_cb('on_disconnect', function () {
+function on_disconnect_callback()
+{
     global $form;
     JAXLLogger::info("registration " . ($form['type'] == 'result' ? 'succeeded' : 'failed'));
-});
+}
+$client->add_cb('on_disconnect', 'on_disconnect_callback');
 
 //
 // finally start configured xmpp stream
@@ -153,10 +157,12 @@ if ($form['type'] == 'result') {
         'log_level' => JAXLLogger::DEBUG
     ));
 
-    $client->add_cb('on_auth_success', function () {
+    function on_auth_success_callback()
+    {
         global $client;
         $client->set_status('Available');
-    });
+    }
+    $client->add_cb('on_auth_success', 'on_auth_success_callback');
 
     $client->start();
 }

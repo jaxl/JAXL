@@ -46,10 +46,12 @@ $pipe_name = getmypid();
 $pipe = new JAXLPipe($pipe_name);
 
 // add read event callback
-$pipe->set_callback(function ($data) {
+function read_event_callback($data)
+{
     global $pipe;
     JAXLLogger::info("read ".trim($data)." from pipe");
-});
+}
+$pipe->set_callback('read_event_callback');
 
 JAXLLoop::run();
 echo "done".PHP_EOL;

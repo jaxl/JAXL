@@ -73,7 +73,8 @@ $client = new JAXL(array(
     'log_level' => JAXLLogger::INFO
 ));
 
-$client->add_cb('on_auth_success', function () {
+function on_auth_success_callback()
+{
     global $client;
     JAXLLogger::info("got on_auth_success cb, jid ".$client->full_jid->to_string());
     echo sprintf(
@@ -84,13 +85,17 @@ $client->add_cb('on_auth_success', function () {
         $client->full_jid->to_string()
     );
     exit;
-});
+}
+$client->add_cb('on_auth_success', 'on_auth_success_callback');
 
-$client->add_cb('on_auth_failure', function ($reason) {
+function on_auth_failure_callback($reason)
+{
     global $client;
-    JAXLLogger::info("got on_auth_failure cb with reason $reason");
+
     $client->send_end_stream();
-});
+    JAXLLogger::info("got on_auth_failure cb with reason $reason");
+}
+$client->add_cb('on_auth_failure', 'on_auth_failure_callback');
 
 //
 // finally start configured xmpp stream
