@@ -427,6 +427,12 @@ class JAXL extends XMPPStream
         $this->start();
     }
 
+    //called back when we want to get the next batch
+    public function process_next_batch() {
+        JAXLLogger::debug("NEXT BATCH CALLED");
+        $this->ev->emit('get_next_batch');
+    }
+
     public function start(array $opts = array())
     {
         // is bosh bot?
@@ -471,6 +477,11 @@ class JAXL extends XMPPStream
             }
             if (isset($opts['--with-unix-sock']) && $opts['--with-unix-sock']) {
                 $this->enable_unix_sock();
+            }
+
+            if ($this->cfg["batched_data"]) {
+                //set the callback for our data checks, time in microseconds
+                JAXLLoop::set_next_batch_cb(array(&$this, 'process_next_batch'), 2000000);
             }
             
             // run main loop
