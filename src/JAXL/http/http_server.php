@@ -138,7 +138,7 @@ class HTTPServer
             $request->body($raw);
         } else {
             // break on crlf
-            $lines = explode(HTTP_CRLF, $raw);
+            $lines = explode(self::HTTP_CRLF, $raw);
 
             // parse request line
             if ($request->state() == 'wait_for_request_line') {

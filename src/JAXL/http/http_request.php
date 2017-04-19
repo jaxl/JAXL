@@ -422,7 +422,7 @@ class HTTPRequest extends JAXLFsm
 
     protected function send_line($code)
     {
-        $raw = $this->version." ".$code." ".constant('HTTP_'.$code).HTTPServer::HTTP_CRLF;
+        $raw = $this->version." ".$code." ".constant('HTTPServer::HTTP_'.$code).HTTPServer::HTTP_CRLF;
         $this->send($raw);
     }
 
