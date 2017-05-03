@@ -72,7 +72,6 @@ class JAXLPipe
      */
     public function __construct($name, $read_cb = null)
     {
-        // TODO: see JAXL->cfg['priv_dir']
         $this->pipes_folder = getcwd().'/.jaxl/pipes';
         if (!is_dir($this->pipes_folder)) {
             mkdir($this->pipes_folder, 0777, true);

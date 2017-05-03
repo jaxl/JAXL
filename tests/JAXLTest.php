@@ -1,4 +1,7 @@
 <?php
+
+require __DIR__.'/../vendor/autoload.php';
+
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -76,10 +79,56 @@ class JAXLTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($jaxl->cfg['multi_client']);
         $this->assertFalse($jaxl->cfg['pass']);
         $this->assertNull($jaxl->cfg['port']);
-        $this->assertContains('.jaxl', $jaxl->cfg['priv_dir']);
         $this->assertNull($jaxl->cfg['protocol']);
         $this->assertNull($jaxl->cfg['resource']);
         $this->assertNull($jaxl->cfg['stream_context']);
         $this->assertFalse($jaxl->cfg['strict']);
+    }
+
+    public function testDirectories()
+    {
+        $config = array(
+            'strict' => false,
+        );
+        $jaxl = new JAXL($config);
+        $this->assertEquals(getcwd().'/.jaxl/run', $jaxl->pid_dir);
+        $this->assertEquals(getcwd().'/.jaxl/sock', $jaxl->sock_dir);
+
+        $config = array(
+            'strict' => false,
+            'pid_dir' => '/tmp/jaxl/run',
+            'sock_dir' => '/tmp/jaxl/sock',
+        );
+        $jaxl = new JAXL($config);
+        $this->assertEquals('/tmp/jaxl/run', $jaxl->pid_dir);
+        $this->assertEquals('/tmp/jaxl/sock', $jaxl->sock_dir);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMesage PID directory is not set
+     */
+    public function testPidDir()
+    {
+        $config = array(
+            'strict' => false,
+            'pid_dir' => null,
+        );
+        $jaxl = new JAXL($config);
+        $jaxl->get_pid_file_path();
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMesage Socket directory is not set
+     */
+    public function testPidSocket()
+    {
+        $config = array(
+            'strict' => false,
+            'sock_dir' => null,
+        );
+        $jaxl = new JAXL($config);
+        $jaxl->get_sock_file_path();
     }
 }
