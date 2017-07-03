@@ -1,4 +1,6 @@
 <?php
+
+use Psr\Log\LoggerInterface;
 /**
 * Jaxl (Jabber XMPP Library)
 *
@@ -122,8 +124,9 @@ class JAXL extends XMPPStream
     
     /**
      * @param array $config
+     * @param LoggerInterface $psr3Logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $psr3Logger = null)
     {
         $cfg_defaults = array(
             'auth_type' => 'PLAIN',
@@ -153,6 +156,10 @@ class JAXL extends XMPPStream
         JAXLLogger::$path = $this->cfg['log_path'];
         JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
         JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
+
+        if ($psr3Logger !== null) {
+            JAXLLogger::setPsr3Logger($psr3Logger);
+        }
 
         // env
         if ($this->cfg['strict']) {
