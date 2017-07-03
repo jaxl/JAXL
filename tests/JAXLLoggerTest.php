@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Log\LogLevel;
+
 class JAXLLoggerTest extends PHPUnit_Framework_TestCase
 {
 
@@ -32,5 +34,19 @@ class JAXLLoggerTest extends PHPUnit_Framework_TestCase
         $msg = 'Test message';
         uopz_backup('error_log');
         JAXLLogger::log($msg);
+    }
+
+    /**
+     * @requires PHP 5.4
+     * @requires function uopz_backup
+     */
+    public function testPsr3Logger()
+    {
+        $msg = 'Test message';
+        $logger = $this->getMock('\Psr\Log\LoggerInterface');
+        $logger->expects($this->once())->method('log')->with(LogLevel::ERROR, $msg);
+        JAXLLogger::setPsr3Logger($logger);
+
+        JAXLLogger::log($msg, JAXLLogger::ERROR);
     }
 }
