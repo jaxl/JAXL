@@ -1,4 +1,6 @@
 <?php
+
+use Psr\Log\LoggerInterface;
 /**
 * Jaxl (Jabber XMPP Library)
 *
@@ -122,8 +124,9 @@ class JAXL extends XMPPStream
     
     /**
      * @param array $config
+     * @param LoggerInterface $psr3Logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $psr3Logger = null)
     {
         $cfg_defaults = array(
             'auth_type' => 'PLAIN',
@@ -153,6 +156,10 @@ class JAXL extends XMPPStream
         JAXLLogger::$path = $this->cfg['log_path'];
         JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
         JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
+
+        if ($psr3Logger !== null) {
+            JAXLLogger::setPsr3Logger($psr3Logger);
+        }
 
         // env
         if ($this->cfg['strict']) {
@@ -427,6 +434,12 @@ class JAXL extends XMPPStream
         $this->start();
     }
 
+    //called back when we want to get the next batch
+    public function process_next_batch() {
+        JAXLLogger::debug("NEXT BATCH CALLED");
+        $this->ev->emit('get_next_batch');
+    }
+
     public function start(array $opts = array())
     {
         // is bosh bot?
@@ -471,6 +484,11 @@ class JAXL extends XMPPStream
             }
             if (isset($opts['--with-unix-sock']) && $opts['--with-unix-sock']) {
                 $this->enable_unix_sock();
+            }
+
+            if ($this->cfg["batched_data"]) {
+                //set the callback for our data checks, time in microseconds
+                JAXLLoop::set_next_batch_cb(array(&$this, 'process_next_batch'), 2000000);
             }
             
             // run main loop
