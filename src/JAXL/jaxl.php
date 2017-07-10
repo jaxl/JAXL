@@ -1,4 +1,6 @@
 <?php
+
+use Psr\Log\LoggerInterface;
 /**
 * Jaxl (Jabber XMPP Library)
 *
@@ -122,8 +124,9 @@ class JAXL extends XMPPStream
     
     /**
      * @param array $config
+     * @param LoggerInterface $psr3Logger
      */
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $psr3Logger = null)
     {
         $cfg_defaults = array(
             'auth_type' => 'PLAIN',
@@ -153,6 +156,10 @@ class JAXL extends XMPPStream
         JAXLLogger::$path = $this->cfg['log_path'];
         JAXLLogger::$level = $this->log_level = $this->cfg['log_level'];
         JAXLLogger::$colorize = $this->log_colorize = $this->cfg['log_colorize'];
+
+        if ($psr3Logger !== null) {
+            JAXLLogger::setPsr3Logger($psr3Logger);
+        }
 
         // env
         if ($this->cfg['strict']) {
@@ -472,6 +479,8 @@ class JAXL extends XMPPStream
             if (isset($opts['--with-unix-sock']) && $opts['--with-unix-sock']) {
                 $this->enable_unix_sock();
             }
+
+            JAXLLoop::set_write_callback(array($this, 'write'));
             
             // run main loop
             JAXLLoop::run();
@@ -853,5 +862,10 @@ class JAXL extends XMPPStream
                 //    ', node:'.(isset($child->attrs['node']) ? $child->attrs['node'] : 'NULL').PHP_EOL;
             }
         }
+    }
+
+    public function write()
+    {
+        $this->ev->emit('on_write');
     }
 }

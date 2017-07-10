@@ -1,4 +1,8 @@
 <?php
+
+use Psr\Log\LogLevel;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 /**
  * Jaxl (Jabber XMPP Library)
  *
@@ -59,8 +63,20 @@ class JAXLLogger
         self::DEBUG => 37  // white
     );
 
+    private static $psr3Logger;
+
+    private static $psr3LogLevelMap = [
+        self::ERROR => LogLevel::ERROR,
+        self::WARNING => LogLevel::WARNING,
+        self::NOTICE => LogLevel::NOTICE,
+        self::INFO => LogLevel::INFO,
+        self::DEBUG => LogLevel::DEBUG,
+    ];
+
     public static function log($msg, $verbosity = self::ERROR)
     {
+        self::getPsr3Logger()->log(self::$psr3LogLevelMap[$verbosity], $msg);
+
         if ($verbosity <= self::$level) {
             $bt = debug_backtrace();
             array_shift($bt);
@@ -136,5 +152,25 @@ class JAXLLogger
         foreach ($colors as $k => $v) {
             self::$colors[$k] = $v;
         }
+    }
+
+    /**
+     * @param \Psr\Log\LoggerInterface $psr3Logger
+     */
+    public static function setPsr3Logger(LoggerInterface $psr3Logger)
+    {
+        self::$psr3Logger = $psr3Logger;
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public static function getPsr3Logger()
+    {
+        if (self::$psr3Logger === null) {
+            self::$psr3Logger = new NullLogger();
+        }
+
+        return self::$psr3Logger;
     }
 }
