@@ -234,6 +234,8 @@ class JAXL extends XMPPStream
         // lifecycle events callback
         $this->ev = new JAXLEvent($this->cfg['multi_client'] ? array(&$this) : array());
 
+        JAXLLoop::set_write_callback(array($this, 'write'));
+
         // initialize xmpp stream with configured transport
         parent::__construct(
             $transport,
@@ -853,5 +855,10 @@ class JAXL extends XMPPStream
                 //    ', node:'.(isset($child->attrs['node']) ? $child->attrs['node'] : 'NULL').PHP_EOL;
             }
         }
+    }
+
+    public function write()
+    {
+        $this->ev->emit('on_write');
     }
 }
