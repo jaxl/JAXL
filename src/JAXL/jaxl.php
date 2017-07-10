@@ -434,12 +434,6 @@ class JAXL extends XMPPStream
         $this->start();
     }
 
-    //called back when we want to get the next batch
-    public function process_next_batch() {
-        JAXLLogger::debug("NEXT BATCH CALLED");
-        $this->ev->emit('get_next_batch');
-    }
-
     public function start(array $opts = array())
     {
         // is bosh bot?
@@ -486,10 +480,7 @@ class JAXL extends XMPPStream
                 $this->enable_unix_sock();
             }
 
-            if ($this->cfg["batched_data"]) {
-                //set the callback for our data checks, time in microseconds
-                JAXLLoop::set_next_batch_cb(array(&$this, 'process_next_batch'), 2000000);
-            }
+            JAXLLoop::set_write_callback(array($this, 'write'));
             
             // run main loop
             JAXLLoop::run();
@@ -871,5 +862,10 @@ class JAXL extends XMPPStream
                 //    ', node:'.(isset($child->attrs['node']) ? $child->attrs['node'] : 'NULL').PHP_EOL;
             }
         }
+    }
+
+    public function write()
+    {
+        $this->ev->emit('on_write');
     }
 }
