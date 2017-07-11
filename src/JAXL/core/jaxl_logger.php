@@ -75,14 +75,14 @@ class JAXLLogger
 
     public static function log($msg, $verbosity = self::ERROR)
     {
+        $bt = debug_backtrace();
+        array_shift($bt);
+        $callee = array_shift($bt);
+        $msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
+
         self::getPsr3Logger()->log(self::$psr3LogLevelMap[$verbosity], $msg);
 
         if ($verbosity <= self::$level) {
-            $bt = debug_backtrace();
-            array_shift($bt);
-            $callee = array_shift($bt);
-            $msg = basename($callee['file'], '.php').":".$callee['line']." - ".@date('Y-m-d H:i:s')." - ".$msg;
-
             $size = strlen($msg);
             if ($size > self::$max_log_size) {
                 $msg = substr($msg, 0, self::$max_log_size) . ' ...';
