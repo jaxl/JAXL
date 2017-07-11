@@ -62,9 +62,6 @@ class JAXLSocketClient implements JAXLClientBase
     private $obuffer = "";
     private $compressed = false;
 
-    private $recv_bytes = 0;
-    private $send_bytes = 0;
-
     /** @var callable */
     private $recv_cb = null;
     private $recv_chunk_size = 1024;
@@ -223,11 +220,8 @@ class JAXLSocketClient implements JAXLClientBase
             }
         }
 
-        $this->recv_bytes += $bytes;
-        $total = $this->ibuffer.$raw;
-
         $this->ibuffer = "";
-        JAXLLogger::debug("read ".$bytes."/".$this->recv_bytes." of data");
+        JAXLLogger::debug("read $bytes bytes of data");
         if ($bytes > 0) {
             JAXLLogger::debug($raw);
         }
@@ -243,9 +237,8 @@ class JAXLSocketClient implements JAXLClientBase
         //JAXLLogger::debug("on write ready called");
         $total = strlen($this->obuffer);
         $bytes = @fwrite($fd, $this->obuffer);
-        $this->send_bytes += $bytes;
 
-        JAXLLogger::debug("sent ".$bytes."/".$this->send_bytes." of data");
+        JAXLLogger::debug("sent $bytes bytes of data");
         JAXLLogger::debug(substr($this->obuffer, 0, $bytes));
 
         $this->obuffer = substr($this->obuffer, $bytes, $total-$bytes);
