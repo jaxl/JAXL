@@ -62,12 +62,19 @@ class JAXLLoop
     private static $secs = 0;
     private static $usecs = 30000;
 
+    private static $write_callback;
+
     private function __construct()
     {
     }
 
     private function __clone()
     {
+    }
+
+    public static function set_write_callback($write_callback)
+    {
+        self::$write_callback = $write_callback;
     }
 
     public static function watch($fd, $opts)
@@ -119,6 +126,10 @@ class JAXLLoop
             self::$clock = new JAXLClock();
 
             while ((self::$active_read_fds + self::$active_write_fds) > 0) {
+                if (is_callable(self::$write_callback)) {
+                    call_user_func(self::$write_callback);
+                }
+
                 self::select();
             }
 
