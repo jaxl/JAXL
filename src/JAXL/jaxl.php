@@ -168,7 +168,7 @@ class JAXL extends XMPPStream
         $jid = ($this->cfg['jid'] !== null) ? new XMPPJid($this->cfg['jid']) : null;
 
         // handle signals
-        if (extension_loaded('pcntl')) {
+        if (extension_loaded('pcntl') && function_exists('pcntl_signal')) {
             pcntl_signal(SIGHUP, array($this, 'signal_handler'));
             pcntl_signal(SIGINT, array($this, 'signal_handler'));
             pcntl_signal(SIGTERM, array($this, 'signal_handler'));
