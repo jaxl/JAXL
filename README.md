@@ -10,11 +10,11 @@ philosophies from my experience with erlang and python languages.
 Jaxl is an asynchronous, non-blocking I/O, event based PHP library 
 for writing custom TCP/IP client and server implementations. 
 From it's previous versions, library inherits a full blown stable support 
-for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/v3.1.0/xmpp). 
-In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/v3.1.0/http) 
+for [XMPP protocol stack](https://github.com/jaxl/JAXL/tree/master/src/JAXL/xmpp). 
+In v3.0, support for [HTTP protocol stack](https://github.com/jaxl/JAXL/tree/master/src/JAXL/http) 
 has also been added.
 
-At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/v3.1.0/core).
+At the heart of every protocol stack sits the [Core stack](https://github.com/jaxl/JAXL/tree/master/src/JAXL/core).
 It contains all the building blocks for everything that we aim to do with Jaxl library. 
 Both XMPP and HTTP protocol stacks are written on top of the Core stack. 
 Infact the source code of protocol implementations knows nothing 
